@@ -963,7 +963,7 @@
 		"builtin-functions": {
 			"patterns": [{
 				"name": "support.function.builtin.harmony",
-				"match": "(?x)\n  (?<!\\.) \\b( all | any | go | hash | inf | keys | len | let | max | min | nametag | setintlevel | stop | spawn | that | trap)\\b"
+				"match": "(?x)\n  (?<!\\.) \\b( all | any | go | hash | inf | keys | len | let | max | min | nametag | setintlevel | stop | spawn | that | trap | choose)\\b"
 			}]
 		},
 		"builtin-types": {
