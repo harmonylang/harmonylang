@@ -1,8 +1,9 @@
 {
     "name": "harmonylang",
     "displayName": "HarmonyLang",
-    "description": "Syntax support for RvR's Harmony",
-    "version": "0.0.1",
+    "description": "VS Code language support for Harmony, a Python-like concurrent programming language.",
+    "icon": "images/harmonylang.png",
+    "version": "0.0.2",
     "publisher": "kevinsun-dev-cornell",
     "repository": "https://github.com/kevinsun-dev/harmonylang",
     "engines": {
@@ -21,6 +22,7 @@
         "email": "contact@kevinsun.dev",
         "name": "Kevin Sun"
     },
+    "license": "MIT",
     "contributes": {
         "languages": [{
             "id": "harmony",
@@ -32,6 +34,10 @@
             "language": "harmony",
             "scopeName": "source.harmony",
             "path": "./syntaxes/harmony.tmLanguage.json"
+        }],
+        "commands": [{
+            "command": "extension.runharmony",
+            "title": "Run Harmony Program"
         }]
     }
 }

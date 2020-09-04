@@ -1,6 +1,6 @@
 # HarmonyLang
 
-HarmonyLang provides general VS compatibility with RvR's [Harmony](http://www.cs.cornell.edu/home/rvr/harmony/), a Python-like programming language for testing and experimenting with concurrent programs.
+HarmonyLang provides general VS compatibility with RvR's [Harmony](http://www.cs.cornell.edu/home/rvr/harmony/), a Python-like programming language for testing and experimenting with concurrent programs designed for Cornell University's CS 4410/4411 course.
 
 ## Features
 
@@ -24,6 +24,10 @@ Supported syntax:
  - Intellicode Support
 
 ## Release Notes
+
+### 0.0.2
+
+Added HarmonyLang extension icon and Harmony file icons. VS Code currently does not support icon fallback, so the latter is currently disabled.
 
 ### 0.0.1
 

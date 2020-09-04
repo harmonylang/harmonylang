@@ -1,0 +1,18 @@
+{
+    "iconDefinitions": {
+        "_harmony_light": {
+            "iconPath": "./images/harmony-light.svg"
+        },
+        "_harmony_dark": {
+            "iconPath": "./images/harmony-dark.svg"
+        }
+    },
+    "fileExtensions": {
+        "hny": "_harmony_light"
+    },
+    "light": {
+        "fileExtensions": {
+            "hny": "_harmony_dark"
+        }
+    }
+}

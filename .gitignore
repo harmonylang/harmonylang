@@ -3,3 +3,4 @@
 .accesstoken
 .vscodeignore
 vsc-extension-quickstart.md
+*.vsix
