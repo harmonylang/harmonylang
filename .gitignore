@@ -1,0 +1,5 @@
+.vscode/**
+.vscode-test/**
+.accesstoken
+.vscodeignore
+vsc-extension-quickstart.md

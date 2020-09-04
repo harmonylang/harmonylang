@@ -1,0 +1,26 @@
+{
+    "name": "harmonylang",
+    "displayName": "HarmonyLang",
+    "description": "Syntax support for RvR's Harmony",
+    "version": "0.0.1",
+    "publisher": "kevinsun-dev-cornell",
+    "engines": {
+        "vscode": "^1.48.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "harmony",
+            "aliases": ["Harmony", "harmony"],
+            "extensions": [".hny"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "harmony",
+            "scopeName": "source.harmony",
+            "path": "./syntaxes/harmony.tmLanguage.json"
+        }]
+    }
+}
