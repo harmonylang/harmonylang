@@ -1019,7 +1019,7 @@
 					"match": "\\b(result)\\b",
 					"captures": {
 						"1": {
-							"name": "variable.language"
+							"name": "variable.language.special.result.harmony"
 						}
 					}
 				}
