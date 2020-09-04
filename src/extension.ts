@@ -1,23 +1,44 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import * as child_process from 'child_process';
+import * as Path from 'path';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "helloworld-sample" is now active!');
+export const activate = (context: vscode.ExtensionContext) => {
+    const disposable = vscode.commands.registerCommand('harmonylang.run', () => {
+        const editor = vscode.window.activeTextEditor;
+        const doc = editor != null ? editor.document : null;
+        const path = doc != null ? doc.fileName : null;
+        const ext = Path.extname(path || '');
+        const harmonyExt = ".hny .sab";
 
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with registerCommand
-    // The commandId parameter must match the command field in package.json
-    const disposable = vscode.commands.registerCommand('extension.helloWorld', () => {
-        // The code you place here will be executed every time your command is executed
+        if (harmonyExt.indexOf(ext) < 0) {
+            vscode.window.showInformationMessage('Target file must be an OCaml signature or implementation file');
+            return;
+        }
 
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Hello World!');
+        if (path === null) {
+            vscode.window.showInformationMessage('Could not locate target file.');
+            return;
+        }
+
+        runHarmony(path);
     });
 
     context.subscriptions.push(disposable);
+};
+
+export function runHarmony(fullFileName: string) {
+    const harmonyPython = vscode.workspace.getConfiguration('harmonylang').get('location');
+    if (harmonyPython === undefined) {
+        vscode.window.showInformationMessage('Please set your Harmony compiler path at Preferences > Extensions > HarmonyLang > Location');
+        return;
+    }
+    const cmd = "python3 \"" + harmonyPython + "\\harmony.py\" \"" + fullFileName + "\"";
+    child_process.exec(cmd, (error, stdout, stderr) => {
+        if (stderr) {
+            vscode.window.showInformationMessage('Build Failed. ' + error);
+        } else {
+            vscode.window.showInformationMessage('Build Success! Output: ' + stdout);
+        }
+    });
+    return;
 }
