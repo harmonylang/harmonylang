@@ -4,12 +4,23 @@
     "description": "Syntax support for RvR's Harmony",
     "version": "0.0.1",
     "publisher": "kevinsun-dev-cornell",
+    "repository": "https://github.com/kevinsun-dev/harmonylang",
     "engines": {
         "vscode": "^1.48.0"
     },
     "categories": [
         "Programming Languages"
     ],
+    "keywords": [
+        "CS 4410",
+        "Harmony",
+        "Syntax",
+        "Language"
+    ],
+    "author": {
+        "email": "contact@kevinsun.dev",
+        "name": "Kevin Sun"
+    },
     "contributes": {
         "languages": [{
             "id": "harmony",
