@@ -780,9 +780,11 @@
 					"name": "punctuation.separator.annotation.result.harmony"
 				}
 			},
-			"patterns": [{
-				"include": "#expression"
-			}]
+			"patterns": [
+			  	{
+					"include": "#expression"
+			  	}
+			]
 		},
 		"item-access": {
 			"patterns": [{
@@ -961,7 +963,7 @@
 		"builtin-functions": {
 			"patterns": [{
 				"name": "support.function.builtin.harmony",
-				"match": "(?x)\n  (?<!\\.) \\b( all | any | go | hash | inf | keys | len | let | max | min | nametag | setintlevel | stop | spawn | that | trap)\\b"
+				"match": "(?x)\n  (?<!\\.) \\b( all | any | go | hash | inf | keys | len | let | max | min | nametag | setintlevel | stop | spawn | that | trap | choose)\\b"
 			}]
 		},
 		"builtin-types": {
@@ -1004,12 +1006,24 @@
 			}
 		},
 		"special-variables": {
-			"match": "\\b(const)\\b",
-			"captures": {
-				"1": {
-					"name": "variable.language.special.const.harmony"
+			"patterns": [
+				{
+					"match": "\\b(const)\\b",
+					"captures": {
+				  		"1": {
+							"name": "variable.language.special.const.harmony"
+						}
+					}
+				},
+			  	{
+					"match": "\\b(result)\\b",
+					"captures": {
+						"1": {
+							"name": "variable.language.special.result.harmony"
+						}
+					}
 				}
-			}
+			]
 		},
 		"ellipsis": {
 			"name": "constant.other.ellipsis.harmony",

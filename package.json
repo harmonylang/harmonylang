@@ -24,20 +24,31 @@
     },
     "license": "MIT",
     "contributes": {
-        "languages": [{
-            "id": "harmony",
-            "aliases": ["Harmony", "harmony"],
-            "extensions": [".hny"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "harmony",
-            "scopeName": "source.harmony",
-            "path": "./syntaxes/harmony.tmLanguage.json"
-        }],
-        "commands": [{
-            "command": "extension.runharmony",
-            "title": "Run Harmony Program"
-        }]
+        "languages": [
+            {
+                "id": "harmony",
+                "aliases": [
+                    "Harmony",
+                    "harmony"
+                ],
+                "extensions": [
+                    ".hny"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "harmony",
+                "scopeName": "source.harmony",
+                "path": "./syntaxes/harmony.tmLanguage.json"
+            }
+        ],
+        "commands": [
+            {
+                "command": "extension.runharmony",
+                "title": "Run Harmony Program"
+            }
+        ]
     }
 }
