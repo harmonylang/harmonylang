@@ -95,7 +95,7 @@
 				},
 				{
 					"name": "keyword.control.flow.harmony",
-					"match": "(?x)\n  \\b(?<!\\.)( atomic | del | assert | for | elif | else | if | pass | while )\\b\n"
+					"match": "(?x)\n  \\b(?<!\\.)( such\\s+that | atomic | del | assert | for | elif | else | if | pass | while )\\b\n"
 				}
 			]
 		},
@@ -963,7 +963,7 @@
 		"builtin-functions": {
 			"patterns": [{
 				"name": "support.function.builtin.harmony",
-				"match": "(?x)\n  (?<!\\.) \\b( all | any | go | hash | inf | keys | len | let | max | min | nametag | setintlevel | stop | spawn | that | trap | choose)\\b"
+				"match": "(?x)\n  (?<!\\.) \\b( all | any | go | hash | inf | keys | len | let | max | min | nametag | setintlevel | stop | spawn | trap | choose)\\b"
 			}]
 		},
 		"builtin-types": {
