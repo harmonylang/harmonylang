@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import * as child_process from 'child_process';
 import * as Path from 'path';
 import * as Fs from 'fs';
-import { isString } from 'util';
 
 export const activate = (context: vscode.ExtensionContext) => {
     const disposable = vscode.commands.registerCommand('harmonylang.run', () => {
@@ -46,14 +45,23 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
     const cmd = `python3 "${compilerPath}" "${fullFileName}"`;
     const process = child_process.exec(cmd, { cwd: Path.dirname(fullFileName) }, (error, stdout, stderr) => {
         if (stderr) {
-            vscode.window.showInformationMessage('Build Failed. ' + error);
+            vscode.window.showInformationMessage('Could not reach Harmony compiler. ' + error);
         } else {
-            const output = 'Build Success!\n' + ((stdout.length > 0) ? 'Output: ' + stdout : '');
+            const showOutputDisplay = stdout.indexOf('harmony.html') > 0;
+            const buildErrors = stdout.toLocaleLowerCase().indexOf('error') > 0;
+            let output = "Build success. See output.";
+            if (buildErrors) {
+                if (showOutputDisplay) {
+                    output = "Build success. See error in output.";
+                } else {
+                    output = "Build failed. Output: " + stdout;
+                }
+            }
             vscode.window.showInformationMessage(output);
+            if (showOutputDisplay) {
+                HarmonyOutputPanel.createOrShow(context.extensionUri);
+            }
         }
-    });
-    process.on('exit', function () {
-        HarmonyOutputPanel.createOrShow(context.extensionUri);
     });
     return;
 }
@@ -158,12 +166,21 @@ class HarmonyOutputPanel {
                 if (err) {
                     vscode.window.showInformationMessage(err.message);
                 }
-                const injectableCSS = `\nbody {
-                    background-color: white;
+                const injectableCSS = `\n
+                * {
+                    font-size: 1rem;
+                }
+                html, * {
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, sans-serif;
+                    line-height: 1.5;
+                }
+                body {
+                    background-color: #fafafa;
                 }
                 #table-scroll {
-                    height: 70vh !important;
-                }\n`;
+                    height: 80vh !important;
+                }
+                \n`;
                 const injectionPoint = data.indexOf('</style>');
                 const formattedHtml = data.substring(0, injectionPoint) + injectableCSS + data.substring(injectionPoint);
                 harmonyPanel.webview.html = formattedHtml;
