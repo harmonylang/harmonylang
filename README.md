@@ -13,14 +13,23 @@ Supported syntax:
  - Binary operators (`and`, `**`, and `>=`)
  - Comments (`#line` and `(* block *)`)
 
-![feature X](images/example.jpg)
+![Syntax Highlighting](images/syntax-example.jpg)
+
+Run your Harmony files in VS Code. Press `Ctrl+Shift+P` and search `Run Harmony` to compile and run the current `.hny` file.
+
+![Command](images/command-example.jpg)
+
+See your Harmony Output results, right in VS Code!
+
+![Harmony Output](images/build-example.jpg)
+
+> Generated `harmony.html` files are saved to current working directory.
 
 ## Upcoming Features
 
  - Auto-formatter
    - Format on save
    - Format via `Shift-Alt-F`
- - Harmony Icon
  - Intellicode Support
 
 ## Release Notes
@@ -28,6 +37,10 @@ Supported syntax:
 ### 0.0.2
 
 Added HarmonyLang extension icon and Harmony file icons. VS Code currently does not support icon fallback, so the latter is currently disabled.
+
+Added `Run Harmony File` command.
+
+Added Harmony Output window.
 
 ### 0.0.1
 
