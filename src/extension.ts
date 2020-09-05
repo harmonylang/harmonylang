@@ -37,16 +37,20 @@ export const activate = (context: vscode.ExtensionContext) => {
 };
 
 export function runHarmony(context: vscode.ExtensionContext, fullFileName: string) {
-    const harmonyPython = vscode.workspace.getConfiguration('harmonylang').get('location');
-    if (harmonyPython === undefined || typeof harmonyPython !== 'string') {
-        vscode.window.showInformationMessage('Please set your Harmony compiler path at Preferences > Extensions > HarmonyLang > Location');
-        return;
-    }
-    const compilerPath = Path.join(harmonyPython, 'harmony.py');
-    const cmd = `python3 "${compilerPath}" "${fullFileName}"`;
+
+    // Same configuration for vscode's Python extension
+    const config = vscode.workspace.getConfiguration('python').get('pythonPath');
+
+    // Use python3 by default if configurations are not set.
+    const pythonPath = config === undefined || typeof config !== 'string' ? 'python3': config;
+
+    const compilerPath = Path.join(__dirname, '..', 'compiler', 'harmony.py');
+    const cmd = `${pythonPath} "${compilerPath}" "${fullFileName}"`;
     const process = child_process.exec(cmd, { cwd: Path.dirname(fullFileName) }, (error, stdout, stderr) => {
-        if (stderr) {
-            vscode.window.showInformationMessage('Build Failed. ' + error);
+        // error if non-null when process exits on code 1.
+        if (error) {
+            const output = 'Build Failed!\n' + ((stdout.length > 0) ? 'Message: ' + stdout : '');
+            vscode.window.showInformationMessage(output);
         } else {
             const output = 'Build Success!\n' + ((stdout.length > 0) ? 'Output: ' + stdout : '');
             vscode.window.showInformationMessage(output);
