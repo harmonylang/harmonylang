@@ -38,11 +38,12 @@ export const activate = (context: vscode.ExtensionContext) => {
 
 export function runHarmony(context: vscode.ExtensionContext, fullFileName: string) {
     const harmonyPython = vscode.workspace.getConfiguration('harmonylang').get('location');
-    if (harmonyPython === undefined) {
+    if (harmonyPython === undefined || typeof harmonyPython !== 'string') {
         vscode.window.showInformationMessage('Please set your Harmony compiler path at Preferences > Extensions > HarmonyLang > Location');
         return;
     }
-    const cmd = "python3 \"" + harmonyPython + "\\harmony.py\" \"" + fullFileName + "\"";
+    const compilerPath = Path.join(harmonyPython, 'harmony.py');
+    const cmd = `python3 "${compilerPath}" "${fullFileName}"`;
     const process = child_process.exec(cmd, { cwd: Path.dirname(fullFileName) }, (error, stdout, stderr) => {
         if (stderr) {
             vscode.window.showInformationMessage('Build Failed. ' + error);

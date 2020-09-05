@@ -32,33 +32,42 @@
             "title": "HarmonyLang",
             "properties": {
                 "harmonylang.location": {
-                    "type": ["string", "null"],
+                    "type": [
+                        "string",
+                        "null"
+                    ],
                     "default": null,
                     "scope": "machine-overridable",
                     "description": "Specifies the folder path containing the Harmony compiler."
                 }
             }
         },
-        "languages": [{
-            "id": "harmony",
-            "aliases": [
-                "Harmony",
-                "harmony"
-            ],
-            "extensions": [
-                ".hny"
-            ],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "harmony",
-            "scopeName": "source.harmony",
-            "path": "./syntaxes/harmony.tmLanguage.json"
-        }],
-        "commands": [{
-            "command": "harmonylang.run",
-            "title": "Run Harmony"
-        }]
+        "languages": [
+            {
+                "id": "harmony",
+                "aliases": [
+                    "Harmony",
+                    "harmony"
+                ],
+                "extensions": [
+                    ".hny"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "harmony",
+                "scopeName": "source.harmony",
+                "path": "./syntaxes/harmony.tmLanguage.json"
+            }
+        ],
+        "commands": [
+            {
+                "command": "harmonylang.run",
+                "title": "Run Harmony"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
