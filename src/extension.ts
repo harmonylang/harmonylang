@@ -37,12 +37,16 @@ export const activate = (context: vscode.ExtensionContext) => {
 };
 
 const activeProcesses: child_process.ChildProcess[] = [];
+const activeIntervals: NodeJS.Timeout[] = [];
 export function endHarmonyProcesses() {
     showMessage('Ending all Harmony processes...');
     activeProcesses.forEach(p => {
         if (!p.killed) p.kill();
     });
     activeProcesses.length = 0;
+
+    activeIntervals.forEach(i => clearInterval(i));
+    activeIntervals.length = 0;
     showMessage('All Harmony processes have ended.');
 }
 
@@ -86,6 +90,9 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
             showMessage('Build Failed!', 'Message', stdout);
         } else {
             const runningInterval = launchRunningMessage(5000);
+            // Push the new interval onto the stack.
+            activeIntervals.push(runningInterval);
+
             // Close the current output for a new run.
             showMessage('Build Succeeded!');
             showMessage(`Starting the Harmony program.`);
