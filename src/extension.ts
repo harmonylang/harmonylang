@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import * as child_process from 'child_process';
 import * as Path from 'path';
 import * as Fs from 'fs';
-import { isString } from 'util';
 
 export const activate = (context: vscode.ExtensionContext) => {
     const disposable = vscode.commands.registerCommand('harmonylang.run', () => {
@@ -47,17 +46,19 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
     const compilerPath = Path.join(__dirname, '..', 'compiler', 'harmony.py');
     const cmd = `${pythonPath} "${compilerPath}" "${fullFileName}"`;
     const process = child_process.exec(cmd, { cwd: Path.dirname(fullFileName) }, (error, stdout, stderr) => {
-        // error if non-null when process exits on code 1.
+        // error is non-null when process exits on code 1, i.e. a parser error.
         if (error) {
+            // Parse error feedback is also in standard output (it's just outputted by python's print function)
             const output = 'Build Failed!\n' + ((stdout.length > 0) ? 'Message: ' + stdout : '');
+            // Close the current output panel, if it exists, to avoid misinterpretation of output.
+            HarmonyOutputPanel.currentPanel?.dispose();
             vscode.window.showInformationMessage(output);
         } else {
             const output = 'Build Success!\n' + ((stdout.length > 0) ? 'Output: ' + stdout : '');
+            // Show the output panel with the contents of harmony.html because the compilation succeeded.
             vscode.window.showInformationMessage(output);
+            HarmonyOutputPanel.createOrShow(context.extensionUri);
         }
-    });
-    process.on('exit', function () {
-        HarmonyOutputPanel.createOrShow(context.extensionUri);
     });
     return;
 }
