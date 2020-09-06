@@ -38,15 +38,16 @@ export const activate = (context: vscode.ExtensionContext) => {
 
 const activeProcesses: child_process.ChildProcess[] = [];
 export function endHarmonyProcesses() {
+    showMessage('Ending all Harmony processes...');
     activeProcesses.forEach(p => {
         if (!p.killed) p.kill();
     });
     activeProcesses.length = 0;
+    showMessage('All Harmony processes have ended.');
 }
 
 const launchRunningMessage = (msLag: number) => {
     const startTime = Date.now();
-    vscode.window.showInformationMessage(`Starting the Harmony program.`);
     return setInterval(() => {
         const elapsed = (Date.now() - startTime) / 1000;
         vscode.window.showInformationMessage(
@@ -55,9 +56,13 @@ const launchRunningMessage = (msLag: number) => {
     }, msLag);
 };
 
-const showMessage = (main: string, subHeader: string, subtext: string) => {
-    const output = main + (subtext.length > 0 ? `\n${subHeader}: ${subtext}`: '');
-    vscode.window.showInformationMessage(output);
+const showMessage = (main: string, subHeader?: string, subtext?: string) => {
+    if (subHeader == null || subtext == null) {
+        vscode.window.showInformationMessage(main);
+    } else {
+        const output = main + (subtext.length > 0 ? `\n${subHeader}: ${subtext}`: '');
+        vscode.window.showInformationMessage(output);
+    }
 };
 
 const processConfig = { cwd: Path.join(__dirname, '..', 'harmony-0.9') };
@@ -73,7 +78,8 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
 
     const buildProcess = child_process.exec(compileCommand, processConfig, (err, stdout, stderr) => {
         if (stderr) {
-            vscode.window.showInformationMessage('Could not reach Harmony compiler.\n' + stderr);
+            // System errors, includes division by zero.
+            showMessage('Error!', 'Message', stderr);
         } else if (err) {
             // error is non-null when process exits on code 1, i.e. a parser error.
             // Parse error feedback is also in standard output (it's just outputted by python's print function)
@@ -81,20 +87,21 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
         } else {
             const runningInterval = launchRunningMessage(5000);
             // Close the current output for a new run.
+            showMessage('Build Succeeded!');
+            showMessage(`Starting the Harmony program.`);
             HarmonyOutputPanel.currentPanel?.dispose();
             const runCommand = `${pythonPath} "${compilerPath}" "${fullFileName}"`;
             const runProcess = child_process.exec(runCommand, processConfig, (error, stdout, stderr) => {
                 if (runningInterval !== undefined) {
                     clearInterval(runningInterval);
                 }
-                if (stderr) {
-                    vscode.window.showInformationMessage('Could not reach Harmony compiler.\n' + stderr);
-                } else if (error) {
+                if (stderr || error) {
                     showMessage('Execution Failed!', 'Message', stdout);
                     HarmonyOutputPanel.currentPanel?.dispose();
                 } else {
+                    // Output Panel will include the stdout output.
+                    showMessage('Execution Finished!');
                     // Show the output panel with the contents of harmony.html because the compilation succeeded.
-                    showMessage('Execution Failed!', 'Output', stdout);
                     if (stdout.includes('harmony.html'))
                         HarmonyOutputPanel.createOrShow(context.extensionUri);
                 }

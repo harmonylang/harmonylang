@@ -6,3 +6,4 @@ vsc-extension-quickstart.md
 *.vsix
 node_modules
 out
+**/harmony.html
