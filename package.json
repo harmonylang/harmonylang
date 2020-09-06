@@ -28,36 +28,46 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
-        "languages": [{
-            "id": "harmony",
-            "aliases": [
-                "Harmony",
-                "harmony"
-            ],
-            "extensions": [
-                ".hny"
-            ],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "harmony",
-            "scopeName": "source.harmony",
-            "path": "./syntaxes/harmony.tmLanguage.json"
-        }],
-        "commands": [{
-            "command": "harmonylang.run",
-            "title": "Run Harmony"
-        }, {
-            "command": "harmonylang.end",
-            "title": "End All Harmony Processes"
-        }],
-        "keybindings": [{
-            "command": "harmonylang.run",
-            "key": "alt+shift+n"
-        }, {
-            "command": "harmonylang.end",
-            "key": "alt+shift+q"
-        }]
+        "languages": [
+            {
+                "id": "harmony",
+                "aliases": [
+                    "Harmony",
+                    "harmony"
+                ],
+                "extensions": [
+                    ".hny"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "harmony",
+                "scopeName": "source.harmony",
+                "path": "./syntaxes/harmony.tmLanguage.json"
+            }
+        ],
+        "commands": [
+            {
+                "command": "harmonylang.run",
+                "title": "Run Harmony"
+            },
+            {
+                "command": "harmonylang.end",
+                "title": "End All Harmony Processes"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "harmonylang.run",
+                "key": "alt+shift+n"
+            },
+            {
+                "command": "harmonylang.end",
+                "key": "alt+shift+q"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

@@ -1,10 +1,11 @@
 import * as vscode from 'vscode';
-import * as child_process from 'child_process';
 import * as Path from 'path';
 import HarmonyOutputPanel from './outputPanel';
+import { ProcessManagerImpl } from './processManager';
 
-const activeProcesses: child_process.ChildProcess[] = [];
-const activeIntervals: NodeJS.Timeout[] = [];
+const processManager = ProcessManagerImpl.init();
+const processConfig = { cwd: Path.join(__dirname, '..', 'harmony-0.9') };
+const compilerPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.py');
 
 export const activate = (context: vscode.ExtensionContext) => {
     const runHarmonyCommand = vscode.commands.registerCommand('harmonylang.run', () => {
@@ -41,19 +42,13 @@ export const activate = (context: vscode.ExtensionContext) => {
 
 export function endHarmonyProcesses() {
     showMessage('Ending all Harmony processes...');
-    activeProcesses.forEach(p => {
-        if (!p.killed) p.kill();
-    });
-    activeProcesses.length = 0;
-
-    activeIntervals.forEach(i => clearInterval(i));
-    activeIntervals.length = 0;
+    processManager.endAll();
     showMessage('All Harmony processes have ended.');
 }
 
-const launchRunningMessage = (msLag: number) => {
+const launchRunningMessage = (msLag: number): string => {
     const startTime = Date.now();
-    return setInterval(() => {
+    return processManager.startInterval(() => {
         const elapsed = (Date.now() - startTime) / 1000;
         vscode.window.showInformationMessage(
             `Running the Harmony program...\n${elapsed.toFixed()} seconds have elapsed.`
@@ -70,19 +65,18 @@ const showMessage = (main: string, subHeader?: string, subtext?: string) => {
     }
 };
 
-const processConfig = { cwd: Path.join(__dirname, '..', 'harmony-0.9') };
-
-export function runHarmony(context: vscode.ExtensionContext, fullFileName: string) {
-
+const getPythonPath = (): string => {
     // Same configuration for vscode's Python extension
     const config = vscode.workspace.getConfiguration('python').get('pythonPath');
-
     // Use python3 by default if configurations are not set.
-    const pythonPath = config === undefined || typeof config !== 'string' ? 'python3' : config;
-    const compilerPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.py');
-    const compileCommand = `${pythonPath} "${compilerPath}" -A "${fullFileName}"`;
+    return config === undefined || typeof config !== 'string' ? 'python3' : config;
+};
 
-    const buildProcess = child_process.exec(compileCommand, processConfig, (err, stdout, stderr) => {
+export function runHarmony(context: vscode.ExtensionContext, fullFileName: string) {
+    // Use python3 by default if configurations are not set.
+    const pythonPath = getPythonPath();
+    const compileCommand = `${pythonPath} "${compilerPath}" -A "${fullFileName}"`;
+    processManager.startCommand(compileCommand, processConfig,  (err, stdout, stderr) => {
         if (stderr) {
             // System errors, includes division by zero.
             showMessage('Error!', 'Message', stderr);
@@ -93,16 +87,15 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
         } else {
             const runningInterval = launchRunningMessage(5000);
             // Push the new interval onto the stack.
-            activeIntervals.push(runningInterval);
-
             // Close the current output for a new run.
             showMessage('Build Succeeded!');
             showMessage(`Starting the Harmony program.`);
             HarmonyOutputPanel.currentPanel?.dispose();
             const runCommand = `${pythonPath} "${compilerPath}" "${fullFileName}"`;
-            const runProcess = child_process.exec(runCommand, processConfig, (error, stdout, stderr) => {
+            processManager.startCommand(runCommand, processConfig, (error, stdout, stderr) => {
+                if (processManager.processesAreKilled) return;
                 if (runningInterval !== undefined) {
-                    clearInterval(runningInterval);
+                    processManager.end(runningInterval);
                 }
                 if (stderr || error) {
                     showMessage('Execution Failed!', 'Message', stdout);
@@ -115,9 +108,6 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                         HarmonyOutputPanel.createOrShow(context.extensionUri);
                 }
             });
-            activeProcesses.push(runProcess);
         }
     });
-    activeProcesses.push(buildProcess);
-    return;
 }
