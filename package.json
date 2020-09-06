@@ -67,6 +67,12 @@
                 "command": "harmonylang.run",
                 "title": "Run Harmony"
             }
+        ],
+        "keybindings": [
+            {
+                "command": "harmonylang.run",
+                "key": "ctrl+shift+n"
+            }
         ]
     },
     "scripts": {
