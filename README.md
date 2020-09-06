@@ -40,20 +40,26 @@ See your Harmony Output results, right in VS Code!
 
 ## Release Notes
 
+### 0.0.3
+
+- Bug fixes.
+- Have the Harmony compiler built into the extension. Not required to download the compiler separately.
+- Show the Harmony Output window only if the build succeeds. The Harmony Output window disappears if the build fails.
+
 ### 0.0.2
 
-Added Unix compatibility for `Run Harmony File`.
+- Added Unix compatibility for `Run Harmony File`.
 
-Reworked build success/failure reporting.
+- Reworked build success/failure reporting.
 
 ### 0.0.2
 
-Added HarmonyLang extension icon and Harmony file icons. VS Code currently does not support icon fallback, so the latter is currently disabled.
+- Added HarmonyLang extension icon and Harmony file icons. VS Code currently does not support icon fallback, so the latter is currently disabled.
 
-Added `Run Harmony File` command.
+- Added `Run Harmony File` command.
 
-Added Harmony Output window.
+- Added Harmony Output window.
 
 ### 0.0.1
 
-Added Harmony syntax highlighting based on the [default VSCode extension for Python](https://github.com/microsoft/vscode)
+- Added Harmony syntax highlighting based on the [default VSCode extension for Python](https://github.com/microsoft/vscode)
