@@ -32,7 +32,19 @@ See your Harmony Output results, right in VS Code!
    - Format via `Shift-Alt-F`
  - Intellicode Support
 
+## Developers
+
+ - Kevin Sun     `@kevinsun-dev`
+
+ - Anthony Yang     `@ayang4114`
+
 ## Release Notes
+
+### 0.0.2
+
+Added Unix compatibility for `Run Harmony File`.
+
+Reworked build success/failure reporting.
 
 ### 0.0.2
 

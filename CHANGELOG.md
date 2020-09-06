@@ -6,6 +6,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.3] - 2020-09-05
+### Added
+ - Added Unix compatibility for `Run Harmony File`.
+ - Reworked build success/failure reporting.
+
 ## [0.0.2] - 2020-09-04
 ### Added
  - Added HarmonyLang extension icon and Harmony file icons. VS Code currently does not support icon fallback, so the latter is currently disabled.

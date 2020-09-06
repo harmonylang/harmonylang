@@ -46,19 +46,24 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
     const compilerPath = Path.join(__dirname, '..', 'compiler', 'harmony.py');
     const cmd = `${pythonPath} "${compilerPath}" "${fullFileName}"`;
     const process = child_process.exec(cmd, { cwd: Path.dirname(fullFileName) }, (error, stdout, stderr) => {
-        // error is non-null when process exits on code 1, i.e. a parser error.
-        if (error) {
+        let output: string | null = null;
+        if (stderr) {
+            vscode.window.showInformationMessage('Could not reach Harmony compiler. ' + stderr);
+        } else if (error) {
+            // error is non-null when process exits on code 1, i.e. a parser error.
             // Parse error feedback is also in standard output (it's just outputted by python's print function)
-            const output = 'Build Failed!\n' + ((stdout.length > 0) ? 'Message: ' + stdout : '');
+            output = 'Build Failed!\n' + ((stdout.length > 0) ? 'Message: ' + stdout : '');
             // Close the current output panel, if it exists, to avoid misinterpretation of output.
             HarmonyOutputPanel.currentPanel?.dispose();
-            vscode.window.showInformationMessage(output);
         } else {
-            const output = 'Build Success!\n' + ((stdout.length > 0) ? 'Output: ' + stdout : '');
             // Show the output panel with the contents of harmony.html because the compilation succeeded.
-            vscode.window.showInformationMessage(output);
-            HarmonyOutputPanel.createOrShow(context.extensionUri);
+            output = 'Build Success!\n' + ((stdout.length > 0) ? 'Output: ' + stdout : '');
+            if (stdout.includes('harmony.html')) {
+                HarmonyOutputPanel.createOrShow(context.extensionUri);
+            }
         }
+        if (output != null)
+            vscode.window.showInformationMessage(output);
     });
     return;
 }
@@ -163,12 +168,21 @@ class HarmonyOutputPanel {
                 if (err) {
                     vscode.window.showInformationMessage(err.message);
                 }
-                const injectableCSS = `\nbody {
-                    background-color: white;
+                const injectableCSS = `\n
+                * {
+                    font-size: 1rem;
+                }
+                html, * {
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, sans-serif;
+                    line-height: 1.5;
+                }
+                body {
+                    background-color: #fafafa;
                 }
                 #table-scroll {
-                    height: 70vh !important;
-                }\n`;
+                    height: 80vh !important;
+                }
+                \n`;
                 const injectionPoint = data.indexOf('</style>');
                 const formattedHtml = data.substring(0, injectionPoint) + injectableCSS + data.substring(injectionPoint);
                 harmonyPanel.webview.html = formattedHtml;
