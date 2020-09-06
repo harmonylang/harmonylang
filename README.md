@@ -40,13 +40,13 @@ See your Harmony Output results, right in VS Code!
 
 ## Release Notes
 
-### 0.0.3
+### 0.0.4
 
 - Bug fixes.
 - Have the Harmony compiler built into the extension. Not required to download the compiler separately.
 - Show the Harmony Output window only if the build succeeds. The Harmony Output window disappears if the build fails.
 
-### 0.0.2
+### 0.0.3
 
 - Added Unix compatibility for `Run Harmony File`.
 
