@@ -47,10 +47,16 @@
         "commands": [{
             "command": "harmonylang.run",
             "title": "Run Harmony"
+        }, {
+            "command": "harmonylang.end",
+            "title": "End All Harmony Processes"
         }],
         "keybindings": [{
             "command": "harmonylang.run",
             "key": "ctrl+shift+n"
+        }, {
+            "command": "harmonylang.end",
+            "key": "ctrl+shift+q"
         }]
     },
     "scripts": {
