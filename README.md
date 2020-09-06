@@ -42,7 +42,8 @@ See your Harmony Output results, right in VS Code!
 
 ### 0.0.5
 
-- Add `End All Harmony Processes` command, with keybinding `Alt+Shift+Q`. For Mac users, substitute `Alt` for `Option`.
+- Added `End All Harmony Processes` command, with keybinding `Alt+Shift+Q`. For Mac users, substitute `Alt` for `Option`.
+- Added keybinding `Alt+Shift+N` to `Run Harmony`.
 - More helpful messages.
 
 ### 0.0.4
