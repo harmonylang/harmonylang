@@ -6,7 +6,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-- Add `End All Harmony Processes` command, with keybinding `Ctrl+Shift+Q`.
+- Add `End All Harmony Processes` command, with keybinding `Alt+Shift+Q`. For Mac users, substitute `Alt` for `Option`.
 - More helpful messages.
 
 ## [0.0.4] - 2020-09-05
