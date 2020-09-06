@@ -1,0 +1,92 @@
+import list;
+import bag;
+
+def tas(lk):
+    atomic:
+        result = !lk;
+        !lk = True;
+    ;
+;
+def Lock():
+    result = False;
+;
+def lock(lk):
+    await not tas(lk);
+;
+def unlock(lk):
+    !lk = False;
+;
+def Condition(lk):
+    result = dict{ .lock: lk, .waiters: bagEmpty() };
+;
+def wait(c):
+    let lk, blocked, cnt = None, True, 0:
+        atomic:
+            lk = c->lock;
+            cnt = bagCount(c->waiters, nametag());
+            bagAdd(?c->waiters, nametag());
+            !lk = False;
+        ;
+        while blocked:
+            atomic:
+                if (not !lk) and (bagCount(c->waiters, nametag()) <= cnt):
+                    !lk = True;
+                    blocked = False;
+                ;
+            ;
+        ;
+    ;
+;
+def notify(c):
+    atomic:
+        let waiters = c->waiters:
+            if waiters != bagEmpty():
+                bagRemove(?c->waiters, bagChoose(waiters));
+            ;
+        ;
+    ;
+;
+def notifyAll(c):
+    c->waiters = bagEmpty();
+;
+def Semaphore(cnt):
+    result = cnt;
+;
+def P(sema):
+    let blocked = True:
+        while blocked:
+            atomic:
+                if !sema > 0:
+                    !sema -= 1;
+                    blocked = False;
+                ;
+            ;
+        ;
+    ;
+;
+def V(sema):
+    atomic:
+        !sema += 1;
+    ;
+;
+def Queue():
+    result = [];
+;
+def dequeue(q):
+    let blocked = True:
+        while blocked:
+            atomic:
+                if !q != []:
+                    result = head(!q);
+                    !q = tail(!q);
+                    blocked = False;
+                ;
+            ;
+        ;
+    ;
+;
+def enqueue(q, item):
+    atomic:
+        !q = append(!q, item);
+    ;
+;

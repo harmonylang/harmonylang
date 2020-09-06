@@ -23,7 +23,7 @@ See your Harmony Output results, right in VS Code!
 
 ![Harmony Output](images/build-example.jpg)
 
-> Generated `harmony.html` files are saved to current working directory.
+> Generated `harmony.html` files are saved to the extension's internal compiler.
 
 ## Upcoming Features
 
@@ -42,9 +42,9 @@ See your Harmony Output results, right in VS Code!
 
 ### 0.0.4
 
+- Built the Harmony compiler directly into the extension. Removed requirement to download the compiler separately.
+- Show the Harmony Output window only if the build succeeds. The Harmony Output window is closed if the build fails.
 - Bug fixes.
-- Have the Harmony compiler built into the extension. Not required to download the compiler separately.
-- Show the Harmony Output window only if the build succeeds. The Harmony Output window disappears if the build fails.
 
 ### 0.0.3
 
