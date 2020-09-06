@@ -1,0 +1,25 @@
+import synch;
+
+def malloc(v):
+    lock(?alloc_lock);
+    if alloc_flist == None:
+        let i = len(alloc_pool):
+            alloc_pool[i] = None;
+            result = ?alloc_pool[i];
+        ;
+    else:
+        result = alloc_flist;
+        alloc_flist = !result;
+    ;
+    unlock(?alloc_lock);
+    !result = v;
+;
+def free(r):
+    lock(?alloc_lock);
+    !r = alloc_flist;
+    alloc_flist = r;
+    unlock(?alloc_lock);
+;
+alloc_pool = [];
+alloc_flist = None;           # free list
+alloc_lock = Lock();

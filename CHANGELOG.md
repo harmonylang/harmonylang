@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.4] - 2020-09-05
+### Added
+- Built the Harmony compiler directly into the extension. Removed requirement to download the compiler separately.
+- Show the Harmony Output window only if the build succeeds. The Harmony Output window is closed if the build fails.
+- Bug fixes.
+
 ## [0.0.3] - 2020-09-05
 ### Added
  - Added Unix compatibility for `Run Harmony File`.

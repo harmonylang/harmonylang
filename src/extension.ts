@@ -41,11 +41,11 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
     const config = vscode.workspace.getConfiguration('python').get('pythonPath');
 
     // Use python3 by default if configurations are not set.
-    const pythonPath = config === undefined || typeof config !== 'string' ? 'python3': config;
+    const pythonPath = config === undefined || typeof config !== 'string' ? 'python3' : config;
 
-    const compilerPath = Path.join(__dirname, '..', 'compiler', 'harmony.py');
+    const compilerPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.py');
     const cmd = `${pythonPath} "${compilerPath}" "${fullFileName}"`;
-    const process = child_process.exec(cmd, { cwd: Path.dirname(fullFileName) }, (error, stdout, stderr) => {
+    const process = child_process.exec(cmd, { cwd: Path.join(__dirname, '..', 'harmony-0.9') }, (error, stdout, stderr) => {
         let output: string | null = null;
         if (stderr) {
             vscode.window.showInformationMessage('Could not reach Harmony compiler.\n' + stderr);
@@ -162,7 +162,7 @@ class HarmonyOutputPanel {
 
         const harmonyPath = vscode.window.activeTextEditor?.document.fileName;
         if (typeof harmonyPath === 'string') {
-            const path = Path.dirname(harmonyPath) + "//harmony.html";
+            const path = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.html');
 
             Fs.readFile(path, 'utf-8', function (err, data) {
                 if (err) {
