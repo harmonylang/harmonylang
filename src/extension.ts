@@ -1,7 +1,9 @@
 import * as vscode from 'vscode';
 import * as child_process from 'child_process';
 import * as Path from 'path';
-import * as Fs from 'fs';
+import HarmonyOutputPanel from './outputPanel';
+
+const activeProcesses: child_process.ChildProcess[] = [];
 
 export const activate = (context: vscode.ExtensionContext) => {
     const runHarmonyCommand = vscode.commands.registerCommand('harmonylang.run', () => {
@@ -36,7 +38,6 @@ export const activate = (context: vscode.ExtensionContext) => {
     }
 };
 
-const activeProcesses: child_process.ChildProcess[] = [];
 export function endHarmonyProcesses() {
     showMessage('Ending all Harmony processes...');
     activeProcesses.forEach(p => {
@@ -52,7 +53,7 @@ const launchRunningMessage = (msLag: number) => {
         const elapsed = (Date.now() - startTime) / 1000;
         vscode.window.showInformationMessage(
             `Running the Harmony program...\n${elapsed.toFixed()} seconds have elapsed.`
-            );
+        );
     }, msLag);
 };
 
@@ -60,12 +61,13 @@ const showMessage = (main: string, subHeader?: string, subtext?: string) => {
     if (subHeader == null || subtext == null) {
         vscode.window.showInformationMessage(main);
     } else {
-        const output = main + (subtext.length > 0 ? `\n${subHeader}: ${subtext}`: '');
+        const output = main + (subtext.length > 0 ? `\n${subHeader}: ${subtext}` : '');
         vscode.window.showInformationMessage(output);
     }
 };
 
 const processConfig = { cwd: Path.join(__dirname, '..', 'harmony-0.9') };
+
 export function runHarmony(context: vscode.ExtensionContext, fullFileName: string) {
 
     // Same configuration for vscode's Python extension
@@ -111,127 +113,4 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
     });
     activeProcesses.push(buildProcess);
     return;
-}
-
-class HarmonyOutputPanel {
-    public static currentPanel: HarmonyOutputPanel | undefined;
-
-    public static readonly viewType = 'harmonyOutput';
-
-    private readonly _panel: vscode.WebviewPanel;
-    private readonly _extensionUri: vscode.Uri;
-    private _disposables: vscode.Disposable[] = [];
-
-    public static createOrShow(extensionUri: vscode.Uri) {
-        const column = vscode.ViewColumn.Beside;
-
-        // If we already have a panel, show it.
-        if (HarmonyOutputPanel.currentPanel) {
-            HarmonyOutputPanel.currentPanel._panel.reveal(column);
-            return;
-        }
-
-        // Otherwise, create a new panel.
-        const panel = vscode.window.createWebviewPanel(
-            HarmonyOutputPanel.viewType,
-            'Harmony Output',
-            column,
-            {
-                // Enable javascript in the webview
-                enableScripts: true
-            }
-        );
-
-        HarmonyOutputPanel.currentPanel = new HarmonyOutputPanel(panel, extensionUri);
-    }
-
-    public static revive(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
-        HarmonyOutputPanel.currentPanel = new HarmonyOutputPanel(panel, extensionUri);
-    }
-
-    private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
-        this._panel = panel;
-        this._extensionUri = extensionUri;
-
-        // Set the webview's initial html content
-        this._update();
-
-        // Listen for when the panel is disposed
-        // This happens when the user closes the panel or when the panel is closed programatically
-        this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
-
-        // Update the content based on view changes
-        this._panel.onDidChangeViewState(
-            e => {
-                if (this._panel.visible) {
-                    this._update();
-                }
-            },
-            null,
-            this._disposables
-        );
-
-        // Handle messages from the webview
-        this._panel.webview.onDidReceiveMessage(
-            message => {
-                this._update();
-            },
-            null,
-            this._disposables
-        );
-    }
-
-    public updateResults() {
-        // Send a message to the webview webview.
-        // You can send any JSON serializable data.
-        this._panel.webview.postMessage({ command: 'update' });
-    }
-
-    public dispose() {
-        HarmonyOutputPanel.currentPanel = undefined;
-
-        // Clean up our resources
-        this._panel.dispose();
-
-        while (this._disposables.length) {
-            const x = this._disposables.pop();
-            if (x) {
-                x.dispose();
-            }
-        }
-    }
-
-    private _update() {
-        const webview = this._panel.webview;
-        const harmonyPanel = this._panel;
-
-        const harmonyPath = vscode.window.activeTextEditor?.document.fileName;
-        if (typeof harmonyPath === 'string') {
-            const path = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.html');
-
-            Fs.readFile(path, 'utf-8', function (err, data) {
-                if (err) {
-                    vscode.window.showInformationMessage(err.message);
-                }
-                const injectableCSS = `\n
-                * {
-                    font-size: 1rem;
-                }
-                html, * {
-                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, sans-serif;
-                    line-height: 1.5;
-                }
-                body {
-                    background-color: #fafafa;
-                }
-                #table-scroll {
-                    height: 80vh !important;
-                }
-                \n`;
-                const injectionPoint = data.indexOf('</style>');
-                const formattedHtml = data.substring(0, injectionPoint) + injectableCSS + data.substring(injectionPoint);
-                harmonyPanel.webview.html = formattedHtml;
-            });
-        }
-    }
 }
