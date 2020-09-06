@@ -72,7 +72,7 @@ export class ProcessManagerImpl implements ProcessManager {
     ) => void
   ): string {
     this.processesAreKilled = false;
-    const id = `command_${this.runningCommands}`;
+    const id = `command_${this.commandCount}`;
     this.runningCommands[id] = child_process.exec(cmd, options, callback);
     this.commandCount++;
     return id;
@@ -85,7 +85,7 @@ export class ProcessManagerImpl implements ProcessManager {
    */
   startInterval(callback: (...args: any[]) => void, ms: number): string {
     this.processesAreKilled = false;
-    const id = `interval_${this.runningIntervals}`;
+    const id = `interval_${this.intervalCount}`;
     this.runningIntervals[id] = setInterval(callback, ms);
     this.intervalCount++;
     return id;
@@ -114,10 +114,12 @@ export class ProcessManagerImpl implements ProcessManager {
    * @param id
    */
   end(id: string): void {
-    const processType = id.substring(0, id.indexOf('_'));
+    const processType = id.substring(0, id.indexOf("_"));
     switch (processType) {
-      case 'interval': return this.endInterval(id);
-      case 'command': return this.endCommand(id);
+      case "interval":
+        return this.endInterval(id);
+      case "command":
+        return this.endCommand(id);
     }
   }
 
@@ -126,10 +128,11 @@ export class ProcessManagerImpl implements ProcessManager {
    */
   endAll(): void {
     this.processesAreKilled = true;
-    Object.keys(this.runningCommands).forEach(cmdId => {
-      if (!this.runningCommands[cmdId].killed) this.runningCommands[cmdId].kill();
+    Object.keys(this.runningCommands).forEach((cmdId) => {
+      if (!this.runningCommands[cmdId].killed)
+        this.runningCommands[cmdId].kill();
     });
-    Object.keys(this.runningIntervals).forEach(intervalId => {
+    Object.keys(this.runningIntervals).forEach((intervalId) => {
       clearInterval(this.runningIntervals[intervalId]);
     });
     this.commandCount = 0;
