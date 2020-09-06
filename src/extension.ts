@@ -4,27 +4,28 @@ import * as Path from 'path';
 import * as Fs from 'fs';
 
 export const activate = (context: vscode.ExtensionContext) => {
-    const disposable = vscode.commands.registerCommand('harmonylang.run', () => {
+    const runHarmonyCommand = vscode.commands.registerCommand('harmonylang.run', () => {
         const editor = vscode.window.activeTextEditor;
         const doc = editor != null ? editor.document : null;
         const path = doc != null ? doc.fileName : null;
         const ext = Path.extname(path || '');
         const harmonyExt = ".hny .sab";
-
         if (harmonyExt.indexOf(ext) < 0) {
             vscode.window.showInformationMessage('Target file must be an Harmony (.hmy) file');
             return;
         }
-
         if (path === null) {
             vscode.window.showInformationMessage('Could not locate target file.');
             return;
         }
-
         runHarmony(context, path);
     });
+    const endHarmonyProcessesCommand = vscode.commands.registerCommand('harmonylang.end', () => {
+        endHarmonyProcesses();
+    });
 
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(runHarmonyCommand);
+    context.subscriptions.push(endHarmonyProcessesCommand);
 
     if (vscode.window.registerWebviewPanelSerializer) {
         vscode.window.registerWebviewPanelSerializer(HarmonyOutputPanel.viewType, {
@@ -35,6 +36,31 @@ export const activate = (context: vscode.ExtensionContext) => {
     }
 };
 
+const activeProcesses: child_process.ChildProcess[] = [];
+export function endHarmonyProcesses() {
+    activeProcesses.forEach(p => {
+        if (!p.killed) p.kill();
+    });
+    activeProcesses.length = 0;
+}
+
+const launchRunningMessage = (msLag: number) => {
+    const startTime = Date.now();
+    vscode.window.showInformationMessage(`Starting the Harmony program.`);
+    return setInterval(() => {
+        const elapsed = (Date.now() - startTime) / 1000;
+        vscode.window.showInformationMessage(
+            `Running the Harmony program...\n${elapsed.toFixed()} seconds have elapsed.`
+            );
+    }, msLag);
+};
+
+const showMessage = (main: string, subHeader: string, subtext: string) => {
+    const output = main + (subtext.length > 0 ? `\n${subHeader}: ${subtext}`: '');
+    vscode.window.showInformationMessage(output);
+};
+
+const processConfig = { cwd: Path.join(__dirname, '..', 'harmony-0.9') };
 export function runHarmony(context: vscode.ExtensionContext, fullFileName: string) {
 
     // Same configuration for vscode's Python extension
@@ -42,58 +68,41 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
 
     // Use python3 by default if configurations are not set.
     const pythonPath = config === undefined || typeof config !== 'string' ? 'python3' : config;
-
     const compilerPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.py');
     const compileCommand = `${pythonPath} "${compilerPath}" -A "${fullFileName}"`;
 
-    const runCommand = `${pythonPath} "${compilerPath}" "${fullFileName}"`;
-
-    const processConfig = { cwd: Path.join(__dirname, '..', 'harmony-0.9') };
     const buildProcess = child_process.exec(compileCommand, processConfig, (err, stdout, stderr) => {
-        let output: string | null = null;
         if (stderr) {
             vscode.window.showInformationMessage('Could not reach Harmony compiler.\n' + stderr);
         } else if (err) {
             // error is non-null when process exits on code 1, i.e. a parser error.
             // Parse error feedback is also in standard output (it's just outputted by python's print function)
-            output = 'Build Failed!' + ((stdout.length > 0) ? '\nMessage: ' + stdout : '');
+            showMessage('Build Failed!', 'Message', stdout);
         } else {
-            let runningInterval: NodeJS.Timeout | undefined = undefined;
-            const startTime = Date.now();
-            vscode.window.showInformationMessage(
-                `Starting the Harmony program.`
-            );
-            runningInterval = setInterval(() => {
-                const elapsed = (Date.now() - startTime) / 1000;
-                vscode.window.showInformationMessage(
-                    `Running the Harmony program...\n${elapsed.toFixed()} seconds have elapsed.`
-                );
-            }, 5000);
+            const runningInterval = launchRunningMessage(5000);
             // Close the current output for a new run.
             HarmonyOutputPanel.currentPanel?.dispose();
+            const runCommand = `${pythonPath} "${compilerPath}" "${fullFileName}"`;
             const runProcess = child_process.exec(runCommand, processConfig, (error, stdout, stderr) => {
-                let output: string | null = null;
                 if (runningInterval !== undefined) {
                     clearInterval(runningInterval);
                 }
                 if (stderr) {
                     vscode.window.showInformationMessage('Could not reach Harmony compiler.\n' + stderr);
                 } else if (error) {
-                    output = 'Execution Failed!' + ((stdout.length > 0) ? '\nMessage: ' + stdout : '');
+                    showMessage('Execution Failed!', 'Message', stdout);
                     HarmonyOutputPanel.currentPanel?.dispose();
                 } else {
                     // Show the output panel with the contents of harmony.html because the compilation succeeded.
-                    output = 'Execution Succeeded!' + ((stdout.length > 0) ? '\nOutput: ' + stdout : '');
+                    showMessage('Execution Failed!', 'Output', stdout);
                     if (stdout.includes('harmony.html'))
                         HarmonyOutputPanel.createOrShow(context.extensionUri);
                 }
-                if (output != null)
-                    vscode.window.showInformationMessage(output);
             });
+            activeProcesses.push(runProcess);
         }
-        if (output != null)
-            vscode.window.showInformationMessage(output);
     });
+    activeProcesses.push(buildProcess);
     return;
 }
 
