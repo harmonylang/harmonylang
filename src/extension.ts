@@ -36,32 +36,34 @@ export const activate = (context: vscode.ExtensionContext) => {
 };
 
 export function runHarmony(context: vscode.ExtensionContext, fullFileName: string) {
-    const harmonyPython = vscode.workspace.getConfiguration('harmonylang').get('location');
-    if (harmonyPython === undefined || typeof harmonyPython !== 'string') {
-        vscode.window.showInformationMessage('Please set your Harmony compiler path at Preferences > Extensions > HarmonyLang > Location');
-        return;
-    }
-    const compilerPath = Path.join(harmonyPython, 'harmony.py');
-    const cmd = `python3 "${compilerPath}" "${fullFileName}"`;
+
+    // Same configuration for vscode's Python extension
+    const config = vscode.workspace.getConfiguration('python').get('pythonPath');
+
+    // Use python3 by default if configurations are not set.
+    const pythonPath = config === undefined || typeof config !== 'string' ? 'python3': config;
+
+    const compilerPath = Path.join(__dirname, '..', 'compiler', 'harmony.py');
+    const cmd = `${pythonPath} "${compilerPath}" "${fullFileName}"`;
     const process = child_process.exec(cmd, { cwd: Path.dirname(fullFileName) }, (error, stdout, stderr) => {
+        let output: string | null = null;
         if (stderr) {
-            vscode.window.showInformationMessage('Could not reach Harmony compiler. ' + error);
+            vscode.window.showInformationMessage('Could not reach Harmony compiler.\n' + stderr);
+        } else if (error) {
+            // error is non-null when process exits on code 1, i.e. a parser error.
+            // Parse error feedback is also in standard output (it's just outputted by python's print function)
+            output = 'Build Failed!' + ((stdout.length > 0) ? '\nMessage: ' + stdout : '');
+            // Close the current output panel, if it exists, to avoid misinterpretation of output.
+            HarmonyOutputPanel.currentPanel?.dispose();
         } else {
-            const showOutputDisplay = stdout.indexOf('harmony.html') > 0;
-            const buildErrors = stdout.toLocaleLowerCase().indexOf('error') > 0;
-            let output = "Build success. See output.";
-            if (buildErrors) {
-                if (showOutputDisplay) {
-                    output = "Build success. See error in output.";
-                } else {
-                    output = "Build failed. Output: " + stdout;
-                }
-            }
-            vscode.window.showInformationMessage(output);
-            if (showOutputDisplay) {
+            // Show the output panel with the contents of harmony.html because the compilation succeeded.
+            output = 'Build Success!' + ((stdout.length > 0) ? '\nOutput: ' + stdout : '');
+            if (stdout.includes('harmony.html')) {
                 HarmonyOutputPanel.createOrShow(context.extensionUri);
             }
         }
+        if (output != null)
+            vscode.window.showInformationMessage(output);
     });
     return;
 }

@@ -73,7 +73,8 @@
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "lint": "eslint . --ext .ts,.tsx",
-        "watch": "tsc -watch -p ./"
+        "watch": "tsc -watch -p ./",
+        "clean": "rm -rf out"
     },
     "devDependencies": {
         "@types/node": "^12.12.0",
