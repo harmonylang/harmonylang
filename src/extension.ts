@@ -44,23 +44,52 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
     const pythonPath = config === undefined || typeof config !== 'string' ? 'python3' : config;
 
     const compilerPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.py');
-    const cmd = `${pythonPath} "${compilerPath}" "${fullFileName}"`;
-    const process = child_process.exec(cmd, { cwd: Path.join(__dirname, '..', 'harmony-0.9') }, (error, stdout, stderr) => {
+    const compileCommand = `${pythonPath} "${compilerPath}" -A "${fullFileName}"`;
+
+    const runCommand = `${pythonPath} "${compilerPath}" "${fullFileName}"`;
+
+    const processConfig = { cwd: Path.join(__dirname, '..', 'harmony-0.9') };
+    const buildProcess = child_process.exec(compileCommand, processConfig, (err, stdout, stderr) => {
         let output: string | null = null;
         if (stderr) {
             vscode.window.showInformationMessage('Could not reach Harmony compiler.\n' + stderr);
-        } else if (error) {
+        } else if (err) {
             // error is non-null when process exits on code 1, i.e. a parser error.
             // Parse error feedback is also in standard output (it's just outputted by python's print function)
             output = 'Build Failed!' + ((stdout.length > 0) ? '\nMessage: ' + stdout : '');
-            // Close the current output panel, if it exists, to avoid misinterpretation of output.
-            HarmonyOutputPanel.currentPanel?.dispose();
         } else {
-            // Show the output panel with the contents of harmony.html because the compilation succeeded.
-            output = 'Build Success!' + ((stdout.length > 0) ? '\nOutput: ' + stdout : '');
-            if (stdout.includes('harmony.html')) {
-                HarmonyOutputPanel.createOrShow(context.extensionUri);
-            }
+            let runningInterval: NodeJS.Timeout | undefined = undefined;
+            const startTime = Date.now();
+            vscode.window.showInformationMessage(
+                `Starting the Harmony program.`
+            );
+            runningInterval = setInterval(() => {
+                const elapsed = (Date.now() - startTime) / 1000;
+                vscode.window.showInformationMessage(
+                    `Running the Harmony program...\n${elapsed.toFixed()} seconds have elapsed.`
+                );
+            }, 5000);
+            // Close the current output for a new run.
+            HarmonyOutputPanel.currentPanel?.dispose();
+            const runProcess = child_process.exec(runCommand, processConfig, (error, stdout, stderr) => {
+                let output: string | null = null;
+                if (runningInterval !== undefined) {
+                    clearInterval(runningInterval);
+                }
+                if (stderr) {
+                    vscode.window.showInformationMessage('Could not reach Harmony compiler.\n' + stderr);
+                } else if (error) {
+                    output = 'Execution Failed!' + ((stdout.length > 0) ? '\nMessage: ' + stdout : '');
+                    HarmonyOutputPanel.currentPanel?.dispose();
+                } else {
+                    // Show the output panel with the contents of harmony.html because the compilation succeeded.
+                    output = 'Execution Succeeded!' + ((stdout.length > 0) ? '\nOutput: ' + stdout : '');
+                    if (stdout.includes('harmony.html'))
+                        HarmonyOutputPanel.createOrShow(context.extensionUri);
+                }
+                if (output != null)
+                    vscode.window.showInformationMessage(output);
+            });
         }
         if (output != null)
             vscode.window.showInformationMessage(output);
