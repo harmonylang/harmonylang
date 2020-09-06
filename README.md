@@ -15,7 +15,7 @@ Supported syntax:
 
 ![Syntax Highlighting](images/syntax-example.jpg)
 
-Run your Harmony files in VS Code. Press `Ctrl+Shift+P` and search `Run Harmony` to compile and run the current `.hny` file.
+Run your Harmony files in VS Code. Press `Alt+Shift+N` to compile and run the current `.hny` file. Alternatively, press `Ctrl+Shift+P` and search `Run Harmony` to find the same command. Kill all running Harmony processes with `Alt+Shift+Q`.
 
 ![Command](images/command-example.jpg)
 
@@ -29,7 +29,7 @@ See your Harmony Output results, right in VS Code!
 
  - Auto-formatter
    - Format on save
-   - Format via `Shift-Alt-F`
+   - Format via `Alt+Shift+F`
  - Intellicode Support
 
 ## Developers
@@ -40,9 +40,9 @@ See your Harmony Output results, right in VS Code!
 
 ## Release Notes
 
-### 0.0.5 - Unreleased
+### 0.0.5
 
-- Add `End All Harmony Processes` command, with keybinding `Ctrl+Shift+Q`.
+- Add `End All Harmony Processes` command, with keybinding `Alt+Shift+Q`.
 - More helpful messages.
 
 ### 0.0.4

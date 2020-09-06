@@ -53,10 +53,10 @@
         }],
         "keybindings": [{
             "command": "harmonylang.run",
-            "key": "ctrl+shift+n"
+            "key": "alt+shift+n"
         }, {
             "command": "harmonylang.end",
-            "key": "ctrl+shift+q"
+            "key": "alt+shift+q"
         }]
     },
     "scripts": {
