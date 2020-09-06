@@ -40,6 +40,11 @@ See your Harmony Output results, right in VS Code!
 
 ## Release Notes
 
+### 0.0.5
+
+- Add `End All Harmony Processes` command, with keybinding `Ctrl+Shift+Q`.
+- More helpful messages.
+
 ### 0.0.4
 
 - Built the Harmony compiler directly into the extension. Removed requirement to download the compiler separately.
