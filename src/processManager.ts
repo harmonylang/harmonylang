@@ -38,7 +38,7 @@ export class ProcessManagerImpl implements ProcessManager {
    * Creates a new instance of a process manager if an instance does not exist,
    * or returns the existing instance.
    */
-  static init(): ProcessManager {
+  static getInstance(): ProcessManager {
     if (this.instance === undefined) {
       this.instance = new ProcessManagerImpl();
     }

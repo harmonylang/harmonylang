@@ -3,7 +3,7 @@ import * as Path from 'path';
 import HarmonyOutputPanel from './outputPanel';
 import { ProcessManagerImpl } from './processManager';
 
-const processManager = ProcessManagerImpl.init();
+const processManager = ProcessManagerImpl.getInstance();
 const processConfig = { cwd: Path.join(__dirname, '..', 'harmony-0.9') };
 const compilerPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.py');
 
