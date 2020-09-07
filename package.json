@@ -56,6 +56,14 @@
             {
                 "command": "harmonylang.end",
                 "title": "End All Harmony Processes"
+            },
+            {
+                "command": "harmonylang.install",
+                "title": "Add `harmony` to PATH"
+            },
+            {
+                "command": "harmonylang.uninstall",
+                "title": "Remove `harmony`"
             }
         ],
         "keybindings": [

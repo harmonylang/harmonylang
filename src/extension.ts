@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as child_process from 'child_process';
 import * as Path from 'path';
 import HarmonyOutputPanel from './outputPanel';
+import { install, uninstall } from './feature/install';
 
 const activeProcesses: child_process.ChildProcess[] = [];
 const activeIntervals: NodeJS.Timeout[] = [];
@@ -26,9 +27,25 @@ export const activate = (context: vscode.ExtensionContext) => {
     const endHarmonyProcessesCommand = vscode.commands.registerCommand('harmonylang.end', () => {
         endHarmonyProcesses();
     });
+    const installHarmony = vscode.commands.registerCommand('harmonylang.install', () => {
+        install(() => {
+            vscode.window.showInformationMessage('Added Harmony locally to the device. Run with the command `harmony`');
+        }, () => {
+            vscode.window.showErrorMessage('Harmony could not be added locally to the device.');
+        });
+    });
+    const uninstallHarmony = vscode.commands.registerCommand('harmonylang.uninstall​​', () => {
+        uninstall(() => {
+            vscode.window.showInformationMessage('Removed Harmony from this device.');
+        }, () => {
+            vscode.window.showInformationMessage('Could not remove Harmony from this device');
+        });
+    });
 
     context.subscriptions.push(runHarmonyCommand);
     context.subscriptions.push(endHarmonyProcessesCommand);
+    context.subscriptions.push(installHarmony);
+    context.subscriptions.push(uninstallHarmony);
 
     if (vscode.window.registerWebviewPanelSerializer) {
         vscode.window.registerWebviewPanelSerializer(HarmonyOutputPanel.viewType, {
