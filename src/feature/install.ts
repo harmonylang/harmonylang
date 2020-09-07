@@ -1,6 +1,7 @@
 import * as os from "os";
 import * as path from "path";
 import * as fs from "fs";
+import * as rm from "rimraf";
 
 const compilerPath = path.join(__dirname, "..", "..", "harmony-0.9");
 const homeDir = os.homedir();
@@ -9,7 +10,14 @@ const harmonyPath = path.join(homeDir, "cs4410_harmony");
 /**
  * Adds the Harmony compiler locally into the user's computer.
  */
-export function install(onSuccess: () => void, onFail: () => void): void {
+export function install(
+  onSuccess: () => void,
+  onFail: () => void,
+  alreadyAdded?: () => void
+): void {
+  if (fs.existsSync(harmonyPath)) {
+    return alreadyAdded && alreadyAdded();
+  }
   const directories = [compilerPath];
   if (!fs.existsSync(harmonyPath)) {
     fs.mkdirSync(harmonyPath);
@@ -32,17 +40,26 @@ export function install(onSuccess: () => void, onFail: () => void): void {
         path.join(os.homedir(), ".zshrc"),
         `\nexport PATH=${harmonyPath}:$PATH\n`
       );
+      return onSuccess();
     }
   }
+  return onFail();
 }
 
 /**
  * Removes the compiler from the user's computer if it exists.
  */
-export function uninstall(onSuccess: () => void, onFail: () => void): void {
-  if (fs.existsSync(harmonyPath)) {
-    fs.rmdirSync(harmonyPath, {
-      recursive: true,
-    });
+export function uninstall(
+  onSuccess: () => void,
+  onFail: () => void,
+  alreadyRemoved?: () => void
+): void {
+  if (!fs.existsSync(harmonyPath)) {
+    return alreadyRemoved && alreadyRemoved();
   }
+  if (fs.existsSync(harmonyPath)) {
+    rm.sync(harmonyPath);
+    return onSuccess();
+  }
+  return onFail();
 }

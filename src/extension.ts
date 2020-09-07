@@ -38,7 +38,7 @@ export const activate = (context: vscode.ExtensionContext) => {
         uninstall(() => {
             vscode.window.showInformationMessage('Removed Harmony from this device.');
         }, () => {
-            vscode.window.showInformationMessage('Could not remove Harmony from this device');
+            vscode.window.showErrorMessage('Could not remove Harmony from this device');
         });
     });
 

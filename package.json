@@ -62,7 +62,7 @@
                 "title": "Add `harmony` to PATH"
             },
             {
-                "command": "harmonylang.uninstall",
+                "command": "harmonylang.uninstall​​",
                 "title": "Remove `harmony`"
             }
         ],
@@ -92,5 +92,8 @@
         "eslint": "^7.1.0",
         "typescript": "^3.9.4"
     },
-    "dependencies": {}
+    "dependencies": {
+        "@types/rimraf": "^3.0.0",
+        "rimraf": "^3.0.2"
+    }
 }
