@@ -36,7 +36,7 @@ export class ProcessManagerImpl implements ProcessManager {
   /**
    * Creates a new instance of a process manager.
    */
-  static getInstance(): ProcessManager {
+  static init(): ProcessManager {
     return new ProcessManagerImpl();
   }
 

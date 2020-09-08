@@ -4,7 +4,7 @@ import HarmonyOutputPanel from './outputPanel';
 import { install, uninstall } from './feature/install';
 import { ProcessManagerImpl } from './processManager';
 
-const processManager = ProcessManagerImpl.getInstance();
+const processManager = ProcessManagerImpl.init();
 const processConfig = { cwd: Path.join(__dirname, '..', 'harmony-0.9') };
 const compilerPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.py');
 
