@@ -98,7 +98,8 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                     processManager.end(runningInterval);
                 }
                 if (stderr || error) {
-                    showMessage('Execution Failed!', 'Message', stdout);
+                    if (activeProcesses.length > 0)
+                        showMessage('Execution Failed!', 'Message', stdout);
                     HarmonyOutputPanel.currentPanel?.dispose();
                 } else {
                     // Output Panel will include the stdout output.
