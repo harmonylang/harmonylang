@@ -33,16 +33,11 @@ export class ProcessManagerImpl implements ProcessManager {
     this.commandCount = 0;
   }
 
-  private static instance: ProcessManager | undefined = undefined;
   /**
-   * Creates a new instance of a process manager if an instance does not exist,
-   * or returns the existing instance.
+   * Creates a new instance of a process manager.
    */
   static getInstance(): ProcessManager {
-    if (this.instance === undefined) {
-      this.instance = new ProcessManagerImpl();
-    }
-    return this.instance;
+    return new ProcessManagerImpl();
   }
 
   /**
