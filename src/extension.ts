@@ -28,18 +28,15 @@ export const activate = (context: vscode.ExtensionContext) => {
         endHarmonyProcesses();
     });
     const installHarmony = vscode.commands.registerCommand('harmonylang.install', () => {
-        install(() => {
-            vscode.window.showInformationMessage('Added Harmony locally to the device. Run with the command `harmony`');
-        }, () => {
-            vscode.window.showErrorMessage('Harmony could not be added locally to the device.');
-        });
+        install(() => showVscodeMessage(false, 'Added Harmony locally to the device. Run with the command `harmony`'),
+        () => showVscodeMessage(true, 'Harmony could not be added locally to the device.'),
+        () => showVscodeMessage(false, 'File already exists'));
     });
-    const uninstallHarmony = vscode.commands.registerCommand('harmonylang.uninstall​​', () => {
-        uninstall(() => {
-            vscode.window.showInformationMessage('Removed Harmony from this device.');
-        }, () => {
-            vscode.window.showErrorMessage('Could not remove Harmony from this device');
-        });
+    const uninstallHarmony = vscode.commands.registerCommand('harmonylang.uninstall', () => {
+        uninstall(
+            () => showVscodeMessage(false, 'Removed Harmony from this device.'),
+            () => showVscodeMessage(true, 'Could not remove Harmony from this device'),
+            () => showVscodeMessage(false, 'File does not exist'));
     });
 
     context.subscriptions.push(runHarmonyCommand);
@@ -78,13 +75,18 @@ const launchRunningMessage = (msLag: number) => {
     }, msLag);
 };
 
-const showMessage = (main: string, subHeader?: string, subtext?: string) => {
+
+const showVscodeMessage = (isError: boolean, main: string, subHeader?: string, subtext?: string) => {
+    const show  = isError ? vscode.window.showErrorMessage : vscode.window.showInformationMessage;
     if (subHeader == null || subtext == null) {
-        vscode.window.showInformationMessage(main);
+        show(main);
     } else {
-        const output = main + (subtext.length > 0 ? `\n${subHeader}: ${subtext}` : '');
-        vscode.window.showInformationMessage(output);
+        show(main + (subtext.length > 0 ? `\n${subHeader}: ${subtext}` : ''));
     }
+};
+
+const showMessage = (main: string, subHeader?: string, subtext?: string) => {
+    return showVscodeMessage(false, main, subHeader, subtext);
 };
 
 const processConfig = { cwd: Path.join(__dirname, '..', 'harmony-0.9') };

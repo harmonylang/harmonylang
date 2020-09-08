@@ -13,7 +13,7 @@ const harmonyPath = path.join(homeDir, "cs4410_harmony");
 export function install(
   onSuccess: () => void,
   onFail: () => void,
-  alreadyAdded?: () => void
+  alreadyAdded: () => void
 ): void {
   if (fs.existsSync(harmonyPath)) {
     return alreadyAdded && alreadyAdded();
@@ -52,7 +52,7 @@ export function install(
 export function uninstall(
   onSuccess: () => void,
   onFail: () => void,
-  alreadyRemoved?: () => void
+  alreadyRemoved: () => void
 ): void {
   if (!fs.existsSync(harmonyPath)) {
     return alreadyRemoved && alreadyRemoved();
