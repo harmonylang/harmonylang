@@ -25,14 +25,17 @@ export const activate = (context: vscode.ExtensionContext) => {
         }
         runHarmony(context, path);
     });
+
     const endHarmonyProcessesCommand = vscode.commands.registerCommand('harmonylang.end', () => {
         endHarmonyProcesses();
     });
+
     const installHarmony = vscode.commands.registerCommand('harmonylang.install', () => {
         install(() => showVscodeMessage(false, 'Added Harmony locally to the device. Run with the command `harmony`'),
-        () => showVscodeMessage(true, 'Harmony could not be added locally to the device.'),
-        () => showVscodeMessage(false, 'File already exists'));
+            () => showVscodeMessage(true, 'Harmony could not be added locally to the device.'),
+            () => showVscodeMessage(false, 'File already exists'));
     });
+
     const uninstallHarmony = vscode.commands.registerCommand('harmonylang.uninstall', () => {
         uninstall(
             () => showVscodeMessage(false, 'Removed Harmony from this device.'),
@@ -72,7 +75,7 @@ const launchRunningMessage = (msLag: number): string => {
 
 
 const showVscodeMessage = (isError: boolean, main: string, subHeader?: string, subtext?: string) => {
-    const show  = isError ? vscode.window.showErrorMessage : vscode.window.showInformationMessage;
+    const show = isError ? vscode.window.showErrorMessage : vscode.window.showInformationMessage;
     if (subHeader == null || subtext == null) {
         show(main);
     } else {
@@ -95,7 +98,7 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
     // Use python3 by default if configurations are not set.
     const pythonPath = getPythonPath();
     const compileCommand = `${pythonPath} "${compilerPath}" -A "${fullFileName}"`;
-    processManager.startCommand(compileCommand, processConfig,  (err, stdout, stderr) => {
+    processManager.startCommand(compileCommand, processConfig, (err, stdout, stderr) => {
         if (stderr) {
             // System errors, includes division by zero.
             showMessage('Error!', 'Message', stderr);

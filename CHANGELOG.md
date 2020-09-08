@@ -6,8 +6,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-- Include `Add 'harmony' to PATH` command, which add and setup the harmony CLI compiler on the device.
-- Include `Remove 'harmony'` command, which removes the added harmony CLI compiler with the above command from the device.
+- Include `Add 'harmony' to PATH` command, which add and setup the harmony CLI compiler on the device. (Unix only)
+- Include `Remove 'harmony' CLI` command, which removes the added harmony CLI compiler with the above command from the device. (Unix only)
+- Lowered required VS Code version to 1.42+.
 - Bug fixes.
 
 ## [0.0.5] - 2020-09-06

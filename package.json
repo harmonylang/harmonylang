@@ -3,11 +3,11 @@
     "displayName": "HarmonyLang",
     "description": "VS Code language support for Harmony, a Python-like concurrent programming language.",
     "icon": "images/harmonylang.png",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "publisher": "kevinsun-dev-cornell",
     "repository": "https://github.com/kevinsun-dev/harmonylang",
     "engines": {
-        "vscode": "^1.48.0"
+        "vscode": "^1.42.0"
     },
     "categories": [
         "Programming Languages"
@@ -28,28 +28,23 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
-        "languages": [
-            {
-                "id": "harmony",
-                "aliases": [
-                    "Harmony",
-                    "harmony"
-                ],
-                "extensions": [
-                    ".hny"
-                ],
-                "configuration": "./language-configuration.json"
-            }
-        ],
-        "grammars": [
-            {
-                "language": "harmony",
-                "scopeName": "source.harmony",
-                "path": "./syntaxes/harmony.tmLanguage.json"
-            }
-        ],
-        "commands": [
-            {
+        "languages": [{
+            "id": "harmony",
+            "aliases": [
+                "Harmony",
+                "harmony"
+            ],
+            "extensions": [
+                ".hny"
+            ],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "harmony",
+            "scopeName": "source.harmony",
+            "path": "./syntaxes/harmony.tmLanguage.json"
+        }],
+        "commands": [{
                 "command": "harmonylang.run",
                 "title": "Run Harmony"
             },
@@ -63,11 +58,10 @@
             },
             {
                 "command": "harmonylang.uninstall​​",
-                "title": "Remove `harmony`"
+                "title": "Remove `harmony` CLI"
             }
         ],
-        "keybindings": [
-            {
+        "keybindings": [{
                 "command": "harmonylang.run",
                 "key": "alt+shift+n"
             },
