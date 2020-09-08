@@ -7,11 +7,12 @@ HarmonyLang provides general VS compatibility with RvR's [Harmony](http://www.cs
 Provides advanced syntax highlighting for all flow control, method definition, and literals based on the [default VSCode extension for Python](https://github.com/microsoft/vscode).
 
 Supported syntax:
- - Control statement keywords (`for`, `while`, `if`, `else`)
- - Literals (`True`, `None`, and numerics)
- - Assignment operators (`and=`, `//=`, and `mod=`)
- - Binary operators (`and`, `**`, and `>=`)
- - Comments (`#line` and `(* block *)`)
+
+- Control statement keywords (`for`, `while`, `if`, `else`)
+- Literals (`True`, `None`, and numerics)
+- Assignment operators (`and=`, `//=`, and `mod=`)
+- Binary operators (`and`, `**`, and `>=`)
+- Comments (`#line` and `(* block *)`)
 
 ![Syntax Highlighting](images/syntax-example.jpg)
 
@@ -27,23 +28,28 @@ See your Harmony Output results, right in VS Code!
 
 ## Upcoming Features
 
- - Auto-formatter
-   - Format on save
-   - Format via `Alt+Shift+F`
- - Intellicode Support
+- Auto-formatter
+  - Format on save
+  - Format via `Alt+Shift+F`
+- Intellicode Support
 
 ## Developers
 
- - Kevin Sun     `@kevinsun-dev`
+- Kevin Sun     `@kevinsun-dev`
 
- - Anthony Yang     `@ayang4114`
+- Anthony Yang     `@ayang4114`
 
 ## Release Notes
 
+### 0.0.6
+
+- Include `Add 'harmony' to PATH` command, which add and setup the harmony CLI compiler on the device.
+- Include `Remove 'harmony'` command, which removes the added harmony CLI compiler with the above command from the device.
+- Bug fixes.
+
 ### 0.0.5
 
-- Added `End All Harmony Processes` command, with keybinding `Alt+Shift+Q`. For Mac users, substitute `Alt` for `Option`.
-- Added keybinding `Alt+Shift+N` to `Run Harmony`.
+- Add `End All Harmony Processes` command, with keybinding `Alt+Shift+Q`. For Mac users, substitute `Alt` for `Option`.
 - More helpful messages.
 
 ### 0.0.4

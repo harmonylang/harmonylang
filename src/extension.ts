@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
 import * as Path from 'path';
 import HarmonyOutputPanel from './outputPanel';
+import { install, uninstall } from './feature/install';
 import { ProcessManagerImpl } from './processManager';
 
-const processManager = ProcessManagerImpl.getInstance();
+const processManager = ProcessManagerImpl.init();
 const processConfig = { cwd: Path.join(__dirname, '..', 'harmony-0.9') };
 const compilerPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.py');
 
@@ -27,9 +28,22 @@ export const activate = (context: vscode.ExtensionContext) => {
     const endHarmonyProcessesCommand = vscode.commands.registerCommand('harmonylang.end', () => {
         endHarmonyProcesses();
     });
+    const installHarmony = vscode.commands.registerCommand('harmonylang.install', () => {
+        install(() => showVscodeMessage(false, 'Added Harmony locally to the device. Run with the command `harmony`'),
+        () => showVscodeMessage(true, 'Harmony could not be added locally to the device.'),
+        () => showVscodeMessage(false, 'File already exists'));
+    });
+    const uninstallHarmony = vscode.commands.registerCommand('harmonylang.uninstall', () => {
+        uninstall(
+            () => showVscodeMessage(false, 'Removed Harmony from this device.'),
+            () => showVscodeMessage(true, 'Could not remove Harmony from this device'),
+            () => showVscodeMessage(false, 'File does not exist'));
+    });
 
     context.subscriptions.push(runHarmonyCommand);
     context.subscriptions.push(endHarmonyProcessesCommand);
+    context.subscriptions.push(installHarmony);
+    context.subscriptions.push(uninstallHarmony);
 
     if (vscode.window.registerWebviewPanelSerializer) {
         vscode.window.registerWebviewPanelSerializer(HarmonyOutputPanel.viewType, {
@@ -56,13 +70,18 @@ const launchRunningMessage = (msLag: number): string => {
     }, msLag);
 };
 
-const showMessage = (main: string, subHeader?: string, subtext?: string) => {
+
+const showVscodeMessage = (isError: boolean, main: string, subHeader?: string, subtext?: string) => {
+    const show  = isError ? vscode.window.showErrorMessage : vscode.window.showInformationMessage;
     if (subHeader == null || subtext == null) {
-        vscode.window.showInformationMessage(main);
+        show(main);
     } else {
-        const output = main + (subtext.length > 0 ? `\n${subHeader}: ${subtext}` : '');
-        vscode.window.showInformationMessage(output);
+        show(main + (subtext.length > 0 ? `\n${subHeader}: ${subtext}` : ''));
     }
+};
+
+const showMessage = (main: string, subHeader?: string, subtext?: string) => {
+    return showVscodeMessage(false, main, subHeader, subtext);
 };
 
 const getPythonPath = (): string => {
