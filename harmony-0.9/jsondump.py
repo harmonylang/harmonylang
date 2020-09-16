@@ -1,12 +1,12 @@
 from json import JSONEncoder
-from typing import Type, Dict
+from typing import Dict
 
 
 def jsonify_dict_value(nametag) -> Dict[str, any]:
+    if isinstance(nametag, (int, str, float)):
+        return {"value": f"{nametag}"}
     if nametag is None:
         return {}
-    if isinstance(nametag, (int, str, float, Type[None])):
-        return {"value": f"{nametag}"}
     dict_rep = {}
     if 'tag' in nametag.d:
         dict_rep["tag"] = jsonify_dict_value(nametag.d["tag"])
