@@ -3243,7 +3243,7 @@ class StatementRule(Rule):
             else:
                 expr = None
             return (AssertAST(token, cond, expr), self.skip(token, t))
-        
+
         # If we get here, the next statement is either an expression
         # or an assignment.  The grammar is either
         #   (tuple_expression '=')* tuple_expression ';'
@@ -4621,7 +4621,9 @@ def main():
         (spc, file, line, column) = v
 
     if printCode == None:
+        from jsondump import jsondump
         (nodes, bad_node) = run(code, scope.labels, mpc, spc, blockflag)
+        jsondump(nodes, bad_node)
         htmldump(nodes, code, scope, bad_node, fulldump, False)
 
 if __name__ == "__main__":

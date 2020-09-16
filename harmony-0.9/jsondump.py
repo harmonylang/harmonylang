@@ -1,5 +1,4 @@
-from json import dumps, loads, JSONEncoder, JSONDecoder
-# from harmony import ContextValue, Node, State
+from json import JSONEncoder
 
 
 def jsonify_dict_value(nametag) -> dict:
@@ -12,6 +11,7 @@ def jsonify_dict_value(nametag) -> dict:
 def jsonify_context(context) -> dict:
     if context is None:
         return {}
+    print(context.stack)
     return {
         "nametag": jsonify_dict_value(context.nametag),
         "pc": context.pc,
@@ -23,63 +23,40 @@ def jsonify_context(context) -> dict:
         "stopped": context.stopped,
         "failure": context.failure,
         "vars": jsonify_dict_value(context.vars),
-        # "stack": context.stack
+        "stack": [f"{s}" for s in context.stack]
     }
 
 
 def jsonify_state(state) -> dict:
-    # code = state.code
-    # labels = state.labels
-    # vars = state.vars
-    # context_bag = [jsonify_context(k) for k in state.ctxbag.keys()]
-    # stopbag = [jsonify_context(k) for k in state.stopbag.keys()]
-    # choosing = state.choosing
-    # initializing = state.initializing
-    state_dict = state.__dict__.copy()
-    state_dict["stopbag"] = [jsonify_context(k) for k in state.stopbag.keys()]
-    state_dict["ctxbag"] = [jsonify_context(k) for k in state.ctxbag.keys()]
-    return state_dict
+    return {
+        "stopbag": [jsonify_context(k) for k in state.stopbag.keys()],
+        "ctxbag": [jsonify_context(k) for k in state.ctxbag.keys()],
+        "code": [f"{i}" for i in state.code],
+        "labels": state.labels,
+        "vars": {f"{k}": v for k, v in state.vars.d.items()},
+        "choosing": jsonify_context(state.choosing),
+        "initializing": state.initializing
+    }
 
 
 def jsonify_node(node) -> dict:
     if node is None:
         return {}
-    node_index = node.uid
-    component_id = node.cid
-    # length = node.len
-    # steps = node.steps
-    # issues = node.issues
-    # expanded = node.expanded
-
-    # parent = node.parent
-    # blocked = [jsonify_context(k) for k, v in node.blocked.items() if v]
-    # after = jsonify_context(node.after)
-    # before = jsonify_context(node.before)
-    # steps = node.steps
-
-    # state = jsonify_state(node.state)
     return {
-        "node_index": node_index,
-        "component_id": component_id,
+        "node_index": node.uid,
+        "component_id": node.cid,
         "length": node.len,
         "steps": node.steps,
         "issues": list(node.issues),
         "expanded": node.expanded,
 
         "parent": jsonify_node(node.parent),
-        "steps": node.steps,
-
         "blocked": [jsonify_context(k) for k, v in node.blocked.items() if v],
         "after": jsonify_context(node.after),
-        "before": jsonify_context(node.before)
+        "before": jsonify_context(node.before),
+
+        "state": jsonify_state(node.state),
     }
-    # node_dict = node.__dict__.copy()
-    # node_dict["blocked"] = [jsonify_context(
-    #     k) for k, v in node.blocked.items() if v]
-    # node_dict["after"] = jsonify_context(node.after)
-    # node_dict["before"] = jsonify_context(node.before)
-    # node_dict["state"] = jsonify_state(node.state)
-    # return node_dict
 
 
 def jsondump(nodes, bad_node) -> None:
