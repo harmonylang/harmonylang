@@ -1,14 +1,19 @@
 from json import JSONEncoder
+from typing import Type, Dict
 
 
-def jsonify_dict_value(nametag) -> dict:
+def jsonify_dict_value(nametag) -> Dict[str, any]:
+    if nametag is None:
+        return {}
+    if isinstance(nametag, (int, str, float, Type[None])):
+        return {"value": f"{nametag}"}
     dict_rep = {}
     if 'tag' in nametag.d:
         dict_rep["tag"] = jsonify_dict_value(nametag.d["tag"])
     return dict_rep
 
 
-def jsonify_context(context) -> dict:
+def jsonify_context(context) -> Dict[str, any]:
     if context is None:
         return {}
     return {
@@ -26,19 +31,21 @@ def jsonify_context(context) -> dict:
     }
 
 
-def jsonify_state(state) -> dict:
+def jsonify_state(state) -> Dict[str, any]:
+    if state is None:
+        return {}
     return {
-        "stopbag": [jsonify_context(k) for k in state.stopbag.keys()],
-        "ctxbag": [jsonify_context(k) for k in state.ctxbag.keys()],
         "code": [f"{i}" for i in state.code],
         "labels": state.labels,
         "vars": {f"{k}": f"{v}" for k, v in state.vars.d.items()},
+        "ctxbag": [jsonify_context(k) for k in state.ctxbag.keys()],
+        "stopbag": [jsonify_context(k) for k in state.stopbag.keys()],
         "choosing": jsonify_context(state.choosing),
         "initializing": state.initializing
     }
 
 
-def jsonify_node(node) -> dict:
+def jsonify_node(node) -> Dict[str, any]:
     if node is None:
         return {}
     return {
