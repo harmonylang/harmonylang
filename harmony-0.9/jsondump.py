@@ -11,7 +11,6 @@ def jsonify_dict_value(nametag) -> dict:
 def jsonify_context(context) -> dict:
     if context is None:
         return {}
-    print(context.stack)
     return {
         "nametag": jsonify_dict_value(context.nametag),
         "pc": context.pc,
@@ -33,7 +32,7 @@ def jsonify_state(state) -> dict:
         "ctxbag": [jsonify_context(k) for k in state.ctxbag.keys()],
         "code": [f"{i}" for i in state.code],
         "labels": state.labels,
-        "vars": {f"{k}": v for k, v in state.vars.d.items()},
+        "vars": {f"{k}": f"{v}" for k, v in state.vars.d.items()},
         "choosing": jsonify_context(state.choosing),
         "initializing": state.initializing
     }
