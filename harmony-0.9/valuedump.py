@@ -9,19 +9,39 @@ class ValueArray:
         self.array = []
         self.value_to_index: Dict[Any, int] = {}
 
+    def get(self) -> List[Any]:
+        return self.array
+
     def add_value(self, value: Any) -> int:
         """
         Adds [value] into the value array, if [value] was not previously added.
         :returns the index that points to [value] in the value array.
         """
-        pass
+
+        # Need a different way to check equality in objects.
+        # 1) We could implement __eq__ in all of the value classes
+        if value in self.value_to_index:
+            return self.value_to_index[value]
+        else:
+            self.array.append({
+                'type': type(value),
+                'value': value
+            })
+            index = len(self.array) - 1
+            self.value_to_index[value] = index
+            return index
 
 
 class ValueDump:
 
-    def create_json_dump(self):
-        dump = {}
-        return json.JSONEncoder().encode(dump)
+    def create_json_dump(self) -> str:
+        bad_node_dump = self.dump_node(self.bad_node)
+        nodes_dump = [self.dump_node(n) for n in self.nodes]
+        return json.JSONEncoder().encode({
+            'values': self.v_array.get(),
+            'bad_node': bad_node_dump,
+            'nodes': nodes_dump
+        })
 
     def _insert_value(self, value: Any) -> int:
         return self.v_array.add_value(value)
@@ -35,9 +55,9 @@ class ValueDump:
         if state is None:
             return None
         state_value = {
-            "code": [f"{i}" for i in state.code],
+            "code": [f"{code}" for code in state.code],
             "labels": self._insert_value(state.labels),
-            "vars": {f"{k}": f"{v}" for k, v in state.vars.d.items()},
+            "vars": [[self._insert_value(k), self._insert_value(v)] for k, v in state.vars.d.items()],
             "ctxbag": [self.dump_context(k) for k in state.ctxbag.keys()],
             "stopbag": [self.dump_context(k) for k in state.stopbag.keys()],
             "choosing": self.dump_context(state.choosing),
@@ -94,4 +114,7 @@ def valuedump(nodes: List[Node], bad_node: Optional[Node]):
     :param bad_node: The bad node, whose successive parents lead to a base node.
     :return:
     """
-    pass
+    val_dumper = ValueDump(nodes, bad_node)
+    dump_str = val_dumper.create_json_dump()
+    with open('valuedump.json', 'w') as f:
+        f.write(dump_str)
