@@ -34,6 +34,11 @@ def jsonify_context(context) -> Dict[str, any]:
 def jsonify_state(state) -> Dict[str, any]:
     if state is None:
         return {}
+    print(state.vars.d)
+    for k, v in state.vars.d.items():
+        print(f"Type of value with key '{k}': ", end='')
+        print(type(v))
+    # print(type(list(state.vars.d.items())[0][1]) if len(state.vars.d) > 0 else "")
     return {
         "code": [f"{i}" for i in state.code],
         "labels": state.labels,

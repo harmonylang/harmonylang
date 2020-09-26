@@ -241,6 +241,7 @@ class AddressValue(Value):
     def key(self):
         return 7, self.indexes
 
+
 class ContextValue(Value):
     def __init__(self, nametag, pc):
         self.nametag = nametag
