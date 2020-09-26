@@ -12,7 +12,7 @@ class ValueArray:
     def get(self) -> List[Any]:
         return self.array
 
-    def add_value(self, value: Any) -> int:
+    def add_value(self, value: Any, type_of_value: str = None) -> int:
         """
         Adds [value] into the value array, if [value] was not previously added.
         :returns the index that points to [value] in the value array.
@@ -24,7 +24,7 @@ class ValueArray:
             return self.value_to_index[value]
         else:
             self.array.append({
-                'type': type(value),
+                'type': type(value) if type_of_value is None else type_of_value,
                 'value': value
             })
             index = len(self.array) - 1
@@ -43,8 +43,8 @@ class ValueDump:
             'nodes': nodes_dump
         })
 
-    def _insert_value(self, value: Any) -> int:
-        return self.v_array.add_value(value)
+    def _insert_value(self, value: Any, type_of_value: str = None) -> int:
+        return self.v_array.add_value(value, type_of_value)
 
     def __init__(self, nodes: List[Node], bad_node: Optional[Node]):
         self.nodes = nodes
@@ -63,7 +63,7 @@ class ValueDump:
             "choosing": self.dump_context(state.choosing),
             "initializing": self._insert_value(state.initializing)
         }
-        return self._insert_value(state_value)
+        return self._insert_value(state_value, 'state')
 
     def dump_context(self, context: Optional[ContextValue]) -> Optional[int]:
         if context is None:
@@ -84,7 +84,7 @@ class ValueDump:
             "vars": self._insert_value(context.vars),
             "stack": [f"{s}" for s in context.stack]
         }
-        return self._insert_value(context_value)
+        return self._insert_value(context_value, 'context')
 
     def dump_node(self, node: Optional[Node]) -> Optional[int]:
         if node is None:
@@ -105,7 +105,7 @@ class ValueDump:
             # List of string issues
             "issues": list(node.issues),
         }
-        return self._insert_value(node_value)
+        return self._insert_value(node_value, 'node')
 
 
 def valuedump(nodes: List[Node], bad_node: Optional[Node]):
