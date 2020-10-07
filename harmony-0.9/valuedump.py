@@ -1,6 +1,13 @@
 import json
 from typing import List, Optional, Dict, Any
-from harmony import Value, Node, AddressValue, PcValue, ContextValue, State
+from value import NodeType, ContextType, StateType
+
+
+def some(lst, v):
+    for i in lst.keys():
+        if i == v:
+            return True
+    return False
 
 
 class ValueArray:
@@ -20,7 +27,11 @@ class ValueArray:
 
         # Need a different way to check equality in objects.
         # 1) We could implement __eq__ in all of the value classes
-        if value in self.value_to_index:
+        if type(value) == dict:
+            value = frozenset(value.items())
+        elif type(value) == set or type(value) == list:
+            value = frozenset(value)
+        if some(self.value_to_index, value):
             return self.value_to_index[value]
         else:
             self.array.append({
@@ -46,12 +57,12 @@ class ValueDump:
     def _insert_value(self, value: Any, type_of_value: str = None) -> int:
         return self.v_array.add_value(value, type_of_value)
 
-    def __init__(self, nodes: List[Node], bad_node: Optional[Node]):
+    def __init__(self, nodes: List[NodeType], bad_node: Optional[NodeType]):
         self.nodes = nodes
         self.bad_node = bad_node
         self.v_array = ValueArray()
 
-    def dump_state(self, state: Optional[State]) -> Optional[int]:
+    def dump_state(self, state: Optional[StateType]) -> Optional[int]:
         if state is None:
             return None
         state_value = {
@@ -65,7 +76,7 @@ class ValueDump:
         }
         return self._insert_value(state_value, 'state')
 
-    def dump_context(self, context: Optional[ContextValue]) -> Optional[int]:
+    def dump_context(self, context: Optional[ContextType]) -> Optional[int]:
         if context is None:
             return None
         context_value = {
@@ -86,7 +97,7 @@ class ValueDump:
         }
         return self._insert_value(context_value, 'context')
 
-    def dump_node(self, node: Optional[Node]) -> Optional[int]:
+    def dump_node(self, node: Optional[NodeType]) -> Optional[int]:
         if node is None:
             return None
         node_value = {
@@ -108,7 +119,7 @@ class ValueDump:
         return self._insert_value(node_value, 'node')
 
 
-def valuedump(nodes: List[Node], bad_node: Optional[Node]):
+def valuedump(nodes: List[NodeType], bad_node: Optional[NodeType]):
     """
     :param nodes: A list of nodes in the program.
     :param bad_node: The bad node, whose successive parents lead to a base node.

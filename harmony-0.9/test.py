@@ -3,6 +3,8 @@ import subprocess
 
 
 if __name__ == "__main__":
+    full_path = os.path.join(os.path.curdir, "code", "atomic_violation.hny")
+    os.system(f'python3 harmony.py "{full_path}"')
     pass
     # stack = [os.path.join(os.path.curdir, "code")]
     # while stack:

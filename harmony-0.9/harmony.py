@@ -31,6 +31,7 @@
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 """
+from valuedump import valuedump
 
 internal_modules = {
 #############################
@@ -4623,8 +4624,8 @@ def main():
     if printCode == None:
         from jsondump import jsondump
         (nodes, bad_node) = run(code, scope.labels, mpc, spc, blockflag)
-        jsondump(nodes, bad_node)
-        htmldump(nodes, code, scope, bad_node, fulldump, False)
+        valuedump(nodes, bad_node)
+        # htmldump(nodes, code, scope, bad_node, fulldump, False)
 
 if __name__ == "__main__":
     main()
