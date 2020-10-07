@@ -1,0 +1,5531 @@
+{
+  "values": [
+    {
+      "type": "<class 'int'>",
+      "value": 27
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 0
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 4
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 25
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 3
+    },
+    {
+      "type": "<class 'bool'>",
+      "value": true
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 8
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 7
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 2
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": []
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Push 12"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Store v"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Push [False, False]"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Store done"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Push { 1, 2, 3 }"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Store tup"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Jump 44"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Frame access ()"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Load v"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Push None"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "2-ary !="
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "JumpCond False 17"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Push 123"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "2-ary +"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "StoreVar result"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Jump 17"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Push ?done"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Push 0"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Address"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Push True"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Store"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Return"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Frame nullify ()"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Push 1"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Frame main ()"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Load done"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "1-ary all"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "JumpCond False 35"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "JumpCond False 43"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Jump 38"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Push ()"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Dup"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Push PC(7)"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Spawn"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Push PC(24)"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Push PC(34)"
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+      ]
+    },
+    {
+      "type": "<class '__main__.DictValue'>",
+      "value": "dict{ .name:.__init__, .tag:() }"
+    },
+    {
+      "type": "<class 'NoneType'>",
+      "value": null
+    },
+    {
+      "type": "<class '__main__.DictValue'>",
+      "value": "()"
+    },
+    {
+      "type": "context",
+      "value": [
+        [
+          "fp",
+          1
+        ],
+        [
+          "pc",
+          1
+        ],
+        [
+          "trap",
+          48
+        ],
+        [
+          "terminated",
+          1
+        ],
+        [
+          "failure",
+          48
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "atomic",
+          5
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
+          "nametag",
+          47
+        ],
+        [
+          "stack",
+          9
+        ],
+        [
+          "vars",
+          49
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        50
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "ctxbag",
+          51
+        ],
+        [
+          "initializing",
+          5
+        ],
+        [
+          "vars",
+          9
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "node_index",
+          1
+        ],
+        [
+          "before",
+          null
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "after",
+          null
+        ],
+        [
+          "parent",
+          null
+        ],
+        [
+          "length",
+          1
+        ],
+        [
+          "state",
+          52
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 56
+    },
+    {
+      "type": "context",
+      "value": [
+        [
+          "fp",
+          1
+        ],
+        [
+          "terminated",
+          5
+        ],
+        [
+          "trap",
+          48
+        ],
+        [
+          "failure",
+          48
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "atomic",
+          5
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
+          "nametag",
+          47
+        ],
+        [
+          "pc",
+          54
+        ],
+        [
+          "stack",
+          9
+        ],
+        [
+          "vars",
+          49
+        ]
+      ]
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "v"
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 12
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        56,
+        57
+      ]
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "done"
+    },
+    {
+      "type": "<class '__main__.DictValue'>",
+      "value": "[False, False]"
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        59,
+        60
+      ]
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "tup"
+    },
+    {
+      "type": "<class '__main__.SetValue'>",
+      "value": "{ 1, 2, 3 }"
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        62,
+        63
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        64,
+        58,
+        61
+      ]
+    },
+    {
+      "type": "<class '__main__.DictValue'>",
+      "value": "dict{ .name:.access, .tag:() }"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "process"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "()"
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        67,
+        68
+      ]
+    },
+    {
+      "type": "context",
+      "value": [
+        [
+          "fp",
+          1
+        ],
+        [
+          "stack",
+          69
+        ],
+        [
+          "trap",
+          48
+        ],
+        [
+          "terminated",
+          1
+        ],
+        [
+          "failure",
+          48
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "pc",
+          7
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
+          "nametag",
+          66
+        ],
+        [
+          "vars",
+          49
+        ]
+      ]
+    },
+    {
+      "type": "<class '__main__.DictValue'>",
+      "value": "dict{ .name:.nullify, .tag:() }"
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 24
+    },
+    {
+      "type": "context",
+      "value": [
+        [
+          "fp",
+          1
+        ],
+        [
+          "stack",
+          69
+        ],
+        [
+          "pc",
+          72
+        ],
+        [
+          "nametag",
+          71
+        ],
+        [
+          "trap",
+          48
+        ],
+        [
+          "terminated",
+          1
+        ],
+        [
+          "failure",
+          48
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
+          "vars",
+          49
+        ]
+      ]
+    },
+    {
+      "type": "<class '__main__.DictValue'>",
+      "value": "dict{ .name:.main, .tag:() }"
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 34
+    },
+    {
+      "type": "context",
+      "value": [
+        [
+          "fp",
+          1
+        ],
+        [
+          "stack",
+          69
+        ],
+        [
+          "pc",
+          75
+        ],
+        [
+          "trap",
+          48
+        ],
+        [
+          "terminated",
+          1
+        ],
+        [
+          "failure",
+          48
+        ],
+        [
+          "nametag",
+          74
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
+          "vars",
+          49
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        73,
+        76,
+        70
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "ctxbag",
+          77
+        ],
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "after",
+          55
+        ],
+        [
+          "node_index",
+          5
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "length",
+          5
+        ],
+        [
+          "before",
+          50
+        ],
+        [
+          "parent",
+          53
+        ],
+        [
+          "state",
+          78
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class '__main__.DictValue'>",
+      "value": "dict{ .result:() }"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "0"
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        81,
+        67,
+        68
+      ]
+    },
+    {
+      "type": "context",
+      "value": [
+        [
+          "stack",
+          82
+        ],
+        [
+          "vars",
+          80
+        ],
+        [
+          "trap",
+          48
+        ],
+        [
+          "terminated",
+          1
+        ],
+        [
+          "failure",
+          48
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "fp",
+          2
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
+          "pc",
+          6
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
+          "nametag",
+          66
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        73,
+        83,
+        76
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          84
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "before",
+          70
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "after",
+          83
+        ],
+        [
+          "length",
+          8
+        ],
+        [
+          "state",
+          85
+        ],
+        [
+          "parent",
+          79
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "node_index",
+          8
+        ]
+      ]
+    },
+    {
+      "type": "context",
+      "value": [
+        [
+          "stack",
+          82
+        ],
+        [
+          "vars",
+          80
+        ],
+        [
+          "trap",
+          48
+        ],
+        [
+          "terminated",
+          1
+        ],
+        [
+          "failure",
+          48
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "fp",
+          2
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
+          "nametag",
+          66
+        ],
+        [
+          "pc",
+          57
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        73,
+        76,
+        87
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          88
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "before",
+          83
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "node_index",
+          7
+        ],
+        [
+          "parent",
+          86
+        ],
+        [
+          "length",
+          8
+        ],
+        [
+          "state",
+          89
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "after",
+          87
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 26
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "None"
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        81,
+        67,
+        68,
+        92
+      ]
+    },
+    {
+      "type": "context",
+      "value": [
+        [
+          "pc",
+          91
+        ],
+        [
+          "nametag",
+          71
+        ],
+        [
+          "trap",
+          48
+        ],
+        [
+          "terminated",
+          1
+        ],
+        [
+          "failure",
+          48
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "vars",
+          80
+        ],
+        [
+          "fp",
+          2
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
+          "stack",
+          93
+        ],
+        [
+          "interrupt_level",
+          1
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        76,
+        94,
+        87
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
+          "ctxbag",
+          95
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "parent",
+          90
+        ],
+        [
+          "before",
+          73
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "state",
+          96
+        ],
+        [
+          "node_index",
+          6
+        ],
+        [
+          "after",
+          94
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 31
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "?done[1]"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "True"
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        99,
+        67,
+        68,
+        100,
+        81
+      ]
+    },
+    {
+      "type": "context",
+      "value": [
+        [
+          "pc",
+          98
+        ],
+        [
+          "stack",
+          101
+        ],
+        [
+          "nametag",
+          71
+        ],
+        [
+          "trap",
+          48
+        ],
+        [
+          "terminated",
+          1
+        ],
+        [
+          "failure",
+          48
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "vars",
+          80
+        ],
+        [
+          "fp",
+          2
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
+          "interrupt_level",
+          1
+        ]
+      ]
+    },
+    {
+      "type": "<class '__main__.AddressValue'>",
+      "value": "None"
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        56,
+        103
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        104,
+        64,
+        61
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        76,
+        102,
+        87
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "vars",
+          105
+        ],
+        [
+          "ctxbag",
+          106
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "parent",
+          97
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "after",
+          102
+        ],
+        [
+          "node_index",
+          3
+        ],
+        [
+          "before",
+          94
+        ],
+        [
+          "state",
+          107
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 14
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Error: unexpected types in ('+', './code/atomic_violation.hny', 8, 20) operands: [123, None]"
+    },
+    {
+      "type": "context",
+      "value": [
+        [
+          "failure",
+          110
+        ],
+        [
+          "stack",
+          82
+        ],
+        [
+          "vars",
+          80
+        ],
+        [
+          "trap",
+          48
+        ],
+        [
+          "terminated",
+          1
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "fp",
+          2
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
+          "pc",
+          109
+        ],
+        [
+          "nametag",
+          66
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        76,
+        102,
+        111
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "ctxbag",
+          112
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "vars",
+          105
+        ]
+      ]
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "Process Failure"
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        114
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          115
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "expanded",
+          1
+        ],
+        [
+          "parent",
+          108
+        ],
+        [
+          "after",
+          111
+        ],
+        [
+          "node_index",
+          0
+        ],
+        [
+          "before",
+          87
+        ],
+        [
+          "state",
+          113
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        94,
+        76,
+        70
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          117
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "before",
+          73
+        ],
+        [
+          "node_index",
+          4
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "state",
+          118
+        ],
+        [
+          "length",
+          8
+        ],
+        [
+          "parent",
+          79
+        ],
+        [
+          "after",
+          94
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 35
+    },
+    {
+      "type": "context",
+      "value": [
+        [
+          "stack",
+          82
+        ],
+        [
+          "pc",
+          120
+        ],
+        [
+          "vars",
+          80
+        ],
+        [
+          "trap",
+          48
+        ],
+        [
+          "terminated",
+          1
+        ],
+        [
+          "failure",
+          48
+        ],
+        [
+          "nametag",
+          74
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "fp",
+          2
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
+          "interrupt_level",
+          1
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        73,
+        70,
+        121
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "ctxbag",
+          122
+        ],
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "length",
+          8
+        ],
+        [
+          "parent",
+          79
+        ],
+        [
+          "state",
+          123
+        ],
+        [
+          "node_index",
+          2
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 5
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        83,
+        76,
+        94
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          126
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "before",
+          73
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "parent",
+          86
+        ],
+        [
+          "node_index",
+          125
+        ],
+        [
+          "state",
+          127
+        ],
+        [
+          "after",
+          94
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 6
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        73,
+        83,
+        121
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "ctxbag",
+          130
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "node_index",
+          129
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "state",
+          131
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "parent",
+          86
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 9
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        73,
+        121,
+        87
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
+          "ctxbag",
+          134
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "node_index",
+          133
+        ],
+        [
+          "state",
+          135
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "parent",
+          90
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 10
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 21
+    },
+    {
+      "type": "<class '__main__.DictValue'>",
+      "value": "dict{ .result:135 }"
+    },
+    {
+      "type": "<class 'str'>",
+      "value": "?done[0]"
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        67,
+        100,
+        68,
+        140,
+        81
+      ]
+    },
+    {
+      "type": "context",
+      "value": [
+        [
+          "trap",
+          48
+        ],
+        [
+          "terminated",
+          1
+        ],
+        [
+          "failure",
+          48
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "pc",
+          138
+        ],
+        [
+          "fp",
+          2
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
+          "stack",
+          141
+        ],
+        [
+          "nametag",
+          66
+        ],
+        [
+          "vars",
+          139
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        73,
+        76,
+        142
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "ctxbag",
+          143
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "parent",
+          90
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "state",
+          144
+        ],
+        [
+          "length",
+          8
+        ],
+        [
+          "before",
+          87
+        ],
+        [
+          "after",
+          142
+        ],
+        [
+          "node_index",
+          137
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 11
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        94,
+        76,
+        142
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
+          "ctxbag",
+          147
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "node_index",
+          146
+        ],
+        [
+          "parent",
+          145
+        ],
+        [
+          "state",
+          148
+        ],
+        [
+          "before",
+          73
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "after",
+          94
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        73,
+        142,
+        121
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
+          "ctxbag",
+          150
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "state",
+          151
+        ],
+        [
+          "parent",
+          145
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "node_index",
+          57
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 13
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 22
+    },
+    {
+      "type": "context",
+      "value": [
+        [
+          "fp",
+          1
+        ],
+        [
+          "terminated",
+          5
+        ],
+        [
+          "trap",
+          48
+        ],
+        [
+          "failure",
+          48
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
+          "pc",
+          154
+        ],
+        [
+          "nametag",
+          66
+        ],
+        [
+          "stack",
+          9
+        ],
+        [
+          "vars",
+          49
+        ]
+      ]
+    },
+    {
+      "type": "<class '__main__.DictValue'>",
+      "value": "[True, False]"
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        59,
+        156
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        64,
+        58,
+        157
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        73,
+        76
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "vars",
+          158
+        ],
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "ctxbag",
+          159
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "parent",
+          145
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "state",
+          160
+        ],
+        [
+          "length",
+          8
+        ],
+        [
+          "after",
+          155
+        ],
+        [
+          "before",
+          142
+        ],
+        [
+          "node_index",
+          153
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        76,
+        94
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "vars",
+          158
+        ],
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          162
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "parent",
+          161
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "before",
+          73
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "state",
+          163
+        ],
+        [
+          "node_index",
+          109
+        ],
+        [
+          "after",
+          94
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 15
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        73,
+        121
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "vars",
+          158
+        ],
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "ctxbag",
+          166
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "parent",
+          161
+        ],
+        [
+          "node_index",
+          165
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "state",
+          167
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 16
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        94,
+        70,
+        121
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          170
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "parent",
+          119
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "node_index",
+          169
+        ],
+        [
+          "state",
+          171
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 17
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        102,
+        76,
+        70
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "vars",
+          105
+        ],
+        [
+          "ctxbag",
+          174
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "parent",
+          119
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "after",
+          102
+        ],
+        [
+          "length",
+          8
+        ],
+        [
+          "state",
+          175
+        ],
+        [
+          "before",
+          94
+        ],
+        [
+          "node_index",
+          173
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 18
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        83,
+        76,
+        102
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          178
+        ],
+        [
+          "vars",
+          105
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "before",
+          70
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "after",
+          83
+        ],
+        [
+          "node_index",
+          177
+        ],
+        [
+          "parent",
+          176
+        ],
+        [
+          "state",
+          179
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 19
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        121,
+        102,
+        70
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "ctxbag",
+          182
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "vars",
+          105
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "node_index",
+          181
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "state",
+          183
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "parent",
+          176
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 20
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 32
+    },
+    {
+      "type": "context",
+      "value": [
+        [
+          "fp",
+          1
+        ],
+        [
+          "terminated",
+          5
+        ],
+        [
+          "nametag",
+          71
+        ],
+        [
+          "trap",
+          48
+        ],
+        [
+          "failure",
+          48
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
+          "pc",
+          186
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
+          "stack",
+          9
+        ],
+        [
+          "vars",
+          49
+        ]
+      ]
+    },
+    {
+      "type": "<class '__main__.DictValue'>",
+      "value": "[False, True]"
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        59,
+        188
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        104,
+        64,
+        189
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        76,
+        70
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          190
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          191
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "node_index",
+          185
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "before",
+          102
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "state",
+          192
+        ],
+        [
+          "parent",
+          176
+        ],
+        [
+          "length",
+          8
+        ],
+        [
+          "after",
+          187
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        83,
+        76
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          190
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "ctxbag",
+          194
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "parent",
+          193
+        ],
+        [
+          "before",
+          70
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "after",
+          83
+        ],
+        [
+          "node_index",
+          138
+        ],
+        [
+          "state",
+          195
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        121,
+        70
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          190
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          197
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "parent",
+          193
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "state",
+          198
+        ],
+        [
+          "node_index",
+          154
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 23
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        121,
+        83,
+        94
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
+          "ctxbag",
+          201
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "node_index",
+          200
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "state",
+          202
+        ],
+        [
+          "parent",
+          128
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        121,
+        94,
+        87
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "ctxbag",
+          204
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "parent",
+          97
+        ],
+        [
+          "node_index",
+          72
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "state",
+          205
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        121,
+        102,
+        87
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          207
+        ],
+        [
+          "vars",
+          105
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "node_index",
+          91
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "state",
+          208
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "parent",
+          108
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 28
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        76,
+        87
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          190
+        ],
+        [
+          "ctxbag",
+          211
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "node_index",
+          210
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "before",
+          102
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "state",
+          212
+        ],
+        [
+          "parent",
+          108
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "after",
+          187
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 29
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        121,
+        87
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          190
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          215
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "expanded",
+          1
+        ],
+        [
+          "state",
+          216
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "node_index",
+          214
+        ],
+        [
+          "parent",
+          213
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 30
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        76,
+        111
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          190
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          219
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          115
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "expanded",
+          1
+        ],
+        [
+          "after",
+          111
+        ],
+        [
+          "state",
+          220
+        ],
+        [
+          "node_index",
+          218
+        ],
+        [
+          "before",
+          87
+        ],
+        [
+          "parent",
+          213
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        94,
+        142,
+        121
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          222
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "expanded",
+          1
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "state",
+          223
+        ],
+        [
+          "parent",
+          149
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "node_index",
+          98
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        102,
+        76,
+        142
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "vars",
+          105
+        ],
+        [
+          "ctxbag",
+          225
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "state",
+          226
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "after",
+          102
+        ],
+        [
+          "node_index",
+          186
+        ],
+        [
+          "before",
+          94
+        ],
+        [
+          "parent",
+          149
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 33
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        121,
+        102,
+        142
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          229
+        ],
+        [
+          "vars",
+          105
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "expanded",
+          1
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "node_index",
+          228
+        ],
+        [
+          "parent",
+          227
+        ],
+        [
+          "state",
+          230
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        104,
+        64,
+        157
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        76,
+        102
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          232
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "ctxbag",
+          233
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "node_index",
+          75
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "parent",
+          164
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "state",
+          234
+        ],
+        [
+          "after",
+          102
+        ],
+        [
+          "before",
+          94
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        76,
+        142
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          190
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          236
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "node_index",
+          120
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "before",
+          102
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "state",
+          237
+        ],
+        [
+          "parent",
+          227
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "after",
+          187
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 36
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        121,
+        142
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          190
+        ],
+        [
+          "ctxbag",
+          240
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "state",
+          241
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "node_index",
+          239
+        ],
+        [
+          "parent",
+          238
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "expanded",
+          1
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 37
+    },
+    {
+      "type": "<class '__main__.DictValue'>",
+      "value": "[True, True]"
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        59,
+        244
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        104,
+        64,
+        245
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        76
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "ctxbag",
+          247
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "vars",
+          246
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "parent",
+          235
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "before",
+          102
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "after",
+          187
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "node_index",
+          243
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "state",
+          248
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 38
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        121,
+        94
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "vars",
+          158
+        ],
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          251
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "parent",
+          164
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "expanded",
+          1
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "node_index",
+          250
+        ],
+        [
+          "state",
+          252
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 39
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        121,
+        102
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          232
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "ctxbag",
+          255
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "parent",
+          235
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "expanded",
+          1
+        ],
+        [
+          "node_index",
+          254
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "state",
+          256
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 40
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        121
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "ctxbag",
+          259
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "vars",
+          246
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "state",
+          260
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "node_index",
+          258
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "expanded",
+          1
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "parent",
+          249
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 41
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        121,
+        83,
+        102
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "ctxbag",
+          263
+        ],
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "vars",
+          105
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "node_index",
+          262
+        ],
+        [
+          "component_id",
+          1
+        ],
+        [
+          "state",
+          264
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "parent",
+          180
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "expanded",
+          1
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 42
+    },
+    {
+      "type": "context",
+      "value": [
+        [
+          "vars",
+          80
+        ],
+        [
+          "trap",
+          48
+        ],
+        [
+          "terminated",
+          1
+        ],
+        [
+          "failure",
+          48
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "pc",
+          138
+        ],
+        [
+          "fp",
+          2
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
+          "stack",
+          141
+        ],
+        [
+          "nametag",
+          66
+        ]
+      ]
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        267,
+        76,
+        102
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          268
+        ],
+        [
+          "vars",
+          105
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "before",
+          83
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "parent",
+          180
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "state",
+          269
+        ],
+        [
+          "node_index",
+          266
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "after",
+          267
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 43
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        121,
+        267,
+        102
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "ctxbag",
+          272
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "vars",
+          105
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "node_index",
+          271
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "parent",
+          270
+        ],
+        [
+          "state",
+          273
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "expanded",
+          1
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 44
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        267,
+        76
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "ctxbag",
+          276
+        ],
+        [
+          "vars",
+          190
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "node_index",
+          275
+        ],
+        [
+          "before",
+          83
+        ],
+        [
+          "parent",
+          196
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "state",
+          277
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "after",
+          267
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 45
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        121,
+        83
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          190
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "ctxbag",
+          280
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "parent",
+          196
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "expanded",
+          1
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "node_index",
+          279
+        ],
+        [
+          "state",
+          281
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 46
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        121,
+        267
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "vars",
+          190
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "ctxbag",
+          284
+        ],
+        [
+          "choosing",
+          null
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "expanded",
+          1
+        ],
+        [
+          "node_index",
+          283
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "state",
+          285
+        ],
+        [
+          "parent",
+          278
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    },
+    {
+      "type": "<class 'int'>",
+      "value": 47
+    },
+    {
+      "type": "<class 'frozenset'>",
+      "value": [
+        121,
+        102,
+        111
+      ]
+    },
+    {
+      "type": "state",
+      "value": [
+        [
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
+        ],
+        [
+          "initializing",
+          1
+        ],
+        [
+          "ctxbag",
+          288
+        ],
+        [
+          "stopbag",
+          9
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "vars",
+          105
+        ]
+      ]
+    },
+    {
+      "type": "node",
+      "value": [
+        [
+          "component_id",
+          1
+        ],
+        [
+          "length",
+          125
+        ],
+        [
+          "node_index",
+          287
+        ],
+        [
+          "issues",
+          115
+        ],
+        [
+          "state",
+          289
+        ],
+        [
+          "parent",
+          209
+        ],
+        [
+          "expanded",
+          1
+        ],
+        [
+          "after",
+          111
+        ],
+        [
+          "before",
+          87
+        ],
+        [
+          "blocked",
+          9
+        ]
+      ]
+    }
+  ],
+  "bad_node": 116,
+  "nodes": [
+    53,
+    79,
+    86,
+    119,
+    124,
+    128,
+    132,
+    90,
+    97,
+    136,
+    145,
+    149,
+    152,
+    161,
+    164,
+    168,
+    172,
+    176,
+    180,
+    184,
+    193,
+    196,
+    199,
+    203,
+    206,
+    108,
+    209,
+    116,
+    213,
+    217,
+    221,
+    224,
+    227,
+    231,
+    235,
+    238,
+    242,
+    249,
+    253,
+    257,
+    261,
+    265,
+    270,
+    274,
+    278,
+    282,
+    286,
+    290
+  ]
+}

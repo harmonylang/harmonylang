@@ -35,7 +35,7 @@ class ValueArray:
             return self.value_to_index[value]
         else:
             self.array.append({
-                'type': type(value) if type_of_value is None else type_of_value,
+                'type': str(type(value)) if type_of_value is None else type_of_value,
                 'value': value
             })
             index = len(self.array) - 1
@@ -45,16 +45,22 @@ class ValueArray:
 
 class ValueDump:
 
+    def edge_case_default(self, v):
+        if type(v) == frozenset:
+            return list(v)
+        else:
+            return str(v)
+
     def create_json_dump(self) -> str:
-        bad_node_dump = self.dump_node(self.bad_node)
-        nodes_dump = [self.dump_node(n) for n in self.nodes]
-        return json.JSONEncoder().encode({
+        bad_node_dump = self.__dump_node(self.bad_node)
+        nodes_dump = [self.__dump_node(n) for n in self.nodes]
+        return json.JSONEncoder(default=lambda s: self.edge_case_default(s), indent=2).encode({
             'values': self.v_array.get(),
             'bad_node': bad_node_dump,
             'nodes': nodes_dump
         })
 
-    def _insert_value(self, value: Any, type_of_value: str = None) -> int:
+    def __insert_value(self, value: Any, type_of_value: str = None) -> int:
         return self.v_array.add_value(value, type_of_value)
 
     def __init__(self, nodes: List[NodeType], bad_node: Optional[NodeType]):
@@ -62,61 +68,61 @@ class ValueDump:
         self.bad_node = bad_node
         self.v_array = ValueArray()
 
-    def dump_state(self, state: Optional[StateType]) -> Optional[int]:
+    def __dump_state(self, state: Optional[StateType]) -> Optional[int]:
         if state is None:
             return None
         state_value = {
-            "code": [f"{code}" for code in state.code],
-            "labels": self._insert_value(state.labels),
-            "vars": [[self._insert_value(k), self._insert_value(v)] for k, v in state.vars.d.items()],
-            "ctxbag": [self.dump_context(k) for k in state.ctxbag.keys()],
-            "stopbag": [self.dump_context(k) for k in state.stopbag.keys()],
-            "choosing": self.dump_context(state.choosing),
-            "initializing": self._insert_value(state.initializing)
+            "code": self.__insert_value([self.__insert_value(f"{code}") for code in state.code]),
+            "labels": self.__insert_value(state.labels),
+            "vars": self.__insert_value([self.__insert_value([self.__insert_value(k), self.__insert_value(v)]) for k, v in state.vars.d.items()]),
+            "ctxbag": self.__insert_value([self.__dump_context(k) for k in state.ctxbag.keys()]),
+            "stopbag": self.__insert_value([self.__dump_context(k) for k in state.stopbag.keys()]),
+            "choosing": self.__dump_context(state.choosing),
+            "initializing": self.__insert_value(state.initializing)
         }
-        return self._insert_value(state_value, 'state')
+        return self.__insert_value(state_value, 'state')
 
-    def dump_context(self, context: Optional[ContextType]) -> Optional[int]:
+    def __dump_context(self, context: Optional[ContextType]) -> Optional[int]:
         if context is None:
             return None
         context_value = {
             # This is a dictValue
-            "nametag": self._insert_value(context.nametag),
-            "pc": self._insert_value(context.pc),
-            "atomic": self._insert_value(context.atomic),
-            "interrupt_level": self._insert_value(context.interruptLevel),
-            "fp": self._insert_value(context.fp),
-            "trap": self._insert_value(context.trap),
-            "terminated": self._insert_value(context.terminated),
-            "stopped": self._insert_value(context.stopped),
-            "failure": self._insert_value(context.failure),
+            "nametag": self.__insert_value(context.nametag),
+            "pc": self.__insert_value(context.pc),
+            "atomic": self.__insert_value(context.atomic),
+            "interrupt_level": self.__insert_value(context.interruptLevel),
+            "fp": self.__insert_value(context.fp),
+            "trap": self.__insert_value(context.trap),
+            "terminated": self.__insert_value(context.terminated),
+            "stopped": self.__insert_value(context.stopped),
+            "failure": self.__insert_value(context.failure),
 
             # This is a dictValue
-            "vars": self._insert_value(context.vars),
-            "stack": [f"{s}" for s in context.stack]
+            "vars": self.__insert_value(context.vars),
+            "stack": self.__insert_value([self.__insert_value(f"{s}") for s in context.stack])
         }
-        return self._insert_value(context_value, 'context')
+        return self.__insert_value(context_value, 'context')
 
-    def dump_node(self, node: Optional[NodeType]) -> Optional[int]:
+    def __dump_node(self, node: Optional[NodeType]) -> Optional[int]:
         if node is None:
             return None
         node_value = {
-            "node_index": self._insert_value(node.uid),
-            "component_id": self._insert_value(node.cid),
-            "length": self._insert_value(node.len),
-            "expanded": self._insert_value(node.expanded),
+            "node_index": self.__insert_value(node.uid),
+            "component_id": self.__insert_value(node.cid),
+            "length": self.__insert_value(node.len),
+            "expanded": self.__insert_value(node.expanded),
 
-            "parent": self.dump_node(node.parent),
-            "blocked": [self.dump_context(k) for k, v in node.blocked.items() if v],
-            "after": self.dump_context(node.after),
-            "before": self.dump_context(node.before),
+            "parent": self.__dump_node(node.parent),
+            "blocked": self.__insert_value([self.__dump_context(k) for k, v in node.blocked.items() if v]),
+            "after": self.__dump_context(node.after),
+            "before": self.__dump_context(node.before),
 
-            "state": self.dump_state(node.state),
+            "state": self.__dump_state(node.state),
 
             # List of string issues
-            "issues": list(node.issues),
+            "issues": self.__insert_value([self.__insert_value(s) for s in node.issues]),
         }
-        return self._insert_value(node_value, 'node')
+        return self.__insert_value(node_value, 'node')
 
 
 def valuedump(nodes: List[NodeType], bad_node: Optional[NodeType]):
