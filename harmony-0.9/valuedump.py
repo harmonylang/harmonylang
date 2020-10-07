@@ -3,13 +3,6 @@ from typing import List, Optional, Dict, Any
 from value import NodeType, ContextType, StateType
 
 
-def some(lst, v):
-    for i in lst.keys():
-        if i == v:
-            return True
-    return False
-
-
 class ValueArray:
 
     def __init__(self):
@@ -31,7 +24,7 @@ class ValueArray:
             value = frozenset(value.items())
         elif type(value) == set or type(value) == list:
             value = frozenset(value)
-        if some(self.value_to_index, value):
+        if value in self.value_to_index:
             return self.value_to_index[value]
         else:
             self.array.append({

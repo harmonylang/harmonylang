@@ -241,24 +241,16 @@
       "type": "context",
       "value": [
         [
-          "fp",
-          1
-        ],
-        [
-          "pc",
-          1
-        ],
-        [
-          "trap",
-          48
-        ],
-        [
-          "terminated",
-          1
-        ],
-        [
           "failure",
           48
+        ],
+        [
+          "vars",
+          49
+        ],
+        [
+          "interrupt_level",
+          1
         ],
         [
           "stopped",
@@ -269,20 +261,28 @@
           5
         ],
         [
-          "interrupt_level",
+          "fp",
           1
-        ],
-        [
-          "nametag",
-          47
         ],
         [
           "stack",
           9
         ],
         [
-          "vars",
-          49
+          "nametag",
+          47
+        ],
+        [
+          "trap",
+          48
+        ],
+        [
+          "terminated",
+          1
+        ],
+        [
+          "pc",
+          1
         ]
       ]
     },
@@ -304,20 +304,20 @@
           46
         ],
         [
-          "ctxbag",
-          51
-        ],
-        [
-          "initializing",
-          5
+          "stopbag",
+          9
         ],
         [
           "vars",
           9
         ],
         [
-          "stopbag",
-          9
+          "initializing",
+          5
+        ],
+        [
+          "ctxbag",
+          51
         ],
         [
           "choosing",
@@ -333,32 +333,8 @@
           1
         ],
         [
-          "node_index",
-          1
-        ],
-        [
           "before",
           null
-        ],
-        [
-          "issues",
-          9
-        ],
-        [
-          "expanded",
-          5
-        ],
-        [
-          "after",
-          null
-        ],
-        [
-          "parent",
-          null
-        ],
-        [
-          "length",
-          1
         ],
         [
           "state",
@@ -367,6 +343,30 @@
         [
           "blocked",
           9
+        ],
+        [
+          "node_index",
+          1
+        ],
+        [
+          "after",
+          null
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "length",
+          1
+        ],
+        [
+          "expanded",
+          5
+        ],
+        [
+          "parent",
+          null
         ]
       ]
     },
@@ -378,20 +378,16 @@
       "type": "context",
       "value": [
         [
-          "fp",
-          1
-        ],
-        [
-          "terminated",
-          5
-        ],
-        [
-          "trap",
-          48
-        ],
-        [
           "failure",
           48
+        ],
+        [
+          "vars",
+          49
+        ],
+        [
+          "interrupt_level",
+          1
         ],
         [
           "stopped",
@@ -402,24 +398,28 @@
           5
         ],
         [
-          "interrupt_level",
+          "fp",
           1
-        ],
-        [
-          "nametag",
-          47
         ],
         [
           "pc",
           54
         ],
         [
+          "terminated",
+          5
+        ],
+        [
           "stack",
           9
         ],
         [
-          "vars",
-          49
+          "nametag",
+          47
+        ],
+        [
+          "trap",
+          48
         ]
       ]
     },
@@ -499,27 +499,15 @@
       "type": "context",
       "value": [
         [
-          "fp",
-          1
-        ],
-        [
-          "stack",
-          69
-        ],
-        [
-          "trap",
-          48
-        ],
-        [
-          "terminated",
-          1
-        ],
-        [
           "failure",
           48
         ],
         [
-          "stopped",
+          "vars",
+          49
+        ],
+        [
+          "interrupt_level",
           1
         ],
         [
@@ -527,20 +515,32 @@
           7
         ],
         [
+          "stopped",
+          1
+        ],
+        [
           "atomic",
           1
         ],
         [
-          "interrupt_level",
+          "fp",
           1
+        ],
+        [
+          "trap",
+          48
         ],
         [
           "nametag",
           66
         ],
         [
-          "vars",
-          49
+          "terminated",
+          1
+        ],
+        [
+          "stack",
+          69
         ]
       ]
     },
@@ -556,32 +556,20 @@
       "type": "context",
       "value": [
         [
-          "fp",
+          "failure",
+          48
+        ],
+        [
+          "vars",
+          49
+        ],
+        [
+          "interrupt_level",
           1
-        ],
-        [
-          "stack",
-          69
-        ],
-        [
-          "pc",
-          72
         ],
         [
           "nametag",
           71
-        ],
-        [
-          "trap",
-          48
-        ],
-        [
-          "terminated",
-          1
-        ],
-        [
-          "failure",
-          48
         ],
         [
           "stopped",
@@ -592,12 +580,24 @@
           1
         ],
         [
-          "interrupt_level",
+          "fp",
           1
         ],
         [
-          "vars",
-          49
+          "trap",
+          48
+        ],
+        [
+          "pc",
+          72
+        ],
+        [
+          "terminated",
+          1
+        ],
+        [
+          "stack",
+          69
         ]
       ]
     },
@@ -613,16 +613,32 @@
       "type": "context",
       "value": [
         [
-          "fp",
+          "failure",
+          48
+        ],
+        [
+          "vars",
+          49
+        ],
+        [
+          "interrupt_level",
           1
         ],
         [
-          "stack",
-          69
+          "stopped",
+          1
         ],
         [
-          "pc",
-          75
+          "nametag",
+          74
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
+          "fp",
+          1
         ],
         [
           "trap",
@@ -633,28 +649,12 @@
           1
         ],
         [
-          "failure",
-          48
+          "stack",
+          69
         ],
         [
-          "nametag",
-          74
-        ],
-        [
-          "stopped",
-          1
-        ],
-        [
-          "atomic",
-          1
-        ],
-        [
-          "interrupt_level",
-          1
-        ],
-        [
-          "vars",
-          49
+          "pc",
+          75
         ]
       ]
     },
@@ -670,8 +670,8 @@
       "type": "state",
       "value": [
         [
-          "ctxbag",
-          77
+          "vars",
+          65
         ],
         [
           "labels",
@@ -682,20 +682,20 @@
           46
         ],
         [
-          "vars",
-          65
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
         ],
         [
+          "ctxbag",
+          77
+        ],
+        [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -707,11 +707,19 @@
           1
         ],
         [
-          "after",
-          55
+          "state",
+          78
         ],
         [
           "node_index",
+          5
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "length",
           5
         ],
         [
@@ -719,12 +727,8 @@
           9
         ],
         [
-          "expanded",
-          5
-        ],
-        [
-          "length",
-          5
+          "after",
+          55
         ],
         [
           "before",
@@ -735,12 +739,8 @@
           53
         ],
         [
-          "state",
-          78
-        ],
-        [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -768,28 +768,20 @@
           82
         ],
         [
-          "vars",
-          80
-        ],
-        [
-          "trap",
-          48
-        ],
-        [
-          "terminated",
-          1
-        ],
-        [
           "failure",
           48
         ],
         [
-          "stopped",
+          "fp",
+          2
+        ],
+        [
+          "interrupt_level",
           1
         ],
         [
-          "fp",
-          2
+          "stopped",
+          1
         ],
         [
           "atomic",
@@ -800,12 +792,20 @@
           6
         ],
         [
-          "interrupt_level",
-          1
+          "vars",
+          80
+        ],
+        [
+          "trap",
+          48
         ],
         [
           "nametag",
           66
+        ],
+        [
+          "terminated",
+          1
         ]
       ]
     },
@@ -821,6 +821,10 @@
       "type": "state",
       "value": [
         [
+          "vars",
+          65
+        ],
+        [
           "labels",
           9
         ],
@@ -829,24 +833,20 @@
           46
         ],
         [
-          "vars",
-          65
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
+        ],
+        [
+          "ctxbag",
+          84
         ],
         [
           "choosing",
           null
         ],
         [
-          "ctxbag",
-          84
+          "initializing",
+          1
         ]
       ]
     },
@@ -858,23 +858,7 @@
           1
         ],
         [
-          "before",
-          70
-        ],
-        [
-          "issues",
-          9
-        ],
-        [
-          "expanded",
-          5
-        ],
-        [
-          "after",
-          83
-        ],
-        [
-          "length",
+          "node_index",
           8
         ],
         [
@@ -882,16 +866,32 @@
           85
         ],
         [
-          "parent",
-          79
-        ],
-        [
           "blocked",
           9
         ],
         [
-          "node_index",
+          "issues",
+          9
+        ],
+        [
+          "length",
           8
+        ],
+        [
+          "before",
+          70
+        ],
+        [
+          "parent",
+          79
+        ],
+        [
+          "after",
+          83
+        ],
+        [
+          "expanded",
+          5
         ]
       ]
     },
@@ -903,6 +903,26 @@
           82
         ],
         [
+          "failure",
+          48
+        ],
+        [
+          "fp",
+          2
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
           "vars",
           80
         ],
@@ -911,36 +931,16 @@
           48
         ],
         [
-          "terminated",
-          1
-        ],
-        [
-          "failure",
-          48
-        ],
-        [
-          "stopped",
-          1
-        ],
-        [
-          "fp",
-          2
-        ],
-        [
-          "atomic",
-          1
-        ],
-        [
-          "interrupt_level",
-          1
+          "pc",
+          57
         ],
         [
           "nametag",
           66
         ],
         [
-          "pc",
-          57
+          "terminated",
+          1
         ]
       ]
     },
@@ -956,20 +956,20 @@
       "type": "state",
       "value": [
         [
+          "vars",
+          65
+        ],
+        [
+          "ctxbag",
+          88
+        ],
+        [
           "labels",
           9
         ],
         [
           "code",
           46
-        ],
-        [
-          "vars",
-          65
-        ],
-        [
-          "initializing",
-          1
         ],
         [
           "stopbag",
@@ -980,8 +980,8 @@
           null
         ],
         [
-          "ctxbag",
-          88
+          "initializing",
+          1
         ]
       ]
     },
@@ -993,40 +993,40 @@
           1
         ],
         [
-          "before",
-          83
-        ],
-        [
-          "issues",
+          "blocked",
           9
-        ],
-        [
-          "expanded",
-          5
-        ],
-        [
-          "node_index",
-          7
-        ],
-        [
-          "parent",
-          86
-        ],
-        [
-          "length",
-          8
         ],
         [
           "state",
           89
         ],
         [
-          "blocked",
+          "issues",
           9
+        ],
+        [
+          "length",
+          8
+        ],
+        [
+          "node_index",
+          7
+        ],
+        [
+          "before",
+          83
+        ],
+        [
+          "parent",
+          86
         ],
         [
           "after",
           87
+        ],
+        [
+          "expanded",
+          5
         ]
       ]
     },
@@ -1051,12 +1051,36 @@
       "type": "context",
       "value": [
         [
-          "pc",
-          91
+          "failure",
+          48
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
+          "fp",
+          2
         ],
         [
           "nametag",
           71
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
+          "vars",
+          80
+        ],
+        [
+          "stack",
+          93
         ],
         [
           "trap",
@@ -1067,32 +1091,8 @@
           1
         ],
         [
-          "failure",
-          48
-        ],
-        [
-          "stopped",
-          1
-        ],
-        [
-          "vars",
-          80
-        ],
-        [
-          "fp",
-          2
-        ],
-        [
-          "atomic",
-          1
-        ],
-        [
-          "stack",
-          93
-        ],
-        [
-          "interrupt_level",
-          1
+          "pc",
+          91
         ]
       ]
     },
@@ -1108,14 +1108,6 @@
       "type": "state",
       "value": [
         [
-          "labels",
-          9
-        ],
-        [
-          "code",
-          46
-        ],
-        [
           "vars",
           65
         ],
@@ -1124,8 +1116,12 @@
           95
         ],
         [
-          "initializing",
-          1
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
         ],
         [
           "stopbag",
@@ -1134,6 +1130,10 @@
         [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -1145,7 +1145,7 @@
           1
         ],
         [
-          "issues",
+          "blocked",
           9
         ],
         [
@@ -1153,12 +1153,16 @@
           90
         ],
         [
-          "before",
-          73
+          "issues",
+          9
         ],
         [
-          "expanded",
-          5
+          "after",
+          94
+        ],
+        [
+          "before",
+          73
         ],
         [
           "state",
@@ -1169,16 +1173,12 @@
           6
         ],
         [
-          "after",
-          94
-        ],
-        [
           "length",
           4
         ],
         [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -1208,31 +1208,31 @@
       "type": "context",
       "value": [
         [
-          "pc",
-          98
+          "failure",
+          48
         ],
         [
           "stack",
           101
         ],
         [
+          "fp",
+          2
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
           "nametag",
           71
         ],
         [
-          "trap",
-          48
-        ],
-        [
-          "terminated",
+          "stopped",
           1
         ],
         [
-          "failure",
-          48
-        ],
-        [
-          "stopped",
+          "atomic",
           1
         ],
         [
@@ -1240,15 +1240,15 @@
           80
         ],
         [
-          "fp",
-          2
+          "trap",
+          48
         ],
         [
-          "atomic",
-          1
+          "pc",
+          98
         ],
         [
-          "interrupt_level",
+          "terminated",
           1
         ]
       ]
@@ -1292,16 +1292,8 @@
           46
         ],
         [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
-        ],
-        [
-          "choosing",
-          null
         ],
         [
           "vars",
@@ -1310,6 +1302,14 @@
         [
           "ctxbag",
           106
+        ],
+        [
+          "choosing",
+          null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -1317,44 +1317,44 @@
       "type": "node",
       "value": [
         [
-          "component_id",
-          1
-        ],
-        [
-          "parent",
-          97
-        ],
-        [
-          "issues",
-          9
-        ],
-        [
-          "expanded",
-          5
-        ],
-        [
           "after",
           102
         ],
         [
-          "node_index",
-          3
+          "component_id",
+          1
         ],
         [
           "before",
           94
         ],
         [
+          "parent",
+          97
+        ],
+        [
           "state",
           107
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "issues",
+          9
         ],
         [
           "length",
           4
         ],
         [
-          "blocked",
-          9
+          "node_index",
+          3
+        ],
+        [
+          "expanded",
+          5
         ]
       ]
     },
@@ -1370,12 +1370,28 @@
       "type": "context",
       "value": [
         [
-          "failure",
-          110
-        ],
-        [
           "stack",
           82
+        ],
+        [
+          "fp",
+          2
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "atomic",
+          1
+        ],
+        [
+          "pc",
+          109
         ],
         [
           "vars",
@@ -1386,32 +1402,16 @@
           48
         ],
         [
-          "terminated",
-          1
-        ],
-        [
-          "stopped",
-          1
-        ],
-        [
-          "fp",
-          2
-        ],
-        [
-          "atomic",
-          1
-        ],
-        [
-          "interrupt_level",
-          1
-        ],
-        [
-          "pc",
-          109
-        ],
-        [
           "nametag",
           66
+        ],
+        [
+          "failure",
+          110
+        ],
+        [
+          "terminated",
+          1
         ]
       ]
     },
@@ -1431,28 +1431,28 @@
           9
         ],
         [
-          "ctxbag",
-          112
-        ],
-        [
           "code",
           46
-        ],
-        [
-          "initializing",
-          1
         ],
         [
           "stopbag",
           9
         ],
         [
+          "vars",
+          105
+        ],
+        [
+          "ctxbag",
+          112
+        ],
+        [
           "choosing",
           null
         ],
         [
-          "vars",
-          105
+          "initializing",
+          1
         ]
       ]
     },
@@ -1470,44 +1470,44 @@
       "type": "node",
       "value": [
         [
-          "component_id",
-          1
-        ],
-        [
-          "issues",
-          115
-        ],
-        [
-          "length",
-          2
-        ],
-        [
           "expanded",
           1
         ],
         [
-          "parent",
-          108
-        ],
-        [
-          "after",
-          111
-        ],
-        [
-          "node_index",
-          0
-        ],
-        [
-          "before",
-          87
+          "component_id",
+          1
         ],
         [
           "state",
           113
         ],
         [
+          "length",
+          2
+        ],
+        [
           "blocked",
           9
+        ],
+        [
+          "before",
+          87
+        ],
+        [
+          "after",
+          111
+        ],
+        [
+          "issues",
+          115
+        ],
+        [
+          "node_index",
+          0
+        ],
+        [
+          "parent",
+          108
         ]
       ]
     },
@@ -1523,20 +1523,20 @@
       "type": "state",
       "value": [
         [
+          "vars",
+          65
+        ],
+        [
+          "ctxbag",
+          117
+        ],
+        [
           "labels",
           9
         ],
         [
           "code",
           46
-        ],
-        [
-          "vars",
-          65
-        ],
-        [
-          "initializing",
-          1
         ],
         [
           "stopbag",
@@ -1547,8 +1547,8 @@
           null
         ],
         [
-          "ctxbag",
-          117
+          "initializing",
+          1
         ]
       ]
     },
@@ -1560,40 +1560,40 @@
           1
         ],
         [
-          "issues",
+          "blocked",
           9
-        ],
-        [
-          "before",
-          73
         ],
         [
           "node_index",
           4
         ],
         [
-          "expanded",
-          5
-        ],
-        [
-          "state",
-          118
+          "issues",
+          9
         ],
         [
           "length",
           8
         ],
         [
-          "parent",
-          79
-        ],
-        [
           "after",
           94
         ],
         [
-          "blocked",
-          9
+          "before",
+          73
+        ],
+        [
+          "state",
+          118
+        ],
+        [
+          "parent",
+          79
+        ],
+        [
+          "expanded",
+          5
         ]
       ]
     },
@@ -1609,8 +1609,28 @@
           82
         ],
         [
-          "pc",
-          120
+          "failure",
+          48
+        ],
+        [
+          "fp",
+          2
+        ],
+        [
+          "interrupt_level",
+          1
+        ],
+        [
+          "stopped",
+          1
+        ],
+        [
+          "nametag",
+          74
+        ],
+        [
+          "atomic",
+          1
         ],
         [
           "vars",
@@ -1625,28 +1645,8 @@
           1
         ],
         [
-          "failure",
-          48
-        ],
-        [
-          "nametag",
-          74
-        ],
-        [
-          "stopped",
-          1
-        ],
-        [
-          "fp",
-          2
-        ],
-        [
-          "atomic",
-          1
-        ],
-        [
-          "interrupt_level",
-          1
+          "pc",
+          120
         ]
       ]
     },
@@ -1662,8 +1662,8 @@
       "type": "state",
       "value": [
         [
-          "ctxbag",
-          122
+          "vars",
+          65
         ],
         [
           "labels",
@@ -1674,20 +1674,20 @@
           46
         ],
         [
-          "vars",
-          65
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
         ],
         [
+          "ctxbag",
+          122
+        ],
+        [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -1695,44 +1695,44 @@
       "type": "node",
       "value": [
         [
+          "node_index",
+          2
+        ],
+        [
           "component_id",
           1
-        ],
-        [
-          "issues",
-          9
-        ],
-        [
-          "blocked",
-          9
-        ],
-        [
-          "expanded",
-          5
-        ],
-        [
-          "before",
-          76
         ],
         [
           "after",
           121
         ],
         [
+          "state",
+          123
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
           "length",
           8
+        ],
+        [
+          "before",
+          76
         ],
         [
           "parent",
           79
         ],
         [
-          "state",
-          123
-        ],
-        [
-          "node_index",
-          2
+          "expanded",
+          5
         ]
       ]
     },
@@ -1752,20 +1752,20 @@
       "type": "state",
       "value": [
         [
-          "labels",
-          9
-        ],
-        [
-          "code",
-          46
-        ],
-        [
           "vars",
           65
         ],
         [
-          "initializing",
-          1
+          "labels",
+          9
+        ],
+        [
+          "ctxbag",
+          126
+        ],
+        [
+          "code",
+          46
         ],
         [
           "stopbag",
@@ -1776,8 +1776,8 @@
           null
         ],
         [
-          "ctxbag",
-          126
+          "initializing",
+          1
         ]
       ]
     },
@@ -1789,40 +1789,40 @@
           1
         ],
         [
-          "issues",
+          "blocked",
           9
-        ],
-        [
-          "before",
-          73
-        ],
-        [
-          "expanded",
-          5
-        ],
-        [
-          "parent",
-          86
-        ],
-        [
-          "node_index",
-          125
         ],
         [
           "state",
           127
         ],
         [
+          "issues",
+          9
+        ],
+        [
+          "parent",
+          86
+        ],
+        [
           "after",
           94
+        ],
+        [
+          "before",
+          73
+        ],
+        [
+          "node_index",
+          125
         ],
         [
           "length",
           4
         ],
         [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -1842,6 +1842,14 @@
       "type": "state",
       "value": [
         [
+          "vars",
+          65
+        ],
+        [
+          "ctxbag",
+          130
+        ],
+        [
           "labels",
           9
         ],
@@ -1850,24 +1858,16 @@
           46
         ],
         [
-          "vars",
-          65
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
-          "ctxbag",
-          130
-        ],
-        [
           "stopbag",
           9
         ],
         [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -1879,40 +1879,40 @@
           1
         ],
         [
-          "issues",
+          "after",
+          121
+        ],
+        [
+          "blocked",
           9
         ],
         [
-          "expanded",
-          5
+          "issues",
+          9
         ],
         [
           "node_index",
           129
         ],
         [
-          "before",
-          76
+          "parent",
+          86
         ],
         [
           "state",
           131
         ],
         [
-          "after",
-          121
-        ],
-        [
-          "parent",
-          86
+          "before",
+          76
         ],
         [
           "length",
           4
         ],
         [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -1932,6 +1932,14 @@
       "type": "state",
       "value": [
         [
+          "ctxbag",
+          134
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
           "labels",
           9
         ],
@@ -1940,24 +1948,16 @@
           46
         ],
         [
-          "vars",
-          65
-        ],
-        [
-          "ctxbag",
-          134
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
         ],
         [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -1967,6 +1967,18 @@
         [
           "component_id",
           1
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "parent",
+          90
         ],
         [
           "node_index",
@@ -1981,28 +1993,16 @@
           9
         ],
         [
-          "parent",
-          90
-        ],
-        [
-          "expanded",
-          5
-        ],
-        [
           "before",
           76
-        ],
-        [
-          "after",
-          121
         ],
         [
           "length",
           4
         ],
         [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -2036,16 +2036,20 @@
       "type": "context",
       "value": [
         [
-          "trap",
-          48
-        ],
-        [
-          "terminated",
-          1
-        ],
-        [
           "failure",
           48
+        ],
+        [
+          "vars",
+          139
+        ],
+        [
+          "fp",
+          2
+        ],
+        [
+          "interrupt_level",
+          1
         ],
         [
           "stopped",
@@ -2056,16 +2060,12 @@
           138
         ],
         [
-          "fp",
-          2
-        ],
-        [
           "atomic",
           1
         ],
         [
-          "interrupt_level",
-          1
+          "trap",
+          48
         ],
         [
           "stack",
@@ -2076,8 +2076,8 @@
           66
         ],
         [
-          "vars",
-          139
+          "terminated",
+          1
         ]
       ]
     },
@@ -2093,6 +2093,14 @@
       "type": "state",
       "value": [
         [
+          "vars",
+          65
+        ],
+        [
+          "ctxbag",
+          143
+        ],
+        [
           "labels",
           9
         ],
@@ -2101,24 +2109,16 @@
           46
         ],
         [
-          "vars",
-          65
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
         ],
         [
-          "ctxbag",
-          143
-        ],
-        [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -2126,44 +2126,44 @@
       "type": "node",
       "value": [
         [
+          "node_index",
+          137
+        ],
+        [
           "component_id",
           1
-        ],
-        [
-          "issues",
-          9
-        ],
-        [
-          "parent",
-          90
         ],
         [
           "blocked",
           9
         ],
         [
-          "expanded",
-          5
+          "before",
+          87
         ],
         [
-          "state",
-          144
+          "parent",
+          90
+        ],
+        [
+          "issues",
+          9
         ],
         [
           "length",
           8
         ],
         [
-          "before",
-          87
-        ],
-        [
           "after",
           142
         ],
         [
-          "node_index",
-          137
+          "state",
+          144
+        ],
+        [
+          "expanded",
+          5
         ]
       ]
     },
@@ -2183,6 +2183,10 @@
       "type": "state",
       "value": [
         [
+          "vars",
+          65
+        ],
+        [
           "labels",
           9
         ],
@@ -2191,24 +2195,20 @@
           46
         ],
         [
-          "vars",
-          65
+          "stopbag",
+          9
         ],
         [
           "ctxbag",
           147
         ],
         [
-          "initializing",
-          1
-        ],
-        [
-          "stopbag",
-          9
-        ],
-        [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -2228,32 +2228,32 @@
           145
         ],
         [
-          "state",
-          148
+          "blocked",
+          9
         ],
         [
-          "before",
-          73
+          "state",
+          148
         ],
         [
           "issues",
           9
         ],
         [
-          "expanded",
-          5
-        ],
-        [
           "after",
           94
+        ],
+        [
+          "before",
+          73
         ],
         [
           "length",
           4
         ],
         [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -2269,6 +2269,14 @@
       "type": "state",
       "value": [
         [
+          "ctxbag",
+          150
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
           "labels",
           9
         ],
@@ -2277,24 +2285,16 @@
           46
         ],
         [
-          "vars",
-          65
-        ],
-        [
-          "ctxbag",
-          150
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
         ],
         [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -2302,44 +2302,44 @@
       "type": "node",
       "value": [
         [
-          "component_id",
-          1
-        ],
-        [
-          "state",
-          151
-        ],
-        [
-          "parent",
-          145
-        ],
-        [
-          "issues",
-          9
-        ],
-        [
           "node_index",
           57
         ],
         [
-          "expanded",
-          5
-        ],
-        [
-          "before",
-          76
+          "component_id",
+          1
         ],
         [
           "after",
           121
         ],
         [
-          "length",
-          4
+          "parent",
+          145
         ],
         [
           "blocked",
           9
+        ],
+        [
+          "state",
+          151
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "expanded",
+          5
         ]
       ]
     },
@@ -2355,20 +2355,16 @@
       "type": "context",
       "value": [
         [
-          "fp",
-          1
-        ],
-        [
-          "terminated",
-          5
-        ],
-        [
-          "trap",
-          48
-        ],
-        [
           "failure",
           48
+        ],
+        [
+          "vars",
+          49
+        ],
+        [
+          "interrupt_level",
+          1
         ],
         [
           "stopped",
@@ -2379,7 +2375,7 @@
           1
         ],
         [
-          "interrupt_level",
+          "fp",
           1
         ],
         [
@@ -2387,16 +2383,20 @@
           154
         ],
         [
-          "nametag",
-          66
-        ],
-        [
           "stack",
           9
         ],
         [
-          "vars",
-          49
+          "terminated",
+          5
+        ],
+        [
+          "trap",
+          48
+        ],
+        [
+          "nametag",
+          66
         ]
       ]
     },
@@ -2430,6 +2430,10 @@
       "type": "state",
       "value": [
         [
+          "ctxbag",
+          159
+        ],
+        [
           "vars",
           158
         ],
@@ -2442,20 +2446,16 @@
           46
         ],
         [
-          "initializing",
-          1
-        ],
-        [
-          "ctxbag",
-          159
-        ],
-        [
           "stopbag",
           9
         ],
         [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -2463,24 +2463,28 @@
       "type": "node",
       "value": [
         [
+          "node_index",
+          153
+        ],
+        [
           "component_id",
           1
+        ],
+        [
+          "before",
+          142
         ],
         [
           "parent",
           145
         ],
         [
-          "issues",
+          "blocked",
           9
         ],
         [
-          "expanded",
-          5
-        ],
-        [
-          "state",
-          160
+          "issues",
+          9
         ],
         [
           "length",
@@ -2491,16 +2495,12 @@
           155
         ],
         [
-          "before",
-          142
+          "state",
+          160
         ],
         [
-          "node_index",
-          153
-        ],
-        [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -2519,16 +2519,16 @@
           158
         ],
         [
+          "ctxbag",
+          162
+        ],
+        [
           "labels",
           9
         ],
         [
           "code",
           46
-        ],
-        [
-          "initializing",
-          1
         ],
         [
           "stopbag",
@@ -2539,8 +2539,8 @@
           null
         ],
         [
-          "ctxbag",
-          162
+          "initializing",
+          1
         ]
       ]
     },
@@ -2556,16 +2556,24 @@
           161
         ],
         [
+          "blocked",
+          9
+        ],
+        [
+          "length",
+          4
+        ],
+        [
           "issues",
           9
         ],
         [
-          "before",
-          73
+          "after",
+          94
         ],
         [
-          "expanded",
-          5
+          "before",
+          73
         ],
         [
           "state",
@@ -2576,16 +2584,8 @@
           109
         ],
         [
-          "after",
-          94
-        ],
-        [
-          "length",
-          4
-        ],
-        [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -2608,6 +2608,10 @@
           158
         ],
         [
+          "initializing",
+          1
+        ],
+        [
           "labels",
           9
         ],
@@ -2616,20 +2620,16 @@
           46
         ],
         [
-          "ctxbag",
-          166
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
         ],
         [
           "choosing",
           null
+        ],
+        [
+          "ctxbag",
+          166
         ]
       ]
     },
@@ -2641,8 +2641,16 @@
           1
         ],
         [
+          "after",
+          121
+        ],
+        [
           "parent",
           161
+        ],
+        [
+          "blocked",
+          9
         ],
         [
           "node_index",
@@ -2657,24 +2665,16 @@
           167
         ],
         [
-          "expanded",
-          5
-        ],
-        [
           "before",
           76
-        ],
-        [
-          "after",
-          121
         ],
         [
           "length",
           4
         ],
         [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -2694,6 +2694,10 @@
       "type": "state",
       "value": [
         [
+          "vars",
+          65
+        ],
+        [
           "labels",
           9
         ],
@@ -2702,24 +2706,20 @@
           46
         ],
         [
-          "vars",
-          65
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
+        ],
+        [
+          "ctxbag",
+          170
         ],
         [
           "choosing",
           null
         ],
         [
-          "ctxbag",
-          170
+          "initializing",
+          1
         ]
       ]
     },
@@ -2731,22 +2731,6 @@
           1
         ],
         [
-          "issues",
-          9
-        ],
-        [
-          "parent",
-          119
-        ],
-        [
-          "expanded",
-          5
-        ],
-        [
-          "before",
-          76
-        ],
-        [
           "after",
           121
         ],
@@ -2755,16 +2739,32 @@
           169
         ],
         [
+          "blocked",
+          9
+        ],
+        [
           "state",
           171
+        ],
+        [
+          "parent",
+          119
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "before",
+          76
         ],
         [
           "length",
           4
         ],
         [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -2792,24 +2792,24 @@
           46
         ],
         [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
         ],
         [
-          "choosing",
-          null
+          "ctxbag",
+          174
         ],
         [
           "vars",
           105
         ],
         [
-          "ctxbag",
-          174
+          "choosing",
+          null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -2817,11 +2817,19 @@
       "type": "node",
       "value": [
         [
+          "after",
+          102
+        ],
+        [
           "component_id",
           1
         ],
         [
-          "issues",
+          "before",
+          94
+        ],
+        [
+          "blocked",
           9
         ],
         [
@@ -2829,12 +2837,8 @@
           119
         ],
         [
-          "expanded",
-          5
-        ],
-        [
-          "after",
-          102
+          "issues",
+          9
         ],
         [
           "length",
@@ -2845,16 +2849,12 @@
           175
         ],
         [
-          "before",
-          94
-        ],
-        [
           "node_index",
           173
         ],
         [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -2874,6 +2874,10 @@
       "type": "state",
       "value": [
         [
+          "ctxbag",
+          178
+        ],
+        [
           "labels",
           9
         ],
@@ -2882,24 +2886,20 @@
           46
         ],
         [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
+        ],
+        [
+          "vars",
+          105
         ],
         [
           "choosing",
           null
         ],
         [
-          "ctxbag",
-          178
-        ],
-        [
-          "vars",
-          105
+          "initializing",
+          1
         ]
       ]
     },
@@ -2911,20 +2911,16 @@
           1
         ],
         [
-          "before",
-          70
+          "blocked",
+          9
         ],
         [
           "issues",
           9
         ],
         [
-          "expanded",
-          5
-        ],
-        [
-          "after",
-          83
+          "before",
+          70
         ],
         [
           "node_index",
@@ -2943,8 +2939,12 @@
           4
         ],
         [
-          "blocked",
-          9
+          "after",
+          83
+        ],
+        [
+          "expanded",
+          5
         ]
       ]
     },
@@ -2964,6 +2964,10 @@
       "type": "state",
       "value": [
         [
+          "ctxbag",
+          182
+        ],
+        [
           "labels",
           9
         ],
@@ -2972,24 +2976,20 @@
           46
         ],
         [
-          "ctxbag",
-          182
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
+        ],
+        [
+          "vars",
+          105
         ],
         [
           "choosing",
           null
         ],
         [
-          "vars",
-          105
+          "initializing",
+          1
         ]
       ]
     },
@@ -2999,6 +2999,14 @@
         [
           "component_id",
           1
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "blocked",
+          9
         ],
         [
           "node_index",
@@ -3013,28 +3021,20 @@
           183
         ],
         [
-          "expanded",
-          5
+          "parent",
+          176
         ],
         [
           "before",
           76
         ],
         [
-          "after",
-          121
-        ],
-        [
-          "parent",
-          176
-        ],
-        [
           "length",
           4
         ],
         [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -3050,24 +3050,20 @@
       "type": "context",
       "value": [
         [
-          "fp",
-          1
+          "failure",
+          48
         ],
         [
-          "terminated",
-          5
+          "vars",
+          49
+        ],
+        [
+          "interrupt_level",
+          1
         ],
         [
           "nametag",
           71
-        ],
-        [
-          "trap",
-          48
-        ],
-        [
-          "failure",
-          48
         ],
         [
           "stopped",
@@ -3078,20 +3074,24 @@
           1
         ],
         [
-          "pc",
-          186
+          "fp",
+          1
         ],
         [
-          "interrupt_level",
-          1
+          "pc",
+          186
         ],
         [
           "stack",
           9
         ],
         [
-          "vars",
-          49
+          "terminated",
+          5
+        ],
+        [
+          "trap",
+          48
         ]
       ]
     },
@@ -3125,20 +3125,20 @@
       "type": "state",
       "value": [
         [
-          "labels",
-          9
-        ],
-        [
-          "code",
-          46
+          "ctxbag",
+          191
         ],
         [
           "vars",
           190
         ],
         [
-          "initializing",
-          1
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
         ],
         [
           "stopbag",
@@ -3149,8 +3149,8 @@
           null
         ],
         [
-          "ctxbag",
-          191
+          "initializing",
+          1
         ]
       ]
     },
@@ -3166,24 +3166,12 @@
           185
         ],
         [
-          "issues",
+          "blocked",
           9
         ],
         [
-          "before",
-          102
-        ],
-        [
-          "expanded",
-          5
-        ],
-        [
-          "state",
-          192
-        ],
-        [
-          "parent",
-          176
+          "issues",
+          9
         ],
         [
           "length",
@@ -3194,8 +3182,20 @@
           187
         ],
         [
-          "blocked",
-          9
+          "parent",
+          176
+        ],
+        [
+          "state",
+          192
+        ],
+        [
+          "before",
+          102
+        ],
+        [
+          "expanded",
+          5
         ]
       ]
     },
@@ -3210,6 +3210,14 @@
       "type": "state",
       "value": [
         [
+          "ctxbag",
+          194
+        ],
+        [
+          "vars",
+          190
+        ],
+        [
           "labels",
           9
         ],
@@ -3218,24 +3226,16 @@
           46
         ],
         [
-          "vars",
-          190
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
         ],
         [
-          "ctxbag",
-          194
-        ],
-        [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -3247,28 +3247,20 @@
           1
         ],
         [
-          "parent",
-          193
+          "blocked",
+          9
         ],
         [
-          "before",
-          70
+          "parent",
+          193
         ],
         [
           "issues",
           9
         ],
         [
-          "expanded",
-          5
-        ],
-        [
-          "after",
-          83
-        ],
-        [
-          "node_index",
-          138
+          "before",
+          70
         ],
         [
           "state",
@@ -3279,8 +3271,16 @@
           4
         ],
         [
-          "blocked",
-          9
+          "node_index",
+          138
+        ],
+        [
+          "after",
+          83
+        ],
+        [
+          "expanded",
+          5
         ]
       ]
     },
@@ -3295,20 +3295,20 @@
       "type": "state",
       "value": [
         [
+          "vars",
+          190
+        ],
+        [
+          "ctxbag",
+          197
+        ],
+        [
           "labels",
           9
         ],
         [
           "code",
           46
-        ],
-        [
-          "vars",
-          190
-        ],
-        [
-          "initializing",
-          1
         ],
         [
           "stopbag",
@@ -3319,8 +3319,8 @@
           null
         ],
         [
-          "ctxbag",
-          197
+          "initializing",
+          1
         ]
       ]
     },
@@ -3332,40 +3332,40 @@
           1
         ],
         [
-          "parent",
-          193
-        ],
-        [
-          "issues",
-          9
-        ],
-        [
-          "expanded",
-          5
-        ],
-        [
-          "before",
-          76
-        ],
-        [
           "after",
           121
         ],
         [
-          "state",
-          198
+          "blocked",
+          9
         ],
         [
-          "node_index",
-          154
+          "parent",
+          193
         ],
         [
           "length",
           4
         ],
         [
-          "blocked",
+          "issues",
           9
+        ],
+        [
+          "state",
+          198
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "node_index",
+          154
+        ],
+        [
+          "expanded",
+          5
         ]
       ]
     },
@@ -3385,6 +3385,14 @@
       "type": "state",
       "value": [
         [
+          "ctxbag",
+          201
+        ],
+        [
+          "vars",
+          65
+        ],
+        [
           "labels",
           9
         ],
@@ -3393,24 +3401,16 @@
           46
         ],
         [
-          "vars",
-          65
-        ],
-        [
-          "ctxbag",
-          201
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
         ],
         [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -3422,7 +3422,15 @@
           1
         ],
         [
-          "issues",
+          "after",
+          121
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "blocked",
           9
         ],
         [
@@ -3430,32 +3438,24 @@
           200
         ],
         [
-          "expanded",
-          5
-        ],
-        [
-          "length",
-          2
-        ],
-        [
-          "before",
-          76
-        ],
-        [
-          "state",
-          202
+          "issues",
+          9
         ],
         [
           "parent",
           128
         ],
         [
-          "after",
-          121
+          "state",
+          202
         ],
         [
-          "blocked",
-          9
+          "before",
+          76
+        ],
+        [
+          "expanded",
+          5
         ]
       ]
     },
@@ -3471,6 +3471,14 @@
       "type": "state",
       "value": [
         [
+          "vars",
+          65
+        ],
+        [
+          "ctxbag",
+          204
+        ],
+        [
           "labels",
           9
         ],
@@ -3479,24 +3487,16 @@
           46
         ],
         [
-          "vars",
-          65
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
-          "ctxbag",
-          204
-        ],
-        [
           "stopbag",
           9
         ],
         [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -3508,6 +3508,10 @@
           1
         ],
         [
+          "after",
+          121
+        ],
+        [
           "parent",
           97
         ],
@@ -3516,32 +3520,28 @@
           72
         ],
         [
-          "issues",
-          9
-        ],
-        [
-          "expanded",
-          5
-        ],
-        [
           "length",
           2
         ],
         [
-          "before",
-          76
+          "blocked",
+          9
+        ],
+        [
+          "issues",
+          9
         ],
         [
           "state",
           205
         ],
         [
-          "after",
-          121
+          "before",
+          76
         ],
         [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -3557,6 +3557,10 @@
       "type": "state",
       "value": [
         [
+          "ctxbag",
+          207
+        ],
+        [
           "labels",
           9
         ],
@@ -3565,24 +3569,20 @@
           46
         ],
         [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
+        ],
+        [
+          "vars",
+          105
         ],
         [
           "choosing",
           null
         ],
         [
-          "ctxbag",
-          207
-        ],
-        [
-          "vars",
-          105
+          "initializing",
+          1
         ]
       ]
     },
@@ -3594,40 +3594,40 @@
           1
         ],
         [
-          "node_index",
-          91
-        ],
-        [
-          "issues",
-          9
-        ],
-        [
-          "expanded",
-          5
+          "after",
+          121
         ],
         [
           "length",
           2
         ],
         [
-          "before",
-          76
+          "node_index",
+          91
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "issues",
+          9
         ],
         [
           "state",
           208
         ],
         [
-          "after",
-          121
+          "before",
+          76
         ],
         [
           "parent",
           108
         ],
         [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -3646,6 +3646,14 @@
       "type": "state",
       "value": [
         [
+          "initializing",
+          1
+        ],
+        [
+          "vars",
+          190
+        ],
+        [
           "labels",
           9
         ],
@@ -3654,24 +3662,16 @@
           46
         ],
         [
-          "vars",
-          190
-        ],
-        [
-          "ctxbag",
-          211
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
         ],
         [
           "choosing",
           null
+        ],
+        [
+          "ctxbag",
+          211
         ]
       ]
     },
@@ -3683,6 +3683,10 @@
           1
         ],
         [
+          "blocked",
+          9
+        ],
+        [
           "node_index",
           210
         ],
@@ -3691,32 +3695,28 @@
           9
         ],
         [
-          "before",
-          102
-        ],
-        [
-          "expanded",
-          5
+          "after",
+          187
         ],
         [
           "state",
           212
         ],
         [
-          "parent",
-          108
+          "before",
+          102
         ],
         [
           "length",
           4
         ],
         [
-          "after",
-          187
+          "parent",
+          108
         ],
         [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -3735,6 +3735,10 @@
       "type": "state",
       "value": [
         [
+          "vars",
+          190
+        ],
+        [
           "labels",
           9
         ],
@@ -3743,24 +3747,20 @@
           46
         ],
         [
-          "vars",
-          190
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
+        ],
+        [
+          "ctxbag",
+          215
         ],
         [
           "choosing",
           null
         ],
         [
-          "ctxbag",
-          215
+          "initializing",
+          1
         ]
       ]
     },
@@ -3768,32 +3768,16 @@
       "type": "node",
       "value": [
         [
-          "component_id",
-          1
-        ],
-        [
-          "issues",
-          9
-        ],
-        [
-          "blocked",
-          9
-        ],
-        [
-          "length",
-          2
-        ],
-        [
-          "before",
-          76
-        ],
-        [
           "expanded",
           1
         ],
         [
-          "state",
-          216
+          "component_id",
+          1
+        ],
+        [
+          "parent",
+          213
         ],
         [
           "after",
@@ -3804,8 +3788,24 @@
           214
         ],
         [
-          "parent",
-          213
+          "length",
+          2
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "state",
+          216
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "before",
+          76
         ]
       ]
     },
@@ -3824,6 +3824,10 @@
       "type": "state",
       "value": [
         [
+          "vars",
+          190
+        ],
+        [
           "labels",
           9
         ],
@@ -3832,24 +3836,20 @@
           46
         ],
         [
-          "vars",
-          190
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
+        ],
+        [
+          "ctxbag",
+          219
         ],
         [
           "choosing",
           null
         ],
         [
-          "ctxbag",
-          219
+          "initializing",
+          1
         ]
       ]
     },
@@ -3857,44 +3857,44 @@
       "type": "node",
       "value": [
         [
-          "component_id",
-          1
-        ],
-        [
-          "issues",
-          115
-        ],
-        [
-          "blocked",
-          9
-        ],
-        [
-          "length",
-          2
-        ],
-        [
           "expanded",
           1
         ],
         [
-          "after",
-          111
+          "component_id",
+          1
+        ],
+        [
+          "parent",
+          213
         ],
         [
           "state",
           220
         ],
         [
-          "node_index",
-          218
+          "length",
+          2
+        ],
+        [
+          "blocked",
+          9
         ],
         [
           "before",
           87
         ],
         [
-          "parent",
-          213
+          "after",
+          111
+        ],
+        [
+          "issues",
+          115
+        ],
+        [
+          "node_index",
+          218
         ]
       ]
     },
@@ -3910,6 +3910,10 @@
       "type": "state",
       "value": [
         [
+          "vars",
+          65
+        ],
+        [
           "labels",
           9
         ],
@@ -3918,24 +3922,20 @@
           46
         ],
         [
-          "vars",
-          65
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
+        ],
+        [
+          "ctxbag",
+          222
         ],
         [
           "choosing",
           null
         ],
         [
-          "ctxbag",
-          222
+          "initializing",
+          1
         ]
       ]
     },
@@ -3943,24 +3943,16 @@
       "type": "node",
       "value": [
         [
+          "expanded",
+          1
+        ],
+        [
           "component_id",
           1
         ],
         [
-          "issues",
-          9
-        ],
-        [
-          "length",
-          2
-        ],
-        [
-          "before",
-          76
-        ],
-        [
-          "expanded",
-          1
+          "node_index",
+          98
         ],
         [
           "after",
@@ -3971,16 +3963,24 @@
           223
         ],
         [
-          "parent",
-          149
+          "length",
+          2
         ],
         [
           "blocked",
           9
         ],
         [
-          "node_index",
-          98
+          "issues",
+          9
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "parent",
+          149
         ]
       ]
     },
@@ -4004,24 +4004,24 @@
           46
         ],
         [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
         ],
         [
-          "choosing",
-          null
+          "ctxbag",
+          225
         ],
         [
           "vars",
           105
         ],
         [
-          "ctxbag",
-          225
+          "choosing",
+          null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -4029,44 +4029,44 @@
       "type": "node",
       "value": [
         [
-          "component_id",
-          1
-        ],
-        [
-          "issues",
-          9
-        ],
-        [
-          "state",
-          226
-        ],
-        [
-          "expanded",
-          5
-        ],
-        [
           "after",
           102
         ],
         [
-          "node_index",
-          186
+          "component_id",
+          1
         ],
         [
           "before",
           94
         ],
         [
+          "state",
+          226
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
           "parent",
           149
+        ],
+        [
+          "node_index",
+          186
         ],
         [
           "length",
           4
         ],
         [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -4094,24 +4094,24 @@
           46
         ],
         [
-          "initializing",
-          1
+          "ctxbag",
+          229
         ],
         [
           "stopbag",
           9
         ],
         [
+          "vars",
+          105
+        ],
+        [
           "choosing",
           null
         ],
         [
-          "ctxbag",
-          229
-        ],
-        [
-          "vars",
-          105
+          "initializing",
+          1
         ]
       ]
     },
@@ -4119,28 +4119,36 @@
       "type": "node",
       "value": [
         [
+          "expanded",
+          1
+        ],
+        [
           "component_id",
           1
         ],
         [
-          "issues",
-          9
+          "after",
+          121
         ],
         [
           "length",
           2
         ],
         [
+          "blocked",
+          9
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "state",
+          230
+        ],
+        [
           "before",
           76
-        ],
-        [
-          "expanded",
-          1
-        ],
-        [
-          "after",
-          121
         ],
         [
           "node_index",
@@ -4149,14 +4157,6 @@
         [
           "parent",
           227
-        ],
-        [
-          "state",
-          230
-        ],
-        [
-          "blocked",
-          9
         ]
       ]
     },
@@ -4179,6 +4179,14 @@
       "type": "state",
       "value": [
         [
+          "ctxbag",
+          233
+        ],
+        [
+          "vars",
+          232
+        ],
+        [
           "labels",
           9
         ],
@@ -4187,24 +4195,16 @@
           46
         ],
         [
-          "vars",
-          232
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
         ],
         [
-          "ctxbag",
-          233
-        ],
-        [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -4212,44 +4212,44 @@
       "type": "node",
       "value": [
         [
-          "component_id",
-          1
-        ],
-        [
-          "node_index",
-          75
-        ],
-        [
-          "issues",
-          9
-        ],
-        [
-          "parent",
-          164
-        ],
-        [
-          "expanded",
-          5
-        ],
-        [
-          "state",
-          234
-        ],
-        [
           "after",
           102
+        ],
+        [
+          "component_id",
+          1
         ],
         [
           "before",
           94
         ],
         [
+          "blocked",
+          9
+        ],
+        [
+          "node_index",
+          75
+        ],
+        [
+          "parent",
+          164
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "state",
+          234
+        ],
+        [
           "length",
           4
         ],
         [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -4264,20 +4264,20 @@
       "type": "state",
       "value": [
         [
-          "labels",
-          9
-        ],
-        [
-          "code",
-          46
+          "ctxbag",
+          236
         ],
         [
           "vars",
           190
         ],
         [
-          "initializing",
-          1
+          "labels",
+          9
+        ],
+        [
+          "code",
+          46
         ],
         [
           "stopbag",
@@ -4288,8 +4288,8 @@
           null
         ],
         [
-          "ctxbag",
-          236
+          "initializing",
+          1
         ]
       ]
     },
@@ -4301,6 +4301,10 @@
           1
         ],
         [
+          "blocked",
+          9
+        ],
+        [
           "node_index",
           120
         ],
@@ -4309,32 +4313,28 @@
           9
         ],
         [
-          "before",
-          102
-        ],
-        [
-          "expanded",
-          5
+          "after",
+          187
         ],
         [
           "state",
           237
         ],
         [
-          "parent",
-          227
+          "before",
+          102
         ],
         [
           "length",
           4
         ],
         [
-          "after",
-          187
+          "parent",
+          227
         ],
         [
-          "blocked",
-          9
+          "expanded",
+          5
         ]
       ]
     },
@@ -4353,6 +4353,14 @@
       "type": "state",
       "value": [
         [
+          "ctxbag",
+          240
+        ],
+        [
+          "vars",
+          190
+        ],
+        [
           "labels",
           9
         ],
@@ -4361,24 +4369,16 @@
           46
         ],
         [
-          "vars",
-          190
-        ],
-        [
-          "ctxbag",
-          240
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
         ],
         [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -4386,15 +4386,23 @@
       "type": "node",
       "value": [
         [
+          "expanded",
+          1
+        ],
+        [
           "component_id",
           1
         ],
         [
-          "state",
-          241
+          "after",
+          121
         ],
         [
-          "issues",
+          "length",
+          2
+        ],
+        [
+          "blocked",
           9
         ],
         [
@@ -4406,24 +4414,16 @@
           238
         ],
         [
-          "length",
-          2
+          "state",
+          241
+        ],
+        [
+          "issues",
+          9
         ],
         [
           "before",
           76
-        ],
-        [
-          "expanded",
-          1
-        ],
-        [
-          "after",
-          121
-        ],
-        [
-          "blocked",
-          9
         ]
       ]
     },
@@ -4468,24 +4468,24 @@
           46
         ],
         [
+          "stopbag",
+          9
+        ],
+        [
           "ctxbag",
           247
         ],
         [
-          "initializing",
-          1
-        ],
-        [
-          "stopbag",
-          9
+          "vars",
+          246
         ],
         [
           "choosing",
           null
         ],
         [
-          "vars",
-          246
+          "initializing",
+          1
         ]
       ]
     },
@@ -4493,44 +4493,44 @@
       "type": "node",
       "value": [
         [
+          "node_index",
+          243
+        ],
+        [
           "component_id",
           1
+        ],
+        [
+          "state",
+          248
         ],
         [
           "parent",
           235
         ],
         [
-          "issues",
+          "blocked",
           9
         ],
         [
-          "before",
-          102
-        ],
-        [
-          "expanded",
-          5
+          "issues",
+          9
         ],
         [
           "after",
           187
         ],
         [
+          "before",
+          102
+        ],
+        [
           "length",
           4
         ],
         [
-          "node_index",
-          243
-        ],
-        [
-          "blocked",
-          9
-        ],
-        [
-          "state",
-          248
+          "expanded",
+          5
         ]
       ]
     },
@@ -4561,8 +4561,8 @@
           46
         ],
         [
-          "initializing",
-          1
+          "ctxbag",
+          251
         ],
         [
           "stopbag",
@@ -4573,8 +4573,8 @@
           null
         ],
         [
-          "ctxbag",
-          251
+          "initializing",
+          1
         ]
       ]
     },
@@ -4582,27 +4582,11 @@
       "type": "node",
       "value": [
         [
-          "component_id",
+          "expanded",
           1
         ],
         [
-          "issues",
-          9
-        ],
-        [
-          "parent",
-          164
-        ],
-        [
-          "length",
-          2
-        ],
-        [
-          "before",
-          76
-        ],
-        [
-          "expanded",
+          "component_id",
           1
         ],
         [
@@ -4610,16 +4594,32 @@
           121
         ],
         [
-          "node_index",
-          250
-        ],
-        [
           "state",
           252
         ],
         [
+          "length",
+          2
+        ],
+        [
           "blocked",
           9
+        ],
+        [
+          "parent",
+          164
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "before",
+          76
+        ],
+        [
+          "node_index",
+          250
         ]
       ]
     },
@@ -4638,6 +4638,14 @@
       "type": "state",
       "value": [
         [
+          "vars",
+          232
+        ],
+        [
+          "ctxbag",
+          255
+        ],
+        [
           "labels",
           9
         ],
@@ -4646,24 +4654,16 @@
           46
         ],
         [
-          "vars",
-          232
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
         ],
         [
-          "ctxbag",
-          255
-        ],
-        [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -4671,32 +4671,12 @@
       "type": "node",
       "value": [
         [
-          "component_id",
-          1
-        ],
-        [
-          "parent",
-          235
-        ],
-        [
-          "issues",
-          9
-        ],
-        [
-          "length",
-          2
-        ],
-        [
-          "before",
-          76
-        ],
-        [
           "expanded",
           1
         ],
         [
-          "node_index",
-          254
+          "component_id",
+          1
         ],
         [
           "after",
@@ -4707,8 +4687,28 @@
           256
         ],
         [
+          "parent",
+          235
+        ],
+        [
+          "length",
+          2
+        ],
+        [
           "blocked",
           9
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "node_index",
+          254
+        ],
+        [
+          "before",
+          76
         ]
       ]
     },
@@ -4726,6 +4726,10 @@
       "type": "state",
       "value": [
         [
+          "ctxbag",
+          259
+        ],
+        [
           "labels",
           9
         ],
@@ -4734,24 +4738,20 @@
           46
         ],
         [
-          "initializing",
-          1
-        ],
-        [
-          "ctxbag",
-          259
-        ],
-        [
           "stopbag",
           9
+        ],
+        [
+          "vars",
+          246
         ],
         [
           "choosing",
           null
         ],
         [
-          "vars",
-          246
+          "initializing",
+          1
         ]
       ]
     },
@@ -4759,8 +4759,28 @@
       "type": "node",
       "value": [
         [
+          "expanded",
+          1
+        ],
+        [
           "component_id",
           1
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "node_index",
+          258
         ],
         [
           "state",
@@ -4771,32 +4791,12 @@
           9
         ],
         [
-          "node_index",
-          258
-        ],
-        [
-          "length",
-          2
-        ],
-        [
-          "expanded",
-          1
-        ],
-        [
           "before",
           76
         ],
         [
-          "after",
-          121
-        ],
-        [
           "parent",
           249
-        ],
-        [
-          "blocked",
-          9
         ]
       ]
     },
@@ -4816,10 +4816,6 @@
       "type": "state",
       "value": [
         [
-          "ctxbag",
-          263
-        ],
-        [
           "labels",
           9
         ],
@@ -4828,20 +4824,24 @@
           46
         ],
         [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
+        ],
+        [
+          "vars",
+          105
+        ],
+        [
+          "ctxbag",
+          263
         ],
         [
           "choosing",
           null
         ],
         [
-          "vars",
-          105
+          "initializing",
+          1
         ]
       ]
     },
@@ -4849,12 +4849,32 @@
       "type": "node",
       "value": [
         [
-          "node_index",
-          262
+          "expanded",
+          1
         ],
         [
           "component_id",
           1
+        ],
+        [
+          "after",
+          121
+        ],
+        [
+          "node_index",
+          262
+        ],
+        [
+          "length",
+          2
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "parent",
+          180
         ],
         [
           "state",
@@ -4865,28 +4885,8 @@
           9
         ],
         [
-          "parent",
-          180
-        ],
-        [
-          "length",
-          2
-        ],
-        [
           "before",
           76
-        ],
-        [
-          "expanded",
-          1
-        ],
-        [
-          "after",
-          121
-        ],
-        [
-          "blocked",
-          9
         ]
       ]
     },
@@ -4898,20 +4898,16 @@
       "type": "context",
       "value": [
         [
-          "vars",
-          80
-        ],
-        [
-          "trap",
-          48
-        ],
-        [
-          "terminated",
-          1
-        ],
-        [
           "failure",
           48
+        ],
+        [
+          "fp",
+          2
+        ],
+        [
+          "interrupt_level",
+          1
         ],
         [
           "stopped",
@@ -4922,16 +4918,16 @@
           138
         ],
         [
-          "fp",
-          2
-        ],
-        [
           "atomic",
           1
         ],
         [
-          "interrupt_level",
-          1
+          "vars",
+          80
+        ],
+        [
+          "trap",
+          48
         ],
         [
           "stack",
@@ -4940,6 +4936,10 @@
         [
           "nametag",
           66
+        ],
+        [
+          "terminated",
+          1
         ]
       ]
     },
@@ -4955,6 +4955,10 @@
       "type": "state",
       "value": [
         [
+          "ctxbag",
+          268
+        ],
+        [
           "labels",
           9
         ],
@@ -4963,24 +4967,20 @@
           46
         ],
         [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
+        ],
+        [
+          "vars",
+          105
         ],
         [
           "choosing",
           null
         ],
         [
-          "ctxbag",
-          268
-        ],
-        [
-          "vars",
-          105
+          "initializing",
+          1
         ]
       ]
     },
@@ -4988,15 +4988,19 @@
       "type": "node",
       "value": [
         [
+          "node_index",
+          266
+        ],
+        [
           "component_id",
           1
         ],
         [
-          "before",
-          83
+          "state",
+          269
         ],
         [
-          "issues",
+          "blocked",
           9
         ],
         [
@@ -5004,28 +5008,24 @@
           180
         ],
         [
-          "expanded",
-          5
+          "issues",
+          9
         ],
         [
-          "state",
-          269
+          "before",
+          83
         ],
         [
-          "node_index",
-          266
+          "after",
+          267
         ],
         [
           "length",
           4
         ],
         [
-          "blocked",
-          9
-        ],
-        [
-          "after",
-          267
+          "expanded",
+          5
         ]
       ]
     },
@@ -5045,6 +5045,10 @@
       "type": "state",
       "value": [
         [
+          "ctxbag",
+          272
+        ],
+        [
           "labels",
           9
         ],
@@ -5053,24 +5057,20 @@
           46
         ],
         [
-          "ctxbag",
-          272
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
+        ],
+        [
+          "vars",
+          105
         ],
         [
           "choosing",
           null
         ],
         [
-          "vars",
-          105
+          "initializing",
+          1
         ]
       ]
     },
@@ -5078,35 +5078,11 @@
       "type": "node",
       "value": [
         [
-          "component_id",
+          "expanded",
           1
         ],
         [
-          "node_index",
-          271
-        ],
-        [
-          "issues",
-          9
-        ],
-        [
-          "parent",
-          270
-        ],
-        [
-          "state",
-          273
-        ],
-        [
-          "length",
-          2
-        ],
-        [
-          "before",
-          76
-        ],
-        [
-          "expanded",
+          "component_id",
           1
         ],
         [
@@ -5114,8 +5090,32 @@
           121
         ],
         [
+          "length",
+          2
+        ],
+        [
+          "node_index",
+          271
+        ],
+        [
+          "parent",
+          270
+        ],
+        [
           "blocked",
           9
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "state",
+          273
+        ],
+        [
+          "before",
+          76
         ]
       ]
     },
@@ -5134,6 +5134,10 @@
       "type": "state",
       "value": [
         [
+          "vars",
+          190
+        ],
+        [
           "labels",
           9
         ],
@@ -5142,24 +5146,20 @@
           46
         ],
         [
-          "ctxbag",
-          276
-        ],
-        [
-          "vars",
-          190
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
         ],
         [
+          "ctxbag",
+          276
+        ],
+        [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -5175,26 +5175,6 @@
           275
         ],
         [
-          "before",
-          83
-        ],
-        [
-          "parent",
-          196
-        ],
-        [
-          "issues",
-          9
-        ],
-        [
-          "expanded",
-          5
-        ],
-        [
-          "length",
-          4
-        ],
-        [
           "state",
           277
         ],
@@ -5203,8 +5183,28 @@
           9
         ],
         [
+          "issues",
+          9
+        ],
+        [
+          "parent",
+          196
+        ],
+        [
+          "before",
+          83
+        ],
+        [
           "after",
           267
+        ],
+        [
+          "length",
+          4
+        ],
+        [
+          "expanded",
+          5
         ]
       ]
     },
@@ -5223,6 +5223,10 @@
       "type": "state",
       "value": [
         [
+          "vars",
+          190
+        ],
+        [
           "labels",
           9
         ],
@@ -5231,12 +5235,8 @@
           46
         ],
         [
-          "vars",
-          190
-        ],
-        [
-          "initializing",
-          1
+          "ctxbag",
+          280
         ],
         [
           "stopbag",
@@ -5247,8 +5247,8 @@
           null
         ],
         [
-          "ctxbag",
-          280
+          "initializing",
+          1
         ]
       ]
     },
@@ -5256,27 +5256,11 @@
       "type": "node",
       "value": [
         [
-          "component_id",
+          "expanded",
           1
         ],
         [
-          "parent",
-          196
-        ],
-        [
-          "issues",
-          9
-        ],
-        [
-          "length",
-          2
-        ],
-        [
-          "before",
-          76
-        ],
-        [
-          "expanded",
+          "component_id",
           1
         ],
         [
@@ -5284,16 +5268,32 @@
           121
         ],
         [
-          "node_index",
-          279
+          "length",
+          2
+        ],
+        [
+          "blocked",
+          9
+        ],
+        [
+          "issues",
+          9
+        ],
+        [
+          "parent",
+          196
         ],
         [
           "state",
           281
         ],
         [
-          "blocked",
-          9
+          "before",
+          76
+        ],
+        [
+          "node_index",
+          279
         ]
       ]
     },
@@ -5312,6 +5312,14 @@
       "type": "state",
       "value": [
         [
+          "ctxbag",
+          284
+        ],
+        [
+          "vars",
+          190
+        ],
+        [
           "labels",
           9
         ],
@@ -5320,24 +5328,16 @@
           46
         ],
         [
-          "vars",
-          190
-        ],
-        [
-          "initializing",
-          1
-        ],
-        [
           "stopbag",
           9
         ],
         [
-          "ctxbag",
-          284
-        ],
-        [
           "choosing",
           null
+        ],
+        [
+          "initializing",
+          1
         ]
       ]
     },
@@ -5345,32 +5345,36 @@
       "type": "node",
       "value": [
         [
+          "expanded",
+          1
+        ],
+        [
           "component_id",
           1
         ],
         [
-          "issues",
-          9
+          "after",
+          121
         ],
         [
           "length",
           2
         ],
         [
-          "before",
-          76
+          "blocked",
+          9
         ],
         [
-          "expanded",
-          1
+          "issues",
+          9
         ],
         [
           "node_index",
           283
         ],
         [
-          "after",
-          121
+          "before",
+          76
         ],
         [
           "state",
@@ -5379,10 +5383,6 @@
         [
           "parent",
           278
-        ],
-        [
-          "blocked",
-          9
         ]
       ]
     },
@@ -5402,6 +5402,10 @@
       "type": "state",
       "value": [
         [
+          "ctxbag",
+          288
+        ],
+        [
           "labels",
           9
         ],
@@ -5410,24 +5414,20 @@
           46
         ],
         [
-          "initializing",
-          1
-        ],
-        [
-          "ctxbag",
-          288
-        ],
-        [
           "stopbag",
           9
+        ],
+        [
+          "vars",
+          105
         ],
         [
           "choosing",
           null
         ],
         [
-          "vars",
-          105
+          "initializing",
+          1
         ]
       ]
     },
@@ -5435,44 +5435,44 @@
       "type": "node",
       "value": [
         [
-          "component_id",
-          1
-        ],
-        [
-          "length",
-          125
-        ],
-        [
-          "node_index",
-          287
-        ],
-        [
-          "issues",
-          115
-        ],
-        [
-          "state",
-          289
-        ],
-        [
-          "parent",
-          209
-        ],
-        [
           "expanded",
           1
         ],
         [
-          "after",
-          111
+          "component_id",
+          1
+        ],
+        [
+          "blocked",
+          9
         ],
         [
           "before",
           87
         ],
         [
-          "blocked",
-          9
+          "parent",
+          209
+        ],
+        [
+          "after",
+          111
+        ],
+        [
+          "node_index",
+          287
+        ],
+        [
+          "state",
+          289
+        ],
+        [
+          "issues",
+          115
+        ],
+        [
+          "length",
+          125
         ]
       ]
     }
