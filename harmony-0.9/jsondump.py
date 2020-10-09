@@ -77,7 +77,7 @@ def jsondump(nodes, bad_node) -> None:
     """
     bad_node_json = jsonify_node(bad_node)
     nodes_json = [jsonify_node(n) for n in nodes]
-    encoded = JSONEncoder(indent=4).encode({
+    encoded = JSONEncoder().encode({
         "nodes": nodes_json,
         "badNode": bad_node_json
     })

@@ -47,7 +47,7 @@ class ValueDump:
     def create_json_dump(self) -> str:
         bad_node_dump = self.__dump_node(self.bad_node)
         nodes_dump = [self.__dump_node(n) for n in self.nodes]
-        return json.JSONEncoder(default=lambda s: self.edge_case_default(s), indent=2).encode({
+        return json.JSONEncoder(default=lambda s: self.edge_case_default(s)).encode({
             'values': self.v_array.get(),
             'bad_node': bad_node_dump,
             'nodes': nodes_dump

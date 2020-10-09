@@ -4624,6 +4624,7 @@ def main():
     if printCode == None:
         from jsondump import jsondump
         (nodes, bad_node) = run(code, scope.labels, mpc, spc, blockflag)
+        jsondump(nodes, bad_node)
         valuedump(nodes, bad_node)
         # htmldump(nodes, code, scope, bad_node, fulldump, False)
 
