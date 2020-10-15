@@ -3,6 +3,15 @@ from typing import List, Optional, Dict, Any
 from value import NodeType, ContextType, StateType
 
 
+def get_type(v: Any, type_val: str = None):
+    if type_val is None:
+        type_str = str(type(v))
+        # Get the type inside of type string
+        return type_str[8:-2]
+    else:
+        return type_val
+
+
 class ValueArray:
 
     def __init__(self):
@@ -27,8 +36,9 @@ class ValueArray:
         if value in self.value_to_index:
             return self.value_to_index[value]
         else:
+
             self.array.append({
-                'type': str(type(value)) if type_of_value is None else type_of_value,
+                'type': get_type(value, type_of_value),
                 'value': value
             })
             index = len(self.array) - 1
@@ -36,18 +46,19 @@ class ValueArray:
             return index
 
 
-class ValueDump:
+def edge_case_default(v):
+    if type(v) == frozenset:
+        return list(v)
+    else:
+        return str(v)
 
-    def edge_case_default(self, v):
-        if type(v) == frozenset:
-            return list(v)
-        else:
-            return str(v)
+
+class ValueDump:
 
     def create_json_dump(self) -> str:
         bad_node_dump = self.__dump_node(self.bad_node)
         nodes_dump = [self.__dump_node(n) for n in self.nodes]
-        return json.JSONEncoder(default=lambda s: self.edge_case_default(s)).encode({
+        return json.JSONEncoder(default=lambda s: edge_case_default(s)).encode({
             'values': self.v_array.get(),
             'bad_node': bad_node_dump,
             'nodes': nodes_dump

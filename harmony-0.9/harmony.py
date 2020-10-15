@@ -31,7 +31,8 @@
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 """
-from valuedump import valuedump
+from analysis.analysis import get_html_content
+from value import Value
 
 internal_modules = {
 #############################
@@ -717,9 +718,6 @@ def keyValue(v):
     assert isinstance(v, Value), v
     return v.key()
 
-class Value:
-    def __str__(self):
-        return self.__repr__()
 
 class PcValue(Value):
     def __init__(self, pc):
@@ -4133,6 +4131,7 @@ def genpath(n):
     path2.append((lastctx, laststeps, laststates, lastvars))
     return path2
 
+# htmlpath(bad_node, "red", file)
 def htmlpath(n, color, f):
     # Generate a label for the path table
     issues = n.issues
@@ -4364,8 +4363,8 @@ def htmlnode(n, code, scope, f, verbose):
         htmlrow(ctx, n.state.stopbag, n, code, scope, f, verbose)
 
     print("</table>", file=f)
-    print("</div>", file=f);
-    print("</div>", file=f);
+    print("</div>", file=f)
+    print("</div>", file=f)
 
 def htmlcode(code, scope, f):
     print("<div id='table-wrapper'>", file=f)
@@ -4461,6 +4460,7 @@ table td, table th {
                 htmlnode(n, code, scope, f, verbose)
         else:
             if node == None:
+                # if no bad node
                 cnt = 0
                 for n in nodes:
                     htmlnode(n, code, scope, f, verbose)
@@ -4468,6 +4468,7 @@ table td, table th {
                     if not fulldump and cnt > 100:
                         break
             else:
+                # if there is a bad node
                 n = node
                 while n != None:
                     htmlnode(n, code, scope, f, verbose)
@@ -4622,11 +4623,27 @@ def main():
         (spc, file, line, column) = v
 
     if printCode == None:
-        from jsondump import jsondump
+        print("Doing stuff")
         (nodes, bad_node) = run(code, scope.labels, mpc, spc, blockflag)
-        jsondump(nodes, bad_node)
-        valuedump(nodes, bad_node)
-        # htmldump(nodes, code, scope, bad_node, fulldump, False)
+        # print("Dumping values")
+        # valuedump(nodes, bad_node)
+        # print("Dumping json")
+        # jsondump(nodes, bad_node)
+
+        get_html_content(nodes, bad_node, code, scope, fulldump, files, {
+            'push_op': PushOp,
+            'jump_op': JumpOp,
+            'jump_cond_op': JumpCondOp,
+            'pc_value': PcValue
+        })
+
+        htmldump(nodes, code, scope, bad_node, fulldump, False)
+
+
+def execute(filepath: str):
+    sys.argv = ["python", filepath]
+    main()
+
 
 if __name__ == "__main__":
     main()

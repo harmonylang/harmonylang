@@ -20,8 +20,9 @@ class NodeType:
     state: StateType
 
 
-class ValueType:
-    pass
+class Value:
+    def __str__(self):
+        return self.__repr__()
 
 
 class NameTagType:
