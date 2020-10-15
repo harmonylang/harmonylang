@@ -40,9 +40,9 @@ def get_code(code, scope, files, typings) -> List[MacroStep]:
                     executed_code.clear()
             last_loc = filename, line
         explanation = code[pc].explain()
-        if isinstance(code[pc], typings['jump_op']) or isinstance(code[pc], typings['jump_cond_op']):
+        if isinstance(code[pc], typings['JumpOp']) or isinstance(code[pc], typings['JumpCondOp']):
             executed_code.append((pc, str(code[pc]), explanation, code[pc].pc))
-        elif isinstance(code[pc], typings['push_op']) and isinstance(code[pc].constant[0], typings['pc_value']):
+        elif isinstance(code[pc], typings['PushOp']) and isinstance(code[pc].constant[0], typings['PcValue']):
             executed_code.append((pc, f"Push {str_of_value(code[pc].constant[0])}", explanation, code[pc].constant[0].pc))
         else:
             executed_code.append((pc, str(code[pc]), explanation, None))

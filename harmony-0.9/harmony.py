@@ -4631,11 +4631,13 @@ def main():
         # jsondump(nodes, bad_node)
 
         get_html_content(nodes, bad_node, code, scope, fulldump, files, {
-            'push_op': PushOp,
-            'jump_op': JumpOp,
-            'jump_cond_op': JumpCondOp,
-            'pc_value': PcValue
-        })
+            'PushOp': PushOp,
+            'JumpOp': JumpOp,
+            'JumpCondOp': JumpCondOp,
+            'PcValue': PcValue,
+            'FrameOp': FrameOp,
+            'DictValue': DictValue
+        }, verbose=False, novalue=novalue)
 
         htmldump(nodes, code, scope, bad_node, fulldump, False)
 

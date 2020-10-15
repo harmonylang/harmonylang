@@ -1,73 +1,66 @@
-from typing import List
+from typing import List, Tuple
 
 from analysis.path import get_path, process_steps
 from analysis.util import nametag_to_str, str_of_value
 
 
-def htmlloc(code, scope, ctx, files, trace_id: List[int]):
+def htmlloc(code, scope, ctx, files, trace_id: List[int], typings, novalue):
     pc = ctx.pc
     fp = ctx.fp
-    print("<table id='loc%d' border='1' width='100%%'>" % trace_id[0], file=f)
+    location = trace_id[0]
+    # print("<table id='loc%d' border='1' width='100%%'>" % trace_id[0], file=f)
     trace = []
     while True:
         trace += [(pc, fp)]
         if fp < 5:
             break
         pc = ctx.stack[fp - 5]
-        assert isinstance(pc, PcValue)
+        assert isinstance(pc, typings['PcValue'])
         pc = pc.pc
         fp = ctx.stack[fp - 1]
     trace.reverse()
     row = 0
+    output = []
     for (pc, fp) in trace:
-        if row == 0:
-            print("<tr style='background-color: #A5FF33'>", file=f)
-        else:
-            print("<tr>", file=f)
-        print("<td>", file=f)
-        print("<a href='#P%d'>%d</a> "%(pc, pc), file=f)
-        print("<a href='javascript:setrow(%d,%d)'>"%(trace_id[0], row), file=f)
         while pc >= 0 and pc not in scope.locations:
             pc -= 1
         (file, line) = scope.locations[pc]
-        while pc >= 0 and not isinstance(code[pc], FrameOp):
+        while pc >= 0 and not isinstance(code[pc], typings['FrameOp']):
             pc -= 1
         if fp >= 3:
             arg = ctx.stack[fp-3]
             if arg == novalue:
-                print("%s()"%(code[pc].name[0]), end="", file=f)
+                output.append(f"{code[pc].name[0]}()")
             else:
-                print("%s(%s)"%(code[pc].name[0], str_of_value(arg)), end="", file=f)
-        print("</a>:", file=f)
+                output.append(f"{code[pc].name[0]}({str_of_value(arg)})")
         lines = files.get(file)
         if lines is not None and line <= len(lines):
-            print(html.escape(lines[line - 1]), file=f)
-        print("</td></tr>", file=f)
+            output.append(lines[line - 1])
         row += 1
-
     if ctx.failure is not None:
-        print("<tr style='color: red'><td>%s</td></tr>"%ctx.failure, file=f)
-    print("</table>", file=f)
+        return {
+            'lines': output,
+            'failure': ctx.failure
+        }
+    else:
+        return {
+            'lines': output,
+            'failure': None
+        }
 
 
-def htmlvars(vars, id, row, trace_id: List[int]):
-    assert(isinstance(vars, DictValue))
+def htmlvars(vars, id, row, trace_id: List[int], typings):
+    assert(isinstance(vars, typings['DictValue']))
     display = "block" if row == 0 else "none"
-    print("<div id='vars%d_%d' style='display:%s'>"%(trace_id[0], row, display), file=f)
-    if len(vars.d) > 0:
-        print("<table>", file=f)
-        for (key, value) in vars.d.items():
-            print("<tr>", file=f)
-            print("<td>%s = %s</td>" % (str_of_value(key)[1:], str_of_value(value)), file=f)
-            print("</tr>", file=f)
-        print("</table>", file=f)
-    print("</div>", file=f)
+    variables = [(str_of_value(key)[1:], str_of_value(value)) for key, value in vars.d.items()]
+    return variables, display
 
 
-def htmltrace(code, scope, ctx, trace_id):
+def htmltrace(code, scope, ctx, trace_id, typings) -> list:
     pc = ctx.pc
     fp = ctx.fp
     trace = [ctx.vars]
+    variables = []
     while True:
         if fp < 5:
             break
@@ -75,13 +68,13 @@ def htmltrace(code, scope, ctx, trace_id):
         fp = ctx.stack[fp - 1]
     trace.reverse()
     for i in range(len(trace)):
-        htmlvars(trace[i], trace_id, i)
+        variables.append(htmlvars(trace[i], trace_id[0], i, trace_id, typings))
+    return variables
 
 
-def htmlrow(ctx, bag, node, code, scope, verbose, files, trace_id: List[int]):
+def htmlrow(ctx, bag, node, code, scope, verbose, files, trace_id: List[int], typings, novalue):
     trace_id[0] += 1
 
-    print("<tr>", file=f)
     process = nametag_to_str(ctx.nametag)
     copies = bag[ctx]
     stopped = ctx.stopped
@@ -94,40 +87,45 @@ def htmlrow(ctx, bag, node, code, scope, verbose, files, trace_id: List[int]):
         else:
             failed = True
 
-    htmlloc(code, scope, ctx, files, trace_id)
+    locs = htmlloc(code, scope, ctx, files, trace_id, typings, novalue)
 
     # print variables
-    htmltrace(code, scope, ctx, trace_id)
+    variables = htmltrace(code, scope, ctx, trace_id, typings)
 
     # print stack
+    context_details = {}
     if verbose:
-        print("<td>%d</td>" % ctx.fp, file=f)
-        print("<td align='center'>", file=f)
-        print("<table border='1'>", file=f)
+        context_details['fp'] = ctx.fp
+        stack = []
         for v in ctx.stack:
-            print("<tr><td align='center'>", file=f)
-            if isinstance(v, PcValue):
-                print("<a href='#P%d'>"%v.pc, file=f)
-                print("%s" % str_of_value(v), file=f)
-                print("</a>", file=f)
+            if isinstance(v, typings['PcValue']):
+                stack.append((v.pc, str_of_value(v)))
             else:
-                print("%s" % str_of_value(v), file=f)
-            print("</td></tr>", file=f)
-        print("</table>", file=f)
-        print("</td>", file=f)
-        assert not s.choosing
+                stack.append((None, str_of_value(v)))
+        context_details['stack'] = stack
+        assert not choosing
+        steps_in_ctx = []
+        uid = None
         if ctx in node.edges:
             nn, nc, steps = node.edges[ctx]
-            print("<td>%s</td>" % process_steps(steps), file=f)
-            print("<td><a href='javascript:show(%d)'>" % nn.uid, file=f)
-            print("%d</a></td>" % nn.uid, file=f)
-        else:
-            print("<td>no steps</td>", file=f)
-            print("<td></td>", file=f)
-    print("</tr>", file=f)
+            steps_in_ctx = process_steps(steps)
+            uid = nn.uid
+        context_details['steps'] = steps_in_ctx
+        context_details['uid'] = uid
+    return {
+        'stopped': stopped,
+        'blocked': blocked,
+        'failed': failed,
+        'choosing': choosing,
+        'process_name': process,
+        'number_of_copies': copies,
+        'variables': variables,
+        'context_details': context_details,
+        'locs': locs
+    }
 
 
-def htmlnode(n, code, scope, verbose, files, trace_id):
+def get_node_data(n, code, scope, verbose, files, typings, trace_id, novalue):
     uid = n.uid
     path_to_n = get_path(n) if verbose else None
 
@@ -135,9 +133,9 @@ def htmlnode(n, code, scope, verbose, files, trace_id):
     stopbag = []
 
     for ctx in sorted(n.state.ctxbag.keys(), key=lambda x: nametag_to_str(x.nametag)):
-        ctxbag.append(htmlrow(ctx, n.state.ctxbag, n, code, scope, verbose, files, trace_id))
+        ctxbag.append(htmlrow(ctx, n.state.ctxbag, n, code, scope, verbose, files, trace_id, typings, novalue))
     for ctx in sorted(n.state.stopbag.keys(), key=lambda x: nametag_to_str(x.nametag)):
-        stopbag.append(htmlrow(ctx, n.state.stopbag, n, code, scope, verbose, files, trace_id))
+        stopbag.append(htmlrow(ctx, n.state.stopbag, n, code, scope, verbose, files, trace_id, typings, novalue))
     return {
         'uid': uid,
         'path_to_n': path_to_n,
@@ -145,5 +143,6 @@ def htmlnode(n, code, scope, verbose, files, trace_id):
         'stop_bag': stopbag
     }
 
-def full_dump(nodes, code, scope, files, verbose):
-    return [htmlnode(n, code, scope, verbose, files, trace_id=[0]) for n in nodes]
+
+def full_dump(nodes, code, scope, files, verbose, typings, novalue):
+    return [get_node_data(n, code, scope, verbose, files, typings, [0], novalue) for n in nodes]

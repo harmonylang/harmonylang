@@ -11,7 +11,11 @@ def key_value(v):
     return v.key()
 
 
-def is_reserved(s):
+def is_reserved(s: str):
+    """
+    :param s: any string
+    :return: True if s is a reserved word in Harmony. Otherwise, False.
+    """
     return s in {
         "all",
         "and",
@@ -63,7 +67,7 @@ def is_reserved(s):
 
 
 def isname(s):
-    return (not is_reserved(s)) and (s[0].isalpha() or s[0] == "_") and all(c.isalnum() or c == '_' for c in s)
+    return not is_reserved(s) and (s[0].isalpha() or s[0] == "_") and all(c.isalnum() or c == '_' for c in s)
 
 
 def str_of_value(v):
@@ -74,7 +78,7 @@ def str_of_value(v):
             return "." + v
         else:
             assert len(v) == 1, v
-            return ".0x%02X"%ord(v[0])
+            return ".0x%02X" % ord(v[0])
     assert False, v
 
 
