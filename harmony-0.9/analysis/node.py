@@ -52,7 +52,7 @@ def htmlloc(code, scope, ctx, files, trace_id: List[int], typings, novalue):
 def htmlvars(vars, id, row, trace_id: List[int], typings):
     assert(isinstance(vars, typings['DictValue']))
     display = "block" if row == 0 else "none"
-    variables = [(str_of_value(key)[1:], str_of_value(value)) for key, value in vars.d.items()]
+    variables = [{"name": str_of_value(key)[1:], "value": str_of_value(value)} for key, value in vars.d.items()]
     return variables, display
 
 
@@ -79,8 +79,8 @@ def htmlrow(ctx, bag, node, code, scope, verbose, files, trace_id: List[int], ty
     copies = bag[ctx]
     stopped = ctx.stopped
     choosing = node.state.choosing
-    blocked = False
-    failed = False
+    blocked = not stopped and not choosing and ctx in node.edges and node.isblocked(ctx)
+    failed = not stopped and not choosing and ctx not in node.edges
     if not stopped and not choosing:
         if ctx in node.edges:
             blocked = node.isblocked(ctx)
