@@ -10,7 +10,7 @@ class MacroStep:
         self.line_number = line_number
         self.executed_line = executed_line
         self.first_pc, _, _, _ = min(code, key=lambda p: p[0])
-        self.code = [(c, explanation, target) for _, c, explanation, target in code]
+        self.code = [{'code': c, 'explanation': explanation, 'jump_target': target} for _, c, explanation, target in code]
 
     def __str__(self):
         layout: List[str] = [f"{self.filename}:{self.line_number} {self.executed_line}"]

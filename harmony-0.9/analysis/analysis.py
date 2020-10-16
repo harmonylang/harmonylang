@@ -1,4 +1,4 @@
-from pprint import pprint
+from json import JSONEncoder
 from typing import List, Optional
 
 from analysis.code import get_code
@@ -7,7 +7,7 @@ from analysis.path import get_path
 from value import NodeType
 
 
-def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code, scope, fulldump, files, typings, verbose, novalue):
+def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code, scope, fulldump, files, typings, verbose, novalue, cwd) -> str:
     """
     :param nodes: A list of all nodes created during execution.
     :param bad_node: A bad node that is encountered when an issue occurs.
@@ -20,18 +20,20 @@ def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code, 
     :param novalue: No dictionary value.
     :return:
     """
-    print("Nodes")
-    print(nodes)
-    print()
-    print("Bad Node")
-    pprint(get_path(bad_node))
-    print()
-    print("Print Code")
-    pprint(get_code(code, scope, files, typings))
-    print()
-    print("Print Scope")
-    print(scope)
-    print()
-    print("Print full dump")
-    pprint(full_dump(nodes, code, scope, files, verbose, typings, novalue))
-    pass
+    dump_name = "harmony.json"
+    data = {
+        'path_to_bad_node': get_path(bad_node),
+        'executed_code': get_code(code, scope, files, typings),
+        'nodes': full_dump(nodes, code, scope, files, verbose, typings, novalue)
+    }
+
+    def default_encoder(v):
+        if isinstance(v, set):
+            return v
+        else:
+            return vars(v)
+
+    encoded = JSONEncoder(default=default_encoder, indent=2).encode(data)
+    with open(dump_name, 'w') as f:
+        f.write(encoded)
+        print(f"Open file://{cwd}/{dump_name} for more information in json format")

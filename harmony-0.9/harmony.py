@@ -4637,7 +4637,7 @@ def main():
             'PcValue': PcValue,
             'FrameOp': FrameOp,
             'DictValue': DictValue
-        }, verbose=False, novalue=novalue)
+        }, verbose=False, novalue=novalue, cwd=os.getcwd())
 
         htmldump(nodes, code, scope, bad_node, fulldump, False)
 

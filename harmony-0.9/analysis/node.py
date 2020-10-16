@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List
 
 from analysis.path import get_path, process_steps
 from analysis.util import nametag_to_str, str_of_value

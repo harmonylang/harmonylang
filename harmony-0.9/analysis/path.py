@@ -111,7 +111,7 @@ def gen_path(n):
 
 def get_path(n):
     # Generate a label for the path table
-    issues = n.issues
+    issues = [str(s) for s in n.issues]
     keys = sorted(n.state.vars.d.keys(), key=key_value)
     values_at_process = defaultdict(dict)
     shared_variables = keys
@@ -121,10 +121,12 @@ def get_path(n):
     for (ctx, steps, states, variables) in path:
         sid = states[-1] if len(states) > 0 else n.uid
         process_name = nametag_to_str(ctx.nametag)
-        processes.append((process_name, sid))
+        processes.append({
+            "name": process_name, "sid": sid
+        })
         link_steps[process_name] = process_steps(steps)
         for k in keys:
-            values_at_process[process_name][k] = variables.d[k]
+            values_at_process[process_name][k] = str(variables.d[k])
     return {
         'issues': issues,
         'processes': processes,
