@@ -142,7 +142,7 @@
     {
       "filename": "atomic_violation.hny",
       "line_number": 7,
-      "executed_line": "    if v != None:",
+      "executed_line": "if v != None:",
       "first_pc": 6,
       "code": [
         {
@@ -160,7 +160,7 @@
     {
       "filename": "atomic_violation.hny",
       "line_number": 8,
-      "executed_line": "        result = v + 123;",
+      "executed_line": "result = v + 123;",
       "first_pc": 8,
       "code": [
         {
@@ -188,7 +188,7 @@
     {
       "filename": "atomic_violation.hny",
       "line_number": 10,
-      "executed_line": "    done[0] = True;",
+      "executed_line": "done[0] = True;",
       "first_pc": 12,
       "code": [
         {
@@ -259,7 +259,7 @@
     {
       "filename": "atomic_violation.hny",
       "line_number": 14,
-      "executed_line": "    v = None;",
+      "executed_line": "v = None;",
       "first_pc": 23,
       "code": [
         {
@@ -277,7 +277,7 @@
     {
       "filename": "atomic_violation.hny",
       "line_number": 15,
-      "executed_line": "    done[1] = True;",
+      "executed_line": "done[1] = True;",
       "first_pc": 25,
       "code": [
         {
@@ -333,7 +333,7 @@
     {
       "filename": "atomic_violation.hny",
       "line_number": 19,
-      "executed_line": "    await all(done);",
+      "executed_line": "await all(done);",
       "first_pc": 33,
       "code": [
         {
@@ -351,7 +351,7 @@
     {
       "filename": "atomic_violation.hny",
       "line_number": 20,
-      "executed_line": "    while True:",
+      "executed_line": "while True:",
       "first_pc": 35,
       "code": [
         {
@@ -374,7 +374,7 @@
     {
       "filename": "atomic_violation.hny",
       "line_number": 21,
-      "executed_line": "        result = 1;",
+      "executed_line": "result = 1;",
       "first_pc": 38,
       "code": [
         {
