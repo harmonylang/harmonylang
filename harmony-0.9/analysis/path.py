@@ -128,23 +128,21 @@ def get_path(n):
     """
     issues = [str(s) for s in n.issues]
     shared_variables = sorted(n.state.vars.d.keys(), key=key_value)
-    values_at_process = defaultdict(dict)
     path = gen_path(n)
     link_steps: Dict[str, List[StepValue]] = {}
     processes = []
     for (ctx, steps, states, variables) in path:
         sid = states[-1] if len(states) > 0 else n.uid
         process_name = nametag_to_str(ctx.nametag)
+        values = {k: str(variables.d[k]) for k in shared_variables}
         processes.append({
-            "name": process_name, "sid": sid
+            "name": process_name,
+            "values": values,
+            "sid": sid,
+            "steps": process_steps(steps)
         })
-        link_steps[process_name] = process_steps(steps)
-        for k in shared_variables:
-            values_at_process[process_name][k] = str(variables.d[k])
     return {
         'issues': issues,
         'processes': processes,
-        'shared_vars': shared_variables,
-        'values_at_process': dict(values_at_process),
-        'steps': link_steps
+        'shared_vars': shared_variables
     }

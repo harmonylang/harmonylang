@@ -1,5 +1,5 @@
 {
-  "bad_node": 49,
+  "bad_node": 27,
   "path_to_bad_node": {
     "issues": [
       "Process Failure"
@@ -7,418 +7,94 @@
     "processes": [
       {
         "name": "__init__/()",
-        "sid": 1
+        "values": {
+          "done": "[False, False]",
+          "tup": "{ 1, 2, 3 }",
+          "v": "12"
+        },
+        "sid": 1,
+        "steps": [
+          {
+            "steps": [
+              0,
+              6
+            ],
+            "error": null,
+            "choose": null
+          },
+          {
+            "steps": [
+              44,
+              56
+            ],
+            "error": null,
+            "choose": null
+          }
+        ]
       },
       {
         "name": "access/()",
-        "sid": 13
+        "values": {
+          "done": "[False, False]",
+          "tup": "{ 1, 2, 3 }",
+          "v": "12"
+        },
+        "sid": 7,
+        "steps": [
+          {
+            "steps": [
+              7,
+              11
+            ],
+            "error": null,
+            "choose": null
+          }
+        ]
       },
       {
         "name": "nullify/()",
-        "sid": 37
+        "values": {
+          "done": "[False, False]",
+          "tup": "{ 1, 2, 3 }",
+          "v": "None"
+        },
+        "sid": 25,
+        "steps": [
+          {
+            "steps": [
+              24,
+              30
+            ],
+            "error": null,
+            "choose": null
+          }
+        ]
       },
       {
-        "name": "main/()",
-        "sid": 49
+        "name": "access/()",
+        "values": {
+          "done": "[False, False]",
+          "tup": "{ 1, 2, 3 }",
+          "v": "None"
+        },
+        "sid": 27,
+        "steps": [
+          {
+            "steps": [
+              12,
+              14
+            ],
+            "error": null,
+            "choose": null
+          }
+        ]
       }
     ],
     "shared_vars": [
       "done",
       "tup",
       "v"
-    ],
-    "values_at_process": {
-      "__init__/()": {
-        "done": "[False, False]",
-        "tup": "{ 1, 2, 3 }",
-        "v": "12"
-      },
-      "access/()": {
-        "done": "[True, False]",
-        "tup": "{ 1, 2, 3 }",
-        "v": "12"
-      },
-      "nullify/()": {
-        "done": "[True, True]",
-        "tup": "{ 1, 2, 3 }",
-        "v": "None"
-      },
-      "main/()": {
-        "done": "[True, True]",
-        "tup": "{ 1, 2, 3 }",
-        "v": "None"
-      }
-    },
-    "steps": {
-      "__init__/()": [
-        {
-          "steps": [
-            0,
-            6
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            42,
-            54
-          ],
-          "error": null,
-          "choose": null
-        }
-      ],
-      "access/()": [
-        {
-          "steps": [
-            7,
-            20
-          ],
-          "error": null,
-          "choose": null
-        }
-      ],
-      "nullify/()": [
-        {
-          "steps": [
-            22,
-            30
-          ],
-          "error": null,
-          "choose": null
-        }
-      ],
-      "main/()": [
-        {
-          "steps": [
-            32,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            40
-          ],
-          "error": null,
-          "choose": null
-        },
-        {
-          "steps": [
-            36,
-            38
-          ],
-          "error": null,
-          "choose": null
-        }
-      ]
-    }
+    ]
   },
   "executed_code": [
     {
@@ -482,9 +158,9 @@
       "first_pc": 6,
       "code": [
         {
-          "code": "Jump 42",
-          "explanation": "set program counter to 42",
-          "jump_target": 42
+          "code": "Jump 44",
+          "explanation": "set program counter to 44",
+          "jump_target": 44
         },
         {
           "code": "Frame access ()",
@@ -496,7 +172,7 @@
     {
       "filename": "atomic_violation.hny",
       "line_number": 8,
-      "executed_line": "result = v;",
+      "executed_line": "result = v + 123;",
       "first_pc": 8,
       "code": [
         {
@@ -515,9 +191,9 @@
           "jump_target": null
         },
         {
-          "code": "JumpCond False 15",
-          "explanation": "pop a value and jump to 15 if the value is False",
-          "jump_target": 15
+          "code": "JumpCond False 17",
+          "explanation": "pop a value and jump to 17 if the value is False",
+          "jump_target": 17
         }
       ]
     },
@@ -533,14 +209,24 @@
           "jump_target": null
         },
         {
+          "code": "Push 123",
+          "explanation": "push constant 123",
+          "jump_target": null
+        },
+        {
+          "code": "2-ary +",
+          "explanation": "pop 2 values and push the result of applying +",
+          "jump_target": null
+        },
+        {
           "code": "StoreVar result",
           "explanation": "pop a value and store in result",
           "jump_target": null
         },
         {
-          "code": "Jump 15",
-          "explanation": "set program counter to 15",
-          "jump_target": 15
+          "code": "Jump 17",
+          "explanation": "set program counter to 17",
+          "jump_target": 17
         }
       ]
     },
@@ -548,7 +234,7 @@
       "filename": "atomic_violation.hny",
       "line_number": 13,
       "executed_line": "def nullify():",
-      "first_pc": 15,
+      "first_pc": 17,
       "code": [
         {
           "code": "Push ?done",
@@ -586,12 +272,12 @@
       "filename": "atomic_violation.hny",
       "line_number": 14,
       "executed_line": "v = None;",
-      "first_pc": 21,
+      "first_pc": 23,
       "code": [
         {
-          "code": "Jump 42",
-          "explanation": "set program counter to 42",
-          "jump_target": 42
+          "code": "Jump 44",
+          "explanation": "set program counter to 44",
+          "jump_target": 44
         },
         {
           "code": "Frame nullify ()",
@@ -604,7 +290,7 @@
       "filename": "atomic_violation.hny",
       "line_number": 15,
       "executed_line": "done[1] = True;",
-      "first_pc": 23,
+      "first_pc": 25,
       "code": [
         {
           "code": "Push None",
@@ -622,7 +308,7 @@
       "filename": "atomic_violation.hny",
       "line_number": 18,
       "executed_line": "def main():",
-      "first_pc": 25,
+      "first_pc": 27,
       "code": [
         {
           "code": "Push ?done",
@@ -660,12 +346,12 @@
       "filename": "atomic_violation.hny",
       "line_number": 19,
       "executed_line": "await all(done);",
-      "first_pc": 31,
+      "first_pc": 33,
       "code": [
         {
-          "code": "Jump 42",
-          "explanation": "set program counter to 42",
-          "jump_target": 42
+          "code": "Jump 44",
+          "explanation": "set program counter to 44",
+          "jump_target": 44
         },
         {
           "code": "Frame main ()",
@@ -678,7 +364,7 @@
       "filename": "atomic_violation.hny",
       "line_number": 20,
       "executed_line": "while True:",
-      "first_pc": 33,
+      "first_pc": 35,
       "code": [
         {
           "code": "Load done",
@@ -691,9 +377,9 @@
           "jump_target": null
         },
         {
-          "code": "JumpCond False 33",
-          "explanation": "pop a value and jump to 33 if the value is False",
-          "jump_target": 33
+          "code": "JumpCond False 35",
+          "explanation": "pop a value and jump to 35 if the value is False",
+          "jump_target": 35
         }
       ]
     },
@@ -701,7 +387,7 @@
       "filename": "atomic_violation.hny",
       "line_number": 21,
       "executed_line": "result = 1;",
-      "first_pc": 36,
+      "first_pc": 38,
       "code": [
         {
           "code": "Push True",
@@ -709,9 +395,9 @@
           "jump_target": null
         },
         {
-          "code": "JumpCond False 41",
-          "explanation": "pop a value and jump to 41 if the value is False",
-          "jump_target": 41
+          "code": "JumpCond False 43",
+          "explanation": "pop a value and jump to 43 if the value is False",
+          "jump_target": 43
         }
       ]
     },
@@ -719,7 +405,7 @@
       "filename": "atomic_violation.hny",
       "line_number": 26,
       "executed_line": "spawn access();",
-      "first_pc": 38,
+      "first_pc": 40,
       "code": [
         {
           "code": "Push 1",
@@ -732,9 +418,9 @@
           "jump_target": null
         },
         {
-          "code": "Jump 36",
-          "explanation": "set program counter to 36",
-          "jump_target": 36
+          "code": "Jump 38",
+          "explanation": "set program counter to 38",
+          "jump_target": 38
         },
         {
           "code": "Return",
@@ -747,7 +433,7 @@
       "filename": "atomic_violation.hny",
       "line_number": 27,
       "executed_line": "spawn nullify();",
-      "first_pc": 42,
+      "first_pc": 44,
       "code": [
         {
           "code": "Push ()",
@@ -775,7 +461,7 @@
       "filename": "atomic_violation.hny",
       "line_number": 28,
       "executed_line": "spawn main();",
-      "first_pc": 46,
+      "first_pc": 48,
       "code": [
         {
           "code": "Push ()",
@@ -788,9 +474,9 @@
           "jump_target": null
         },
         {
-          "code": "Push PC(22)",
-          "explanation": "push constant PC(22)",
-          "jump_target": 22
+          "code": "Push PC(24)",
+          "explanation": "push constant PC(24)",
+          "jump_target": 24
         },
         {
           "code": "Spawn",
@@ -803,7 +489,7 @@
       "filename": "atomic_violation.hny",
       "line_number": 28,
       "executed_line": "spawn main();",
-      "first_pc": 50,
+      "first_pc": 52,
       "code": [
         {
           "code": "Push ()",
@@ -816,9 +502,9 @@
           "jump_target": null
         },
         {
-          "code": "Push PC(32)",
-          "explanation": "push constant PC(32)",
-          "jump_target": 32
+          "code": "Push PC(34)",
+          "explanation": "push constant PC(34)",
+          "jump_target": 34
         },
         {
           "code": "Spawn",
@@ -1350,7 +1036,7 @@
           "locs": {
             "lines": [
               "access()",
-              "        result = v;"
+              "        result = v + 123;"
             ],
             "failure": null
           }
@@ -1426,7 +1112,7 @@
           "locs": {
             "lines": [
               "access()",
-              "        result = v;"
+              "        result = v + 123;"
             ],
             "failure": null
           }
@@ -1508,7 +1194,7 @@
           "locs": {
             "lines": [
               "access()",
-              "        result = v;"
+              "        result = v + 123;"
             ],
             "failure": null
           }
@@ -1580,7 +1266,7 @@
               [
                 {
                   "name": "result",
-                  "value": "12"
+                  "value": "135"
                 }
               ],
               "block"
@@ -1656,7 +1342,7 @@
               [
                 {
                   "name": "result",
-                  "value": "12"
+                  "value": "135"
                 }
               ],
               "block"
@@ -1673,7 +1359,7 @@
         },
         {
           "stopped": false,
-          "blocked": true,
+          "blocked": false,
           "failed": false,
           "choosing": null,
           "process_name": "main/()",
@@ -1738,7 +1424,7 @@
               [
                 {
                   "name": "result",
-                  "value": "12"
+                  "value": "135"
                 }
               ],
               "block"
@@ -1859,7 +1545,7 @@
       "context_bag": [
         {
           "stopped": false,
-          "blocked": true,
+          "blocked": false,
           "failed": false,
           "choosing": null,
           "process_name": "main/()",
@@ -2558,7 +2244,7 @@
           "locs": {
             "lines": [
               "access()",
-              "        result = v;"
+              "        result = v + 123;"
             ],
             "failure": null
           }
@@ -2646,7 +2332,7 @@
           "locs": {
             "lines": [
               "access()",
-              "        result = v;"
+              "        result = v + 123;"
             ],
             "failure": null
           }
@@ -2728,7 +2414,7 @@
           "locs": {
             "lines": [
               "access()",
-              "        result = v;"
+              "        result = v + 123;"
             ],
             "failure": null
           }
@@ -2797,7 +2483,7 @@
         {
           "stopped": false,
           "blocked": false,
-          "failed": false,
+          "failed": true,
           "choosing": null,
           "process_name": "access/()",
           "number_of_copies": 1,
@@ -2806,7 +2492,7 @@
               [
                 {
                   "name": "result",
-                  "value": "None"
+                  "value": "()"
                 }
               ],
               "block"
@@ -2816,15 +2502,15 @@
           "locs": {
             "lines": [
               "access()",
-              "    done[0] = True;"
+              "        result = v + 123;"
             ],
-            "failure": null
+            "failure": "Error: unexpected types in ('+', './code/atomic_violation.hny', 8, 20) operands: [123, None]"
           }
         },
         {
           "stopped": false,
           "blocked": false,
-          "failed": false,
+          "failed": true,
           "choosing": null,
           "process_name": "main/()",
           "number_of_copies": 1,
@@ -2845,7 +2531,7 @@
         {
           "stopped": false,
           "blocked": false,
-          "failed": false,
+          "failed": true,
           "choosing": null,
           "process_name": "nullify/()",
           "number_of_copies": 1,
@@ -2898,14 +2584,14 @@
           "locs": {
             "lines": [
               "access()",
-              "        result = v;"
+              "        result = v + 123;"
             ],
             "failure": null
           }
         },
         {
           "stopped": false,
-          "blocked": true,
+          "blocked": false,
           "failed": false,
           "choosing": null,
           "process_name": "main/()",
@@ -2934,7 +2620,7 @@
         {
           "stopped": false,
           "blocked": false,
-          "failed": false,
+          "failed": true,
           "choosing": null,
           "process_name": "access/()",
           "number_of_copies": 1,
@@ -2953,15 +2639,15 @@
           "locs": {
             "lines": [
               "access()",
-              "        result = v;"
+              "        result = v + 123;"
             ],
             "failure": null
           }
         },
         {
           "stopped": false,
-          "blocked": true,
-          "failed": false,
+          "blocked": false,
+          "failed": true,
           "choosing": null,
           "process_name": "main/()",
           "number_of_copies": 1,
@@ -2995,7 +2681,7 @@
         {
           "stopped": false,
           "blocked": false,
-          "failed": false,
+          "failed": true,
           "choosing": null,
           "process_name": "access/()",
           "number_of_copies": 1,
@@ -3004,7 +2690,7 @@
               [
                 {
                   "name": "result",
-                  "value": "None"
+                  "value": "()"
                 }
               ],
               "block"
@@ -3014,15 +2700,15 @@
           "locs": {
             "lines": [
               "access()",
-              "    done[0] = True;"
+              "        result = v + 123;"
             ],
-            "failure": null
+            "failure": "Error: unexpected types in ('+', './code/atomic_violation.hny', 8, 20) operands: [123, None]"
           }
         },
         {
           "stopped": false,
           "blocked": false,
-          "failed": false,
+          "failed": true,
           "choosing": null,
           "process_name": "main/()",
           "number_of_copies": 1,
@@ -3050,7 +2736,7 @@
         {
           "stopped": false,
           "blocked": false,
-          "failed": false,
+          "failed": true,
           "choosing": null,
           "process_name": "access/()",
           "number_of_copies": 1,
@@ -3059,7 +2745,7 @@
               [
                 {
                   "name": "result",
-                  "value": "12"
+                  "value": "135"
                 }
               ],
               "block"
@@ -3076,8 +2762,8 @@
         },
         {
           "stopped": false,
-          "blocked": true,
-          "failed": false,
+          "blocked": false,
+          "failed": true,
           "choosing": null,
           "process_name": "main/()",
           "number_of_copies": 1,
@@ -3104,7 +2790,7 @@
         {
           "stopped": false,
           "blocked": false,
-          "failed": false,
+          "failed": true,
           "choosing": null,
           "process_name": "nullify/()",
           "number_of_copies": 1,
@@ -3147,7 +2833,7 @@
               [
                 {
                   "name": "result",
-                  "value": "12"
+                  "value": "135"
                 }
               ],
               "block"
@@ -3164,7 +2850,7 @@
         },
         {
           "stopped": false,
-          "blocked": true,
+          "blocked": false,
           "failed": false,
           "choosing": null,
           "process_name": "main/()",
@@ -3220,7 +2906,7 @@
         {
           "stopped": false,
           "blocked": false,
-          "failed": false,
+          "failed": true,
           "choosing": null,
           "process_name": "access/()",
           "number_of_copies": 1,
@@ -3229,7 +2915,7 @@
               [
                 {
                   "name": "result",
-                  "value": "12"
+                  "value": "135"
                 }
               ],
               "block"
@@ -3246,8 +2932,8 @@
         },
         {
           "stopped": false,
-          "blocked": true,
-          "failed": false,
+          "blocked": false,
+          "failed": true,
           "choosing": null,
           "process_name": "main/()",
           "number_of_copies": 1,
@@ -3274,7 +2960,7 @@
         {
           "stopped": false,
           "blocked": false,
-          "failed": false,
+          "failed": true,
           "choosing": null,
           "process_name": "nullify/()",
           "number_of_copies": 1,
@@ -3307,7 +2993,7 @@
       "context_bag": [
         {
           "stopped": false,
-          "blocked": true,
+          "blocked": false,
           "failed": false,
           "choosing": null,
           "process_name": "main/()",
@@ -3372,7 +3058,7 @@
               [
                 {
                   "name": "result",
-                  "value": "12"
+                  "value": "135"
                 }
               ],
               "block"
@@ -3389,7 +3075,7 @@
         },
         {
           "stopped": false,
-          "blocked": true,
+          "blocked": false,
           "failed": false,
           "choosing": null,
           "process_name": "main/()",
@@ -3418,7 +3104,7 @@
         {
           "stopped": false,
           "blocked": false,
-          "failed": false,
+          "failed": true,
           "choosing": null,
           "process_name": "access/()",
           "number_of_copies": 1,
@@ -3427,7 +3113,7 @@
               [
                 {
                   "name": "result",
-                  "value": "12"
+                  "value": "135"
                 }
               ],
               "block"
@@ -3444,8 +3130,8 @@
         },
         {
           "stopped": false,
-          "blocked": true,
-          "failed": false,
+          "blocked": false,
+          "failed": true,
           "choosing": null,
           "process_name": "main/()",
           "number_of_copies": 1,
@@ -3506,8 +3192,8 @@
       "context_bag": [
         {
           "stopped": false,
-          "blocked": true,
-          "failed": false,
+          "blocked": false,
+          "failed": true,
           "choosing": null,
           "process_name": "main/()",
           "number_of_copies": 1,
@@ -3534,7 +3220,7 @@
         {
           "stopped": false,
           "blocked": false,
-          "failed": false,
+          "failed": true,
           "choosing": null,
           "process_name": "nullify/()",
           "number_of_copies": 1,
@@ -3567,8 +3253,8 @@
       "context_bag": [
         {
           "stopped": false,
-          "blocked": true,
-          "failed": false,
+          "blocked": false,
+          "failed": true,
           "choosing": null,
           "process_name": "main/()",
           "number_of_copies": 1,
@@ -3595,7 +3281,7 @@
         {
           "stopped": false,
           "blocked": false,
-          "failed": false,
+          "failed": true,
           "choosing": null,
           "process_name": "nullify/()",
           "number_of_copies": 1,
@@ -3629,7 +3315,7 @@
         {
           "stopped": false,
           "blocked": false,
-          "failed": false,
+          "failed": true,
           "choosing": null,
           "process_name": "main/()",
           "number_of_copies": 1,
@@ -4107,7 +3793,7 @@
               [
                 {
                   "name": "result",
-                  "value": "None"
+                  "value": "()"
                 }
               ],
               "block"
@@ -4117,9 +3803,9 @@
           "locs": {
             "lines": [
               "access()",
-              "    done[0] = True;"
+              "        result = v + 123;"
             ],
-            "failure": null
+            "failure": "Error: unexpected types in ('+', './code/atomic_violation.hny', 8, 20) operands: [123, None]"
           }
         },
         {
@@ -4174,101 +3860,6 @@
               "    done[1] = True;"
             ],
             "failure": null
-          }
-        }
-      ],
-      "stop_bag": []
-    },
-    {
-      "uid": 48,
-      "path_to_n": null,
-      "context_bag": [
-        {
-          "stopped": false,
-          "blocked": false,
-          "failed": true,
-          "choosing": null,
-          "process_name": "access/()",
-          "number_of_copies": 1,
-          "variables": [
-            [
-              [
-                {
-                  "name": "result",
-                  "value": "None"
-                }
-              ],
-              "block"
-            ]
-          ],
-          "context_details": {},
-          "locs": {
-            "lines": [
-              "access()",
-              "    done[0] = True;"
-            ],
-            "failure": null
-          }
-        },
-        {
-          "stopped": false,
-          "blocked": false,
-          "failed": true,
-          "choosing": null,
-          "process_name": "main/()",
-          "number_of_copies": 1,
-          "variables": [
-            [
-              [
-                {
-                  "name": "result",
-                  "value": "()"
-                }
-              ],
-              "block"
-            ]
-          ],
-          "context_details": {},
-          "locs": {
-            "lines": [
-              "main()",
-              "    await all(done);"
-            ],
-            "failure": null
-          }
-        }
-      ],
-      "stop_bag": []
-    },
-    {
-      "uid": 49,
-      "path_to_n": null,
-      "context_bag": [
-        {
-          "stopped": false,
-          "blocked": false,
-          "failed": true,
-          "choosing": null,
-          "process_name": "main/()",
-          "number_of_copies": 1,
-          "variables": [
-            [
-              [
-                {
-                  "name": "result",
-                  "value": "1"
-                }
-              ],
-              "block"
-            ]
-          ],
-          "context_details": {},
-          "locs": {
-            "lines": [
-              "main()",
-              "        result = 1;"
-            ],
-            "failure": "infinite loop"
           }
         }
       ],
