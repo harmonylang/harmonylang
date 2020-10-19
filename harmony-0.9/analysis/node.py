@@ -145,4 +145,5 @@ def get_node_data(n, code, scope, verbose, files, typings, trace_id, novalue):
 
 
 def full_dump(nodes, code, scope, files, verbose, typings, novalue):
+    nodes = sorted(nodes, key=lambda n: n.uid)
     return [get_node_data(n, code, scope, verbose, files, typings, [0], novalue) for n in nodes]

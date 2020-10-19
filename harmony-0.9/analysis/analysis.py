@@ -22,6 +22,7 @@ def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code, 
     """
     dump_name = "harmony.json"
     data = {
+        'bad_node': None if bad_node is None else bad_node.uid,
         'path_to_bad_node': get_path(bad_node),
         'executed_code': get_code(code, scope, files, typings),
         'nodes': full_dump(nodes, code, scope, files, verbose, typings, novalue)
