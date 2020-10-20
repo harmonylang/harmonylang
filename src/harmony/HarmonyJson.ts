@@ -45,7 +45,7 @@ type MacroStep = {
   filename: string;
   line_number: number;
   executed_line: string;
-  first_pc: string;
+  first_pc: number;
   code: HarmonyCode[]
 };
 
@@ -171,6 +171,17 @@ class HarmonyJson {
     } else {
       return this.json.nodes[process.sid];
     }
+  }
+
+  macroStepAtPc(pc: number): MacroStep | undefined {
+    return this.json.executed_code.find((m, i) => {
+      return i + 1 >= this.json.executed_code.length
+        || (m.first_pc <= pc && this.json.executed_code[i + 1].first_pc > pc);
+    });
+  }
+
+  codeAtPC(pc: number): HarmonyCode | undefined {
+    return this.allCode[pc];
   }
 
 }
