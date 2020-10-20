@@ -77,6 +77,8 @@ type ContextBag = {
   };
 };
 
+type StopBag = ContextBag;
+
 /**
  * A node in Harmony. Contains a unique identifier, a list of context bags and
  * stop bags.
@@ -88,7 +90,7 @@ type HarmonyNode = {
   uid: number;
   path_to_n: null | unknown;
   context_bag: ContextBag[];
-  stop_bag: unknown[];
+  stop_bag: StopBag[];
 };
 
 function deepFreeze<T extends Record<string, any>>(o: T): T {
@@ -174,9 +176,4 @@ class HarmonyJson {
 }
 
 const obj = new HarmonyJson("../../harmony-0.9/harmony.json");
-
-function print(s: unknown) {
-  console.log(s);
-}
-
-print(obj);
+// console.log(obj);
