@@ -53,7 +53,10 @@ def htmlvars(vars, id, row, trace_id: List[int], typings):
     assert(isinstance(vars, typings['DictValue']))
     display = "block" if row == 0 else "none"
     variables = [{"name": str_of_value(key)[1:], "value": str_of_value(value)} for key, value in vars.d.items()]
-    return variables, display
+    return {
+        'variables': variables,
+        'display': display
+    }
 
 
 def htmltrace(code, scope, ctx, trace_id, typings) -> list:
@@ -61,6 +64,7 @@ def htmltrace(code, scope, ctx, trace_id, typings) -> list:
     fp = ctx.fp
     trace = [ctx.vars]
     variables = []
+    print(vars(ctx), end='\n\n')
     while True:
         if fp < 5:
             break
@@ -90,7 +94,7 @@ def htmlrow(ctx, bag, node, code, scope, verbose, files, trace_id: List[int], ty
     locs = htmlloc(code, scope, ctx, files, trace_id, typings, novalue)
 
     # print variables
-    variables = htmltrace(code, scope, ctx, trace_id, typings)
+    traces = htmltrace(code, scope, ctx, trace_id, typings)
 
     # print stack
     context_details = {}
@@ -119,7 +123,7 @@ def htmlrow(ctx, bag, node, code, scope, verbose, files, trace_id: List[int], ty
         'choosing': choosing,
         'process_name': process,
         'number_of_copies': copies,
-        'variables': variables,
+        'traces': traces,
         'context_details': context_details,
         'locs': locs
     }
