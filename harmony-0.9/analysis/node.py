@@ -64,7 +64,6 @@ def htmltrace(code, scope, ctx, trace_id, typings) -> list:
     fp = ctx.fp
     trace = [ctx.vars]
     variables = []
-    print(vars(ctx), end='\n\n')
     while True:
         if fp < 5:
             break

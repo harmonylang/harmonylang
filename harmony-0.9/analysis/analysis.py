@@ -1,3 +1,4 @@
+import json
 from json import JSONEncoder
 from typing import List, Optional
 
@@ -7,7 +8,7 @@ from analysis.path import get_path
 from value import NodeType
 
 
-def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code, scope, fulldump, files, typings, verbose, novalue, cwd) -> str:
+def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code, scope, fulldump, files, typings, verbose, novalue, cwd):
     """
     :param nodes: A list of all nodes created during execution.
     :param bad_node: A bad node that is encountered when an issue occurs.
@@ -30,7 +31,7 @@ def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code, 
 
     def default_encoder(v):
         if isinstance(v, set):
-            return v
+            return list(v)
         else:
             return vars(v)
 
