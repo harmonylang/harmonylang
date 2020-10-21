@@ -45,10 +45,10 @@ export class ProcessManagerImpl implements ProcessManager {
    */
   processesAreKilled: boolean;
 
-  private readonly runningIntervals: Record<string, NodeJS.Timeout>;
+  private runningIntervals: Record<string, NodeJS.Timeout>;
   private intervalCount: number;
 
-  private readonly runningCommands: Record<string, child_process.ChildProcess>;
+  private runningCommands: Record<string, child_process.ChildProcess>;
   private commandCount: number;
 
   /**
@@ -91,16 +91,18 @@ export class ProcessManagerImpl implements ProcessManager {
       clearInterval(this.runningIntervals[id]);
       delete this.runningIntervals[id];
       this.intervalCount--;
+      delete this.runningIntervals[id];
     }
   }
 
   private endCommand(id: string) {
     if (this.runningCommands[id] != null) {
       if (!this.runningCommands[id].killed) {
-        this.runningCommands[id].kill();
+        this.runningCommands[id].kill('SIGKILL');
       }
       delete this.runningCommands[id];
       this.commandCount--;
+      delete this.runningCommands[id];
     }
   }
 
@@ -130,6 +132,8 @@ export class ProcessManagerImpl implements ProcessManager {
     Object.keys(this.runningIntervals).forEach((intervalId) => {
       clearInterval(this.runningIntervals[intervalId]);
     });
+    this.runningIntervals = {};
+    this.runningCommands = {};
     this.commandCount = 0;
     this.intervalCount = 0;
   }
