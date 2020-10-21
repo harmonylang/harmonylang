@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Harmony Output</title>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
+        integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+    <style type="text/css">
+        body {
+            background-color: #1e1e1e;
+            color: #fff;
+        }
+
+        #process-window {
+            position: fixed;
+            bottom: 0%;
+            right: 0px;
+            left: 0px;
+            width: 100%;
+            height: 40%;
+        }
+
+        #processes {
+            position: relative;
+            padding-top: 1rem;
+            height: 80%;
+        }
+
+        .process-labels {
+            height: 100%;
+        }
+
+        .process-label-row {
+            background-color: #252525;
+            height: 3rem;
+            width: 100%;
+        }
+
+        .process-label-text {
+            margin-top: 0;
+            margin-bottom: 0;
+            padding-left: 1rem;
+            line-height: 3rem;
+            font-weight: 600;
+        }
+
+        .process-bars {
+            position: absolute;
+            top: 1rem;
+            left: 20.83333%;
+            bottom: 0;
+            overflow-x: scroll;
+        }
+
+        .process-bar-row {
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            padding-right: 1rem;
+            width: fit-content;
+        }
+
+        .process-bar {
+            border-radius: 0px 5px 5px 0px;
+            height: 2rem;
+            width: 50rem;
+        }
+
+        #seekbar {
+            background-color: #3c3c3c;
+            position: relative;
+            top: 0%;
+            width: 100%;
+            height: 3rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pure-g">
+        <div class="pure-u-1-2">
+            <p id="towa">Data</p>
+        </div>
+        <div class="pure-u-1-2">
+            <p>Thirds</p>
+        </div>
+    </div>
+    <div id="process-window">
+        <div class="pure-g" id="seekbar">
+
+        </div>
+        <div class="pure-g" id="processes">
+            <div class="pure-u-5-24 process-labels">
+                <div class="process-label-row">
+                    <p class="process-label-text">__init__/()</p>
+                </div>
+                <div class="process-label-row">
+                    <p class="process-label-text">diner/1</p>
+                </div>
+            </div>
+            <div class="pure-u-19-24 process-bars">
+                <div class="process-bar-row">
+                    <div class="process-bar"
+                        style="background: linear-gradient(to right, #bcbcbc 0%, #bcbcbc 20%, #323232 20%, #323232 100%);">
+                    </div>
+                </div>
+                <div class="process-bar-row">
+                    <div class="process-bar"
+                        style="background: linear-gradient(to right, #323232 0%, #323232 20%, #BA6B6C 20%, #BA6B6C 36%, #323232 36%, #323232 100%);">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    window.addEventListener('message', event => {
+
+        const message = event.data; // The command and JSON data our extension sent
+
+        switch (message.command) {
+            case 'load':
+                // todo: do something with the json data
+                console.log(message.jsonData)
+                document.getElementById("towa").innerHTML = message.jsonData;
+                break;
+        }
+    });
+</script>
+
+</html>

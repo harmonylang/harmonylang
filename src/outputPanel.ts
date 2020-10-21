@@ -27,7 +27,8 @@ export default class HarmonyOutputPanel {
             column,
             {
                 // Enable javascript in the webview
-                enableScripts: true
+                enableScripts: true,
+                localResourceRoots: [vscode.Uri.file(Path.join(__dirname, '..', 'harmony-0.9', 'web'))]
             }
         );
 
@@ -50,30 +51,30 @@ export default class HarmonyOutputPanel {
         this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
         // Update the content based on view changes
-        this._panel.onDidChangeViewState(
-            e => {
-                if (this._panel.visible) {
-                    this._update();
-                }
-            },
-            null,
-            this._disposables
-        );
+        // this._panel.onDidChangeViewState(
+        //     e => {
+        //         if (this._panel.visible) {
+        //             this._update();
+        //         }
+        //     },
+        //     null,
+        //     this._disposables
+        // );
 
         // Handle messages from the webview
-        this._panel.webview.onDidReceiveMessage(
-            message => {
-                this._update();
-            },
-            null,
-            this._disposables
-        );
+        // this._panel.webview.onDidReceiveMessage(
+        //     message => {
+        //         this._update();
+        //     },
+        //     null,
+        //     this._disposables
+        // );
     }
 
     public updateResults() {
         // Send a message to the webview webview.
         // You can send any JSON serializable data.
-        this._panel.webview.postMessage({ command: 'update' });
+        this._panel.webview.postMessage({ command: 'load', jsonData: "Put on screen" });
     }
 
     public dispose() {
@@ -96,30 +97,39 @@ export default class HarmonyOutputPanel {
 
         const harmonyPath = vscode.window.activeTextEditor?.document.fileName;
         if (typeof harmonyPath === 'string') {
-            const path = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.html');
+            const uiPath = Path.join(__dirname, '..', 'harmony-0.9', 'web', 'index.html');
+            const dataPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.json');
 
-            Fs.readFile(path, 'utf-8', function (err, data) {
+            Fs.readFile(uiPath, 'utf-8', function (err, data) {
                 if (err) {
                     vscode.window.showInformationMessage(err.message);
                 }
-                const injectableCSS = `\n
-                * {
-                    font-size: 1rem;
+                // const injectableCSS = `\n
+                // * {
+                //     font-size: 1rem;
+                // }
+                // html, * {
+                //     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, sans-serif;
+                //     line-height: 1.5;
+                // }
+                // body {
+                //     background-color: #fafafa;
+                // }
+                // #table-scroll {
+                //     height: 80vh !important;
+                // }
+                // \n`;
+                // const injectionPoint = data.indexOf('</style>');
+                // const formattedHtml = data.substring(0, injectionPoint) + injectableCSS + data.substring(injectionPoint);
+                // harmonyPanel.webview.html = formattedHtml;
+                harmonyPanel.webview.html = data;
+            });
+
+            Fs.readFile(dataPath, 'utf-8', function (err, data) {
+                if (err) {
+                    vscode.window.showInformationMessage(err.message);
                 }
-                html, * {
-                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, sans-serif;
-                    line-height: 1.5;
-                }
-                body {
-                    background-color: #fafafa;
-                }
-                #table-scroll {
-                    height: 80vh !important;
-                }
-                \n`;
-                const injectionPoint = data.indexOf('</style>');
-                const formattedHtml = data.substring(0, injectionPoint) + injectableCSS + data.substring(injectionPoint);
-                harmonyPanel.webview.html = formattedHtml;
+                webview.postMessage({ command: 'load', jsonData: data });
             });
         }
     }
