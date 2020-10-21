@@ -1,5 +1,5 @@
-import json
 from json import JSONEncoder
+import gzip
 from typing import List, Optional
 
 from analysis.code import get_code
@@ -35,7 +35,7 @@ def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code, 
         else:
             return vars(v)
 
-    encoded = JSONEncoder(default=default_encoder).encode(data)
-    with open(dump_name, 'w') as f:
-        f.write(encoded)
-        print(f"Open file://{cwd}/{dump_name} for more information in json format")
+    json_encoded = JSONEncoder(default=default_encoder).encode(data)
+    with gzip.open(dump_name + '.gzip', 'w') as f:
+        f.write(json_encoded.encode('utf-8'))
+        print(f"Open file://{cwd}/{dump_name}.gzip for more information in json format")

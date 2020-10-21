@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as zlib from 'zlib';
 import {PathLike} from "fs";
 
 type Step = {
@@ -119,9 +120,14 @@ class HarmonyJson {
 
   private readonly allCode: HarmonyCode[];
 
+  /**
+   * Constructs a interface with the Harmony JSON data.
+   * @param filename A path to a zipped
+   */
   constructor(filename: PathLike) {
-    const file = fs.readFileSync(filename);
-    const content = file.toString();
+
+    const zippedContent = fs.readFileSync(filename);
+    const content = zlib.gunzipSync(zippedContent).toString('utf-8');
     const json = JSON.parse(content);
     this.json = deepFreeze({
       bad_node: json.bad_node,
@@ -186,5 +192,5 @@ class HarmonyJson {
 
 }
 
-const obj = new HarmonyJson("../../harmony-0.9/harmony.json");
+const obj = new HarmonyJson("../../harmony-0.9/harmony.json.gzip");
 // console.log(obj);
