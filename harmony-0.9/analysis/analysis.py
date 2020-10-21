@@ -35,7 +35,7 @@ def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code, 
         else:
             return vars(v)
 
-    encoded = JSONEncoder(default=default_encoder, indent=2).encode(data)
+    encoded = JSONEncoder(default=default_encoder).encode(data)
     with open(dump_name, 'w') as f:
         f.write(encoded)
         print(f"Open file://{cwd}/{dump_name} for more information in json format")
