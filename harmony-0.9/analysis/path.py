@@ -1,5 +1,4 @@
-from collections import defaultdict
-from typing import List, Optional, Tuple, Dict
+from typing import List, Optional, Tuple
 
 from analysis.util import key_value, str_of_value, nametag_to_str
 
@@ -129,7 +128,6 @@ def get_path(n):
     issues = [str(s) for s in n.issues]
     shared_variables = sorted(n.state.vars.d.keys(), key=key_value)
     path = gen_path(n)
-    link_steps: Dict[str, List[StepValue]] = {}
     processes = []
     for (ctx, steps, states, variables) in path:
         sid = states[-1] if len(states) > 0 else n.uid
