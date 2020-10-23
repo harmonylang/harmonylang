@@ -52,7 +52,7 @@ type MacroStep = {
 
 type VariableBlock = {
   name: string;
-  value: string;
+  value: unknown;
 };
 
 /**
@@ -197,4 +197,4 @@ class HarmonyJson {
 }
 
 const obj = new HarmonyJson("../../harmony-0.9/harmony.json.gzip");
-console.log(obj.getProcesses().map(p => p));
+console.log(obj.getProcesses()[0].values);

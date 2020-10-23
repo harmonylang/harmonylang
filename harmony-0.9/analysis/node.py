@@ -1,14 +1,13 @@
 from typing import List
 
 from analysis.path import get_path, process_steps
-from analysis.util import nametag_to_str, str_of_value
+from analysis.util import nametag_to_str, str_of_value, json_valid_value
 
 
 def htmlloc(code, scope, ctx, files, trace_id: List[int], typings, novalue):
     pc = ctx.pc
     fp = ctx.fp
     location = trace_id[0]
-    # print("<table id='loc%d' border='1' width='100%%'>" % trace_id[0], file=f)
     trace = []
     while True:
         trace += [(pc, fp)]
@@ -52,7 +51,7 @@ def htmlloc(code, scope, ctx, files, trace_id: List[int], typings, novalue):
 def htmlvars(vars, id, row, trace_id: List[int], typings):
     assert(isinstance(vars, typings['DictValue']))
     display = "block" if row == 0 else "none"
-    variables = [{"name": str_of_value(key)[1:], "value": str_of_value(value)} for key, value in vars.d.items()]
+    variables = [{"name": str_of_value(key)[1:], "value": json_valid_value(value, typings)} for key, value in vars.d.items()]
     return {
         'variables': variables,
         'display': display

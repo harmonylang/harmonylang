@@ -4624,20 +4624,15 @@ def main():
         (spc, file, line, column) = v
 
     if printCode == None:
-        print("Doing stuff")
         (nodes, bad_node) = run(code, scope.labels, mpc, spc, blockflag)
-        # print("Dumping values")
-        # valuedump(nodes, bad_node)
-        # print("Dumping json")
-        # jsondump(nodes, bad_node)
-
         get_html_content(nodes, bad_node, code, scope, fulldump, files, {
             'PushOp': PushOp,
             'JumpOp': JumpOp,
             'JumpCondOp': JumpCondOp,
             'PcValue': PcValue,
             'FrameOp': FrameOp,
-            'DictValue': DictValue
+            'DictValue': DictValue,
+            'SetValue': SetValue
         }, verbose=False, novalue=novalue, cwd=os.getcwd())
 
         htmldump(nodes, code, scope, bad_node, fulldump, False)

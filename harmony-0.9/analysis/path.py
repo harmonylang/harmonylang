@@ -1,6 +1,6 @@
 from typing import List, Optional, Tuple
 
-from analysis.util import key_value, str_of_value, nametag_to_str
+from analysis.util import key_value, str_of_value, nametag_to_str, json_valid_value
 
 
 class StepValue:
@@ -111,7 +111,7 @@ def gen_path(n):
     return path2
 
 
-def get_path(n):
+def get_path(n, typings):
     """
     Returns a dictionary of the processes and steps that led to the node n.
     {
@@ -132,7 +132,7 @@ def get_path(n):
     for (ctx, steps, states, variables) in path:
         sid = states[-1] if len(states) > 0 else n.uid
         process_name = nametag_to_str(ctx.nametag)
-        values = {k: str(variables.d[k]) for k in shared_variables}
+        values = {k: json_valid_value(variables.d[k], typings) for k in shared_variables}
         processes.append({
             "name": process_name,
             "values": values,

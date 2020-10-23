@@ -25,7 +25,7 @@ def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code,
     :return:
     """
     dump_name = "harmony.json"
-    path_to_node = get_path(bad_node)
+    path_to_node = get_path(bad_node, typings)
     data = {
         'bad_node': None if bad_node is None else bad_node.uid,
         'path_to_bad_node': path_to_node,
@@ -42,5 +42,4 @@ def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code,
     json_encoded = JSONEncoder(default=default_encoder).encode(data)
     with gzip.open(dump_name + '.gzip', 'w') as f:
         f.write(json_encoded.encode('utf-8'))
-        print(
-            f"Open file://{cwd}/{dump_name}.gzip for more information in json format")
+        print(f"Open file://{cwd}/{dump_name}.gzip for more information in json format")
