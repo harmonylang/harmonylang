@@ -115,7 +115,7 @@ class HarmonyJson {
     bad_node: number | null;
     path_to_bad_node: HarmonyNodePath;
     executed_code: MacroStep[];
-    nodes: HarmonyNode[];
+    nodes: Record<number, HarmonyNode>;
   }
 
   private readonly allCode: HarmonyCode[];
@@ -129,11 +129,15 @@ class HarmonyJson {
     const zippedContent = fs.readFileSync(filename);
     const content = zlib.gunzipSync(zippedContent).toString('utf-8');
     const json = JSON.parse(content);
+    const nodes: Record<number, HarmonyNode> = {};
+    for (const n of json.nodes) {
+      nodes[n.uid] = n;
+    }
     this.json = deepFreeze({
       bad_node: json.bad_node,
       path_to_bad_node: json.path_to_bad_node,
       executed_code: json.executed_code,
-      nodes: json.nodes
+      nodes: nodes
     });
     this.allCode = [];
     this.json.executed_code.forEach(step => {
@@ -164,7 +168,7 @@ class HarmonyJson {
   }
 
   getAllNodes(): HarmonyNode[] {
-    return this.json.nodes;
+    return Object.values(this.json.nodes);
   }
 
   getProcesses(): HarmonyProcess[] {
@@ -193,4 +197,4 @@ class HarmonyJson {
 }
 
 const obj = new HarmonyJson("../../harmony-0.9/harmony.json.gzip");
-// console.log(obj);
+console.log(obj.getProcesses().map(p => obj.getNodeOfProcess(p)));

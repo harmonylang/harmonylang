@@ -4456,6 +4456,7 @@ table td, table th {
 
         print("<td valign='top'>", file=f)
         if fulldump:
+            print("Number of nodes", len(nodes))
             for n in nodes:
                 htmlnode(n, code, scope, f, verbose)
         else:

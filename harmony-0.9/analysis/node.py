@@ -64,9 +64,8 @@ def htmltrace(code, scope, ctx, trace_id, typings) -> list:
     fp = ctx.fp
     trace = [ctx.vars]
     variables = []
-    while True:
-        if fp < 5:
-            break
+    while fp >= 5:
+        # print("Frame pointer", fp)
         trace.append(ctx.stack[fp - 2])
         fp = ctx.stack[fp - 1]
     trace.reverse()
@@ -135,10 +134,11 @@ def get_node_data(n, code, scope, verbose, files, typings, trace_id, novalue):
     ctxbag = []
     stopbag = []
 
+    # print("Number of context bags", len(n.state.ctxbag.keys()))
     for ctx in sorted(n.state.ctxbag.keys(), key=lambda x: nametag_to_str(x.nametag)):
         ctxbag.append(htmlrow(ctx, n.state.ctxbag, n, code, scope, verbose, files, trace_id, typings, novalue))
-    for ctx in sorted(n.state.stopbag.keys(), key=lambda x: nametag_to_str(x.nametag)):
-        stopbag.append(htmlrow(ctx, n.state.stopbag, n, code, scope, verbose, files, trace_id, typings, novalue))
+    # for ctx in sorted(n.state.stopbag.keys(), key=lambda x: nametag_to_str(x.nametag)):
+    #     stopbag.append(htmlrow(ctx, n.state.stopbag, n, code, scope, verbose, files, trace_id, typings, novalue))
     return {
         'uid': uid,
         'path_to_n': path_to_n,
@@ -147,6 +147,11 @@ def get_node_data(n, code, scope, verbose, files, typings, trace_id, novalue):
     }
 
 
-def full_dump(nodes, code, scope, files, verbose, typings, novalue):
+def full_dump(nodes, code, scope, files, verbose, typings, novalue, fulldump: bool, bad_node_id: int, path):
     nodes = sorted(nodes, key=lambda n: n.uid)
-    return [get_node_data(n, code, scope, verbose, files, typings, [0], novalue) for n in nodes]
+    if fulldump:
+        return [get_node_data(n, code, scope, verbose, files, typings, [0], novalue) for n in nodes]
+    else:
+        sids = set(map(lambda p: p['sid'], path['processes']))
+        bad_nodes = filter(lambda n: n.uid == bad_node_id or n.uid in sids, nodes)
+        return [get_node_data(n, code, scope, verbose, files, typings, [0], novalue) for n in bad_nodes]
