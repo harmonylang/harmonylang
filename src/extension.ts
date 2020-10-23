@@ -120,6 +120,7 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                     processManager.end(runningInterval);
                 }
                 if (stderr || error) {
+                    console.log(stderr, error);
                     showMessage('Execution Failed!', 'Message', stdout);
                     HarmonyOutputPanel.currentPanel?.dispose();
                 } else {
