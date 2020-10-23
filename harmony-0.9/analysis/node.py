@@ -137,8 +137,8 @@ def get_node_data(n, code, scope, verbose, files, typings, trace_id, novalue):
     # print("Number of context bags", len(n.state.ctxbag.keys()))
     for ctx in sorted(n.state.ctxbag.keys(), key=lambda x: nametag_to_str(x.nametag)):
         ctxbag.append(htmlrow(ctx, n.state.ctxbag, n, code, scope, verbose, files, trace_id, typings, novalue))
-    # for ctx in sorted(n.state.stopbag.keys(), key=lambda x: nametag_to_str(x.nametag)):
-    #     stopbag.append(htmlrow(ctx, n.state.stopbag, n, code, scope, verbose, files, trace_id, typings, novalue))
+    for ctx in sorted(n.state.stopbag.keys(), key=lambda x: nametag_to_str(x.nametag)):
+        stopbag.append(htmlrow(ctx, n.state.stopbag, n, code, scope, verbose, files, trace_id, typings, novalue))
     return {
         'uid': uid,
         'path_to_n': path_to_n,

@@ -8,7 +8,7 @@ type Step = {
   choose?: null | string;
 };
 
-type HarmonyProcess = {
+type ProcessMegaStep = {
   name: string;
   sid: number;
   values: Record<string, string>;
@@ -23,7 +23,7 @@ type HarmonyProcess = {
  */
 type HarmonyNodePath = {
   issues: string[];
-  processes: HarmonyProcess[];
+  processes: ProcessMegaStep[];
   shared_vars: string[];
 };
 
@@ -171,11 +171,11 @@ class HarmonyJson {
     return Object.values(this.json.nodes);
   }
 
-  getProcesses(): HarmonyProcess[] {
+  getProcesses(): ProcessMegaStep[] {
     return this.json.path_to_bad_node.processes;
   }
 
-  getNodeOfProcess(process: HarmonyProcess | number): HarmonyNode {
+  getNodeOfProcess(process: ProcessMegaStep | number): HarmonyNode {
     if (typeof process === 'number') {
       return this.json.nodes[process];
     } else {
@@ -197,4 +197,4 @@ class HarmonyJson {
 }
 
 const obj = new HarmonyJson("../../harmony-0.9/harmony.json.gzip");
-console.log(obj.getProcesses().map(p => obj.getNodeOfProcess(p)));
+console.log(obj.getProcesses().map(p => p));
