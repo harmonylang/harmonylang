@@ -31,6 +31,8 @@
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 """
+from analysis.analysis import get_html_content
+from value import Value
 
 internal_modules = {
 #############################
@@ -716,9 +718,6 @@ def keyValue(v):
     assert isinstance(v, Value), v
     return v.key()
 
-class Value:
-    def __str__(self):
-        return self.__repr__()
 
 class PcValue(Value):
     def __init__(self, pc):
@@ -3243,7 +3242,7 @@ class StatementRule(Rule):
             else:
                 expr = None
             return (AssertAST(token, cond, expr), self.skip(token, t))
-        
+
         # If we get here, the next statement is either an expression
         # or an assignment.  The grammar is either
         #   (tuple_expression '=')* tuple_expression ';'
@@ -4132,6 +4131,7 @@ def genpath(n):
     path2.append((lastctx, laststeps, laststates, lastvars))
     return path2
 
+# htmlpath(bad_node, "red", file)
 def htmlpath(n, color, f):
     # Generate a label for the path table
     issues = n.issues
@@ -4363,8 +4363,8 @@ def htmlnode(n, code, scope, f, verbose):
         htmlrow(ctx, n.state.stopbag, n, code, scope, f, verbose)
 
     print("</table>", file=f)
-    print("</div>", file=f);
-    print("</div>", file=f);
+    print("</div>", file=f)
+    print("</div>", file=f)
 
 def htmlcode(code, scope, f):
     print("<div id='table-wrapper'>", file=f)
@@ -4456,10 +4456,12 @@ table td, table th {
 
         print("<td valign='top'>", file=f)
         if fulldump:
+            print("Number of nodes", len(nodes))
             for n in nodes:
                 htmlnode(n, code, scope, f, verbose)
         else:
             if node == None:
+                # if no bad node
                 cnt = 0
                 for n in nodes:
                     htmlnode(n, code, scope, f, verbose)
@@ -4467,6 +4469,7 @@ table td, table th {
                     if not fulldump and cnt > 100:
                         break
             else:
+                # if there is a bad node
                 n = node
                 while n != None:
                     htmlnode(n, code, scope, f, verbose)
@@ -4622,7 +4625,23 @@ def main():
 
     if printCode == None:
         (nodes, bad_node) = run(code, scope.labels, mpc, spc, blockflag)
+        get_html_content(nodes, bad_node, code, scope, fulldump, files, {
+            'PushOp': PushOp,
+            'JumpOp': JumpOp,
+            'JumpCondOp': JumpCondOp,
+            'PcValue': PcValue,
+            'FrameOp': FrameOp,
+            'DictValue': DictValue,
+            'SetValue': SetValue
+        }, verbose=False, novalue=novalue, cwd=os.getcwd())
+
         htmldump(nodes, code, scope, bad_node, fulldump, False)
+
+
+def execute(filepath: str):
+    sys.argv = ["python", filepath]
+    main()
+
 
 if __name__ == "__main__":
     main()
