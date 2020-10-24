@@ -3,7 +3,7 @@ import * as zlib from 'zlib';
 import {PathLike} from "fs";
 
 type Step = {
-  steps?: [number, number];
+  steps?: Readonly<[number, number]>;
   error?: null | string;
   choose?: null | string;
 };
@@ -11,8 +11,8 @@ type Step = {
 type ProcessMegaStep = {
   name: string;
   sid: number;
-  values: Record<string, string>;
-  steps: Step[]
+  values: Record<string, unknown>;
+  steps: Readonly<Step>[]
 };
 
 /**
@@ -22,9 +22,9 @@ type ProcessMegaStep = {
  * 3) The set of shared variables in the program.
  */
 type HarmonyNodePath = {
-  issues: string[];
-  processes: ProcessMegaStep[];
-  shared_vars: string[];
+  issues: Readonly<string>[];
+  processes: Readonly<ProcessMegaStep>[];
+  shared_vars: Readonly<string>[];
 };
 
 /**
@@ -47,19 +47,19 @@ type MacroStep = {
   line_number: number;
   executed_line: string;
   first_pc: number;
-  code: HarmonyCode[]
+  code: Readonly<HarmonyCode>[]
 };
 
 type VariableBlock = {
   name: string;
-  value: unknown;
+  value: Readonly<unknown>;
 };
 
 /**
  * Contains trace information of a process, i.e. different stack frames.
  */
 type TraceStruct = {
-  variables: VariableBlock[];
+  variables: Readonly<VariableBlock>[];
   display: "block" | "none";
 };
 
@@ -70,12 +70,12 @@ type ContextBag = {
   choosing: string | null;
   process_name: string;
   number_of_copies: number;
-  traces: TraceStruct[];
-  context_details: Record<string, unknown>;
-  locs: {
-    lines: string[];
+  traces: Readonly<TraceStruct>[];
+  context_details: Readonly<Record<string, unknown>>;
+  locs: Readonly<{
+    lines: Readonly<string>[];
     failure: boolean | null;
-  };
+  }>;
 };
 
 type StopBag = ContextBag;
@@ -151,7 +151,7 @@ class HarmonyJson {
     return this.json.bad_node != null;
   }
 
-  getBadNode(): HarmonyNode | null {
+  getBadNode(): Readonly<HarmonyNode> | null {
     if (this.json.bad_node != null) {
       return this.json.nodes[this.json.bad_node];
     } else {
@@ -159,23 +159,31 @@ class HarmonyJson {
     }
   }
 
-  getIssues(): string[] {
+  getIssues(): Readonly<string>[] {
     return this.json.path_to_bad_node.issues;
   }
 
-  getAllCode(): HarmonyCode[] {
+  getAllCode(): Readonly<HarmonyCode>[] {
     return this.allCode;
   }
 
-  getAllNodes(): HarmonyNode[] {
+  getAllNodes(): Readonly<HarmonyNode>[] {
     return Object.values(this.json.nodes);
   }
 
-  getProcesses(): ProcessMegaStep[] {
+  getAllMacroSteps(): Readonly<MacroStep>[] {
+    return this.json.executed_code;
+  }
+
+  getSharedVariables(): Readonly<string>[] {
+    return this.json.path_to_bad_node.shared_vars;
+  }
+
+  getProcesses(): Readonly<ProcessMegaStep>[] {
     return this.json.path_to_bad_node.processes;
   }
 
-  getNodeOfProcess(process: ProcessMegaStep | number): HarmonyNode {
+  getNodeOfProcess(process: ProcessMegaStep | number): Readonly<HarmonyNode> {
     if (typeof process === 'number') {
       return this.json.nodes[process];
     } else {
@@ -183,18 +191,18 @@ class HarmonyJson {
     }
   }
 
-  macroStepAtPc(pc: number): MacroStep | undefined {
+  macroStepAtPc(pc: number): Readonly<MacroStep> | undefined {
     return this.json.executed_code.find((m, i) => {
       return i + 1 >= this.json.executed_code.length
         || (m.first_pc <= pc && this.json.executed_code[i + 1].first_pc > pc);
     });
   }
 
-  codeAtPC(pc: number): HarmonyCode | undefined {
+  codeAtPC(pc: number): Readonly<HarmonyCode> | undefined {
     return this.allCode[pc];
   }
 
 }
 
 const obj = new HarmonyJson("../../harmony-0.9/harmony.json.gzip");
-console.log(obj.getProcesses()[0].values);
+console.log(obj.getAllNodes());
