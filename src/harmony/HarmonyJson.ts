@@ -109,7 +109,7 @@ function deepFreeze<T extends Record<string, any>>(o: T): T {
   return o;
 }
 
-class HarmonyJson {
+export default class HarmonyJson {
 
   private readonly json: {
     bad_node: number | null;
@@ -203,6 +203,3 @@ class HarmonyJson {
   }
 
 }
-
-const obj = new HarmonyJson("../../harmony-0.9/harmony.json.gzip");
-console.log(obj.getAllNodes());
