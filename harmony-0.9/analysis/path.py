@@ -133,11 +133,21 @@ def get_path(n, typings):
         sid = states[-1] if len(states) > 0 else n.uid
         process_name = nametag_to_str(ctx.nametag)
         values = {k: json_valid_value(variables.d[k], typings) for k in shared_variables}
+        all_steps = process_steps(steps)
+        duration = 0
+        for s in all_steps:
+            if s.steps is not None:
+                start, end = s.steps
+                duration += (end - start + 1)
+            elif s.choose is not None:
+                duration += 1
+
         processes.append({
             "name": process_name,
             "values": values,
             "sid": sid,
-            "steps": process_steps(steps)
+            "steps": process_steps(steps),
+            "duration": duration
         })
     return {
         'issues': issues,

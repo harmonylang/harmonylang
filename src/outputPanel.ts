@@ -3,6 +3,7 @@ import * as Path from 'path';
 import * as Fs from 'fs';
 import * as zlib from 'zlib';
 import HarmonyJson from './harmony/HarmonyJson';
+import {Webview} from "vscode";
 
 export default class HarmonyOutputPanel {
     public static currentPanel: HarmonyOutputPanel | undefined;
@@ -109,16 +110,56 @@ export default class HarmonyOutputPanel {
                 harmonyPanel.webview.html = data;
             });
 
-            this._loadData(dataPath);
+            this._loadData(dataPath, webview);
         }
     }
 
-    private _loadData(dataPath: string) {
-        let data = new HarmonyJson(dataPath);
+    private _loadData(dataPath: string, webview: Webview) {
+        const dataInterface = new HarmonyJson(dataPath);
+        const inOrderCode = dataInterface.getInOrderCode();
+        const codeBlock = dataInterface.getAllMacroSteps();
+        const processes = dataInterface.getProcesses();
+        const sharedVariables = dataInterface.getSharedVariables();
+        const nodes = dataInterface.getAllNodes();
+        const allCode = dataInterface.getAllCode();
 
+        const jsonData = {
+            processes,
+            sharedVariables,
+            inOrderCode,
+            codeBlock,
+            nodes,
+            allCode
+        };
 
+        // Get all process names in order
+        jsonData.processes.forEach(p => {
+            console.log(p.name);
+            console.log(p.duration);
+            // Process -> code block
 
-        webview.postMessage({ command: 'load', jsonData: data });
-        console.log(data);
+            p.steps.forEach(s => {
+                if (s.steps != null) {
+                    const [start, finish] = s.steps;
+                } else if (s.choose != null) {
+                    const [pc, chosenValue] = s.choose;
+                }
+            });
+            console.log(p.steps[0]);
+        });
+
+        jsonData.codeBlock.forEach(block => {
+            console.log(block.executed_line); // Harmony code
+            // All of the assembly used to execute this Harmony code
+            block.code.forEach(code => {
+                console.log(code.code);
+                console.log(code.explanation);
+                console.log(code.jump_target);
+            });
+            console.log(block.code);
+        });
+
+        console.log(dataInterface);
+        webview.postMessage({ command: 'load', jsonData: dataInterface });
     }
 }
