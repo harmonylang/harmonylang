@@ -5,7 +5,7 @@ import {PathLike} from "fs";
 type Step = {
   steps?: Readonly<[number, number]>;
   error?: null | string;
-  choose?: null | string;
+  choose?: null | [number, string];
 };
 
 type ProcessMegaStep = {
