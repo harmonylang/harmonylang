@@ -167,6 +167,31 @@ export default class HarmonyJson {
     return this.allCode;
   }
 
+  /**
+   * Gets all of the executed code in the order that each line was
+   * executed.
+   */
+  inOrderCode(): Readonly<(HarmonyCode & {pc: number})[]> {
+    const processes = this.getProcesses();
+    const inOrderCode: (HarmonyCode & {pc: number})[] = [];
+    for (const p of processes) {
+      p.steps.forEach(s => {
+        if (s.steps != null) {
+          const [start, end] = s.steps;
+          for (let pc = start; pc <= end; pc++) {
+            const code = this.codeAtPC(pc) as HarmonyCode;
+            inOrderCode.push({...code, pc});
+          }
+        } else if (s.choose != null) {
+          const [pc] = s.choose;
+          const code = this.codeAtPC(pc) as HarmonyCode;
+          inOrderCode.push({...code, pc});
+        }
+      });
+    }
+    return inOrderCode;
+  }
+
   getAllNodes(): Readonly<HarmonyNode>[] {
     return Object.values(this.json.nodes);
   }
