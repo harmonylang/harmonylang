@@ -123,7 +123,8 @@
             case 'load':
                 // todo: do something with the json data
                 console.log(message.jsonData)
-                document.getElementById("towa").innerHTML = message.jsonData;
+                console.log(message.jsonData.hasBadNode())
+                document.getElementById("towa").innerHTML = message.jsonData.hasBadNode();
                 break;
         }
     });

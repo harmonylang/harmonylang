@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import * as Path from 'path';
 import * as Fs from 'fs';
+import * as zlib from 'zlib';
+import HarmonyJson from './harmony/HarmonyJson';
 
 export default class HarmonyOutputPanel {
     public static currentPanel: HarmonyOutputPanel | undefined;
@@ -98,39 +100,25 @@ export default class HarmonyOutputPanel {
         const harmonyPath = vscode.window.activeTextEditor?.document.fileName;
         if (typeof harmonyPath === 'string') {
             const uiPath = Path.join(__dirname, '..', 'harmony-0.9', 'web', 'index.html');
-            const dataPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.json');
+            const dataPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.json.gzip');
 
             Fs.readFile(uiPath, 'utf-8', function (err, data) {
                 if (err) {
                     vscode.window.showInformationMessage(err.message);
                 }
-                // const injectableCSS = `\n
-                // * {
-                //     font-size: 1rem;
-                // }
-                // html, * {
-                //     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, sans-serif;
-                //     line-height: 1.5;
-                // }
-                // body {
-                //     background-color: #fafafa;
-                // }
-                // #table-scroll {
-                //     height: 80vh !important;
-                // }
-                // \n`;
-                // const injectionPoint = data.indexOf('</style>');
-                // const formattedHtml = data.substring(0, injectionPoint) + injectableCSS + data.substring(injectionPoint);
-                // harmonyPanel.webview.html = formattedHtml;
                 harmonyPanel.webview.html = data;
             });
 
-            Fs.readFile(dataPath, 'utf-8', function (err, data) {
-                if (err) {
-                    vscode.window.showInformationMessage(err.message);
-                }
-                webview.postMessage({ command: 'load', jsonData: data });
-            });
+            this._loadData(dataPath);
         }
+    }
+
+    private _loadData(dataPath: string) {
+        let data = new HarmonyJson(dataPath);
+
+
+
+        webview.postMessage({ command: 'load', jsonData: data });
+        console.log(data);
     }
 }
