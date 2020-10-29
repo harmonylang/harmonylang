@@ -39,7 +39,7 @@ class ContextType:
     terminated: bool
     stopped: bool
     failure: Optional[Any]
-    vars: Dict[str, ValueType]
+    vars: Dict[str, Value]
     stack: List[str]
 
 
