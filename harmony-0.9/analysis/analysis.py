@@ -25,11 +25,12 @@ def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code,
     :return:
     """
     dump_name = "harmony.json"
+    path_to_node = get_path(bad_node, typings)
     data = {
         'bad_node': None if bad_node is None else bad_node.uid,
-        'path_to_bad_node': get_path(bad_node),
+        'path_to_bad_node': path_to_node,
         'executed_code': get_code(code, scope, files, typings),
-        'nodes': full_dump(nodes, code, scope, files, verbose, typings, novalue)
+        'nodes': full_dump(nodes, code, scope, files, verbose, typings, novalue, fulldump, bad_node.uid, path_to_node)
     }
 
     def default_encoder(v):

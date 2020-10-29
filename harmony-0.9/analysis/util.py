@@ -87,3 +87,22 @@ def str_of_value(v):
 
 def nametag_to_str(nt):
     return str(nt.d["name"]) + "/" + str(nt.d["tag"])
+
+
+def json_valid_value(v, typings):
+    """
+    Converts the Harmony value into a JSON-valid representation.
+    :param typings:
+    :param v:
+    :return:
+    """
+    if isinstance(v, list):
+        return [json_valid_value(z, typings) for z in v]
+    elif isinstance(v, (bool, int, str)):
+        return v
+    elif isinstance(v, typings['SetValue']):
+        return [json_valid_value(z, typings) for z in v.s]
+    if isinstance(v, typings['DictValue']):
+        return {k: json_valid_value(v, typings) for k, v in v.d.items()}
+    else:
+        return str(v)
