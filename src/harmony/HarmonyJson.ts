@@ -12,7 +12,8 @@ type ProcessMegaStep = {
   name: string;
   sid: number;
   values: Record<string, unknown>;
-  steps: Readonly<Step>[]
+  steps: Readonly<Step>[];
+  duration: number;
 };
 
 /**
@@ -89,7 +90,7 @@ type StopBag = ContextBag;
  */
 type HarmonyNode = {
   uid: number;
-  path_to_n: null | unknown;
+  path_to_n: null | ProcessMegaStep[];
   context_bag: ContextBag[];
   stop_bag: StopBag[];
 };
@@ -119,13 +120,13 @@ export default class HarmonyJson {
   }
 
   private readonly allCode: HarmonyCode[];
+  private readonly inOrderCode: (HarmonyCode & {pc: number})[]
 
   /**
    * Constructs a interface with the Harmony JSON data.
    * @param filename A path to a zipped
    */
   constructor(filename: PathLike) {
-
     const zippedContent = fs.readFileSync(filename);
     const content = zlib.gunzipSync(zippedContent).toString('utf-8');
     const json = JSON.parse(content);
@@ -139,12 +140,32 @@ export default class HarmonyJson {
       executed_code: json.executed_code,
       nodes: nodes
     });
+
     this.allCode = [];
     this.json.executed_code.forEach(step => {
       step.code.forEach(c => {
         this.allCode.push(c);
       });
     });
+
+    const processes = this.getProcesses();
+    const inOrderCode: (HarmonyCode & {pc: number})[] = [];
+    for (const p of processes) {
+      p.steps.forEach(s => {
+        if (s.steps != null) {
+          const [start, end] = s.steps;
+          for (let pc = start; pc <= end; pc++) {
+            const code = this.codeAtPC(pc) as HarmonyCode;
+            inOrderCode.push({...code, pc});
+          }
+        } else if (s.choose != null) {
+          const [pc] = s.choose;
+          const code = this.codeAtPC(pc) as HarmonyCode;
+          inOrderCode.push({...code, pc});
+        }
+      });
+    }
+    this.inOrderCode = inOrderCode;
   }
 
   hasBadNode(): boolean {
@@ -171,44 +192,27 @@ export default class HarmonyJson {
    * Gets all of the executed code in the order that each line was
    * executed.
    */
-  inOrderCode(): Readonly<(HarmonyCode & {pc: number})[]> {
-    const processes = this.getProcesses();
-    const inOrderCode: (HarmonyCode & {pc: number})[] = [];
-    for (const p of processes) {
-      p.steps.forEach(s => {
-        if (s.steps != null) {
-          const [start, end] = s.steps;
-          for (let pc = start; pc <= end; pc++) {
-            const code = this.codeAtPC(pc) as HarmonyCode;
-            inOrderCode.push({...code, pc});
-          }
-        } else if (s.choose != null) {
-          const [pc] = s.choose;
-          const code = this.codeAtPC(pc) as HarmonyCode;
-          inOrderCode.push({...code, pc});
-        }
-      });
-    }
-    return inOrderCode;
+  readonly getInOrderCode = (): Readonly<(HarmonyCode & {pc: number})[]> => {
+    return this.inOrderCode;
   }
 
-  getAllNodes(): Readonly<HarmonyNode>[] {
+  readonly getAllNodes = (): Readonly<HarmonyNode>[] => {
     return Object.values(this.json.nodes);
   }
 
-  getAllMacroSteps(): Readonly<MacroStep>[] {
+  readonly getAllMacroSteps = (): Readonly<MacroStep>[] => {
     return this.json.executed_code;
   }
 
-  getSharedVariables(): Readonly<string>[] {
+  readonly getSharedVariables = (): Readonly<string>[] => {
     return this.json.path_to_bad_node.shared_vars;
   }
 
-  getProcesses(): Readonly<ProcessMegaStep>[] {
+  readonly getProcesses = (): Readonly<ProcessMegaStep>[] => {
     return this.json.path_to_bad_node.processes;
   }
 
-  getNodeOfProcess(process: ProcessMegaStep | number): Readonly<HarmonyNode> {
+  readonly getNodeOfProcess = (process: ProcessMegaStep | number): Readonly<HarmonyNode> => {
     if (typeof process === 'number') {
       return this.json.nodes[process];
     } else {
@@ -216,14 +220,14 @@ export default class HarmonyJson {
     }
   }
 
-  macroStepAtPc(pc: number): Readonly<MacroStep> | undefined {
+  readonly macroStepAtPc = (pc: number): Readonly<MacroStep> | undefined => {
     return this.json.executed_code.find((m, i) => {
       return i + 1 >= this.json.executed_code.length
         || (m.first_pc <= pc && this.json.executed_code[i + 1].first_pc > pc);
     });
   }
 
-  codeAtPC(pc: number): Readonly<HarmonyCode> | undefined {
+  readonly codeAtPC = (pc: number): Readonly<HarmonyCode> | undefined => {
     return this.allCode[pc];
   }
 
