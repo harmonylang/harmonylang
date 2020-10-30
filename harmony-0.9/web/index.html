@@ -27,7 +27,7 @@
         #processes {
             position: relative;
             padding-top: 1rem;
-            height: 80%;
+            height: calc(100% - 4rem);
         }
 
         .process-labels {
@@ -50,23 +50,33 @@
 
         .process-bars {
             position: absolute;
-            top: 1rem;
+            top: 0;
+            padding-top: 1rem;
             left: 20.83333%;
             bottom: 0;
             overflow-x: scroll;
+            overflow-y: visible;
         }
 
         .process-bar-row {
             margin-top: 0.5rem;
             margin-bottom: 1rem;
+            padding-left: 12px;
             padding-right: 1rem;
             width: fit-content;
         }
 
         .process-bar {
-            border-radius: 0px 5px 5px 0px;
+            position: relative;
+            background: #323232;
+            border-radius: 5px;
             height: 2rem;
-            width: 50rem;
+        }
+
+        .process-block {
+            position: absolute;
+            border-radius: 5px;
+            height: 2rem;
         }
 
         .seekbar-button {
@@ -120,13 +130,13 @@
     </div>
     <div id="process-window">
         <div class="pure-g" id="seekbar-div">
-            <button class="pure-button seekbar-button" style="margin-left: 1rem">
+            <button class="pure-button seekbar-button" style="margin-left: 1rem" id="button-back">
                 <i class="fas fa-chevron-left"></i>
             </button>
-            <button class="pure-button seekbar-button">
+            <button class="pure-button seekbar-button" id="button-play">
                 <i class="fas fa-play"></i>
             </button>
-            <button class="pure-button seekbar-button" style="margin-right: 1rem;">
+            <button class="pure-button seekbar-button" style="margin-right: 1rem;" id="button-forward">
                 <i class="fas fa-chevron-right"></i>
             </button>
             <p class="seekbar-time" id="start-time">00:08:32</p>
@@ -134,24 +144,45 @@
             <p class="seekbar-time" id="end-time">00:42:03</p>
         </div>
         <div class="pure-g" id="processes">
-            <div class="pure-u-5-24 process-labels">
-                <div class="process-label-row">
-                    <p class="process-label-text">__init__/()</p>
-                </div>
-                <div class="process-label-row">
-                    <p class="process-label-text">diner/1</p>
-                </div>
-            </div>
-            <div class="pure-u-19-24 process-bars">
-                <div class="process-bar-row">
-                    <div class="process-bar"
-                        style="background: linear-gradient(to right, #bcbcbc 0%, #bcbcbc 20%, #323232 20%, #323232 100%);">
-                    </div>
-                </div>
-                <div class="process-bar-row">
-                    <div class="process-bar"
-                        style="background: linear-gradient(to right, #323232 0%, #323232 20%, #BA6B6C 20%, #BA6B6C 36%, #323232 36%, #323232 100%);">
-                    </div>
+            <div class="pure-u-5-24 process-labels" id="process-labels"></div>
+            <div class="pure-u-19-24 process-bars" id="process-bars">
+                <div id="process-slider"
+                    style="width: 24px; height: 100%; position: absolute; top: 0; overflow: hidden; z-index: 1;">
+                    <svg width="24" height="900" viewBox="0 0 16 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g filter="url(#filter0_d)">
+                            <line x1="8" y1="602" x2="8.00003" y2="2.00006" stroke="#E0E0E0" stroke-width="2" />
+                        </g>
+                        <g filter="url(#filter1_d)">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M12 3C12 1.89543 11.1046 1 10 1H6C4.89543 1 4 1.89543 4 3V8.39445C4 8.7893 4.11688 9.17531 4.3359 9.50385L6.33591 12.5039C7.12755 13.6913 8.87247 13.6913 9.66411 12.5038L11.6641 9.50385C11.8831 9.17531 12 8.7893 12 8.39445V3Z"
+                                fill="#E0E0E0" />
+                        </g>
+                        <circle cx="8" cy="8" r="2" fill="#C4C4C4" />
+                        <defs>
+                            <filter id="filter0_d" x="3" y="6.10352e-05" width="10" height="608"
+                                filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                                <feColorMatrix in="SourceAlpha" type="matrix"
+                                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+                                <feOffset dy="2" />
+                                <feGaussianBlur stdDeviation="2" />
+                                <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+                                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
+                                <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
+                            </filter>
+                            <filter id="filter1_d" x="0" y="1" width="16" height="20.3944" filterUnits="userSpaceOnUse"
+                                color-interpolation-filters="sRGB">
+                                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                                <feColorMatrix in="SourceAlpha" type="matrix"
+                                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+                                <feOffset dy="4" />
+                                <feGaussianBlur stdDeviation="2" />
+                                <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+                                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
+                                <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
+                            </filter>
+                        </defs>
+                    </svg>
                 </div>
             </div>
         </div>
@@ -159,8 +190,16 @@
 </body>
 
 <script>
+    const BAR_LEN_FACTOR = 5;
+    const COLOR_MAP = ['#c62828', '#AD1457', '#6A1B9A', '#4527A0', '#283593', '#1565C0', '#0277BD', '#00838F',
+        '#00695C', '#2E7D32', '#558B2F', '#9E9D24', '#F9A825', '#FF8F00', '#EF6C00', '#D84315', '#4E342E',
+        '#424242', '#37474F'
+    ];
+
     let time = 0;
     let maxTime = 0;
+
+    let harmonyData;
 
     let timeStartText;
     let timeEndText;
@@ -169,11 +208,9 @@
     let backButton;
     let forwardButton;
 
-    document.addEventListener('DOMContentLoaded', (event) => {
-        timeStartText = document.getElementById("start-time");
-        timeEndText = document.getElementById("end-time");
-        timeSlider = document.getElementById("time-slider");
-    });
+    let processLabels;
+    let processBars;
+    let processSlider;
 
     let timeFormat = (t) => {
         var hours = Math.floor(t / 3600);
@@ -192,7 +229,67 @@
         return hours + ':' + minutes + ':' + seconds;
     }
 
-    let initWindow = () => {
+    document.addEventListener('DOMContentLoaded', (event) => {
+        timeStartText = document.getElementById("start-time");
+        timeEndText = document.getElementById("end-time");
+        timeSlider = document.getElementById("time-slider");
+        playButton = document.getElementById("button-play");
+        backButton = document.getElementById("button-back");
+        forwardButton = document.getElementById("button-forward");
+        processBars = document.getElementById("process-bars");
+        processLabels = document.getElementById("process-labels");
+        processSlider = document.getElementById("process-slider");
+    });
+
+    let initWindow = (data) => {
+        harmonyData = data;
+
+        // Get all process names in order
+        totalDuration = 0;
+        let processObjects = new Map();
+        data.processes.forEach(p => {
+            // console.log(p.name);
+            // console.log(p.duration);
+            if (!processObjects.has(p.name.toString())) {
+                // Label Generation
+                let labelContainer = document.createElement("div");
+                labelContainer.setAttribute('class', 'process-label-row');
+                let label = document.createElement('p');
+                label.setAttribute('class', 'process-label-text');
+                label.textContent = p.name;
+                labelContainer.appendChild(label);
+                processLabels.appendChild(labelContainer);
+                // Row Generation
+                let row = document.createElement("div");
+                row.setAttribute('class', 'process-bar-row');
+                let bar = document.createElement("div");
+                bar.setAttribute('class', "process-bar");
+                row.appendChild(bar);
+                processObjects.set(p.name, bar);
+                processBars.appendChild(row);
+            }
+
+            let processBlock = document.createElement("div");
+            processBlock.setAttribute('class', 'process-block');
+            processBlock.style.left = `${totalDuration / BAR_LEN_FACTOR}rem`;
+            processBlock.style.width = `${p.duration / BAR_LEN_FACTOR}rem`;
+            processObjects.get(p.name).appendChild(processBlock);
+            totalDuration += p.duration;
+        });
+
+        maxTime = totalDuration;
+
+        let processNum = 0;
+        processObjects.forEach((processBar, processName) => {
+            console.log(processBar);
+            processBar.style.width = `${maxTime / BAR_LEN_FACTOR}rem`;
+            let blocks = processBar.childNodes;
+            blocks.forEach((block) => {
+                block.style.background = COLOR_MAP[processNum % COLOR_MAP.length];
+            });
+            processNum++;
+        });
+
         timeSlider.max = maxTime;
         timeEndText.innerHTML = timeFormat(maxTime);
 
@@ -215,9 +312,7 @@
         switch (message.command) {
             case 'load':
                 console.log(message.jsonData);
-                document.getElementById("towa").innerHTML = message.jsonData;
-                maxTime = 10032;
-                initWindow();
+                initWindow(message.jsonData);
                 break;
         }
     });

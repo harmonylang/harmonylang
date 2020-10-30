@@ -116,7 +116,7 @@ export default class HarmonyOutputPanel {
 
     private _loadData(dataPath: string, webview: Webview) {
         const dataInterface = new HarmonyJson(dataPath);
-        // const inOrderCode = dataInterface.getInOrderCode();
+        const inOrderCode = dataInterface.getInOrderCode();
         const codeBlock = dataInterface.getAllMacroSteps();
         const processes = dataInterface.getProcesses();
         const sharedVariables = dataInterface.getSharedVariables();
@@ -126,7 +126,7 @@ export default class HarmonyOutputPanel {
         const jsonData = {
             processes,
             sharedVariables,
-            // inOrderCode,
+            inOrderCode,
             codeBlock,
             nodes,
             allCode
