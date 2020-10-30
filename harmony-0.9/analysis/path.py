@@ -1,6 +1,6 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Any
 
-from analysis.util import key_value, str_of_value, nametag_to_str, json_valid_value
+from analysis.util import key_value, nametag_to_str, json_valid_value
 
 
 class StepValue:
@@ -19,7 +19,7 @@ class StepValue:
         return StepValue(steps=steps)
 
     @staticmethod
-    def make_choose(start: int, choose: str):
+    def make_choose(start: int, choose: Any):
         return StepValue(choose=(start, choose))
 
     def get_error(self) -> Optional[str]:
@@ -46,9 +46,10 @@ class StepValue:
         return str(self)
 
 
-def process_steps(steps) -> List[StepValue]:
+def process_steps(steps, typings) -> List[StepValue]:
     """
     Returns a list of steps in processes. This is based on the strsteps(steps) function in harmony.py
+    :param typings:
     :param steps:
     :return:
     """
@@ -63,7 +64,7 @@ def process_steps(steps) -> List[StepValue]:
         if pc is None:
             result.append(StepValue.make_error("Interrupt"))
         elif choice is not None:
-            result.append(StepValue.make_choose(start, str_of_value(choice)))
+            result.append(StepValue.make_choose(start, json_valid_value(choice, typings)))
             pass
         else:
             while j < len(steps):
@@ -133,7 +134,7 @@ def get_path(n, typings):
         sid = states[-1] if len(states) > 0 else n.uid
         process_name = nametag_to_str(ctx.nametag)
         values = {k: json_valid_value(variables.d[k], typings) for k in shared_variables}
-        all_steps = process_steps(steps)
+        all_steps = process_steps(steps, typings)
         duration = 0
         for s in all_steps:
             if s.steps is not None:
@@ -146,7 +147,7 @@ def get_path(n, typings):
             "name": process_name,
             "values": values,
             "sid": sid,
-            "steps": process_steps(steps),
+            "steps": all_steps,
             "duration": duration
         })
     return {
