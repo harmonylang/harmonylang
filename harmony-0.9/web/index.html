@@ -6,6 +6,9 @@
     <title>Harmony Output</title>
     <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
         integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+        integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
+        crossorigin="anonymous" />
     <style type="text/css">
         body {
             background-color: #1e1e1e;
@@ -66,12 +69,42 @@
             width: 50rem;
         }
 
-        #seekbar {
+        .seekbar-button {
+            background: #252525;
+            color: #fff;
+            width: 2.5rem;
+            height: 2.5rem;
+            margin-top: .25rem;
+            margin-bottom: .25rem;
+            margin-left: .25rem;
+        }
+
+        .seekbar-time {
+            margin-top: 0;
+            margin-bottom: 0;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            letter-spacing: normal;
+            line-height: 3rem;
+            font-weight: 600;
+        }
+
+        #seekbar-div {
             background-color: #3c3c3c;
             position: relative;
             top: 0%;
             width: 100%;
             height: 3rem;
+        }
+
+        #time-slider {
+            flex-grow: 1;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        #time-slider:focus {
+            outline: none;
         }
     </style>
 </head>
@@ -86,8 +119,19 @@
         </div>
     </div>
     <div id="process-window">
-        <div class="pure-g" id="seekbar">
-
+        <div class="pure-g" id="seekbar-div">
+            <button class="pure-button seekbar-button" style="margin-left: 1rem">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="pure-button seekbar-button">
+                <i class="fas fa-play"></i>
+            </button>
+            <button class="pure-button seekbar-button" style="margin-right: 1rem;">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <p class="seekbar-time" id="start-time">00:08:32</p>
+            <input type="range" min="0" max="100" value="0" id="time-slider">
+            <p class="seekbar-time" id="end-time">00:42:03</p>
         </div>
         <div class="pure-g" id="processes">
             <div class="pure-u-5-24 process-labels">
@@ -115,17 +159,65 @@
 </body>
 
 <script>
-    window.addEventListener('message', event => {
+    let time = 0;
+    let maxTime = 0;
 
+    let timeStartText;
+    let timeEndText;
+    let timeSlider;
+    let playButton;
+    let backButton;
+    let forwardButton;
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        timeStartText = document.getElementById("start-time");
+        timeEndText = document.getElementById("end-time");
+        timeSlider = document.getElementById("time-slider");
+    });
+
+    let timeFormat = (t) => {
+        var hours = Math.floor(t / 3600);
+        var minutes = Math.floor((t - (hours * 3600)) / 60);
+        var seconds = t - (hours * 3600) - (minutes * 60);
+
+        if (hours < 10) {
+            hours = "0" + hours;
+        }
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+        if (seconds < 10) {
+            seconds = "0" + seconds;
+        }
+        return hours + ':' + minutes + ':' + seconds;
+    }
+
+    let initWindow = () => {
+        timeSlider.max = maxTime;
+        timeEndText.innerHTML = timeFormat(maxTime);
+
+        timeSlider.addEventListener('input', () => {
+            time = timeSlider.value;
+            updateWindow();
+        }, false);
+
+        updateWindow();
+    }
+
+    let updateWindow = () => {
+        timeSlider.value = time;
+        timeStartText.innerHTML = timeFormat(time);
+    }
+
+    window.addEventListener('message', event => {
         const message = event.data; // The command and JSON data our extension sent
 
         switch (message.command) {
             case 'load':
-                // todo: do something with the json data
-                console.log(message);
-                console.log(message.jsonData)
-                console.log(message.jsonData.hasBadNode())
-                document.getElementById("towa").innerHTML = message.jsonData.hasBadNode();
+                console.log(message.jsonData);
+                document.getElementById("towa").innerHTML = message.jsonData;
+                maxTime = 10032;
+                initWindow();
                 break;
         }
     });
