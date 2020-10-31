@@ -25,7 +25,8 @@ def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code,
     :return:
     """
     dump_name = "harmony.json"
-    path_to_node = get_path(bad_node, typings)
+    nodes = sorted(nodes, key=lambda n: n.uid)
+    path_to_node = get_path(bad_node, typings, nodes, code)
     data = {
         'bad_node': None if bad_node is None else bad_node.uid,
         'path_to_bad_node': path_to_node,

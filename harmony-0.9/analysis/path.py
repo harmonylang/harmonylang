@@ -1,6 +1,7 @@
 from typing import List, Optional, Tuple, Any
 
 from analysis.util import key_value, nametag_to_str, json_valid_value
+from value import NodeType
 
 
 class StepValue:
@@ -115,7 +116,7 @@ def gen_path(n):
     return path2
 
 
-def get_path(n, typings):
+def get_path(n, typings, nodes: List[NodeType], code):
     """
     See htmlpath(n, color, f) in harmony.py for the html version of the function
     Returns a dictionary of the processes and steps that led to the node n.
@@ -146,21 +147,41 @@ def get_path(n, typings):
         process_name = nametag_to_str(last_ctx.nametag)
         values = {k: json_valid_value(variables.d[k], typings) for k in shared_variables}
         all_steps = process_steps(steps, typings)
-        duration = 0
+
+        total_duration = 0
+        time_slice_duration = 0
+        time_slices: List[int] = []
         for s in all_steps:
             if s.steps is not None:
                 start, end = s.steps
-                duration += (end - start + 1)
+                codes = list(filter(lambda e: str(e[1]).startswith("Store"), enumerate(code[start:end+1])))
+                if len(codes) > 0:
+                    differences = [i[0] - j[0] for i, j in zip(codes[1:], codes[:-1])]
+                    time_slices.append(time_slice_duration + codes[0][0])
+                    time_slices.extend(differences)
+                    time_slice_duration = end - (codes[-1][0] + start) + 1
+                else:
+                    time_slice_duration += end - start + 1
+                total_duration += end - start + 1
             elif s.choose is not None:
-                duration += 1
-
+                total_duration += 1
+                time_slice_duration += 1
+        # print(process_name)
+        # for s in states:
+        #     ctx = nodes[s].before
+        #     print(ctx.vars.d)
+        if time_slice_duration > 0:
+            time_slices.append(time_slice_duration)
+        assert sum(time_slices) == total_duration, f"{time_slices} =?= {total_duration}"
         processes.append({
             "pid": pid,
             "name": process_name,
             "values": values,
             "sid": sid,
             "steps": all_steps,
-            "duration": duration
+            "duration": total_duration,
+            "states": states,
+            "time_slices": time_slices
         })
     return {
         'issues': issues,

@@ -126,9 +126,9 @@ def htmlrow(ctx, bag, node, code, scope, verbose, files, trace_id: List[int], ty
     }
 
 
-def get_node_data(n, code, scope, verbose, files, typings, trace_id, novalue):
+def get_node_data(n, code, scope, verbose, files, typings, trace_id, novalue, nodes):
     uid = n.uid
-    path_to_n = get_path(n) if verbose else None
+    path_to_n = get_path(n, typings, nodes, code) if verbose else None
 
     ctxbag = []
     stopbag = []
@@ -147,10 +147,9 @@ def get_node_data(n, code, scope, verbose, files, typings, trace_id, novalue):
 
 
 def full_dump(nodes, code, scope, files, verbose, typings, novalue, fulldump: bool, bad_node_id: int, path):
-    nodes = sorted(nodes, key=lambda n: n.uid)
     if fulldump:
-        return [get_node_data(n, code, scope, verbose, files, typings, [0], novalue) for n in nodes]
+        return [get_node_data(n, code, scope, verbose, files, typings, [0], novalue, nodes) for n in nodes]
     else:
         sids = set(map(lambda p: p['sid'], path['processes']))
         bad_nodes = filter(lambda n: n.uid == bad_node_id or n.uid in sids, nodes)
-        return [get_node_data(n, code, scope, verbose, files, typings, [0], novalue) for n in bad_nodes]
+        return [get_node_data(n, code, scope, verbose, files, typings, [0], novalue, nodes) for n in bad_nodes]

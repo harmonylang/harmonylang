@@ -15,6 +15,7 @@ type ProcessMegaStep = {
   values: Record<string, unknown>;
   steps: Readonly<Step>[];
   duration: number;
+  time_slices: number[];
 };
 
 /**
