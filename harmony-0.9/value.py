@@ -35,6 +35,7 @@ class ContextType:
     atomic: int
     interruptLevel: bool
     fp: int
+    readonly: int
     trap: Optional[Any]
     terminated: bool
     stopped: bool

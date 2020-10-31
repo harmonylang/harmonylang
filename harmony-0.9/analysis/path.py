@@ -83,7 +83,7 @@ def process_steps(steps, typings) -> List[StepValue]:
 
 def gen_path(n):
     """
-    Extracts the path to node n
+    Extracts the path to node n. See genpath(n) in harmony.py for its html counterpart
     """
     path = []
     while n is not None and n.after is not None:
@@ -92,28 +92,31 @@ def gen_path(n):
 
     # Now compress the path, combining macrosteps by the same context
     path2 = []
-    last_context = None
+    last_context = first_context = None
     last_steps = []
     last_states = []
     last_vars = None
     for n in path:
+        if first_context is None:
+            first_context = n.before
         if last_context is None or last_context == n.before:
             last_steps += n.steps
             last_context = n.after
             last_states.append(n.uid)
             last_vars = n.state.vars
         else:
-            path2.append((last_context, last_steps, last_states, last_vars))
+            path2.append((first_context, last_context, last_steps, last_states, last_vars))
             last_context = n.after
             last_steps = n.steps.copy()
             last_states = [n.uid]
             last_vars = n.state.vars
-    path2.append((last_context, last_steps, last_states, last_vars))
+    path2.append((first_context, last_context, last_steps, last_states, last_vars))
     return path2
 
 
 def get_path(n, typings):
     """
+    See htmlpath(n, color, f) in harmony.py for the html version of the function
     Returns a dictionary of the processes and steps that led to the node n.
     {
         issues: string list;
@@ -130,9 +133,16 @@ def get_path(n, typings):
     shared_variables = sorted(n.state.vars.d.keys(), key=key_value)
     path = gen_path(n)
     processes = []
-    for (ctx, steps, states, variables) in path:
+    pids = []
+    for (first_ctx, last_ctx, steps, states, variables) in path:
         sid = states[-1] if len(states) > 0 else n.uid
-        process_name = nametag_to_str(ctx.nametag)
+        try:
+            pid = pids.index(first_ctx)
+            pids[pid] = last_ctx
+        except ValueError:
+            pids.append(last_ctx)
+            pid = len(pids) - 1
+        process_name = nametag_to_str(last_ctx.nametag)
         values = {k: json_valid_value(variables.d[k], typings) for k in shared_variables}
         all_steps = process_steps(steps, typings)
         duration = 0
@@ -144,6 +154,7 @@ def get_path(n, typings):
                 duration += 1
 
         processes.append({
+            "pid": pid,
             "name": process_name,
             "values": values,
             "sid": sid,
