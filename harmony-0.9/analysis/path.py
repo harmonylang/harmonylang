@@ -136,7 +136,8 @@ def get_path(n, typings, nodes: List[NodeType], code):
     path = gen_path(n)
     processes = []
     pids = []
-    for (first_ctx, last_ctx, steps, states, variables) in path:
+    for (first_ctx, last_ctx, steps, all_states, variables) in path:
+        states = [s for s in all_states]
         sid = states[-1] if len(states) > 0 else n.uid
         if first_ctx in pids:
             pid = pids.index(first_ctx)
@@ -150,38 +151,46 @@ def get_path(n, typings, nodes: List[NodeType], code):
 
         total_duration = 0
         time_slice_duration = 0
-        time_slices: List[int] = []
+        state_slices: list = []
+
+        def update(slice_duration):
+            slice_duration += 1
+            if len(states) > 0 and pc == nodes[states[0]].after.pc:
+                state_slices.append({
+                    "values": nodes[states[0]].state.vars.d,
+                    "duration": slice_duration
+                })
+                states.pop(0)
+                return 0
+            return slice_duration
+
         for s in all_steps:
             if s.steps is not None:
                 start, end = s.steps
-                codes = list(filter(lambda e: str(e[1]).startswith("Store"), enumerate(code[start:end+1])))
-                if len(codes) > 0:
-                    differences = [i[0] - j[0] for i, j in zip(codes[1:], codes[:-1])]
-                    time_slices.append(time_slice_duration + codes[0][0])
-                    time_slices.extend(differences)
-                    time_slice_duration = end - (codes[-1][0] + start) + 1
-                else:
-                    time_slice_duration += end - start + 1
+                for pc in range(start, end + 1):
+                    time_slice_duration = update(time_slice_duration)
                 total_duration += end - start + 1
             elif s.choose is not None:
+                pc = s.choose[0]
                 total_duration += 1
-                time_slice_duration += 1
-        # print(process_name)
-        # for s in states:
-        #     ctx = nodes[s].before
-        #     print(ctx.vars.d)
-        if time_slice_duration > 0:
-            time_slices.append(time_slice_duration)
-        assert sum(time_slices) == total_duration, f"{time_slices} =?= {total_duration}"
+                time_slice_duration = update(time_slice_duration)
+        if len(states) > 0:
+            state_slices.append({
+                "values": nodes[states[0]].state.vars.d,
+                "duration": time_slice_duration
+            })
+            states.pop(0)
+        assert len(states) == 0, str(len(states)) + ", All: " + str(list(map(lambda s: nodes[s].after.pc, all_states))) + ",  " + str(all_steps)
         processes.append({
             "pid": pid,
             "name": process_name,
             "values": values,
+            "final_values": values,
             "sid": sid,
             "steps": all_steps,
             "duration": total_duration,
             "states": states,
-            "time_slices": time_slices
+            "slices": state_slices
         })
     return {
         'issues': issues,
