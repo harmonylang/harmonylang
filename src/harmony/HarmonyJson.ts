@@ -235,4 +235,4 @@ export default class HarmonyJson {
 }
 
 const i = new HarmonyJson("../../harmony-0.9/harmony.json.gzip");
-console.log(i.getProcesses());
+console.log(i.getAllCode());

@@ -137,10 +137,10 @@ def get_path(n, typings):
     pids = []
     for (first_ctx, last_ctx, steps, states, variables) in path:
         sid = states[-1] if len(states) > 0 else n.uid
-        try:
+        if first_ctx in pids:
             pid = pids.index(first_ctx)
             pids[pid] = last_ctx
-        except ValueError:
+        else:
             pids.append(last_ctx)
             pid = len(pids) - 1
         process_name = nametag_to_str(last_ctx.nametag)
