@@ -9,6 +9,7 @@ type Step = {
 };
 
 type ProcessMegaStep = {
+  pid: number,
   name: string;
   sid: number;
   values: Record<string, unknown>;
@@ -232,3 +233,6 @@ export default class HarmonyJson {
   }
 
 }
+
+const i = new HarmonyJson("../../harmony-0.9/harmony.json.gzip");
+console.log(i.getProcesses());

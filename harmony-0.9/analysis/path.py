@@ -106,6 +106,7 @@ def gen_path(n):
             last_vars = n.state.vars
         else:
             path2.append((first_context, last_context, last_steps, last_states, last_vars))
+            first_context = n.before
             last_context = n.after
             last_steps = n.steps.copy()
             last_states = [n.uid]
