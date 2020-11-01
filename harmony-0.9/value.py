@@ -35,11 +35,12 @@ class ContextType:
     atomic: int
     interruptLevel: bool
     fp: int
+    readonly: int
     trap: Optional[Any]
     terminated: bool
     stopped: bool
     failure: Optional[Any]
-    vars: Dict[str, Value]
+    vars: DictValueType
     stack: List[str]
 
 

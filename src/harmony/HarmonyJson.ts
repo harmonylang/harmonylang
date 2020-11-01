@@ -9,11 +9,20 @@ type Step = {
 };
 
 type ProcessMegaStep = {
+  pid: number,
   name: string;
   sid: number;
+  /**
+   * @deprecated Use [final_values]. For values in between states, use [slices]
+   */
   values: Record<string, unknown>;
+  final_values: Record<string, unknown>
   steps: Readonly<Step>[];
   duration: number;
+  slices: {
+    duration: number;
+    values: Record<string, unknown>
+  }[];
 };
 
 /**

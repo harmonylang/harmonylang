@@ -415,6 +415,8 @@ constants = {}          # constants modified with -c
 modules = {}            # modules modified with -m
 namestack = []          # stack of module names being compiled
 node_uid = 1            # unique node identifier
+silent = False          # not printing periodic status updates
+lasttime = 0
 
 def load_string(all, filename, scope, code):
     files[filename] = all.split("\n")
@@ -717,7 +719,6 @@ def keyValue(v):
         return (2, v)
     assert isinstance(v, Value), v
     return v.key()
-
 
 class PcValue(Value):
     def __init__(self, pc):
@@ -1095,6 +1096,9 @@ class StoreOp(Op):
             return "pop a value and store it in shared variable " + self.name[0]
 
     def eval(self, state, context):
+        if context.readonly > 0:
+            context.failure = "Error: no update allowed in assert " + str(self.token)
+            return
         v = context.pop()
         if self.name == None:
             av = context.pop()
@@ -1103,6 +1107,9 @@ class StoreOp(Op):
                                     str(self.token) + " -> " + str(av)
                 return
             lv = av.indexes
+            if len(lv) == 0:
+                context.failure = "Error: bad address " + str(self.token)
+                return
             name = lv[0]
         else:
             (lexeme, file, line, column) = self.name
@@ -1462,6 +1469,29 @@ class AtomicDecOp(Op):
         context.atomic -= 1
         context.pc += 1
 
+class ReadonlyIncOp(Op):
+    def __repr__(self):
+        return "ReadonlyInc"
+
+    def explain(self):
+        return "increment readonly counter of context; process can't mutate shared variables if > 0"
+
+    def eval(self, state, context):
+        context.readonly += 1
+        context.pc += 1
+
+class ReadonlyDecOp(Op):
+    def __repr__(self):
+        return "ReadonlyDec"
+
+    def explain(self):
+        return "decrement readonly counter of context"
+
+    def eval(self, state, context):
+        assert context.readonly > 0
+        context.readonly -= 1
+        context.pc += 1
+
 class JumpOp(Op):
     def __init__(self, pc):
         self.pc = pc
@@ -1626,7 +1656,7 @@ class NaryOp(Op):
                         if not self.checktype(state, context, sa, isinstance(e2, SetValue)):
                             return
                         e2 = SetValue(e2.s.union(e1.s))
-                elif op == "^": 
+                elif op == "^":
                     if isinstance(e1, int):
                         if not self.checktype(state, context, sa, isinstance(e2, int)):
                             return
@@ -1966,7 +1996,7 @@ class AST:
             tst = len(code)
             code.append(None)       # going to plug in a Jump op here
             code.append(LoadVarOp(S))
-            code.append(CutOp())  
+            code.append(CutOp())
             code.append(StoreVarOp(S))
             code.append(StoreVarOp(var))
 
@@ -2398,7 +2428,7 @@ class ListComprehensionRule(Rule):
 
     def parse(self, t):
         token = t[0]
-        (lst, t) = self.iterParse(t[1:], self.closers) 
+        (lst, t) = self.iterParse(t[1:], self.closers)
         return (ListComprehensionAST(self.value, lst, token), t)
 
 class SetRule(Rule):
@@ -2519,7 +2549,7 @@ class BasicExpressionRule(Rule):
         if lexeme[0] == '"':
             return (TupleAST([ ConstantAST((c, file, line, column))
                                 for c in lexeme[1:] ], token), t[1:])
-        if lexeme == ".": 
+        if lexeme == ".":
             (lexeme, file, line, column) = t[1]
             if lexeme.startswith("0x"):
                 return (ConstantAST((chr(int(lexeme, 16)), file, line, column)), t[2:])
@@ -2844,12 +2874,14 @@ class AssertAST(AST):
         return "Assert(" + str(self.token) + str(self.cond) + ", " + str(self.expr) + ")"
 
     def compile(self, scope, code):
+        code.append(ReadonlyIncOp())
         code.append(AtomicIncOp())
         self.cond.compile(scope, code)
         if self.expr != None:
             self.expr.compile(scope, code)
         code.append(AssertOp(self.token, self.expr != None))
         code.append(AtomicDecOp())
+        code.append(ReadonlyDecOp())
 
 class MethodAST(AST):
     def __init__(self, name, args, stat, fun):
@@ -3141,7 +3173,7 @@ class StatementRule(Rule):
         if not ((line1 == line2) or (col1 == col2)):
             print("Parse warning: ';' does not line up", token, t[0])
         return t[1:]
-        
+
     def parse(self, t):
         token = t[0]
         (lexeme, file, line, column) = token
@@ -3271,6 +3303,7 @@ class ContextValue(Value):
         self.nametag = nametag
         self.pc = pc
         self.atomic = 0
+        self.readonly = 0
         self.interruptLevel = False
         self.stack = []     # collections.deque() seems slightly slower
         self.fp = 0         # frame pointer
@@ -3287,7 +3320,7 @@ class ContextValue(Value):
         return self.__repr__()
 
     def __hash__(self):
-        h = (self.nametag, self.pc, self.atomic, self.interruptLevel, self.vars,
+        h = (self.nametag, self.pc, self.atomic, self.readonly, self.interruptLevel, self.vars,
             self.trap, self.terminated, self.stopped, self.failure).__hash__()
         for v in self.stack:
             h ^= v.__hash__()
@@ -3301,6 +3334,8 @@ class ContextValue(Value):
         if self.pc != other.pc:
             return False
         if self.atomic != other.atomic:
+            return False
+        if self.readonly != other.readonly:
             return False
         if self.interruptLevel != other.interruptLevel:
             return False
@@ -3319,6 +3354,7 @@ class ContextValue(Value):
     def copy(self):
         c = ContextValue(self.nametag, self.pc)
         c.atomic = self.atomic
+        c.readonly = self.readonly
         c.interruptLevel = self.interruptLevel
         c.stack = self.stack.copy()
         c.fp = self.fp
@@ -3605,10 +3641,10 @@ def strvars(vars):
 
 def print_path(bad_node):
     path = genpath(bad_node)
-    for (ctx, steps, states, vars) in path:
+    for (fctx, ctx, steps, states, vars) in path:
         print(nametag2str(ctx.nametag), strsteps(steps), ctx.pc, strvars(vars.d))
     if len(path) > 0:
-        (ctx, steps, states, vars) = path[-1]
+        (fctx, ctx, steps, states, vars) = path[-1]
         if ctx.failure != None:
             print(">>>", ctx.failure)
 
@@ -3666,14 +3702,12 @@ def optimize(code):
         elif isinstance(op, JumpCondOp):
             code[i] = JumpCondOp(op.cond, optjump(code, op.pc))
 
-lasttime = 0
-
 class Pad:
     def __init__(self, descr):
         self.descr = descr
         self.value = ""
         self.lastlen = 0
-    
+
     def __repr__(self):
         return self.descr + " = " + self.value
 
@@ -3727,8 +3761,8 @@ def onestep(node, ctx, choice, interrupt, nodes, visited, todo):
         steps.append((cc.pc, choice_copy))
 
         # print status update
-        global lasttime
-        if time.time() - lasttime > 0.3:
+        global lasttime, silent
+        if not silent and time.time() - lasttime > 0.3:
             p_ctx.pad(nametag2str(cc.nametag))
             p_pc.pad(str(cc.pc))
             p_ns.pad(str(len(visited)))
@@ -3774,7 +3808,7 @@ def onestep(node, ctx, choice, interrupt, nodes, visited, todo):
             else:
                 choice_copy = list(v.s)[0]
 
-        # if we're about to do a state change, let other processes
+        # if we're about to access shared state, let other processes
         # go first assuming there are other processes and we're not
         # in "atomic" mode
         if cc.atomic == 0 and type(sc.code[cc.pc]) in { LoadOp, StoreOp }: # TODO  and len(sc.ctxbag) > 1:
@@ -3976,7 +4010,8 @@ def run(code, labels, map, step, blockflag):
                 if ctx.trap != None and not ctx.interruptLevel:
                     onestep(node, ctx, None, True, nodes, visited, todo)
 
-    print("#states =", len(visited), "diameter =", maxdiameter,
+    if not silent:
+        print("#states =", len(visited), "diameter =", maxdiameter,
                                 " "*100 + "\b"*100)
 
     todump = set()
@@ -3993,7 +4028,8 @@ def run(code, labels, map, step, blockflag):
     if not faultyState:
         # Determine the strongly connected components
         components = find_scc(nodes)
-        print("#components:", len(components))
+        if not silent:
+            print("#components:", len(components))
 
         # Figure out which strongly connected components are "good".
         # These are non-sink components or components that have
@@ -4067,7 +4103,7 @@ def run(code, labels, map, step, blockflag):
 
     if not issues_found:
         print("no issues found")
-        n = lastNode
+        n = None
     else:
         n = find_shortest(todump)
     return (nodes, n)
@@ -4112,26 +4148,28 @@ def genpath(n):
 
     # Now compress the path, combining macrosteps by the same context
     path2 = []
-    lastctx = None
+    lastctx = firstctx = None
     laststeps = []
     laststates = []
     lastvars = DictValue({})
     for n in path:
+        if firstctx == None:
+            firstctx = n.before
         if lastctx == None or lastctx == n.before:
             laststeps += n.steps
             lastctx = n.after
             laststates.append(n.uid)
             lastvars = n.state.vars
             continue
-        path2.append((lastctx, laststeps, laststates, lastvars))
+        path2.append((firstctx, lastctx, laststeps, laststates, lastvars))
+        firstctx = n.before
         lastctx = n.after
         laststeps = n.steps.copy()
         laststates = [n.uid]
         lastvars = n.state.vars
-    path2.append((lastctx, laststeps, laststates, lastvars))
+    path2.append((firstctx, lastctx, laststeps, laststates, lastvars))
     return path2
 
-# htmlpath(bad_node, "red", file)
 def htmlpath(n, color, f):
     # Generate a label for the path table
     issues = n.issues
@@ -4156,13 +4194,20 @@ def htmlpath(n, color, f):
         print("<td align='center' style='font-style: italic'>%s</td>"%v, file=f)
     print("</tr><tr><td><td></tr>", file=f)
     row = 1
-    for (ctx, steps, states, vars) in path:
+    pids = []
+    for (fctx, ctx, steps, states, vars) in path:
         row += 1
         if len(states) > 0:
             sid = states[-1]
         else:
             sid = n.uid
-        print("<tr><td><a href='javascript:rowshow(%d,%d)'>%s</a></td>"%(row, sid, nametag2str(ctx.nametag)), file=f)
+        try:
+            pid = pids.index(fctx)
+            pids[pid] = ctx
+        except ValueError:
+            pids.append(ctx)
+            pid = len(pids) - 1
+        print("<tr><td>P%d: <a href='javascript:rowshow(%d,%d)'>%s</a></td>"%(pid, row, sid, nametag2str(ctx.nametag)), file=f)
         print("<td>%s</td><td></td>"%htmlstrsteps(steps), file=f)
 
         for k in keys:
@@ -4363,8 +4408,8 @@ def htmlnode(n, code, scope, f, verbose):
         htmlrow(ctx, n.state.stopbag, n, code, scope, f, verbose)
 
     print("</table>", file=f)
-    print("</div>", file=f)
-    print("</div>", file=f)
+    print("</div>", file=f);
+    print("</div>", file=f);
 
 def htmlcode(code, scope, f):
     print("<div id='table-wrapper'>", file=f)
@@ -4456,12 +4501,10 @@ table td, table th {
 
         print("<td valign='top'>", file=f)
         if fulldump:
-            print("Number of nodes", len(nodes))
             for n in nodes:
                 htmlnode(n, code, scope, f, verbose)
         else:
             if node == None:
-                # if no bad node
                 cnt = 0
                 for n in nodes:
                     htmlnode(n, code, scope, f, verbose)
@@ -4469,7 +4512,6 @@ table td, table th {
                     if not fulldump and cnt > 100:
                         break
             else:
-                # if there is a bad node
                 n = node
                 while n != None:
                     htmlnode(n, code, scope, f, verbose)
@@ -4547,6 +4589,7 @@ table td, table th {
         print("</html>", file=f)
     print("Open file://" + os.getcwd() + "/harmony.html for more information")
 
+
 def usage():
     print("Usage: harmony [options] harmony-file ...")
     print("  options: ")
@@ -4556,9 +4599,13 @@ def usage():
     print("    -d: htmldump full state into html file")
     print("    -h: help")
     print("    -m module=version: select a module version")
+    print("    -s: silent (do not print periodic status updates)")
     exit(1)
 
+
 def main():
+    global silent
+
     # Get options.  First set default values
     consts = []
     mods = []
@@ -4567,7 +4614,7 @@ def main():
     fulldump = False
     try:
         opts, args = getopt.getopt(sys.argv[1:],
-                        "Aabc:dhm:", ["const=", "help", "module="])
+                        "Aabc:dhm:s", ["const=", "help", "module="])
     except getopt.GetoptError as err:
         print(str(err))
         usage()
@@ -4584,6 +4631,8 @@ def main():
             fulldump = True
         elif o in { "-m", "--module" }:
             mods.append(a)
+        elif o == "-s":
+            silent = True
         elif o in { "-h", "--help" }:
             usage()
         else:
@@ -4623,19 +4672,22 @@ def main():
         assert t == "constant"
         (spc, file, line, column) = v
 
-    if printCode == None:
+    if printCode is None:
         (nodes, bad_node) = run(code, scope.labels, mpc, spc, blockflag)
-        get_html_content(nodes, bad_node, code, scope, fulldump, files, {
-            'PushOp': PushOp,
-            'JumpOp': JumpOp,
-            'JumpCondOp': JumpCondOp,
-            'PcValue': PcValue,
-            'FrameOp': FrameOp,
-            'DictValue': DictValue,
-            'SetValue': SetValue
-        }, verbose=False, novalue=novalue, cwd=os.getcwd())
-
-        htmldump(nodes, code, scope, bad_node, fulldump, False)
+        if bad_node is None:
+            sys.exit(0)
+        if not silent:
+            htmldump(nodes, code, scope, bad_node, fulldump, False)
+            get_html_content(nodes, bad_node, code, scope, fulldump, files, {
+                'PushOp': PushOp,
+                'JumpOp': JumpOp,
+                'JumpCondOp': JumpCondOp,
+                'PcValue': PcValue,
+                'FrameOp': FrameOp,
+                'DictValue': DictValue,
+                'SetValue': SetValue
+            }, verbose=False, novalue=novalue, cwd=os.getcwd())
+        sys.exit(1)
 
 
 def execute(filepath: str):

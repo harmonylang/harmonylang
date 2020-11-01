@@ -102,7 +102,7 @@ def json_valid_value(v, typings):
         return v
     elif isinstance(v, typings['SetValue']):
         return [json_valid_value(z, typings) for z in v.s]
-    if isinstance(v, typings['DictValue']):
+    elif isinstance(v, typings['DictValue']):
         return {k: json_valid_value(v, typings) for k, v in v.d.items()}
     else:
         return str(v)
