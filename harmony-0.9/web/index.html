@@ -191,6 +191,7 @@
 
 <script>
     const BAR_LEN_FACTOR = 5;
+    const PLAY_SPEED = 200;
     const COLOR_MAP = ['#c62828', '#AD1457', '#6A1B9A', '#4527A0', '#283593', '#1565C0', '#0277BD', '#00838F',
         '#00695C', '#2E7D32', '#558B2F', '#9E9D24', '#F9A825', '#FF8F00', '#EF6C00', '#D84315', '#4E342E',
         '#424242', '#37474F'
@@ -198,6 +199,7 @@
 
     let time = 0;
     let maxTime = 0;
+    let processLengthPx = 0;
 
     let harmonyData;
 
@@ -212,22 +214,8 @@
     let processBars;
     let processSlider;
 
-    let timeFormat = (t) => {
-        var hours = Math.floor(t / 3600);
-        var minutes = Math.floor((t - (hours * 3600)) / 60);
-        var seconds = t - (hours * 3600) - (minutes * 60);
-
-        if (hours < 10) {
-            hours = "0" + hours;
-        }
-        if (minutes < 10) {
-            minutes = "0" + minutes;
-        }
-        if (seconds < 10) {
-            seconds = "0" + seconds;
-        }
-        return hours + ':' + minutes + ':' + seconds;
-    }
+    let playTimer;
+    let playing = false;
 
     document.addEventListener('DOMContentLoaded', (event) => {
         timeStartText = document.getElementById("start-time");
@@ -289,21 +277,72 @@
             });
             processNum++;
         });
+        processLengthPx = convertRemToPixels(maxTime / BAR_LEN_FACTOR);
 
         timeSlider.max = maxTime;
         timeEndText.innerHTML = timeFormat(maxTime);
 
-        timeSlider.addEventListener('input', () => {
+        timeSlider.addEventListener('input', (e) => {
+            e.preventDefault();
             time = timeSlider.value;
             updateWindow();
         }, false);
 
+        playButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (playing) {
+                window.clearInterval(playTimer);
+                playButton.firstElementChild.setAttribute('class', 'fas fa-play');
+                playing = false;
+            } else {
+                playTimer = window.setInterval(playExecution, PLAY_SPEED);
+                playButton.firstElementChild.setAttribute('class', 'fas fa-pause');
+                playing = true;
+            }
+        }, false);
+
+        forwardButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (time < maxTime) {
+                time++;
+            }
+            updateWindow();
+        }, false);
+
+        backButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (time > 0) {
+                time--;
+            }
+            updateWindow();
+        }, false);
+
+        // processSlider.addEventListener('drag', (e, drag) => {
+        //     e.preventDefault();
+        //     console.log(drag.offsetX);
+        //     let timeDelta = Math.floor((drag.offsetX / processLengthPx) * maxTime);
+        //     time += timeDelta;
+        //     updateWindow();
+        // }, false);
+
+        updateWindow();
+    }
+
+    let playExecution = () => {
+        if (time < maxTime) {
+            time++;
+        } else {
+            window.clearInterval(playTimer);
+            playButton.firstElementChild.setAttribute('class', 'fas fa-play');
+            playing = false;
+        }
         updateWindow();
     }
 
     let updateWindow = () => {
         timeSlider.value = time;
         timeStartText.innerHTML = timeFormat(time);
+        processSlider.style.left = `${convertRemToPixels(time / BAR_LEN_FACTOR)}px`;
     }
 
     window.addEventListener('message', event => {
@@ -316,6 +355,29 @@
                 break;
         }
     });
+
+    // Utility Functions
+
+    let timeFormat = (t) => {
+        var hours = Math.floor(t / 3600);
+        var minutes = Math.floor((t - (hours * 3600)) / 60);
+        var seconds = t - (hours * 3600) - (minutes * 60);
+
+        if (hours < 10) {
+            hours = "0" + hours;
+        }
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+        if (seconds < 10) {
+            seconds = "0" + seconds;
+        }
+        return hours + ':' + minutes + ':' + seconds;
+    }
+
+    function convertRemToPixels(rem) {
+        return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+    }
 </script>
 
 </html>
