@@ -134,33 +134,6 @@ export default class HarmonyOutputPanel {
             issues
         };
 
-        // // Get all process names in order
-        // jsonData.processes.forEach(p => {
-        //     console.log(p.name);
-        //     // console.log(p.duration);
-        //     // Process -> code block
-
-        //     p.steps.forEach(s => {
-        //         if (s.steps != null) {
-        //             const [start, finish] = s.steps;
-        //         } else if (s.choose != null) {
-        //             const [pc, chosenValue] = s.choose;
-        //         }
-        //     });
-        //     console.log(p.steps[0]);
-        // });
-
-        // jsonData.codeBlock.forEach(block => {
-        //     console.log(block.executed_line); // Harmony code
-        //     // All of the assembly used to execute this Harmony code
-        //     block.code.forEach(code => {
-        //         console.log(code.code);
-        //         console.log(code.explanation);
-        //         console.log(code.jump_target);
-        //     });
-        //     console.log(block.code);
-        // });
-
         console.log(dataInterface);
         webview.postMessage({ command: 'load', jsonData: jsonData });
     }
