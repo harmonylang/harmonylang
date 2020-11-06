@@ -301,7 +301,7 @@
         data.processes.forEach(p => {
             // console.log(p.name);
             // console.log(p.duration);
-            if (!processObjects.has(p.name.toString())) {
+            if (!processObjects.has(p.pid)) {
                 // Label Generation
                 let labelContainer = document.createElement("div");
                 labelContainer.setAttribute('class', 'process-label-row');
@@ -316,7 +316,7 @@
                 let bar = document.createElement("div");
                 bar.setAttribute('class', "process-bar");
                 row.appendChild(bar);
-                processObjects.set(p.name, bar);
+                processObjects.set(p.pid, bar);
                 processBars.appendChild(row);
             }
 
@@ -324,15 +324,14 @@
             processBlock.setAttribute('class', 'process-block');
             processBlock.style.left = `${totalDuration / BAR_LEN_FACTOR}rem`;
             processBlock.style.width = `${p.duration / BAR_LEN_FACTOR}rem`;
-            processObjects.get(p.name).appendChild(processBlock);
+            processObjects.get(p.pid).appendChild(processBlock);
             totalDuration += p.duration;
         });
 
         maxTime = totalDuration;
 
         let processNum = 0;
-        processObjects.forEach((processBar, processName) => {
-            console.log(processBar);
+        processObjects.forEach((processBar, processId) => {
             processBar.style.width = `${maxTime / BAR_LEN_FACTOR}rem`;
             let blocks = processBar.childNodes;
             blocks.forEach((block) => {
@@ -406,6 +405,46 @@
         timeSlider.value = time;
         timeStartText.innerHTML = timeFormat(time);
         processSlider.style.left = `${convertRemToPixels(time / BAR_LEN_FACTOR)}px`;
+
+        document.getElementById("towa").textContent = JSON.stringify(getStateAtTime())
+    }
+
+    let getStateAtTime = () => {
+        let duration = 0;
+        let currentProcess = harmonyData.processes[0];
+        for (p of harmonyData.processes) {
+            duration += p.duration;
+            // if (duration === maxTime) {
+            //     currentProcess = p;
+            // }
+            if (duration >= time) {
+                duration -= p.duration;
+                break;
+            }
+            currentProcess = p;
+        }
+        let steps = [];
+        for (step of currentProcess.steps) {
+            if (step.steps !== null) {
+                for (let i = step.steps[0]; i <= step.steps[1]; i++) {
+                    steps.push([i, null]);
+                }
+            } else {
+                steps.push(step.choose);
+            }
+        }
+        let currentStep = steps[time - duration];
+        let currentSlice = null;
+        for (slice of currentProcess.slices) {
+            duration += slice.duration;
+            if (duration >= time) {
+                currentSlice = slice.values;
+            }
+        }
+        return {
+            "currentStep": currentStep,
+            "currentSlice": currentSlice
+        };
     }
 
     window.addEventListener('message', event => {
