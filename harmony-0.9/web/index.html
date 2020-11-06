@@ -246,6 +246,9 @@
         processSlider = document.getElementById("process-slider");
     });
 
+    /**
+     * Inserts a row element(s) to the code-table given a macro-step.
+     */
     function insertCodeBlock(block) {
       const makeTableCell = (content) => {
         const cell = document.createElement("td");
@@ -281,13 +284,24 @@
       });
     }
 
+    /**
+     * Displays the shared variables on the the current state.
+     */
     function setSharedVariablesTable(state) {
       const currentSlice = state.currentSlice;
       document.getElementById("shared-var-table").innerHTML = JSON.stringify(currentSlice, undefined, 2);
     }
 
+    /**
+     * Scrolls the code-table to the current step of the state and highlights that line of code
+     * if the step exists.
+     */
     function moveAndHighlightCode(state) {
-      document.getElementById("code-pc-" + i).scrollIntoView();
+      if (state.currentStep != null) {
+        const [pc, _] = state.currentStep;
+        const line = document.getElementById("code-pc-" + pc)
+        line.scrollIntoView();
+      }
     }
 
     let initWindow = (data) => {
@@ -420,9 +434,13 @@
 
         const currentState = getStateAtTime();
         moveAndHighlightCode(currentState);
-        setSharedVariablesTable(getStateAtTime());
+        setSharedVariablesTable(currentState);
     }
 
+    /**
+     * Returns the state of the program at the current time shown in the bottom progress bars.
+     * @returns {{currentStep: *, currentSlice: null}}
+     */
     let getStateAtTime = () => {
         let duration = 0;
         let currentProcess = harmonyData.processes[0];
@@ -449,7 +467,7 @@
         }
         let currentStep = steps[time - duration];
         let currentSlice = null;
-        for (slice of currentProcess.slices) {
+        for (const slice of currentProcess.slices) {
             duration += slice.duration;
             if (duration >= time) {
                 currentSlice = slice.values;
