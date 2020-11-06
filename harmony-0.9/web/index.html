@@ -126,16 +126,22 @@
         </div>
         <div class="pure-u-1-2">
             <div id="issue-box">
-                <p>Issue: <span id="issue-value" style="color: #c63636">None</span></p>
+                <div style="display: flex">
+                    <div style="order: 1; padding-left: 10px; padding-right: 10px; background-color: #252526"><h2 style="color: #ffffff">Issue</h2></div>
+                    <div style="order: 5; padding-left: 10px; padding-right: 10px; background-color: #3C3C3C"><h2 id="issue-value" style="color: #F44336">None</h2></div>
+                </div>
             </div>
             <div id="all-code">
-                <p>Assembly</p>
-                <div id="code-table" style="height:150px;overflow:auto;">
-                <!-- Insert code here -->
+                <h2 style="background-color: #3c3c3c; padding: 10px">Assembly</h2>
+                <div style="height:150px;overflow:auto;">
+                    <table id="code-table">
+                        <tr><td></td><td>Diners.py</td></tr>
+                        <tr><td>123</td><td>print("Hello World")</td></tr>
+                    </table>
                 </div>
             </div>
             <div id="shared-variables">
-                <p>Shared Variables</p>
+                <h2 style="background-color: #3c3c3c; padding: 10px">Shared Variables</h2>
                 <div id="shared-var-table" style="height:150px;overflow:auto;">
                     <!-- Insert shared elements here. -->
                 </div>
@@ -243,6 +249,24 @@
         processSlider = document.getElementById("process-slider");
     });
 
+    function insertCodeBlock(block) {
+      const header = `${block.filename}: ${block.line_number} ${block.executed_line}`
+      const tableRow = document.createElement("tr");
+      const emptyCell = document.createElement("td");
+      const contentCell = document.createElement("td");
+      contentCell.textContent = header;
+      tableRow.appendChild()
+      document.getElementById("code-table").appendChild(headerElement);
+
+      const firstPc = block.first_pc;
+      block.code.forEach((c, idx) => {
+        const content = `${idx + firstPc} ${c.code}`;
+        const codeElement = document.createElement("p");
+        codeElement.textContent = content;
+        document.getElementById("code-table").appendChild(codeElement);
+      });
+    }
+
     let initWindow = (data) => {
         harmonyData = data;
 
@@ -253,20 +277,20 @@
           document.getElementById("issue-value").textContent = data.issues[0];
         }
 
-        data.codeBlock.forEach(block => {
-          const header = `${block.filename}: ${block.line_number} ${block.executed_line}`
-          const headerElement = document.createElement("p");
-          headerElement.textContent = header;
-          document.getElementById("code-table").appendChild(headerElement);
-
-          const firstPc = block.first_pc;
-          block.code.forEach((c, idx) => {
-            const content = `${idx + firstPc} ${c.code}`;
-            const codeElement = document.createElement("p");
-            codeElement.textContent = content;
-            document.getElementById("code-table").appendChild(codeElement);
-          });
-        });
+        // data.codeBlock.forEach(block => {
+        //   const header = `${block.filename}: ${block.line_number} ${block.executed_line}`
+        //   const headerElement = document.createElement("p");
+        //   headerElement.textContent = header;
+        //   document.getElementById("code-table").appendChild(headerElement);
+        //
+        //   const firstPc = block.first_pc;
+        //   block.code.forEach((c, idx) => {
+        //     const content = `${idx + firstPc} ${c.code}`;
+        //     const codeElement = document.createElement("p");
+        //     codeElement.textContent = content;
+        //     document.getElementById("code-table").appendChild(codeElement);
+        //   });
+        // });
 
         data.sharedVariables.forEach(v => {
           const sharedVarElement = document.createElement("p");
