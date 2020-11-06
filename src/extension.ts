@@ -128,8 +128,8 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                     // Output Panel will include the stdout output.
                     showMessage('Execution Finished!');
                     // Show the output panel with the contents of harmony.html because the compilation succeeded.
-                    if (stdout.includes('harmony.html'))
-                        HarmonyOutputPanel.createOrShow(context.extensionUri);
+                    // if (stdout.includes('harmony.html'))
+                    //     HarmonyOutputPanel.createOrShow(context.extensionUri);
                 }
             });
         }

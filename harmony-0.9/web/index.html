@@ -133,7 +133,7 @@
             </div>
             <div id="all-code">
                 <h2 style="background-color: #3c3c3c; padding: 10px">Assembly</h2>
-                <div style="height:150px;overflow:auto;">
+                <div style="height:100px;overflow:auto;">
                     <table id="code-table"></table>
                 </div>
             </div>
@@ -271,18 +271,23 @@
 
       const firstPc = block.first_pc;
       block.code.forEach((c, idx) => {
-        const pcCell = makeTableCell(idx + firstPc);
+        const pc = idx + firstPc
+        const pcCell = makeTableCell(pc);
         pcCell.setAttribute("style", "color: #788585;")
         const codeCell = makeTableCell(c.code);
         const tableRow = makeTableRow(pcCell, codeCell);
+        tableRow.setAttribute("id", `code-pc-${pc}`);
         document.getElementById("code-table").appendChild(tableRow);
       });
     }
 
     function setSharedVariablesTable(state) {
-      const currentStep = state.currentStep;
       const currentSlice = state.currentSlice;
+      document.getElementById("shared-var-table").innerHTML = JSON.stringify(currentSlice, undefined, 2);
+    }
 
+    function moveAndHighlightCode(state) {
+      document.getElementById("code-pc-" + i).scrollIntoView();
     }
 
     let initWindow = (data) => {
@@ -299,11 +304,11 @@
           insertCodeBlock(block);
         });
 
-        data.sharedVariables.forEach(v => {
-          const sharedVarElement = document.createElement("p");
-          sharedVarElement.textContent = v;
-          document.getElementById("shared-var-table").appendChild(sharedVarElement);
-        });
+        // data.sharedVariables.forEach(v => {
+        //   const sharedVarElement = document.createElement("p");
+        //   sharedVarElement.textContent = v;
+        //   document.getElementById("shared-var-table").appendChild(sharedVarElement);
+        // });
 
         data.processes.forEach(p => {
             // console.log(p.name);
@@ -413,13 +418,15 @@
         timeStartText.innerHTML = timeFormat(time);
         processSlider.style.left = `${convertRemToPixels(time / BAR_LEN_FACTOR)}px`;
 
-        document.getElementById("towa").textContent = JSON.stringify(getStateAtTime())
+        const currentState = getStateAtTime();
+        moveAndHighlightCode(currentState);
+        setSharedVariablesTable(getStateAtTime());
     }
 
     let getStateAtTime = () => {
         let duration = 0;
         let currentProcess = harmonyData.processes[0];
-        for (p of harmonyData.processes) {
+        for (const p of harmonyData.processes) {
             duration += p.duration;
             // if (duration === maxTime) {
             //     currentProcess = p;
@@ -431,8 +438,8 @@
             currentProcess = p;
         }
         let steps = [];
-        for (step of currentProcess.steps) {
-            if (step.steps !== null) {
+        for (const step of currentProcess.steps) {
+            if (step.steps != null) {
                 for (let i = step.steps[0]; i <= step.steps[1]; i++) {
                     steps.push([i, null]);
                 }
@@ -455,33 +462,32 @@
     }
 
     window.addEventListener('message', event => {
-        const message = event.data; // The command and JSON data our extension sent
-
-        switch (message.command) {
-            case 'load':
-                console.log(message.jsonData);
-                initWindow(message.jsonData);
-                break;
-        }
+      const message = event.data; // The command and JSON data our extension sent
+      switch (message.command) {
+        case 'load':
+          console.log(message.jsonData);
+          initWindow(message.jsonData);
+          break;
+      }
     });
 
     // Utility Functions
 
     let timeFormat = (t) => {
-        var hours = Math.floor(t / 3600);
-        var minutes = Math.floor((t - (hours * 3600)) / 60);
-        var seconds = t - (hours * 3600) - (minutes * 60);
+      let hours = Math.floor(t / 3600);
+      let minutes = Math.floor((t - (hours * 3600)) / 60);
+      let seconds = t - (hours * 3600) - (minutes * 60);
 
-        if (hours < 10) {
-            hours = "0" + hours;
-        }
-        if (minutes < 10) {
-            minutes = "0" + minutes;
-        }
-        if (seconds < 10) {
-            seconds = "0" + seconds;
-        }
-        return hours + ':' + minutes + ':' + seconds;
+      if (hours < 10) {
+        hours = "0" + hours;
+      }
+      if (minutes < 10) {
+        minutes = "0" + minutes;
+      }
+      if (seconds < 10) {
+        seconds = "0" + seconds;
+      }
+      return hours + ':' + minutes + ':' + seconds;
     }
 
     function convertRemToPixels(rem) {
