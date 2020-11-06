@@ -125,7 +125,21 @@
             <p id="towa">Data</p>
         </div>
         <div class="pure-u-1-2">
-            <p>Thirds</p>
+            <div id="issue-box">
+                <p>Issue: <span id="issue-value" style="color: #c63636">None</span></p>
+            </div>
+            <div id="all-code">
+                <p>Assembly</p>
+                <div id="code-table" style="height:150px;overflow:auto;">
+                <!-- Insert code here -->
+                </div>
+            </div>
+            <div id="shared-variables">
+                <p>Shared Variables</p>
+                <div id="shared-var-table" style="height:150px;overflow:auto;">
+                    <!-- Insert shared elements here. -->
+                </div>
+            </div>
         </div>
     </div>
     <div id="process-window">
@@ -235,6 +249,31 @@
         // Get all process names in order
         totalDuration = 0;
         let processObjects = new Map();
+        if (data.issues != null && data.issues.length > 0) {
+          document.getElementById("issue-value").textContent = data.issues[0];
+        }
+
+        data.codeBlock.forEach(block => {
+          const header = `${block.filename}: ${block.line_number} ${block.executed_line}`
+          const headerElement = document.createElement("p");
+          headerElement.textContent = header;
+          document.getElementById("code-table").appendChild(headerElement);
+
+          const firstPc = block.first_pc;
+          block.code.forEach((c, idx) => {
+            const content = `${idx + firstPc} ${c.code}`;
+            const codeElement = document.createElement("p");
+            codeElement.textContent = content;
+            document.getElementById("code-table").appendChild(codeElement);
+          });
+        });
+
+        data.sharedVariables.forEach(v => {
+          const sharedVarElement = document.createElement("p");
+          sharedVarElement.textContent = v;
+          document.getElementById("shared-var-table").appendChild(sharedVarElement);
+        });
+
         data.processes.forEach(p => {
             // console.log(p.name);
             // console.log(p.duration);

@@ -123,6 +123,7 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                     console.log(stderr, error);
                     showMessage('Execution Failed!', 'Message', stdout);
                     HarmonyOutputPanel.currentPanel?.dispose();
+                    HarmonyOutputPanel.createOrShow(context.extensionUri);
                 } else {
                     // Output Panel will include the stdout output.
                     showMessage('Execution Finished!');

@@ -122,6 +122,7 @@ export default class HarmonyOutputPanel {
         const sharedVariables = dataInterface.getSharedVariables();
         const nodes = dataInterface.getAllNodes();
         const allCode = dataInterface.getAllCode();
+        const issues = dataInterface.getIssues();
 
         const jsonData = {
             processes,
@@ -129,7 +130,8 @@ export default class HarmonyOutputPanel {
             inOrderCode,
             codeBlock,
             nodes,
-            allCode
+            allCode,
+            issues
         };
 
         // // Get all process names in order
