@@ -134,10 +134,7 @@
             <div id="all-code">
                 <h2 style="background-color: #3c3c3c; padding: 10px">Assembly</h2>
                 <div style="height:150px;overflow:auto;">
-                    <table id="code-table">
-                        <tr><td></td><td>Diners.py</td></tr>
-                        <tr><td>123</td><td>print("Hello World")</td></tr>
-                    </table>
+                    <table id="code-table"></table>
                 </div>
             </div>
             <div id="shared-variables">
@@ -250,21 +247,42 @@
     });
 
     function insertCodeBlock(block) {
-      const header = `${block.filename}: ${block.line_number} ${block.executed_line}`
-      const tableRow = document.createElement("tr");
-      const emptyCell = document.createElement("td");
-      const contentCell = document.createElement("td");
-      contentCell.textContent = header;
-      tableRow.appendChild()
-      document.getElementById("code-table").appendChild(headerElement);
+      const makeTableCell = (content) => {
+        const cell = document.createElement("td");
+        if (content != null) {
+          cell.innerHTML = content;
+        }
+        return cell;
+      }
+      const makeTableRow = (...cells) => {
+        const tableRow = document.createElement("tr");
+        if (cells != null) {
+          cells.forEach(c => {
+            tableRow.appendChild(c);
+          });
+        }
+        return tableRow;
+      }
+      const header = `<span style="color: #C05B5B">${block.filename}<span>: <span style="color: #788585">${block.line_number} ${block.executed_line}</span>`
+      const emptyCell = makeTableCell();
+      const contentCell = makeTableCell(header);
+      const tableRow = makeTableRow(emptyCell, contentCell);
+      document.getElementById("code-table").appendChild(tableRow);
 
       const firstPc = block.first_pc;
       block.code.forEach((c, idx) => {
-        const content = `${idx + firstPc} ${c.code}`;
-        const codeElement = document.createElement("p");
-        codeElement.textContent = content;
-        document.getElementById("code-table").appendChild(codeElement);
+        const pcCell = makeTableCell(idx + firstPc);
+        pcCell.setAttribute("style", "color: #788585;")
+        const codeCell = makeTableCell(c.code);
+        const tableRow = makeTableRow(pcCell, codeCell);
+        document.getElementById("code-table").appendChild(tableRow);
       });
+    }
+
+    function setSharedVariablesTable(state) {
+      const currentStep = state.currentStep;
+      const currentSlice = state.currentSlice;
+
     }
 
     let initWindow = (data) => {
@@ -277,20 +295,9 @@
           document.getElementById("issue-value").textContent = data.issues[0];
         }
 
-        // data.codeBlock.forEach(block => {
-        //   const header = `${block.filename}: ${block.line_number} ${block.executed_line}`
-        //   const headerElement = document.createElement("p");
-        //   headerElement.textContent = header;
-        //   document.getElementById("code-table").appendChild(headerElement);
-        //
-        //   const firstPc = block.first_pc;
-        //   block.code.forEach((c, idx) => {
-        //     const content = `${idx + firstPc} ${c.code}`;
-        //     const codeElement = document.createElement("p");
-        //     codeElement.textContent = content;
-        //     document.getElementById("code-table").appendChild(codeElement);
-        //   });
-        // });
+        data.codeBlock.forEach(block => {
+          insertCodeBlock(block);
+        });
 
         data.sharedVariables.forEach(v => {
           const sharedVarElement = document.createElement("p");
