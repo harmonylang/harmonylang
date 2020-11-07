@@ -82,6 +82,29 @@ def process_steps(steps, typings) -> List[StepValue]:
     return result
 
 
+def get_path_to_node(n: NodeType) -> List[Tuple[int, NodeType]]:
+    """
+    Returns a list of the nodes and associated process taken to reach the given node.
+    :param n:
+    :return:
+    """
+    path = []
+    while n is not None and n.after is not None:
+        path.insert(0, n)
+        n = n.parent
+    pids = []
+    macrosteps = []
+    for n in path:
+        if n.before in pids:
+            pid = pids.index(n.before)
+            pids[pid] = n.after
+        else:
+            pids.append(n.after)
+            pid = len(pids) - 1
+        macrosteps.append((pid, n))
+    return macrosteps
+
+
 def gen_path(n):
     """
     Extracts the path to node n. See genpath(n) in harmony.py for its html counterpart
@@ -90,7 +113,6 @@ def gen_path(n):
     while n is not None and n.after is not None:
         path.insert(0, n)
         n = n.parent
-
     # Now compress the path, combining macrosteps by the same context
     path2 = []
     last_context = first_context = None
@@ -133,6 +155,7 @@ def get_path(n, typings, nodes: List[NodeType], code):
     """
     issues = [str(s) for s in n.issues]
     shared_variables = sorted(n.state.vars.d.keys(), key=key_value)
+    mecrostep_path = get_path_to_node(n)
     path = gen_path(n)
     processes = []
     pids = []

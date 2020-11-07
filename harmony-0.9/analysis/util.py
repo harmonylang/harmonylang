@@ -74,7 +74,7 @@ def isname(s):
 
 
 def str_of_value(v):
-    if isinstance(v, Value) or isinstance(v, bool) or isinstance(v, int) or isinstance(v, float):
+    if isinstance(v, Value) or isinstance(v, (bool, int, float, dict)):
         return str(v)
     if isinstance(v, str):
         if isname(v):
@@ -106,3 +106,37 @@ def json_valid_value(v, typings):
         return {k: json_valid_value(v, typings) for k, v in v.d.items()}
     else:
         return str(v)
+
+
+def str_of_steps(steps):
+    """
+    Returns a string representation of a list of steps.
+    :param steps:
+    :return:
+    """
+    if steps is None:
+        return "[]"
+    result = ""
+    i = 0
+    while i < len(steps):
+        if result != "":
+            result += ","
+        (pc, choice) = steps[i]
+        if pc is None:
+            result += "Interrupt"
+        else:
+            result += str(pc)
+        j = i + 1
+        if choice is not None:
+            result += "(choose %s)" % str_of_value(choice)
+        else:
+            while j < len(steps):
+                (pc2, choice2) = steps[j]
+                if pc is None or pc2 != pc + 1 or choice2 is not None:
+                    break
+                (pc, choice) = (pc2, choice2)
+                j += 1
+            if j > i + 1:
+                result += "-%d" % pc
+        i = j
+    return "[" + result + "]"
