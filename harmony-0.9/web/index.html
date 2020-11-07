@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="UTF-8">
     <title>Harmony Output</title>
@@ -14,7 +13,6 @@
             background-color: #1e1e1e;
             color: #fff;
         }
-
         #process-window {
             position: fixed;
             bottom: 0%;
@@ -149,7 +147,6 @@
         }
     </style>
 </head>
-
 <body>
     <div class="pure-g">
         <div class="pure-u-1-2">
@@ -237,340 +234,347 @@
 </body>
 
 <script>
-    const BAR_LEN_FACTOR = 5;
-    const PLAY_SPEED = 200;
-    const COLOR_MAP = ['#c62828', '#AD1457', '#6A1B9A', '#4527A0', '#283593', '#1565C0', '#0277BD', '#00838F',
-        '#00695C', '#2E7D32', '#558B2F', '#9E9D24', '#F9A825', '#FF8F00', '#EF6C00', '#D84315', '#4E342E',
-        '#424242', '#37474F'
-    ];
+  const BAR_LEN_FACTOR = 5;
+  const PLAY_SPEED = 200;
+  const COLOR_MAP = ['#c62828', '#AD1457', '#6A1B9A', '#4527A0', '#283593', '#1565C0', '#0277BD', '#00838F',
+    '#00695C', '#2E7D32', '#558B2F', '#9E9D24', '#F9A825', '#FF8F00', '#EF6C00', '#D84315', '#4E342E',
+    '#424242', '#37474F'
+  ];
+  let time = 0;
+  let maxTime = 0;
+  let processLengthPx = 0;
 
-    let time = 0;
-    let maxTime = 0;
-    let processLengthPx = 0;
+  let harmonyData;
 
-    let harmonyData;
+  let timeStartText;
+  let timeEndText;
+  let timeSlider;
+  let playButton;
+  let backButton;
+  let forwardButton;
 
-    let timeStartText;
-    let timeEndText;
-    let timeSlider;
-    let playButton;
-    let backButton;
-    let forwardButton;
+  let processLabels;
+  let processBars;
+  let processSlider;
 
-    let processLabels;
-    let processBars;
-    let processSlider;
+  let playTimer;
+  let playing = false;
 
-    let playTimer;
-    let playing = false;
+  document.addEventListener('DOMContentLoaded', (event) => {
+    timeStartText = document.getElementById("start-time");
+    timeEndText = document.getElementById("end-time");
+    timeSlider = document.getElementById("time-slider");
+    playButton = document.getElementById("button-play");
+    backButton = document.getElementById("button-back");
+    forwardButton = document.getElementById("button-forward");
+    processBars = document.getElementById("process-bars");
+    processLabels = document.getElementById("process-labels");
+    processSlider = document.getElementById("process-slider");
+  });
 
-    document.addEventListener('DOMContentLoaded', (event) => {
-        timeStartText = document.getElementById("start-time");
-        timeEndText = document.getElementById("end-time");
-        timeSlider = document.getElementById("time-slider");
-        playButton = document.getElementById("button-play");
-        backButton = document.getElementById("button-back");
-        forwardButton = document.getElementById("button-forward");
-        processBars = document.getElementById("process-bars");
-        processLabels = document.getElementById("process-labels");
-        processSlider = document.getElementById("process-slider");
-    });
-
-    /**
-     * Inserts a row element(s) to the code-table given a macro-step.
-     */
-    function insertCodeBlock(block) {
-      const makeTableCell = (content) => {
-        const cell = document.createElement("td");
-        if (content != null) {
-          cell.innerHTML = content;
-        }
-        return cell;
+  /**
+   * Inserts a row element(s) to the code-table given a macro-step.
+   */
+  function insertCodeBlock(block) {
+    const makeTableCell = (content) => {
+      const cell = document.createElement("td");
+      if (content != null) {
+        cell.innerHTML = content;
       }
-      const makeTableRow = (...cells) => {
-        const tableRow = document.createElement("tr");
-        if (cells != null) {
-          cells.forEach(c => {
-            tableRow.appendChild(c);
-          });
-        }
-        return tableRow;
+      return cell;
+    }
+    const makeTableRow = (...cells) => {
+      const tableRow = document.createElement("tr");
+      if (cells != null) {
+        cells.forEach(c => {
+          tableRow.appendChild(c);
+        });
       }
-      const header = `<span style="color: #C05B5B">${block.filename}<span>: <span style="color: #788585">${block.line_number} ${block.executed_line}</span>`
-      const emptyCell = makeTableCell();
-      const contentCell = makeTableCell(header);
-      const tableRow = makeTableRow(emptyCell, contentCell);
+      return tableRow;
+    }
+    const header = `<span style="color: #C05B5B">${block.filename}<span>: <span style="color: #788585">${block.line_number} ${block.executed_line}</span>`
+    const emptyCell = makeTableCell();
+    const contentCell = makeTableCell(header);
+    const tableRow = makeTableRow(emptyCell, contentCell);
+    document.getElementById("code-table").appendChild(tableRow);
+
+    const firstPc = block.first_pc;
+    block.code.forEach((c, idx) => {
+      const pc = idx + firstPc
+      const pcCell = makeTableCell(pc);
+      pcCell.setAttribute("style", "color: #788585;")
+      const codeCell = makeTableCell(c.code);
+      const tableRow = makeTableRow(pcCell, codeCell);
+      tableRow.setAttribute("id", `code-pc-${pc}`);
       document.getElementById("code-table").appendChild(tableRow);
+    });
+  }
 
-      const firstPc = block.first_pc;
-      block.code.forEach((c, idx) => {
-        const pc = idx + firstPc
-        const pcCell = makeTableCell(pc);
-        pcCell.setAttribute("style", "color: #788585;")
-        const codeCell = makeTableCell(c.code);
-        const tableRow = makeTableRow(pcCell, codeCell);
-        tableRow.setAttribute("id", `code-pc-${pc}`);
-        document.getElementById("code-table").appendChild(tableRow);
-      });
+  /**
+   * Creates an html-tag string which is customized for colors based on
+   * the type of the given value.
+   */
+  function createHtmlValue(v) {
+    const typeofV = typeof v;
+    const create = (color, value) => `<span style="color: ${color}">${value}</span>`;
+    if (typeofV === "string") {
+      return create("#bc6021", `"${v}"`);
     }
-
-    function createHtmlValue(v) {
-      const typeofV = typeof v;
-      const create = (color, value) => `<span style="color: ${color}">${value}</span>`;
-      if (typeofV === "string") {
-        return create("#bc6021", `"${v}"`);
-      }
-      if (typeofV === "boolean" || typeofV === "number") {
-        const s = v.toString()
-        return create("#24a583", s[0].toUpperCase() + s.substring(1));
-      }
-      if (v == null) {
-        return create("#a01c1c", 'None');
-      }
+    if (typeofV === "boolean" || typeofV === "number") {
+      const s = v.toString()
+      return create("#24a583", s[0].toUpperCase() + s.substring(1));
     }
-    function makeCollapseable(summary, obj) {
-      const collapseable = document.createElement("details");
-      const summaryElement = document.createElement("summary");
-      summaryElement.innerText = summary;
-      collapseable.appendChild(summaryElement);
-      Object.entries(obj).forEach(([k, v]) => {
-        if (v == null || typeof v !== 'object') {
-          const p = document.createElement("p");
-          p.innerHTML = `${k}: ${createHtmlValue(v)}`;
-          collapseable.appendChild(p);
-        } else {
-          const subcollapseable = makeCollapseable(`${k}: [object Object]`, v);
-          collapseable.appendChild(subcollapseable);
-        }
-      });
-      return collapseable;
+    if (v == null) {
+      return create("#a01c1c", 'None');
     }
-
-    /**
-     * Displays the shared variables on the the current state.
-     */
-    function setSharedVariablesTable(state) {
-      const currentSlice = state.currentSlice;
-      const collapseable = makeCollapseable("Shared Variables", currentSlice ?? {});
-      const table = document.getElementById("shared-var-table")
-      table.childNodes.forEach(n => table.removeChild(n));
-      collapseable.setAttribute("open", "true");
-      table.appendChild(collapseable);
-    }
-
-    /**
-     * Scrolls the code-table to the current step of the state and highlights that line of code
-     * if the step exists.
-     */
-    function moveAndHighlightCode(state) {
-      if (state.currentStep != null) {
-        const [pc, _] = state.currentStep;
-        const line = document.getElementById("code-pc-" + pc)
-        line.scrollIntoView();
-      }
-    }
-
-    let initWindow = (data) => {
-        harmonyData = data;
-
-        // Get all process names in order
-        totalDuration = 0;
-        let processObjects = new Map();
-        if (data.issues != null && data.issues.length > 0) {
-          document.getElementById("issue-value").textContent = data.issues[0];
-        }
-
-        data.codeBlock.forEach(block => {
-          insertCodeBlock(block);
-        });
-
-        data.processes.forEach(p => {
-            // console.log(p.name);
-            // console.log(p.duration);
-            if (!processObjects.has(p.pid)) {
-                // Label Generation
-                let labelContainer = document.createElement("div");
-                labelContainer.setAttribute('class', 'process-label-row');
-                let label = document.createElement('p');
-                label.setAttribute('class', 'process-label-text');
-                label.textContent = p.name;
-                labelContainer.appendChild(label);
-                processLabels.appendChild(labelContainer);
-                // Row Generation
-                let row = document.createElement("div");
-                row.setAttribute('class', 'process-bar-row');
-                let bar = document.createElement("div");
-                bar.setAttribute('class', "process-bar");
-                row.appendChild(bar);
-                processObjects.set(p.pid, bar);
-                processBars.appendChild(row);
-            }
-
-            let processBlock = document.createElement("div");
-            processBlock.setAttribute('class', 'process-block');
-            processBlock.style.left = `${totalDuration / BAR_LEN_FACTOR}rem`;
-            processBlock.style.width = `${p.duration / BAR_LEN_FACTOR}rem`;
-            processObjects.get(p.pid).appendChild(processBlock);
-            totalDuration += p.duration;
-        });
-
-        maxTime = totalDuration;
-
-        let processNum = 0;
-        processObjects.forEach((processBar, processId) => {
-            processBar.style.width = `${maxTime / BAR_LEN_FACTOR}rem`;
-            let blocks = processBar.childNodes;
-            blocks.forEach((block) => {
-                block.style.background = COLOR_MAP[processNum % COLOR_MAP.length];
-            });
-            processNum++;
-        });
-        processLengthPx = convertRemToPixels(maxTime / BAR_LEN_FACTOR);
-
-        timeSlider.max = maxTime;
-        timeEndText.innerHTML = timeFormat(maxTime);
-
-        timeSlider.addEventListener('input', (e) => {
-            e.preventDefault();
-            time = timeSlider.value;
-            updateWindow();
-        }, false);
-
-        playButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (playing) {
-                window.clearInterval(playTimer);
-                playButton.firstElementChild.setAttribute('class', 'fas fa-play');
-                playing = false;
-            } else {
-                playTimer = window.setInterval(playExecution, PLAY_SPEED);
-                playButton.firstElementChild.setAttribute('class', 'fas fa-pause');
-                playing = true;
-            }
-        }, false);
-
-        forwardButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (time < maxTime) {
-                time++;
-            }
-            updateWindow();
-        }, false);
-
-        backButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (time > 0) {
-                time--;
-            }
-            updateWindow();
-        }, false);
-
-        // processSlider.addEventListener('drag', (e, drag) => {
-        //     e.preventDefault();
-        //     console.log(drag.offsetX);
-        //     let timeDelta = Math.floor((drag.offsetX / processLengthPx) * maxTime);
-        //     time += timeDelta;
-        //     updateWindow();
-        // }, false);
-
-        updateWindow();
-    }
-
-    let playExecution = () => {
-        if (time < maxTime) {
-            time++;
-        } else {
-            window.clearInterval(playTimer);
-            playButton.firstElementChild.setAttribute('class', 'fas fa-play');
-            playing = false;
-        }
-        updateWindow();
-    }
-
-    let updateWindow = () => {
-        timeSlider.value = time;
-        timeStartText.innerHTML = timeFormat(time);
-        processSlider.style.left = `${convertRemToPixels(time / BAR_LEN_FACTOR)}px`;
-
-        const currentState = getStateAtTime();
-        moveAndHighlightCode(currentState);
-        setSharedVariablesTable(currentState);
-    }
-
-    /**
-     * Returns the state of the program at the current time shown in the bottom progress bars.
-     * @returns {{currentStep: *, currentSlice: null}}
-     */
-    let getStateAtTime = () => {
-        let duration = 0;
-        let currentProcess = harmonyData.processes[0];
-        for (const p of harmonyData.processes) {
-            duration += p.duration;
-            // if (duration === maxTime) {
-            //     currentProcess = p;
-            // }
-            if (duration >= time) {
-                duration -= p.duration;
-                break;
-            }
-            currentProcess = p;
-        }
-        let steps = [];
-        for (const step of currentProcess.steps) {
-            if (step.steps != null) {
-                for (let i = step.steps[0]; i <= step.steps[1]; i++) {
-                    steps.push([i, null]);
-                }
-            } else {
-                steps.push(step.choose);
-            }
-        }
-        let currentStep = steps[time - duration];
-        let currentSlice = null;
-        for (const slice of currentProcess.slices) {
-            duration += slice.duration;
-            if (duration >= time) {
-                currentSlice = slice.values;
-            }
-        }
-        return {
-            "currentStep": currentStep,
-            "currentSlice": currentSlice
-        };
-    }
-
-    window.addEventListener('message', event => {
-      const message = event.data; // The command and JSON data our extension sent
-      switch (message.command) {
-        case 'load':
-          console.log(message.jsonData);
-          initWindow(message.jsonData);
-          break;
+  }
+  /**
+   * Creates a collapseable html entry that represents the values in the
+   * given object.
+   */
+  function makeCollapseable(summary, obj) {
+    const collapseable = document.createElement("details");
+    const summaryElement = document.createElement("summary");
+    summaryElement.innerText = summary;
+    collapseable.appendChild(summaryElement);
+    Object.entries(obj).forEach(([k, v]) => {
+      if (v == null || typeof v !== 'object') {
+        const p = document.createElement("p");
+        p.innerHTML = `${k}: ${createHtmlValue(v)}`;
+        collapseable.appendChild(p);
+      } else {
+        const subcollapseable = makeCollapseable(`${k}: [object Object]`, v);
+        collapseable.appendChild(subcollapseable);
       }
     });
+    return collapseable;
+  }
 
-    // Utility Functions
+  /**
+   * Displays the shared variables on the the current state.
+   */
+  function setSharedVariablesTable(state) {
+    const currentSlice = state.currentSlice;
+    const collapseable = makeCollapseable("Shared Variables", currentSlice ?? {});
+    const table = document.getElementById("shared-var-table")
+    table.childNodes.forEach(n => table.removeChild(n));
+    collapseable.setAttribute("open", "true");
+    table.appendChild(collapseable);
+  }
 
-    let timeFormat = (t) => {
-      let hours = Math.floor(t / 3600);
-      let minutes = Math.floor((t - (hours * 3600)) / 60);
-      let seconds = t - (hours * 3600) - (minutes * 60);
+  /**
+   * Scrolls the code-table to the current step of the state and highlights that line of code
+   * if the step exists.
+   */
+  function moveAndHighlightCode(state) {
+    if (state.currentStep != null) {
+      const [pc, _] = state.currentStep;
+      const line = document.getElementById("code-pc-" + pc)
+      line.scrollIntoView();
+    }
+  }
 
-      if (hours < 10) {
-        hours = "0" + hours;
-      }
-      if (minutes < 10) {
-        minutes = "0" + minutes;
-      }
-      if (seconds < 10) {
-        seconds = "0" + seconds;
-      }
-      return hours + ':' + minutes + ':' + seconds;
+  let initWindow = (data) => {
+    harmonyData = data;
+
+    // Get all process names in order
+    let totalDuration = 0;
+    let processObjects = new Map();
+    if (data.issues != null && data.issues.length > 0) {
+      document.getElementById("issue-value").textContent = data.issues[0];
     }
 
-    function convertRemToPixels(rem) {
-        return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+    data.codeBlock.forEach(block => {
+      insertCodeBlock(block);
+    });
+
+    data.processes.forEach(p => {
+      // console.log(p.name);
+      // console.log(p.duration);
+      if (!processObjects.has(p.pid)) {
+        // Label Generation
+        const labelContainer = document.createElement("div");
+        labelContainer.setAttribute('class', 'process-label-row');
+        const label = document.createElement('p');
+        label.setAttribute('class', 'process-label-text');
+        label.textContent = p.name;
+        labelContainer.appendChild(label);
+        processLabels.appendChild(labelContainer);
+        // Row Generation
+        const row = document.createElement("div");
+        row.setAttribute('class', 'process-bar-row');
+        const bar = document.createElement("div");
+        bar.setAttribute('class', "process-bar");
+        row.appendChild(bar);
+        processObjects.set(p.pid, bar);
+        processBars.appendChild(row);
+      }
+
+      const processBlock = document.createElement("div");
+      processBlock.setAttribute('class', 'process-block');
+      processBlock.style.left = `${totalDuration / BAR_LEN_FACTOR}rem`;
+      processBlock.style.width = `${p.duration / BAR_LEN_FACTOR}rem`;
+      processObjects.get(p.pid).appendChild(processBlock);
+      totalDuration += p.duration;
+    });
+
+    maxTime = totalDuration;
+
+    let processNum = 0;
+    processObjects.forEach((processBar, processId) => {
+      processBar.style.width = `${maxTime / BAR_LEN_FACTOR}rem`;
+      const blocks = processBar.childNodes;
+      blocks.forEach((block) => {
+        block.style.background = COLOR_MAP[processNum % COLOR_MAP.length];
+      });
+      processNum++;
+    });
+    processLengthPx = convertRemToPixels(maxTime / BAR_LEN_FACTOR);
+
+    timeSlider.max = maxTime;
+    timeEndText.innerHTML = timeFormat(maxTime);
+
+    timeSlider.addEventListener('input', (e) => {
+      e.preventDefault();
+      time = timeSlider.value;
+      updateWindow();
+    }, false);
+
+    playButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (playing) {
+        window.clearInterval(playTimer);
+        playButton.firstElementChild.setAttribute('class', 'fas fa-play');
+        playing = false;
+      } else {
+        playTimer = window.setInterval(playExecution, PLAY_SPEED);
+        playButton.firstElementChild.setAttribute('class', 'fas fa-pause');
+        playing = true;
+      }
+    }, false);
+
+    forwardButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (time < maxTime) {
+        time++;
+      }
+      updateWindow();
+    }, false);
+
+    backButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (time > 0) {
+        time--;
+      }
+      updateWindow();
+    }, false);
+
+    // processSlider.addEventListener('drag', (e, drag) => {
+    //     e.preventDefault();
+    //     console.log(drag.offsetX);
+    //     let timeDelta = Math.floor((drag.offsetX / processLengthPx) * maxTime);
+    //     time += timeDelta;
+    //     updateWindow();
+    // }, false);
+
+    updateWindow();
+  }
+
+  let playExecution = () => {
+    if (time < maxTime) {
+      time++;
+    } else {
+      window.clearInterval(playTimer);
+      playButton.firstElementChild.setAttribute('class', 'fas fa-play');
+      playing = false;
     }
+    updateWindow();
+  }
+
+  let updateWindow = () => {
+    timeSlider.value = time;
+    timeStartText.innerHTML = timeFormat(time);
+    processSlider.style.left = `${convertRemToPixels(time / BAR_LEN_FACTOR)}px`;
+
+    const currentState = getStateAtTime();
+    moveAndHighlightCode(currentState);
+    setSharedVariablesTable(currentState);
+  }
+
+  /**
+   * Returns the state of the program at the current time shown in the bottom progress bars.
+   * @returns {{currentStep: *, currentSlice: null}}
+   */
+  const getStateAtTime = () => {
+    let duration = 0;
+    let currentProcess = harmonyData.processes[0];
+    for (const p of harmonyData.processes) {
+      duration += p.duration;
+      // if (duration === maxTime) {
+      //     currentProcess = p;
+      // }
+      if (duration >= time) {
+        duration -= p.duration;
+        break;
+      }
+      currentProcess = p;
+    }
+    let steps = [];
+    for (const step of currentProcess.steps) {
+      if (step.steps != null) {
+        for (let i = step.steps[0]; i <= step.steps[1]; i++) {
+          steps.push([i, null]);
+        }
+      } else {
+        steps.push(step.choose);
+      }
+    }
+    let currentStep = steps[time - duration];
+    let currentSlice = null;
+    for (const slice of currentProcess.slices) {
+      duration += slice.duration;
+      if (duration >= time) {
+        currentSlice = slice.values;
+      }
+    }
+    return {
+      "currentStep": currentStep,
+      "currentSlice": currentSlice
+    };
+  }
+
+  window.addEventListener('message', event => {
+    const message = event.data; // The command and JSON data our extension sent
+    switch (message.command) {
+      case 'load':
+        console.log(message.jsonData);
+        initWindow(message.jsonData);
+        break;
+    }
+  });
+
+  // Utility Functions
+
+  let timeFormat = (t) => {
+    let hours = Math.floor(t / 3600);
+    let minutes = Math.floor((t - (hours * 3600)) / 60);
+    let seconds = t - (hours * 3600) - (minutes * 60);
+
+    if (hours < 10) {
+      hours = "0" + hours;
+    }
+    if (minutes < 10) {
+      minutes = "0" + minutes;
+    }
+    if (seconds < 10) {
+      seconds = "0" + seconds;
+    }
+    return hours + ':' + minutes + ':' + seconds;
+  }
+
+  function convertRemToPixels(rem) {
+    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+  }
 </script>
 
 </html>
