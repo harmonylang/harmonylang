@@ -116,6 +116,37 @@
         #time-slider:focus {
             outline: none;
         }
+
+        details {
+          font: 20px Calibri;
+          width: 750px;
+        }
+        details > summary {
+          font-family: "Courier New", Courier, monospace;
+          color: white;
+          padding: 2px 6px;
+          width: 15em;
+          /*background-color: lightblue;*/
+          border: none;
+          /*box-shadow: 3px 3px 4px green;*/
+          cursor: pointer;
+          transition : color 1s;
+        }
+        details > p {
+          font-family: "Courier New", Courier, monospace;
+          color: white;
+          padding: 2px 6px;
+          width: 15em;
+          margin-top: 2px;
+          margin-bottom: 2px;
+          margin-left: 40px;
+        }
+        details > * {
+          margin-left: 20px;
+        }
+        details[open] > summary {
+          color: #a3a3ff;
+        }
     </style>
 </head>
 
@@ -137,10 +168,9 @@
                     <table id="code-table"></table>
                 </div>
             </div>
-            <div id="shared-variables">
-                <h2 style="background-color: #3c3c3c; padding: 10px">Shared Variables</h2>
-                <div id="shared-var-table" style="height:150px;overflow:auto;">
-                    <!-- Insert shared elements here. -->
+            <div id="shared-variables" style="height:100%; margin-top: 10px;">
+<!--                <h2 style="background-color: #3c3c3c; padding: 10px">Shared Variables</h2>-->
+                <div id="shared-var-table" style="overflow-y:auto; font-size: xx-small">
                 </div>
             </div>
         </div>
@@ -284,12 +314,48 @@
       });
     }
 
+    function createHtmlValue(v) {
+      const typeofV = typeof v;
+      const create = (color, value) => `<span style="color: ${color}">${value}</span>`;
+      if (typeofV === "string") {
+        return create("#bc6021", `"${v}"`);
+      }
+      if (typeofV === "boolean" || typeofV === "number") {
+        const s = v.toString()
+        return create("#24a583", s[0].toUpperCase() + s.substring(1));
+      }
+      if (v == null) {
+        return create("#a01c1c", 'None');
+      }
+    }
+    function makeCollapseable(summary, obj) {
+      const collapseable = document.createElement("details");
+      const summaryElement = document.createElement("summary");
+      summaryElement.innerText = summary;
+      collapseable.appendChild(summaryElement);
+      Object.entries(obj).forEach(([k, v]) => {
+        if (v == null || typeof v !== 'object') {
+          const p = document.createElement("p");
+          p.innerHTML = `${k}: ${createHtmlValue(v)}`;
+          collapseable.appendChild(p);
+        } else {
+          const subcollapseable = makeCollapseable(`${k}: [object Object]`, v);
+          collapseable.appendChild(subcollapseable);
+        }
+      });
+      return collapseable;
+    }
+
     /**
      * Displays the shared variables on the the current state.
      */
     function setSharedVariablesTable(state) {
       const currentSlice = state.currentSlice;
-      document.getElementById("shared-var-table").innerHTML = JSON.stringify(currentSlice, undefined, 2);
+      const collapseable = makeCollapseable("Shared Variables", currentSlice ?? {});
+      const table = document.getElementById("shared-var-table")
+      table.childNodes.forEach(n => table.removeChild(n));
+      collapseable.setAttribute("open", "true");
+      table.appendChild(collapseable);
     }
 
     /**
@@ -317,12 +383,6 @@
         data.codeBlock.forEach(block => {
           insertCodeBlock(block);
         });
-
-        // data.sharedVariables.forEach(v => {
-        //   const sharedVarElement = document.createElement("p");
-        //   sharedVarElement.textContent = v;
-        //   document.getElementById("shared-var-table").appendChild(sharedVarElement);
-        // });
 
         data.processes.forEach(p => {
             // console.log(p.name);
