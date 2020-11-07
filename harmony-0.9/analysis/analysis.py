@@ -3,7 +3,6 @@ import gzip
 from typing import List, Optional
 
 from analysis.code import get_code
-from analysis.next import dump_path
 from analysis.node import full_dump
 from analysis.path import get_path
 from value import NodeType
@@ -25,10 +24,6 @@ def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code,
     :param novalue: No dictionary value.
     :return:
     """
-    if bad_node is not None:
-        print("Start Dump Path")
-        dump_path(bad_node)
-        print("End Dump Path")
 
     dump_name = "harmony.json"
     nodes = sorted(nodes, key=lambda n: n.uid)

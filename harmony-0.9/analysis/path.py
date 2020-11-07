@@ -32,6 +32,15 @@ class StepValue:
     def get_choose(self) -> Optional[Tuple[int, str]]:
         return self.choose
 
+    def get_duration(self) -> int:
+        if self.error is not None:
+            return 0
+        if self.steps is not None:
+            start, end = self.steps
+            return end - start + 1
+        if self.choose is not None:
+            return 1
+
     def __str__(self):
         if self.choose is not None:
             return str(self.choose[0]) + f", choose({self.choose[1]})"
@@ -170,40 +179,22 @@ def get_path(n, typings, nodes: List[NodeType], code):
             pid = len(pids) - 1
         process_name = nametag_to_str(last_ctx.nametag)
         values = {k: json_valid_value(variables.d[k], typings) for k in shared_variables}
-        all_steps = process_steps(steps, typings)
-
+        all_steps = []
         total_duration = 0
-        time_slice_duration = 0
-        state_slices: list = []
-
-        def update(slice_duration):
-            slice_duration += 1
-            if len(states) > 0 and pc == nodes[states[0]].after.pc:
-                state_slices.append({
-                    "values": nodes[states[0]].state.vars.d,
-                    "duration": slice_duration
-                })
-                states.pop(0)
-                return 0
-            return slice_duration
-
-        for s in all_steps:
-            if s.steps is not None:
-                start, end = s.steps
-                for pc in range(start, end + 1):
-                    time_slice_duration = update(time_slice_duration)
-                total_duration += end - start + 1
-            elif s.choose is not None:
-                pc = s.choose[0]
-                total_duration += 1
-                time_slice_duration = update(time_slice_duration)
-        if len(states) > 0:
+        state_slices = []
+        while len(mecrostep_path) > 0 and mecrostep_path[0][0] == pid:
+            _, node = mecrostep_path.pop(0)
+            steps_in_ms = process_steps(node.steps, typings)
+            variables = {k: json_valid_value(v, typings) for k, v in node.state.vars.d.items()}
+            slice_duration = 0
+            for s in steps_in_ms:
+                slice_duration += s.get_duration()
+                all_steps.append(s)
             state_slices.append({
-                "values": nodes[states[0]].state.vars.d,
-                "duration": time_slice_duration
+                "values": variables,
+                "duration": slice_duration
             })
-            states.pop(0)
-        assert len(states) == 0, str(len(states)) + ", All: " + str(list(map(lambda s: nodes[s].after.pc, all_states))) + ",  " + str(all_steps)
+        total_duration += sum(map(lambda s: s['duration'], state_slices))
         processes.append({
             "pid": pid,
             "name": process_name,

@@ -16,6 +16,7 @@ class NodeType:
     issues: List[str]
     before: ContextType
     after: ContextType
+    steps: list
     blocked: Dict[ContextType, bool]
     state: StateType
 
