@@ -425,6 +425,14 @@
         processBlock.setAttribute('class', 'process-block');
         processBlock.style.left = `${totalDuration / BAR_LEN_FACTOR}rem`;
         processBlock.style.width = `${s.duration / BAR_LEN_FACTOR}rem`;
+        const currentTime = totalDuration;
+        processBlock.addEventListener("click", (e) => {
+          e.preventDefault();
+          time = currentTime;
+          console.log(time);
+          updateWindow();
+          console.log("Help");
+        })
         processBar.appendChild(processBlock);
         totalDuration += s.duration;
       });
