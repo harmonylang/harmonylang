@@ -383,7 +383,6 @@
     if (data.issues != null && data.issues.length > 0) {
       document.getElementById("issue-value").textContent = data.issues[0];
     }
-
     data.codeBlock.forEach(block => {
       insertCodeBlock(block);
     });
@@ -410,12 +409,15 @@
         processBars.appendChild(row);
       }
 
-      const processBlock = document.createElement("div");
-      processBlock.setAttribute('class', 'process-block');
-      processBlock.style.left = `${totalDuration / BAR_LEN_FACTOR}rem`;
-      processBlock.style.width = `${p.duration / BAR_LEN_FACTOR}rem`;
-      processObjects.get(p.pid).appendChild(processBlock);
-      totalDuration += p.duration;
+      const processBar = processObjects.get(p.pid);
+      p.slices.forEach(s => {
+        const processBlock = document.createElement("div");
+        processBlock.setAttribute('class', 'process-block');
+        processBlock.style.left = `${totalDuration / BAR_LEN_FACTOR}rem`;
+        processBlock.style.width = `${s.duration / BAR_LEN_FACTOR}rem`;
+        processBar.appendChild(processBlock);
+        totalDuration += s.duration;
+      });
     });
 
     maxTime = totalDuration;
@@ -520,6 +522,7 @@
       currentProcess = p;
     }
     let steps = [];
+    console.log(currentProcess);
     for (const step of currentProcess.steps) {
       if (step.steps != null) {
         for (let i = step.steps[0]; i <= step.steps[1]; i++) {
@@ -535,6 +538,7 @@
       duration += slice.duration;
       if (duration >= time) {
         currentSlice = slice.values;
+        break;
       }
     }
     return {
