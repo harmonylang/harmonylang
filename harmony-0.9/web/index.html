@@ -295,6 +295,7 @@
     const header = `<span style="color: #C05B5B">${block.filename}<span>: <span style="color: #788585">${block.line_number} ${block.executed_line}</span>`
     const emptyCell = makeTableCell();
     const contentCell = makeTableCell(header);
+    contentCell.style.fontFamily = '"Courier New", Courier, monospace';
     const tableRow = makeTableRow(emptyCell, contentCell);
     document.getElementById("code-table").appendChild(tableRow);
 
@@ -302,8 +303,10 @@
     block.code.forEach((c, idx) => {
       const pc = idx + firstPc
       const pcCell = makeTableCell(pc);
-      pcCell.setAttribute("style", "color: #788585;")
+      pcCell.style.fontFamily = '"Courier New", Courier, monospace';
+      pcCell.style.color = 'color: #788585';
       const codeCell = makeTableCell(c.code);
+      codeCell.style.fontFamily = '"Courier New", Courier, monospace';
       const tableRow = makeTableRow(pcCell, codeCell);
       tableRow.setAttribute("id", `code-pc-${pc}`);
       document.getElementById("code-table").appendChild(tableRow);
