@@ -362,14 +362,21 @@
     table.appendChild(collapseable);
   }
 
+  let lastHighlighted = null;
   /**
    * Scrolls the code-table to the current step of the state and highlights that line of code
    * if the step exists.
    */
   function moveAndHighlightCode(state) {
+    if (lastHighlighted != null) {
+      const line = document.getElementById(`code-pc-${lastHighlighted}`)
+      line.style.backgroundColor = "";
+    }
     if (state.currentStep != null) {
       const [pc, _] = state.currentStep;
-      const line = document.getElementById("code-pc-" + pc)
+      const line = document.getElementById(`code-pc-${pc}`)
+      line.style.backgroundColor = "rgba(0, 255, 255, 0.2)";
+      lastHighlighted = pc;
       line.scrollIntoView();
     }
   }
@@ -505,24 +512,20 @@
 
   /**
    * Returns the state of the program at the current time shown in the bottom progress bars.
-   * @returns {{currentStep: *, currentSlice: null}}
+   * @returns {{currentStep: [number, Optional<unknown>], currentSlice: unknown}}
    */
   const getStateAtTime = () => {
     let duration = 0;
     let currentProcess = harmonyData.processes[0];
     for (const p of harmonyData.processes) {
       duration += p.duration;
-      // if (duration === maxTime) {
-      //     currentProcess = p;
-      // }
+      currentProcess = p;
       if (duration >= time) {
         duration -= p.duration;
         break;
       }
-      currentProcess = p;
     }
     let steps = [];
-    console.log(currentProcess);
     for (const step of currentProcess.steps) {
       if (step.steps != null) {
         for (let i = step.steps[0]; i <= step.steps[1]; i++) {
@@ -551,7 +554,7 @@
     const message = event.data; // The command and JSON data our extension sent
     switch (message.command) {
       case 'load':
-        console.log(message.jsonData);
+        // console.log(message.jsonData);
         initWindow(message.jsonData);
         break;
     }
