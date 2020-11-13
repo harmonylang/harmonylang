@@ -21,7 +21,8 @@ type ProcessMegaStep = {
   duration: number;
   slices: {
     duration: number;
-    values: Record<string, unknown>
+    values: Record<string, unknown>;
+    uid: number;
   }[];
 };
 
@@ -240,6 +241,3 @@ export default class HarmonyJson {
     return this.allCode[pc];
   }
 }
-
-// const i = new HarmonyJson('../../harmony-0.9/harmony.json.gzip');
-// console.log(Object.values(i.getAllNodes())[1].context_bag[1]);

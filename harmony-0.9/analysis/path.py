@@ -192,9 +192,11 @@ def get_path(n, typings, nodes: List[NodeType], code):
                 all_steps.append(s)
             state_slices.append({
                 "values": variables,
-                "duration": slice_duration
+                "duration": slice_duration,
+                "uid": node.uid
             })
         total_duration += sum(map(lambda s: s['duration'], state_slices))
+        print(list(map(lambda slicer: slicer['uid'], state_slices)), states)
         processes.append({
             "pid": pid,
             "name": process_name,

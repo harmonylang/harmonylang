@@ -510,8 +510,8 @@
   }
 
   const updateStackTrace = (state) => {
-    const currentProcess = state.currentProcess;
-    const node = harmonyData.nodes[currentProcess.sid];
+    const nodeId = state.currentNodeId;
+    const node = harmonyData.nodes[nodeId];
     const contextBag = node.context_bag;
     const tbl = document.getElementById("stack-trace-table");
     tbl.style.fontFamily = '"Courier New", Courier, monospace';
@@ -608,7 +608,7 @@
 
   /**
    * Returns the state of the program at the current time shown in the bottom progress bars.
-   * @returns {{currentStep: [number, Optional<unknown>], currentSlice: unknown}}
+   * @returns {{currentStep: *, currentNodeId: null, currentSlice: null}}
    */
   const getStateAtTime = () => {
     let duration = 0;
@@ -633,17 +633,19 @@
     }
     let currentStep = steps[time - duration];
     let currentSlice = null;
+    let currentUid = null;
     for (const slice of currentProcess.slices) {
       duration += slice.duration;
       if (duration >= time) {
         currentSlice = slice.values;
+        currentUid = slice.uid
         break;
       }
     }
     return {
       "currentStep": currentStep,
       "currentSlice": currentSlice,
-      "currentProcess": currentProcess
+      "currentNodeId": currentUid
     };
   }
 

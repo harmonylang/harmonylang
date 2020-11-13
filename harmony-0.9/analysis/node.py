@@ -150,6 +150,6 @@ def full_dump(nodes, code, scope, files, verbose, typings, novalue, fulldump: bo
     if fulldump:
         return [get_node_data(n, code, scope, verbose, files, typings, [0], novalue, nodes) for n in nodes]
     else:
-        sids = set(map(lambda p: p['sid'], path['processes']))
+        sids = set(s for p in path['processes'] for s in p['states'])
         bad_nodes = filter(lambda n: n.uid == bad_node_id or n.uid in sids, nodes)
         return [get_node_data(n, code, scope, verbose, files, typings, [0], novalue, nodes) for n in bad_nodes]
