@@ -170,7 +170,7 @@
             </div>
         </div>
     </div>
-    <div id="process-window">
+    <div id="process-window" style="background-color: #1e1e1e">
         <div class="pure-g" id="seekbar-div">
             <button class="pure-button seekbar-button" style="margin-left: 1rem" id="button-back">
                 <i class="fas fa-chevron-left"></i>
@@ -562,17 +562,13 @@
 
       const locs = bag.locs;
       const stackTraceCell = document.createElement("td");
-      stackTraceCell.style.display = "flex";
-      stackTraceCell.style.flexDirection = "column";
       locs.lines.forEach(l => {
         const line = document.createElement("div");
-        line.style.flex = "1 auto";
         line.innerText = l;
         stackTraceCell.appendChild(line);
       });
       if (locs.failure != null) {
         const line = document.createElement("div");
-        line.style.flex = "1 auto";
         line.innerText = locs.failure;
         line.style.color = "#d71616";
         stackTraceCell.appendChild(line);
@@ -580,13 +576,10 @@
       row.appendChild(stackTraceCell);
 
       const variablesCell = document.createElement("td");
-      variablesCell.style.display = "flex";
-      variablesCell.style.flexDirection = "column";
       const trace = bag.traces[0];
       if (trace != null) {
         trace.variables.forEach(v => {
           const line = document.createElement("div");
-          line.style.flex = "1 auto";
           line.innerText = `${v.name} = ${v.value}`;
           variablesCell.appendChild(line);
         });
