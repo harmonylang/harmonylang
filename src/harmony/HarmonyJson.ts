@@ -84,7 +84,7 @@ type ContextBag = {
   context_details: Readonly<Record<string, unknown>>;
   locs: Readonly<{
     lines: Readonly<string>[];
-    failure: boolean | null;
+    failure: string | null;
   }>;
 };
 
@@ -205,8 +205,8 @@ export default class HarmonyJson {
     return this.inOrderCode;
   }
 
-  readonly getAllNodes = (): Readonly<HarmonyNode>[] => {
-    return Object.values(this.json.nodes);
+  readonly getAllNodes = (): Readonly<Record<number, HarmonyNode>> => {
+    return this.json.nodes;
   }
 
   readonly getAllMacroSteps = (): Readonly<MacroStep>[] => {
@@ -239,5 +239,7 @@ export default class HarmonyJson {
   readonly codeAtPC = (pc: number): Readonly<HarmonyCode> | undefined => {
     return this.allCode[pc];
   }
-
 }
+
+// const i = new HarmonyJson('../../harmony-0.9/harmony.json.gzip');
+// console.log(Object.values(i.getAllNodes())[1].context_bag[1]);

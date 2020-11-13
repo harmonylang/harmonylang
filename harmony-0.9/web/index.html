@@ -149,10 +149,8 @@
 </head>
 <body>
     <div class="pure-g">
-        <div class="pure-u-1-2">
-            <p id="towa">Data</p>
-        </div>
-        <div class="pure-u-1-2">
+        <table class="pure-u-1-2" id="stack-trace-table" style="overflow: auto;"></table>
+        <div class="pure-u-1-2" style="background-color: #1e1e1e">
             <div id="issue-box">
                 <div style="display: flex">
                     <div style="order: 1; padding-left: 10px; padding-right: 10px; background-color: #252526"><h2 style="color: #ffffff">Issue</h2></div>
@@ -167,7 +165,7 @@
             </div>
             <div id="shared-variables" style="height:100%; margin-top: 10px;">
 <!--                <h2 style="background-color: #3c3c3c; padding: 10px">Shared Variables</h2>-->
-                <div id="shared-var-table" style="overflow-y:auto; font-size: xx-small">
+                <div id="shared-var-table" style="overflow-y: auto;">
                 </div>
             </div>
         </div>
@@ -339,11 +337,13 @@
     const collapseable = document.createElement("details");
     const summaryElement = document.createElement("summary");
     summaryElement.innerText = summary;
+    summaryElement.style.fontSize = "15px";
     collapseable.appendChild(summaryElement);
     Object.entries(obj).forEach(([k, v]) => {
       if (v == null || typeof v !== 'object') {
         const p = document.createElement("p");
         p.innerHTML = `${k}: ${createHtmlValue(v)}`;
+        p.style.fontSize = "15px";
         collapseable.appendChild(p);
       } else {
         const subcollapseable = makeCollapseable(`${k}: [object Object]`, v);
@@ -360,7 +360,7 @@
     const currentSlice = state.currentSlice;
     const collapseable = makeCollapseable("Shared Variables", currentSlice ?? {});
     const table = document.getElementById("shared-var-table")
-    table.childNodes.forEach(n => table.removeChild(n));
+    while (table.firstChild != null) table.removeChild(table.firstChild);
     collapseable.setAttribute("open", "true");
     table.appendChild(collapseable);
   }
@@ -509,6 +509,92 @@
     updateWindow();
   }
 
+  const updateStackTrace = (state) => {
+    const currentProcess = state.currentProcess;
+    const node = harmonyData.nodes[currentProcess.sid];
+    const contextBag = node.context_bag;
+    const tbl = document.getElementById("stack-trace-table");
+    tbl.style.fontFamily = '"Courier New", Courier, monospace';
+
+    while (tbl.firstChild != null) tbl.removeChild(tbl.firstChild);
+    const header = document.createElement("tr");
+    const processHeader = document.createElement("th");
+    processHeader.innerText = "Process";
+    const statusHeader = document.createElement("th");
+    statusHeader.innerText = "Status";
+    const stackTraceHeader = document.createElement("th");
+    stackTraceHeader.innerText = "Stack Trace";
+    const variablesHeader = document.createElement("th");
+    variablesHeader.innerText = "Variables";
+    header.appendChild(processHeader);
+    header.appendChild(statusHeader);
+    header.appendChild(stackTraceHeader);
+    header.appendChild(variablesHeader);
+    tbl.appendChild(header);
+
+    contextBag.forEach(bag => {
+      const row = document.createElement("tr");
+      let processName = `${bag.process_name}`
+      if (bag.number_of_copies > 1) processName += `: [${bag.number_of_copies} copies]`
+      const processCell = document.createElement("td");
+      processCell.innerText = processName;
+      row.appendChild(processCell);
+
+      const statusCell = document.createElement("td");
+      if (bag.blocked) {
+        statusCell.innerText = "blocked";
+        statusCell.style.color = "#701f1f";
+      } else if (bag.failed) {
+        statusCell.innerText = "failed";
+        statusCell.style.color = "#d71616";
+      } else if (bag.choosing != null) {
+        statusCell.innerText = "choosing";
+        statusCell.style.color = "#19a7ee";
+      } else if (bag.stopped) {
+        statusCell.innerText = "stopped";
+        statusCell.style.color = "#fff000";
+      } else {
+        statusCell.innerText = "running";
+        statusCell.style.color = "#30ea30";
+      }
+      row.appendChild(statusCell);
+
+      const locs = bag.locs;
+      const stackTraceCell = document.createElement("td");
+      stackTraceCell.style.display = "flex";
+      stackTraceCell.style.flexDirection = "column";
+      locs.lines.forEach(l => {
+        const line = document.createElement("div");
+        line.style.flex = "1 auto";
+        line.innerText = l;
+        stackTraceCell.appendChild(line);
+      });
+      if (locs.failure != null) {
+        const line = document.createElement("div");
+        line.style.flex = "1 auto";
+        line.innerText = locs.failure;
+        line.style.color = "#d71616";
+        stackTraceCell.appendChild(line);
+      }
+      row.appendChild(stackTraceCell);
+
+      const variablesCell = document.createElement("td");
+      variablesCell.style.display = "flex";
+      variablesCell.style.flexDirection = "column";
+      const trace = bag.traces[0];
+      if (trace != null) {
+        trace.variables.forEach(v => {
+          const line = document.createElement("div");
+          line.style.flex = "1 auto";
+          line.innerText = `${v.name} = ${v.value}`;
+          variablesCell.appendChild(line);
+        });
+      }
+      row.appendChild(variablesCell);
+      tbl.appendChild(row);
+    });
+  }
+
   let updateWindow = () => {
     timeSlider.value = time;
     timeStartText.innerHTML = timeFormat(time);
@@ -517,6 +603,7 @@
     const currentState = getStateAtTime();
     moveAndHighlightCode(currentState);
     setSharedVariablesTable(currentState);
+    updateStackTrace(currentState);
   }
 
   /**
@@ -555,7 +642,8 @@
     }
     return {
       "currentStep": currentStep,
-      "currentSlice": currentSlice
+      "currentSlice": currentSlice,
+      "currentProcess": currentProcess
     };
   }
 
