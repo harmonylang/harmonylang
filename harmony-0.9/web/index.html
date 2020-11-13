@@ -159,7 +159,7 @@
             </div>
             <div id="all-code">
                 <h2 style="background-color: #3c3c3c; padding: 10px">Assembly</h2>
-                <div style="height:100px;overflow:auto;">
+                <div style="height:200px;overflow:auto;">
                     <table id="code-table"></table>
                 </div>
             </div>
@@ -431,6 +431,7 @@
           time = currentTime;
           updateWindow();
         })
+        processBlock.style.border = "1px solid rgb(256, 256, 256, 0.75)";
         processBar.appendChild(processBlock);
         totalDuration += s.duration;
       });
