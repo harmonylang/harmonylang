@@ -420,8 +420,7 @@
         const currentTime = totalDuration;
         processBlock.addEventListener("click", (e) => {
           e.preventDefault();
-          time = currentTime;
-          updateWindow();
+          updateWindow(currentTime);
         })
         processBlock.style.border = "1px solid rgb(256, 256, 256, 0.75)";
         processBar.appendChild(processBlock);
@@ -447,8 +446,7 @@
 
     timeSlider.addEventListener('input', (e) => {
       e.preventDefault();
-      time = timeSlider.value;
-      updateWindow();
+      updateWindow(timeSlider.value);
     }, false);
 
     playButton.addEventListener('click', (e) => {
@@ -467,17 +465,15 @@
     forwardButton.addEventListener('click', (e) => {
       e.preventDefault();
       if (time < maxTime) {
-        time++;
+        updateWindow(time + 1);
       }
-      updateWindow();
     }, false);
 
     backButton.addEventListener('click', (e) => {
       e.preventDefault();
       if (time > 0) {
-        time--;
+        updateWindow(time - 1);
       }
-      updateWindow();
     }, false);
 
     // processSlider.addEventListener('drag', (e, drag) => {
@@ -487,8 +483,7 @@
     //     time += timeDelta;
     //     updateWindow();
     // }, false);
-
-    updateWindow();
+    updateWindow(time);
   }
 
   let playExecution = () => {
@@ -499,7 +494,7 @@
       playButton.firstElementChild.setAttribute('class', 'fas fa-play');
       playing = false;
     }
-    updateWindow();
+    updateWindow(time);
   }
 
   /**
@@ -530,19 +525,17 @@
     tbl.style.fontFamily = '"Courier New", Courier, monospace';
 
     while (tbl.firstChild != null) tbl.removeChild(tbl.firstChild);
-    const header = document.createElement("tr");
-    const processHeader = document.createElement("th");
-    processHeader.innerText = "Process";
-    const statusHeader = document.createElement("th");
-    statusHeader.innerText = "Status";
-    const stackTraceHeader = document.createElement("th");
-    stackTraceHeader.innerText = "Stack Trace";
-    const variablesHeader = document.createElement("th");
-    variablesHeader.innerText = "Variables";
-    header.appendChild(processHeader);
-    header.appendChild(statusHeader);
-    header.appendChild(stackTraceHeader);
-    header.appendChild(variablesHeader);
+
+    const buildHeader = (...headers) => {
+      const row = document.createElement("tr");
+      headers.forEach(h => {
+        const header = document.createElement("th");
+        header.innerText = h;
+        row.appendChild(header);
+      });
+      return row;
+    }
+    const header = buildHeader('Process', 'Status', 'Stack Trace', 'Variables');
     tbl.appendChild(header);
 
     contextBag.forEach((bag, rowNumber) => {
@@ -573,7 +566,6 @@
       row.appendChild(statusCell);
 
       const scopes = bag.locs;
-
       const variablesCell = document.createElement("td");
       const stackTraceCell = document.createElement("td");
 
@@ -615,7 +607,8 @@
     });
   }
 
-  let updateWindow = () => {
+  let updateWindow = (newTime) => {
+    if (newTime != null) time = newTime;
     timeSlider.value = time;
     timeStartText.innerHTML = timeFormat(time);
     processSlider.style.left = `${convertRemToPixels(time / BAR_LEN_FACTOR)}px`;
@@ -676,9 +669,7 @@
     const message = event.data; // The command and JSON data our extension sent
     switch (message.command) {
       case 'load':
-        // console.log(message.jsonData);
         initWindow(message.jsonData);
-        break;
     }
   });
 
