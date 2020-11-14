@@ -274,22 +274,6 @@
    * Inserts a row element(s) to the code-table given a macro-step.
    */
   function insertCodeBlock(block) {
-    const makeTableCell = (content) => {
-      const cell = document.createElement("td");
-      if (content != null) {
-        cell.innerHTML = content;
-      }
-      return cell;
-    }
-    const makeTableRow = (...cells) => {
-      const tableRow = document.createElement("tr");
-      if (cells != null) {
-        cells.forEach(c => {
-          tableRow.appendChild(c);
-        });
-      }
-      return tableRow;
-    }
     const header = `<span style="color: #C05B5B">${block.filename}<span>: <span style="color: #788585">${block.line_number} ${block.executed_line}</span>`
     const emptyCell = makeTableCell();
     const contentCell = makeTableCell(header);
@@ -303,7 +287,7 @@
       const pcCell = makeTableCell(pc);
       pcCell.style.fontFamily = '"Courier New", Courier, monospace';
       pcCell.style.color = 'color: #788585';
-      const codeCell = makeTableCell(c.code);
+      const codeCell = makeTableCell(`<span title="${c.explanation}">${c.code}</span>`);
       codeCell.style.fontFamily = '"Courier New", Courier, monospace';
       const tableRow = makeTableRow(pcCell, codeCell);
       tableRow.setAttribute("id", `code-pc-${pc}`);
@@ -694,6 +678,23 @@
 
   function convertRemToPixels(rem) {
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+  }
+
+  const makeTableCell = (content) => {
+    const cell = document.createElement("td");
+    if (content != null) {
+      cell.innerHTML = content;
+    }
+    return cell;
+  }
+  const makeTableRow = (...cells) => {
+    const tableRow = document.createElement("tr");
+    if (cells != null) {
+      cells.forEach(c => {
+        tableRow.appendChild(c);
+      });
+    }
+    return tableRow;
   }
 </script>
 
