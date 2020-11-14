@@ -157,6 +157,12 @@
       margin-top: calc(20px + 15pt);
     }
 
+    #stack-trace-table {
+      overflow: auto;
+      border: none;
+      padding: 1rem;
+    }
+
     details>summary {
       font-family: "Courier New", Courier, monospace;
       color: white;
@@ -190,8 +196,8 @@
 </head>
 
 <body>
-  <div class="pure-g" style="position: absolute; height: 60%; width: 100%">
-    <table class="pure-u-1-2" id="stack-trace-table" style="overflow: auto;"></table>
+  <div class="pure-g" style="position: absolute; height: 60%; width: 100%; left: 0">
+    <table class="pure-u-1-2 pure-table" id="stack-trace-table"></table>
     <div class="pure-u-1-2" style="height: 100%; background-color: #1e1e1e">
       <div id="issue-box-container">
         <div id="issue-box">
