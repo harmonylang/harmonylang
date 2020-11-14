@@ -11,3 +11,4 @@ out
 **/.idea/
 **/env/
 **/*.json.gzip
+harmony-0.9/harmony.json.gzip

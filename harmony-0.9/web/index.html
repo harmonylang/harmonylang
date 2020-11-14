@@ -158,9 +158,60 @@
     }
 
     #stack-trace-table {
-      overflow: auto;
+      overflow: scroll;
+      height: 100%;
       border: none;
       padding: 1rem;
+    }
+
+    #overlay {
+      position: fixed; /* Sit on top of the page content */
+      /* display: none; /* Hidden by default */
+      width: 100%; /* Full width (cover the whole page) */
+      height: 100%; /* Full height (cover the whole page) */
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #1e1e1e;
+      transition: opacity 1s ease-in-out;
+      z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    }
+
+    #harmonyLangIcon {
+      position: absolute;
+      top: calc(50% - 10rem);
+      left: calc(50% - 4rem);
+      width: 8rem;
+      height: 8rem;
+    }
+
+    #loader {
+      position: absolute;
+      top: calc(50%);
+      left: calc(50% - 2rem - 10px);
+      border: 8px solid #00000000;
+      border-radius: 50%;
+      border-top: 8px solid #E7E7E7;
+      border-bottom: 8px solid #E7E7E7;
+      width: 4rem;
+      height: 4rem;
+      -webkit-animation: spin 2s linear infinite;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    #overlay-text {
+      position: absolute;
+      top: calc(50% + 6rem);
+      left: calc(50% - 10rem);
+      width: 20rem;
+      text-align: center;
+      transition: all 0.3s ease-in-out;
     }
 
     details>summary {
@@ -196,6 +247,27 @@
 </head>
 
 <body>
+  <div id="overlay">
+    <svg id="harmonyLangIcon" viewBox="0 0 264 264" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g filter="url(#filter0_d_unscrew)">
+      <rect x="4" width="256" height="256" rx="10" fill="#FFEBEE"/>
+      </g>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M242.446 20.3866C242.446 19.2821 241.55 18.3866 240.446 18.3866L22.0914 18.3866C20.9869 18.3866 20.0914 19.2821 20.0914 20.3866L20.0914 22.0441C20.0914 23.1487 20.9869 24.0441 22.0914 24.0441L125.892 24.0441C115.032 28.6889 107.598 36.6686 106.622 44.9291C106.48 45.2036 106.4 45.5151 106.4 45.8452V63.6463L22.0914 63.6463C20.9869 63.6463 20.0914 64.5417 20.0914 65.6463L20.0914 67.3038C20.0914 68.4083 20.9869 69.3038 22.0914 69.3038L106.4 69.3038V108.906H22.0914C20.9869 108.906 20.0914 109.801 20.0914 110.906L20.0914 112.563C20.0914 113.668 20.9869 114.563 22.0914 114.563L106.4 114.563V154.166H22.0914C20.9869 154.166 20.0914 155.061 20.0914 156.166L20.0914 157.823C20.0914 158.928 20.9869 159.823 22.0914 159.823H106.4V199.425H22.0914C20.9869 199.425 20.0914 200.321 20.0914 201.425L20.0914 203.083C20.0914 204.187 20.9869 205.083 22.0914 205.083H106.4V249.757C106.4 250.861 107.295 251.757 108.4 251.757H110.251C111.356 251.757 112.251 250.861 112.251 249.757V205.083L240.446 205.083C241.55 205.083 242.446 204.187 242.446 203.083V201.425C242.446 200.321 241.55 199.425 240.446 199.425L112.251 199.425V172.084C119.303 178.403 131.962 181.173 145.321 178.445C158.614 175.73 168.997 168.307 172.848 159.823H240.446C241.55 159.823 242.446 158.928 242.446 157.823V156.166C242.446 155.061 241.55 154.166 240.446 154.166H174.398C174.548 152.59 174.462 151.006 174.119 149.434C171.447 137.206 154.222 130.368 135.646 134.162C125.725 136.188 117.425 140.837 112.251 146.592V114.563L240.446 114.563C241.55 114.563 242.446 113.668 242.446 112.563V110.906C242.446 109.801 241.55 108.906 240.446 108.906H155.164C168.209 103.3 176.286 92.8794 174.119 82.9588C172.781 76.8367 167.796 72.0658 160.819 69.3038L240.446 69.3038C241.55 69.3038 242.446 68.4084 242.446 67.3038V65.6463C242.446 64.5417 241.55 63.6463 240.446 63.6463L151.475 63.6463C166.659 58.5383 176.498 47.1135 174.133 36.2849C173.001 31.1042 169.257 26.8911 163.904 24.0441L240.446 24.0441C241.55 24.0441 242.446 23.1487 242.446 22.0441V20.3866ZM120.081 63.6463C117.045 62.4351 114.39 60.8423 112.251 58.9226V63.6463H120.081ZM112.251 69.3038V80.1171C116.334 75.5753 122.365 71.7223 129.602 69.3038H112.251ZM117.016 108.906H112.251V105.609C113.636 106.85 115.237 107.954 117.016 108.906Z" fill="#212121"/>
+      <defs>
+      <filter id="filter0_d_unscrew" x="0" y="0" width="264" height="264" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>
+      <feOffset dy="4"/>
+      <feGaussianBlur stdDeviation="2"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+      </filter>
+      </defs>
+    </svg>
+    <div id="loader"></div>
+    <h2 id="overlay-text">&nbsp;Harmony is processing...</h2>
+  </div>
   <div class="pure-g" style="position: absolute; height: 60%; width: 100%; left: 0">
     <table class="pure-u-1-2 pure-table" id="stack-trace-table"></table>
     <div class="pure-u-1-2" style="height: 100%; background-color: #1e1e1e">
@@ -242,9 +314,9 @@
       <div class="pure-u-19-24 process-bars" id="process-bars">
         <div id="process-slider"
           style="width: 24px; height: 100%; position: absolute; top: 0; overflow: hidden; z-index: 1;">
-          <svg width="24" height="900" viewBox="0 0 16 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="24" height="1800" viewBox="0 0 16 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g filter="url(#filter0_d)">
-              <line x1="8" y1="602" x2="8.00003" y2="2.00006" stroke="#E0E0E0" stroke-width="2" />
+              <line x1="8" y1="1200" x2="8.00003" y2="2.00006" stroke="#E0E0E0" stroke-width="2" />
             </g>
             <g filter="url(#filter1_d)">
               <path fill-rule="evenodd" clip-rule="evenodd"
@@ -308,6 +380,16 @@
   let playTimer;
   let playing = false;
 
+  let codeTable;
+  let sharedVariableTable;
+  let stackTraceTable;
+
+  let issueDisplay;
+
+  let overlay;
+  let overlayLoader;
+  let overlayText;
+
   document.addEventListener('DOMContentLoaded', (event) => {
     timeStartText = document.getElementById("start-time");
     timeEndText = document.getElementById("end-time");
@@ -318,6 +400,13 @@
     processBars = document.getElementById("process-bars");
     processLabels = document.getElementById("process-labels");
     processSlider = document.getElementById("process-slider");
+    codeTable = document.getElementById("code-table");
+    sharedVariableTable = document.getElementById("shared-var-table");
+    stackTraceTable = document.getElementById("stack-trace-table");
+    issueDisplay = document.getElementById("issue-value");
+    overlay = document.getElementById("overlay");
+    overlayLoader = document.getElementById("loader");
+    overlayText = document.getElementById("overlay-text");
   });
 
   /**
@@ -330,7 +419,7 @@
     const contentCell = makeTableCell(header);
     contentCell.style.fontFamily = '"Courier New", Courier, monospace';
     const tableRow = makeTableRow(emptyCell, contentCell);
-    document.getElementById("code-table").appendChild(tableRow);
+    codeTable.appendChild(tableRow);
 
     const firstPc = block.first_pc;
     block.code.forEach((c, idx) => {
@@ -343,7 +432,7 @@
       codeCell.style.color = '#E7E7E7'
       const tableRow = makeTableRow(pcCell, codeCell);
       tableRow.setAttribute("id", `code-pc-${pc}`);
-      document.getElementById("code-table").appendChild(tableRow);
+      codeTable.appendChild(tableRow);
     });
   }
 
@@ -403,9 +492,8 @@
   function setSharedVariablesTable(slice) {
     if (slice === lastSlice) return;
     const collapseable = makeCollapseable("Shared Variables", slice ?? {});
-    const table = document.getElementById("shared-var-table")
-    while (table.firstChild != null) table.removeChild(table.firstChild);
-    table.appendChild(collapseable);
+    while (sharedVariableTable.firstChild != null) sharedVariableTable.removeChild(sharedVariableTable.firstChild);
+    sharedVariableTable.appendChild(collapseable);
     lastSlice = slice;
   } 
 
@@ -431,7 +519,7 @@
     let totalDuration = 0;
     let processObjects = new Map();
     if (data.issues != null && data.issues.length > 0) {
-      document.getElementById("issue-value").textContent = data.issues[0];
+      issueDisplay.textContent = data.issues[0];
     }
     data.codeBlock.forEach(block => insertCodeBlock(block));
 
@@ -566,7 +654,7 @@
   function updateStackTrace(nodeId) {
     const node = harmonyData.nodes[nodeId];
     const contextBag = node.context_bag;
-    const tbl = document.getElementById("stack-trace-table");
+    const tbl = stackTraceTable;
     tbl.style.fontFamily = '"Courier New", Courier, monospace';
 
     while (tbl.firstChild != null) tbl.removeChild(tbl.firstChild);
@@ -704,7 +792,17 @@
     const message = event.data; // The command and JSON data our extension sent
     switch (message.command) {
       case 'load':
+        overlay.addEventListener("transitionend", (event) => {
+          overlay.style.display = "none";
+        }, false);
+        overlay.style.opacity = 0;
         initWindow(message.jsonData);
+      break;
+      case 'message':
+        overlayLoader.style.display = "none";
+        overlayText.style.top = "50%";
+        overlayText.textContent = message.jsonData;
+      break;
     }
   });
 

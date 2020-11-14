@@ -76,7 +76,12 @@ export default class HarmonyOutputPanel {
     public updateResults() {
         // Send a message to the webview webview.
         // You can send any JSON serializable data.
-        this._panel.webview.postMessage({ command: 'load', jsonData: "Put on screen" });
+        this._update(true);
+    }
+
+    public updateMessage(message: string) {
+        const webview = this._panel.webview;
+        webview.postMessage({ command: 'message', jsonData: message });
     }
 
     public dispose() {
@@ -93,22 +98,23 @@ export default class HarmonyOutputPanel {
         }
     }
 
-    private _update() {
+    private _update(hasData = false) {
         const webview = this._panel.webview;
         const harmonyPanel = this._panel;
 
-        const harmonyPath = vscode.window.activeTextEditor?.document.fileName;
-        if (typeof harmonyPath === 'string') {
-            const uiPath = Path.join(__dirname, '..', 'harmony-0.9', 'web', 'index.html');
-            const dataPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.json.gzip');
+        const uiPath = Path.join(__dirname, '..', 'harmony-0.9', 'web', 'index.html');
+        const dataPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.json.gzip');
 
+        if (!hasData){
             Fs.readFile(uiPath, 'utf-8', function (err, data) {
                 if (err) {
                     vscode.window.showInformationMessage(err.message);
                 }
                 harmonyPanel.webview.html = data;
-            });
+            });  
+        }
 
+        if (hasData){
             this._loadData(dataPath, webview);
         }
     }
@@ -133,7 +139,6 @@ export default class HarmonyOutputPanel {
             issues
         };
 
-        console.log(dataInterface);
         webview.postMessage({ command: 'load', jsonData: jsonData });
     }
 }
