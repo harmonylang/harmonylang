@@ -303,7 +303,11 @@
     const typeofV = typeof v;
     const create = (color, value) => `<span style="color: ${color}">${value}</span>`;
     if (typeofV === "string") {
-      return create("#bc6021", `"${v}"`);
+      if (v.startsWith("?")) {
+        return create("#ed85ff", `${v}`);
+      } else {
+        return create("#bc6021", `"${v}"`);
+      }
     }
     if (typeofV === "boolean" || typeofV === "number") {
       const s = v.toString()
@@ -311,6 +315,8 @@
     }
     if (v == null) {
       return create("#a01c1c", 'None');
+    } else {
+      return create("#ffffff", JSON.stringify(v));
     }
   }
   /**
@@ -496,7 +502,7 @@
     while (cell.firstChild != null) cell.removeChild(cell.firstChild);
     trace.variables.forEach(v => {
       const line = document.createElement("div");
-      line.innerText = `${v.name} = ${v.value}`;
+      line.innerHTML = `${v.name} = ${createHtmlValue(v.value)}`;
       cell.appendChild(line);
     });
   }
@@ -523,12 +529,9 @@
     tbl.appendChild(header);
 
     contextBag.forEach((bag, rowNumber) => {
-      const row = document.createElement("tr");
       let processName = `${bag.process_name}`
       if (bag.number_of_copies > 1) processName += `: [${bag.number_of_copies} copies]`
-      const processCell = document.createElement("td");
-      processCell.innerText = processName;
-      row.appendChild(processCell);
+      const processCell = makeTableCell(processName);
 
       const statusCell = document.createElement("td");
       if (bag.blocked) {
@@ -547,15 +550,13 @@
         statusCell.innerText = "running";
         statusCell.style.color = "#30ea30";
       }
-      row.appendChild(statusCell);
 
       const scopes = bag.locs;
-      const variablesCell = document.createElement("td");
-      const stackTraceCell = document.createElement("td");
-
+      const variablesCell = makeTableCell();
       const variableCellId = `trace-variables-row-${rowNumber}`;
       variablesCell.id = variableCellId;
 
+      const stackTraceCell = makeTableCell();
       scopes.lines.forEach((l, level) => {
         const line = document.createElement("div");
         line.innerHTML = l.map((x, i) => {
@@ -576,18 +577,9 @@
         line.style.color = "#d71616";
         stackTraceCell.appendChild(line);
       }
-      row.appendChild(stackTraceCell);
 
-      const trace = bag.traces[0];
-      if (trace != null) {
-        trace.variables.forEach(v => {
-          const line = document.createElement("div");
-          line.innerText = `${v.name} = ${v.value}`;
-          variablesCell.appendChild(line);
-        });
-      }
-      row.appendChild(variablesCell);
-      tbl.appendChild(row);
+      tbl.appendChild(makeTableRow(processCell, statusCell, stackTraceCell, variablesCell));
+      if (bag.traces.length > 0) showStackTraceVariables(0, variableCellId, nodeId, rowNumber);
     });
   }
 
