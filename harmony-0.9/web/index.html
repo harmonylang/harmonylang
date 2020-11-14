@@ -1,234 +1,278 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="UTF-8">
-    <title>Harmony Output</title>
-    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
-        integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
-        integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
-        crossorigin="anonymous" />
-    <style type="text/css">
-        body {
-            background-color: #1e1e1e;
-            color: #fff;
-        }
-        #process-window {
-            position: fixed;
-            bottom: 0%;
-            right: 0px;
-            left: 0px;
-            width: 100%;
-            height: 40%;
-        }
+  <meta charset="UTF-8">
+  <title>Harmony Output</title>
+  <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
+    integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
+    crossorigin="anonymous" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <style type="text/css">
+    body {
+      background-color: #1e1e1e;
+      color: #fff;
+    }
 
-        #processes {
-            position: relative;
-            padding-top: 1rem;
-            height: calc(100% - 4rem);
-        }
+    h2 {
+      font-family: 'Source Code Pro', monospace;
+      font-size: 13pt;
+    }
 
-        .process-labels {
-            height: 100%;
-        }
+    #process-window {
+      position: fixed;
+      bottom: 0%;
+      right: 0px;
+      left: 0px;
+      width: 100%;
+      height: 40%;
+    }
 
-        .process-label-row {
-            background-color: #252525;
-            height: 3rem;
-            width: 100%;
-        }
+    #processes {
+      position: relative;
+      padding-top: 1rem;
+      height: calc(100% - 4rem);
+    }
 
-        .process-label-text {
-            margin-top: 0;
-            margin-bottom: 0;
-            padding-left: 1rem;
-            line-height: 3rem;
-            font-weight: 600;
-        }
+    .process-labels {
+      height: 100%;
+    }
 
-        .process-bars {
-            position: absolute;
-            top: 0;
-            padding-top: 1rem;
-            left: 20.83333%;
-            bottom: 0;
-            overflow-x: scroll;
-            overflow-y: visible;
-        }
+    .process-label-row {
+      background-color: #252525;
+      height: 3rem;
+      width: 100%;
+    }
 
-        .process-bar-row {
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
-            padding-left: 12px;
-            padding-right: 1rem;
-            width: fit-content;
-        }
+    .process-label-text {
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-left: 1rem;
+      line-height: 3rem;
+      font-weight: 600;
+    }
 
-        .process-bar {
-            position: relative;
-            background: #323232;
-            border-radius: 5px;
-            height: 2rem;
-        }
+    .process-bars {
+      position: absolute;
+      top: 0;
+      padding-top: 1rem;
+      left: 20.83333%;
+      bottom: 0;
+      overflow-x: scroll;
+      overflow-y: visible;
+    }
 
-        .process-block {
-            position: absolute;
-            border-radius: 5px;
-            height: 2rem;
-        }
+    .process-bar-row {
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+      padding-left: 12px;
+      padding-right: 1rem;
+      width: fit-content;
+    }
 
-        .seekbar-button {
-            background: #252525;
-            color: #fff;
-            width: 2.5rem;
-            height: 2.5rem;
-            margin-top: .25rem;
-            margin-bottom: .25rem;
-            margin-left: .25rem;
-        }
+    .process-bar {
+      position: relative;
+      background: #323232;
+      border-radius: 5px;
+      height: 2rem;
+    }
 
-        .seekbar-time {
-            margin-top: 0;
-            margin-bottom: 0;
-            padding-left: 1rem;
-            padding-right: 1rem;
-            letter-spacing: normal;
-            line-height: 3rem;
-            font-weight: 600;
-        }
+    .process-block {
+      position: absolute;
+      border: 2px solid rgb(255, 255, 255, 0.2);
+      border-radius: 5px;
+      height: 2rem;
+    }
 
-        #seekbar-div {
-            background-color: #3c3c3c;
-            position: relative;
-            top: 0%;
-            width: 100%;
-            height: 3rem;
-        }
+    .seekbar-button {
+      background: #252525;
+      color: #fff;
+      width: 2.5rem;
+      height: 2.5rem;
+      margin-top: .25rem;
+      margin-bottom: .25rem;
+      margin-left: .25rem;
+    }
 
-        #time-slider {
-            flex-grow: 1;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-        }
+    .seekbar-time {
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      letter-spacing: normal;
+      line-height: 3rem;
+      font-weight: 600;
+    }
 
-        #time-slider:focus {
-            outline: none;
-        }
+    #seekbar-div {
+      background-color: #3c3c3c;
+      position: relative;
+      top: 0%;
+      width: 100%;
+      height: 3rem;
+    }
 
-        details {
-          font: 20px Calibri;
-          width: 750px;
-        }
-        details > summary {
-          font-family: "Courier New", Courier, monospace;
-          color: white;
-          padding: 2px 6px;
-          width: 15em;
-          /*background-color: lightblue;*/
-          border: none;
-          /*box-shadow: 3px 3px 4px green;*/
-          cursor: pointer;
-          transition : color 1s;
-        }
-        details > p {
-          font-family: "Courier New", Courier, monospace;
-          color: white;
-          padding: 2px 6px;
-          width: 15em;
-          margin-top: 2px;
-          margin-bottom: 2px;
-          margin-left: 40px;
-        }
-        details > * {
-          margin-left: 20px;
-        }
-        details[open] > summary {
-          color: #a3a3ff;
-        }
-    </style>
+    #time-slider {
+      flex-grow: 1;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    #time-slider:focus {
+      outline: none;
+    }
+
+    #issue-box {
+      display: flex;
+      height: 2.5rem;
+      line-height: .7rem;
+      margin-top: 1rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #issue-box-container {
+      height: 5%;
+    }
+
+    #all-code {
+      height: 40%
+    }
+
+    #shared-var-table {
+      overflow-y: auto;
+      height: calc(100% - 20px - 14pt);
+    }
+
+    details {
+      font: 20px Calibri;
+    }
+
+    #shared-variables {
+      height: calc(55% - 40px - 23pt);
+      margin-top: calc(20px + 15pt);
+    }
+
+    details>summary {
+      font-family: "Courier New", Courier, monospace;
+      color: white;
+      padding: 2px 6px;
+      width: 15em;
+      /*background-color: lightblue;*/
+      border: none;
+      /*box-shadow: 3px 3px 4px green;*/
+      cursor: pointer;
+      transition: color 1s;
+    }
+
+    details>p {
+      font-family: "Courier New", Courier, monospace;
+      color: white;
+      padding: 2px 6px;
+      width: 15em;
+      margin-top: 2px;
+      margin-bottom: 2px;
+      margin-left: 40px;
+    }
+
+    details>* {
+      margin-left: 20px;
+    }
+
+    details[open]>summary {
+      color: #a3a3ff;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="pure-g">
-        <table class="pure-u-1-2" id="stack-trace-table" style="overflow: auto;"></table>
-        <div class="pure-u-1-2" style="background-color: #1e1e1e">
-            <div id="issue-box">
-                <div style="display: flex">
-                    <div style="order: 1; padding-left: 10px; padding-right: 10px; background-color: #252526"><h2 style="color: #ffffff">Issue</h2></div>
-                    <div style="order: 5; padding-left: 10px; padding-right: 10px; background-color: #3C3C3C"><h2 id="issue-value" style="color: #F44336">None</h2></div>
-                </div>
-            </div>
-            <div id="all-code">
-                <h2 style="background-color: #3c3c3c; padding: 10px">Assembly</h2>
-                <div style="height:200px;overflow:auto;">
-                    <table id="code-table"></table>
-                </div>
-            </div>
-            <div id="shared-variables" style="height:100%; margin-top: 10px;">
-<!--                <h2 style="background-color: #3c3c3c; padding: 10px">Shared Variables</h2>-->
-                <div id="shared-var-table" style="overflow-y: auto;">
-                </div>
-            </div>
+  <div class="pure-g" style="position: absolute; height: 60%; width: 100%">
+    <table class="pure-u-1-2" id="stack-trace-table" style="overflow: auto;"></table>
+    <div class="pure-u-1-2" style="height: 100%; background-color: #1e1e1e">
+      <div id="issue-box-container">
+        <div id="issue-box">
+          <div style="order: 1; padding-left: 10px; padding-right: 10px; background-color: #252526">
+            <h2 style="color: #ffffff">Issue</h2>
+          </div>
+          <div style="order: 5; padding-left: 10px; padding-right: 10px; background-color: #3C3C3C">
+            <h2 id="issue-value" style="color: #F44336">None</h2>
+          </div>
         </div>
+      </div>
+      <div id="all-code">
+        <h2 style="background-color: #3c3c3c; padding: 10px; margin-bottom: 0px;">Assembly</h2>
+        <div style="height:100%; overflow:auto;">
+          <table id="code-table"></table>
+        </div>
+      </div>
+      <div id="shared-variables">
+        <h2 style="background-color: #3c3c3c; padding: 10px; margin-bottom: 0px;">Shared Variables</h2>
+        <div id="shared-var-table"=>
+        </div>
+      </div>
     </div>
-    <div id="process-window" style="background-color: #1e1e1e">
-        <div class="pure-g" id="seekbar-div">
-            <button class="pure-button seekbar-button" style="margin-left: 1rem" id="button-back">
-                <i class="fas fa-chevron-left"></i>
-            </button>
-            <button class="pure-button seekbar-button" id="button-play">
-                <i class="fas fa-play"></i>
-            </button>
-            <button class="pure-button seekbar-button" style="margin-right: 1rem;" id="button-forward">
-                <i class="fas fa-chevron-right"></i>
-            </button>
-            <p class="seekbar-time" id="start-time">00:08:32</p>
-            <input type="range" min="0" max="100" value="0" id="time-slider">
-            <p class="seekbar-time" id="end-time">00:42:03</p>
-        </div>
-        <div class="pure-g" id="processes">
-            <div class="pure-u-5-24 process-labels" id="process-labels"></div>
-            <div class="pure-u-19-24 process-bars" id="process-bars">
-                <div id="process-slider"
-                    style="width: 24px; height: 100%; position: absolute; top: 0; overflow: hidden; z-index: 1;">
-                    <svg width="24" height="900" viewBox="0 0 16 600" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g filter="url(#filter0_d)">
-                            <line x1="8" y1="602" x2="8.00003" y2="2.00006" stroke="#E0E0E0" stroke-width="2" />
-                        </g>
-                        <g filter="url(#filter1_d)">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M12 3C12 1.89543 11.1046 1 10 1H6C4.89543 1 4 1.89543 4 3V8.39445C4 8.7893 4.11688 9.17531 4.3359 9.50385L6.33591 12.5039C7.12755 13.6913 8.87247 13.6913 9.66411 12.5038L11.6641 9.50385C11.8831 9.17531 12 8.7893 12 8.39445V3Z"
-                                fill="#E0E0E0" />
-                        </g>
-                        <circle cx="8" cy="8" r="2" fill="#C4C4C4" />
-                        <defs>
-                            <filter id="filter0_d" x="3" y="6.10352e-05" width="10" height="608"
-                                filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                                <feFlood flood-opacity="0" result="BackgroundImageFix" />
-                                <feColorMatrix in="SourceAlpha" type="matrix"
-                                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
-                                <feOffset dy="2" />
-                                <feGaussianBlur stdDeviation="2" />
-                                <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
-                                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
-                                <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
-                            </filter>
-                            <filter id="filter1_d" x="0" y="1" width="16" height="20.3944" filterUnits="userSpaceOnUse"
-                                color-interpolation-filters="sRGB">
-                                <feFlood flood-opacity="0" result="BackgroundImageFix" />
-                                <feColorMatrix in="SourceAlpha" type="matrix"
-                                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
-                                <feOffset dy="4" />
-                                <feGaussianBlur stdDeviation="2" />
-                                <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
-                                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
-                                <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
-                            </filter>
-                        </defs>
-                    </svg>
-                </div>
-            </div>
-        </div>
+  </div>
+  <div id="process-window" style="background-color: #1e1e1e">
+    <div class="pure-g" id="seekbar-div">
+      <button class="pure-button seekbar-button" style="margin-left: 1rem" id="button-back">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button class="pure-button seekbar-button" id="button-play">
+        <i class="fas fa-play"></i>
+      </button>
+      <button class="pure-button seekbar-button" style="margin-right: 1rem;" id="button-forward">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+      <p class="seekbar-time" id="start-time">00:08:32</p>
+      <input type="range" min="0" max="100" value="0" id="time-slider">
+      <p class="seekbar-time" id="end-time">00:42:03</p>
     </div>
+    <div class="pure-g" id="processes">
+      <div class="pure-u-5-24 process-labels" id="process-labels"></div>
+      <div class="pure-u-19-24 process-bars" id="process-bars">
+        <div id="process-slider"
+          style="width: 24px; height: 100%; position: absolute; top: 0; overflow: hidden; z-index: 1;">
+          <svg width="24" height="900" viewBox="0 0 16 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g filter="url(#filter0_d)">
+              <line x1="8" y1="602" x2="8.00003" y2="2.00006" stroke="#E0E0E0" stroke-width="2" />
+            </g>
+            <g filter="url(#filter1_d)">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M12 3C12 1.89543 11.1046 1 10 1H6C4.89543 1 4 1.89543 4 3V8.39445C4 8.7893 4.11688 9.17531 4.3359 9.50385L6.33591 12.5039C7.12755 13.6913 8.87247 13.6913 9.66411 12.5038L11.6641 9.50385C11.8831 9.17531 12 8.7893 12 8.39445V3Z"
+                fill="#E0E0E0" />
+            </g>
+            <circle cx="8" cy="8" r="2" fill="#C4C4C4" />
+            <defs>
+              <filter id="filter0_d" x="3" y="6.10352e-05" width="10" height="608" filterUnits="userSpaceOnUse"
+                color-interpolation-filters="sRGB">
+                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+                <feOffset dy="2" />
+                <feGaussianBlur stdDeviation="2" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
+                <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
+              </filter>
+              <filter id="filter1_d" x="0" y="1" width="16" height="20.3944" filterUnits="userSpaceOnUse"
+                color-interpolation-filters="sRGB">
+                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+                <feOffset dy="4" />
+                <feGaussianBlur stdDeviation="2" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
+                <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
+              </filter>
+            </defs>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 
 <script>
@@ -274,7 +318,8 @@
    * Inserts a row element(s) to the code-table given a macro-step.
    */
   function insertCodeBlock(block) {
-    const header = `<span style="color: #C05B5B">${block.filename}<span>: <span style="color: #788585">${block.line_number} ${block.executed_line}</span>`
+    const header =
+      `<span style="color: #A5D6A7">${block.filename}<span>: <span style="color: #788585">${block.line_number} ${block.executed_line}</span>`
     const emptyCell = makeTableCell();
     const contentCell = makeTableCell(header);
     contentCell.style.fontFamily = '"Courier New", Courier, monospace';
@@ -286,9 +331,10 @@
       const pc = idx + firstPc
       const pcCell = makeTableCell(pc);
       pcCell.style.fontFamily = '"Courier New", Courier, monospace';
-      pcCell.style.color = 'color: #788585';
+      pcCell.style.color = '#788585';
       const codeCell = makeTableCell(`<span title="${c.explanation}">${c.code}</span>`);
       codeCell.style.fontFamily = '"Courier New", Courier, monospace';
+      codeCell.style.color = '#E7E7E7'
       const tableRow = makeTableRow(pcCell, codeCell);
       tableRow.setAttribute("id", `code-pc-${pc}`);
       document.getElementById("code-table").appendChild(tableRow);
@@ -340,24 +386,27 @@
         collapseable.appendChild(subcollapseable);
       }
     });
+    collapseable.setAttribute("open", "true");
     return collapseable;
   }
 
   /**
    * Displays the shared variables on the the current state.
    */
+  let lastSlice = null;
   function setSharedVariablesTable(slice) {
+    if (slice === lastSlice) return;
     const collapseable = makeCollapseable("Shared Variables", slice ?? {});
     const table = document.getElementById("shared-var-table")
     while (table.firstChild != null) table.removeChild(table.firstChild);
-    collapseable.setAttribute("open", "true");
     table.appendChild(collapseable);
-  }
+    lastSlice = slice;
+  } 
 
-  let lastHighlighted = null;
   /**
    * Scrolls the code-table to the given pc and highlights that line of code.
    */
+  let lastHighlighted = null;
   function moveAndHighlightCode(pc) {
     if (lastHighlighted != null) {
       const line = document.getElementById(`code-pc-${lastHighlighted}`)
@@ -412,7 +461,7 @@
           e.preventDefault();
           updateWindow(currentTime);
         })
-        processBlock.style.border = "1px solid rgb(256, 256, 256, 0.75)";
+        // processBlock.style.border = "2px solid rgb(255, 255, 255, 0.2)";
         processBar.appendChild(processBlock);
         totalDuration += s.duration;
       });
@@ -589,7 +638,11 @@
     timeStartText.innerHTML = timeFormat(time);
     processSlider.style.left = `${convertRemToPixels(time / BAR_LEN_FACTOR)}px`;
 
-    const {currentStep, currentSlice, currentNodeId} = getStateAtTime();
+    const {
+      currentStep,
+      currentSlice,
+      currentNodeId
+    } = getStateAtTime();
     if (currentStep != null) {
       const [pc] = currentStep;
       moveAndHighlightCode(pc);
