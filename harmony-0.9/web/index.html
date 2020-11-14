@@ -356,9 +356,8 @@
   /**
    * Displays the shared variables on the the current state.
    */
-  function setSharedVariablesTable(state) {
-    const currentSlice = state.currentSlice;
-    const collapseable = makeCollapseable("Shared Variables", currentSlice ?? {});
+  function setSharedVariablesTable(slice) {
+    const collapseable = makeCollapseable("Shared Variables", slice ?? {});
     const table = document.getElementById("shared-var-table")
     while (table.firstChild != null) table.removeChild(table.firstChild);
     collapseable.setAttribute("open", "true");
@@ -389,13 +388,10 @@
     if (data.issues != null && data.issues.length > 0) {
       document.getElementById("issue-value").textContent = data.issues[0];
     }
-    data.codeBlock.forEach(block => {
-      insertCodeBlock(block);
-    });
+    data.codeBlock.forEach(block => insertCodeBlock(block));
 
+    // Builds the process blocks on the bottom.
     data.processes.forEach(p => {
-      // console.log(p.name);
-      // console.log(p.duration);
       if (!processObjects.has(p.pid)) {
         // Label Generation
         const labelContainer = document.createElement("div");
@@ -527,8 +523,7 @@
   }
 
 
-  function updateStackTrace(state) {
-    const nodeId = state.currentNodeId;
+  function updateStackTrace(nodeId) {
     const node = harmonyData.nodes[nodeId];
     const contextBag = node.context_bag;
     const tbl = document.getElementById("stack-trace-table");
@@ -625,13 +620,13 @@
     timeStartText.innerHTML = timeFormat(time);
     processSlider.style.left = `${convertRemToPixels(time / BAR_LEN_FACTOR)}px`;
 
-    const currentState = getStateAtTime();
-    if (currentState.currentStep != null) {
-      const [pc] = currentState.currentStep;
+    const {currentStep, currentSlice, currentNodeId} = getStateAtTime();
+    if (currentStep != null) {
+      const [pc] = currentStep;
       moveAndHighlightCode(pc);
     }
-    setSharedVariablesTable(currentState);
-    updateStackTrace(currentState);
+    setSharedVariablesTable(currentSlice);
+    updateStackTrace(currentNodeId);
   }
 
   /**
