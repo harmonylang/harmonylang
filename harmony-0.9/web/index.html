@@ -367,21 +367,17 @@
 
   let lastHighlighted = null;
   /**
-   * Scrolls the code-table to the current step of the state and highlights that line of code
-   * if the step exists.
+   * Scrolls the code-table to the given pc and highlights that line of code.
    */
-  function moveAndHighlightCode(state) {
+  function moveAndHighlightCode(pc) {
     if (lastHighlighted != null) {
       const line = document.getElementById(`code-pc-${lastHighlighted}`)
       line.style.backgroundColor = "";
     }
-    if (state.currentStep != null) {
-      const [pc, _] = state.currentStep;
-      const line = document.getElementById(`code-pc-${pc}`)
-      line.style.backgroundColor = "rgba(0, 255, 255, 0.2)";
-      lastHighlighted = pc;
-      line.scrollIntoView();
-    }
+    const line = document.getElementById(`code-pc-${pc}`)
+    line.style.backgroundColor = "rgba(0, 255, 255, 0.2)";
+    lastHighlighted = pc;
+    line.scrollIntoView();
   }
 
   let initWindow = (data) => {
@@ -510,7 +506,28 @@
     updateWindow();
   }
 
-  const updateStackTrace = (state) => {
+  /**
+   * Updates the current stack trace table's list of variables.
+   *
+   * - level is a number denoting position of the corresponding stack trace scope on the table, where the top row is 0
+   * and each row after increases by 1.
+   * - id is the HTML id of the table cell displaying the variables, in the form `trace-variables-row-${row}`.
+   * - nodeId is the uid of the node corresponding to the current state.
+   * - row is a the table row, starting at 0 from the top row and skipping the header row.
+   */
+  function showStackTraceVariables(level, id, nodeId, row) {
+    const trace = harmonyData.nodes[nodeId].context_bag[row].traces[level];
+    const cell = document.getElementById(id);
+    while (cell.firstChild != null) cell.removeChild(cell.firstChild);
+    trace.variables.forEach(v => {
+      const line = document.createElement("div");
+      line.innerText = `${v.name} = ${v.value}`;
+      cell.appendChild(line);
+    });
+  }
+
+
+  function updateStackTrace(state) {
     const nodeId = state.currentNodeId;
     const node = harmonyData.nodes[nodeId];
     const contextBag = node.context_bag;
@@ -533,7 +550,7 @@
     header.appendChild(variablesHeader);
     tbl.appendChild(header);
 
-    contextBag.forEach(bag => {
+    contextBag.forEach((bag, rowNumber) => {
       const row = document.createElement("tr");
       let processName = `${bag.process_name}`
       if (bag.number_of_copies > 1) processName += `: [${bag.number_of_copies} copies]`
@@ -560,22 +577,36 @@
       }
       row.appendChild(statusCell);
 
-      const locs = bag.locs;
+      const scopes = bag.locs;
+
+      const variablesCell = document.createElement("td");
       const stackTraceCell = document.createElement("td");
-      locs.lines.forEach(l => {
+
+      const variableCellId = `trace-variables-row-${rowNumber}`;
+      variablesCell.id = variableCellId;
+
+      scopes.lines.forEach((l, level) => {
         const line = document.createElement("div");
-        line.innerText = l;
+        line.innerHTML = l.map((x, i) => {
+          if (i === 0) {
+            return `<span onclick="moveAndHighlightCode(${x});" style="color: rgb(50,177,224); text-decoration:underline">${x}</span>`
+          } else if (i === 1 && x != null) {
+            // Can jump to the stack of variables.
+            return `<span style="color: rgb(71,226,92); text-decoration: underline" onclick="showStackTraceVariables(${level}, '${variableCellId}', ${nodeId}, ${rowNumber});">${x}</span>`
+          } else {
+            return x || "";
+          }
+        }).join(" ");
         stackTraceCell.appendChild(line);
       });
-      if (locs.failure != null) {
+      if (scopes.failure != null) {
         const line = document.createElement("div");
-        line.innerText = locs.failure;
+        line.innerText = scopes.failure;
         line.style.color = "#d71616";
         stackTraceCell.appendChild(line);
       }
       row.appendChild(stackTraceCell);
 
-      const variablesCell = document.createElement("td");
       const trace = bag.traces[0];
       if (trace != null) {
         trace.variables.forEach(v => {
@@ -595,7 +626,10 @@
     processSlider.style.left = `${convertRemToPixels(time / BAR_LEN_FACTOR)}px`;
 
     const currentState = getStateAtTime();
-    moveAndHighlightCode(currentState);
+    if (currentState.currentStep != null) {
+      const [pc] = currentState.currentStep;
+      moveAndHighlightCode(pc);
+    }
     setSharedVariablesTable(currentState);
     updateStackTrace(currentState);
   }

@@ -84,7 +84,7 @@ type ContextBag = {
   traces: Readonly<TraceStruct>[];
   context_details: Readonly<Record<string, unknown>>;
   locs: Readonly<{
-    lines: Readonly<string>[];
+    lines: Readonly<[number, string | null, string | null]>[];
     failure: string | null;
   }>;
 };

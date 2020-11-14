@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import * as Path from 'path';
 import * as Fs from 'fs';
-import * as zlib from 'zlib';
 import HarmonyJson from './harmony/HarmonyJson';
 import { Webview } from "vscode";
 
