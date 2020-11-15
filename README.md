@@ -41,6 +41,14 @@ See your Harmony Output results, right in VS Code!
 
 ## Release Notes
 
+### 0.1.0
+ - Massive UI overhaul with compiler output rewrite.
+   - Interactive Process Visualizer
+   - Crash Timeline Playback
+ - Removed previous UI
+ - Removed Notification Output System
+ - Bug fixes
+
 ### 0.0.6
 
 - Include `Add 'harmony' to PATH` command, which add and setup the harmony CLI compiler on the device. (Unix only)

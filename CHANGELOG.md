@@ -4,7 +4,15 @@ All notable changes to the "harmonylang" extension will be documented in this fi
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [Unreleased]
+## [0.1.0] - Unreleased
+ - Massive UI overhaul with compiler output rewrite.
+   - Interactive Process Visualizer
+   - Crash Timeline Playback
+ - Removed previous UI
+ - Removed Notification Output System
+ - Bug fixes
+
+## [0.0.6] - 2020-09-08
 
 - Include `Add 'harmony' to PATH` command, which add and setup the harmony CLI compiler on the device. (Unix only)
 - Include `Remove 'harmony' CLI` command, which removes the added harmony CLI compiler with the above command from the device. (Unix only)
