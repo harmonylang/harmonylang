@@ -243,6 +243,28 @@
     details[open]>summary {
       color: #a3a3ff;
     }
+
+    #data-window {
+      position: absolute;
+      height: 60%;
+      width: 100%;
+      left: 0;
+    }
+
+    #separator {
+      cursor: row-resize;
+      background-color: #b1b1b1;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20'><path d='M0 6 h20 M0 10 h20 M0 14 h20' fill='none' stroke='black'/></svg>");
+      background-repeat: no-repeat;
+      background-position: center;
+      width: 100%;
+      height: 18px;
+
+      /* Prevent the browser's built-in drag from interfering */
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
   </style>
 </head>
 
@@ -268,7 +290,7 @@
     <div id="loader"></div>
     <h2 id="overlay-text">&nbsp;Harmony is processing...</h2>
   </div>
-  <div class="pure-g" style="position: absolute; height: 60%; width: 100%; left: 0">
+  <div id="data-window" class="pure-g">
     <table class="pure-u-1-2 pure-table" id="stack-trace-table"></table>
     <div class="pure-u-1-2" style="height: 100%; background-color: #1e1e1e">
       <div id="issue-box-container">
@@ -290,11 +312,11 @@
       <div id="shared-variables">
         <h2 style="background-color: #3c3c3c; padding: 10px; margin-bottom: 0px;">Shared Variables</h2>
         <div id="shared-var-table"></div>
-        </div>
       </div>
     </div>
   </div>
   <div id="process-window" style="background-color: #1e1e1e">
+    <div id="separator"></div>
     <div class="pure-g" id="seekbar-div">
       <button class="pure-button seekbar-button" style="margin-left: 1rem" id="button-back">
         <i class="fas fa-chevron-left"></i>
@@ -410,6 +432,42 @@
   });
 
   /**
+   * Source: https://stackoverflow.com/a/55202728
+   */
+  function initResizeBar()
+  {
+    let   mouseDetails; // remember mouse down info
+    const resizeBar = document.getElementById("separator");
+    const resizeBarHeight = resizeBar.clientHeight;
+    const processWindow = document.getElementById("process-window");
+    const dataWindow = document.getElementById("data-window");
+
+    resizeBar.onmousedown = onMouseDown;
+    function onMouseDown(e)
+    {
+      mouseDetails = {
+        e,
+        initialHeight: processWindow.offsetHeight
+      };
+      document.onmousemove = onMouseMove;
+      document.onmouseup = () => {
+        document.onmousemove = document.onmouseup = null;
+      }
+    }
+    function onMouseMove(e) {
+      const deltaY = e.clientY - mouseDetails.e.clientY;
+      const documentHeight = getDocumentHeight();
+
+      const newHeight = fitInBounds(mouseDetails.initialHeight - deltaY, resizeBarHeight, documentHeight);
+      console.log("Body Height", documentHeight);
+      const heightPercentage = (newHeight / documentHeight) * 100;
+      dataWindow.style.height = (100 - heightPercentage).toString() + '%';
+      processWindow.style.height = heightPercentage.toString() + '%';
+      console.log(dataWindow, dataWindow.style.height);
+    }
+  }
+
+  /**
    * Inserts a row element(s) to the code-table given a macro-step.
    */
   function insertCodeBlock(block) {
@@ -514,6 +572,7 @@
 
   let initWindow = (data) => {
     harmonyData = data;
+    initResizeBar();
 
     // Get all process names in order
     let totalDuration = 0;
@@ -827,6 +886,28 @@
 
   function convertRemToPixels(rem) {
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+  }
+
+  /**
+   * Gets the height of the current document. Uses JQuery's implementation.
+   * @returns {number} A pixel measurement.
+   */
+  function getDocumentHeight() {
+    const body = document.body, html = document.documentElement;
+    return Math.max( body.scrollHeight, body.offsetHeight,
+            html.clientHeight, html.scrollHeight, html.offsetHeight);
+  }
+
+  /**
+   * Fits the value in between a lower and upper bound.
+   * @param value The value to fit.
+   * @param min The lower bound.
+   * @param max The upper bound.
+   * @requires min <= max
+   * @returns {number} value if (min <= value <= max) else min if (value < min) else max if (value > max).
+   */
+  function fitInBounds(value, min, max) {
+    return Math.min(Math.max(value, min), max);
   }
 
   const makeTableCell = (content) => {
