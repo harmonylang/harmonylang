@@ -83,7 +83,7 @@
 
     .process-block {
       position: absolute;
-      border: 2px solid rgb(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.2);
       border-radius: 5px;
       height: 2rem;
     }
@@ -204,7 +204,7 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    
+
     #overlay-text {
       position: absolute;
       top: calc(50% + 6rem);
@@ -289,7 +289,7 @@
       </div>
       <div id="shared-variables">
         <h2 style="background-color: #3c3c3c; padding: 10px; margin-bottom: 0px;">Shared Variables</h2>
-        <div id="shared-var-table"=>
+        <div id="shared-var-table"></div>
         </div>
       </div>
     </div>
@@ -495,7 +495,7 @@
     while (sharedVariableTable.firstChild != null) sharedVariableTable.removeChild(sharedVariableTable.firstChild);
     sharedVariableTable.appendChild(collapseable);
     lastSlice = slice;
-  } 
+  }
 
   /**
    * Scrolls the code-table to the given pc and highlights that line of code.
