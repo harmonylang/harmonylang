@@ -103,7 +103,13 @@ def json_valid_value(v, typings):
     elif isinstance(v, typings['SetValue']):
         return [json_valid_value(z, typings) for z in v.s]
     elif isinstance(v, typings['DictValue']):
-        return {k: json_valid_value(v, typings) for k, v in v.d.items()}
+        dictionary = {k: json_valid_value(v, typings) for k, v in v.d.items()}
+        keys = dictionary.keys()
+        all_int_keys = all(map(lambda k: isinstance(k, int), keys))
+        if all_int_keys and all(map(lambda idx: idx in keys, range(len(keys)))):
+            return [dictionary[i] for i in range(len(keys))]
+        else:
+            return dictionary
     else:
         return str(v)
 

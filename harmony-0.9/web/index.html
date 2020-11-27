@@ -535,7 +535,8 @@
         p.style.fontSize = "15px";
         collapseable.appendChild(p);
       } else {
-        const subcollapseable = makeCollapseable(`${k}: [object Object]`, v);
+        const header = Array.isArray(v) ? "[Array]" : "[object Object]"
+        const subcollapseable = makeCollapseable(`${k}: ${header}`, v);
         collapseable.appendChild(subcollapseable);
       }
     });
@@ -609,6 +610,7 @@
         processBlock.setAttribute('class', 'process-block');
         processBlock.style.left = `${totalDuration / BAR_LEN_FACTOR}rem`;
         processBlock.style.width = `${s.duration / BAR_LEN_FACTOR}rem`;
+        processBlock.style.cursor = "pointer";
         const currentTime = totalDuration;
         processBlock.addEventListener("click", (e) => {
           e.preventDefault();
@@ -763,10 +765,10 @@
         const line = document.createElement("div");
         line.innerHTML = l.map((x, i) => {
           if (i === 0) {
-            return `<span onclick="moveAndHighlightCode(${x});" style="color: rgb(50,177,224); text-decoration:underline">${x}</span>`
+            return `<span onclick="moveAndHighlightCode(${x});" style="color: rgb(50,177,224); text-decoration:underline; cursor: pointer" >${x}</span>`
           } else if (i === 1 && x != null) {
             // Can jump to the stack of variables.
-            return `<span style="color: rgb(71,226,92); text-decoration: underline" onclick="showStackTraceVariables(${level}, '${variableCellId}', ${nodeId}, ${rowNumber});">${x}</span>`
+            return `<span style="cursor: pointer; color: rgb(71,226,92); text-decoration: underline" onclick="showStackTraceVariables(${level}, '${variableCellId}', ${nodeId}, ${rowNumber});">${x}</span>`
           } else {
             return x || "";
           }
