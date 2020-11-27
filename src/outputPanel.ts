@@ -3,6 +3,7 @@ import * as Path from 'path';
 import * as Fs from 'fs';
 import HarmonyJson from './harmony/HarmonyJson';
 import { Webview } from "vscode";
+import {createStandaloneHtml} from "./feature/standaloneHtml";
 
 export default class HarmonyOutputPanel {
     public static currentPanel: HarmonyOutputPanel | undefined;
@@ -111,7 +112,7 @@ export default class HarmonyOutputPanel {
                     vscode.window.showInformationMessage(err.message);
                 }
                 harmonyPanel.webview.html = data;
-            });  
+            });
         }
 
         if (hasData){
@@ -139,6 +140,9 @@ export default class HarmonyOutputPanel {
             issues
         };
 
+        if (vscode.workspace.workspaceFolders) {
+            createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, jsonData);
+        }
         webview.postMessage({ command: 'load', jsonData: jsonData });
     }
 }
