@@ -1,4 +1,5 @@
 from value import Value
+from collections import Hashable
 
 
 def key_value(v):
@@ -103,13 +104,15 @@ def json_valid_value(v, typings):
     elif isinstance(v, typings['SetValue']):
         return [json_valid_value(z, typings) for z in v.s]
     elif isinstance(v, typings['DictValue']):
-        dictionary = {k: json_valid_value(v, typings) for k, v in v.d.items()}
-        keys = dictionary.keys()
-        all_int_keys = all(map(lambda k: isinstance(k, int), keys))
-        if all_int_keys and all(map(lambda idx: idx in keys, range(len(keys)))):
-            return [dictionary[i] for i in range(len(keys))]
+        if any(not isinstance(json_valid_value(k, typings), Hashable) for k in v.d.keys()):
+            return [(json_valid_value(k, typings), json_valid_value(v, typings)) for k, v in v.d.items()]
         else:
-            return dictionary
+            dictionary = {json_valid_value(k, typings): json_valid_value(v, typings) for k, v in v.d.items()}
+            keys = dictionary.keys()
+            if all(isinstance(k, int) for k in keys) and all(i in keys for i in range(len(keys))):
+                return [dictionary[i] for i in range(len(keys))]
+            else:
+                return dictionary
     else:
         return str(v)
 

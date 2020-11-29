@@ -41,7 +41,12 @@ def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code,
         else:
             return vars(v)
 
-    json_encoded = JSONEncoder(default=default_encoder).encode(data)
+    try:
+        json_encoded = JSONEncoder(default=default_encoder).encode(data)
+    except TypeError as e:
+        print(e)
+        exit(1)
+
     with gzip.open(dump_name + '.gzip', 'w') as f:
         f.write(json_encoded.encode('utf-8'))
         print(f"Open file://{cwd}/{dump_name}.gzip for more information in json format")
