@@ -20,7 +20,7 @@ async function update() {
     const destination = path.join(__dirname, 'harmony-0.9', 'harmony_updated.py');
     const diffOutput = path.join(__dirname, 'harmony-0.9', 'harmony_diff.txt');
     fs.writeFileSync(destination, rawData);
-    child_process.exec(`diff '${destination}' ${utilizedHarmonyPath}`, (_, stdout) => {
+    child_process.exec(`diff '${utilizedHarmonyPath}' ${destination}`, (_, stdout) => {
       fs.writeFileSync(diffOutput, stdout);
     });
   }

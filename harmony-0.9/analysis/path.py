@@ -158,8 +158,7 @@ def get_path(n, typings, nodes: List[NodeType], code):
             name: string;
             sid: int;
         } list;
-        values_at_process: Map<process_name, Map<variable_name, value_as_string>>;
-        steps: Map<process_name, StepValue_object>
+        height: int;
     }
     """
     issues = [str(s) for s in n.issues]
@@ -210,5 +209,5 @@ def get_path(n, typings, nodes: List[NodeType], code):
     return {
         'issues': issues,
         'processes': processes,
-        'shared_vars': shared_variables
+        'shared_vars': shared_variables,
     }
