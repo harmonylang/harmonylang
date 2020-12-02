@@ -12,3 +12,7 @@ out
 **/env/
 **/*.json.gzip
 harmony-0.9/harmony.json.gzip
+
+.env
+harmony-0.9/harmony_diff.txt
+harmony-0.9/harmony_updated.py
