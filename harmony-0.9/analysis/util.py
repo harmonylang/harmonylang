@@ -13,7 +13,7 @@ def key_value(v):
 
 
 RESERVED_KEYWORDS = {
-    "all",
+        "all",
         "and",
         "any",
         "as",
@@ -95,26 +95,28 @@ def nametag_to_str(nt):
 def json_valid_value(v, typings):
     """
     Converts the Harmony value into a JSON-valid representation.
-    :param typings:
-    :param v:
-    :return:
+    It performs the following checks:
+        - If it is a boolean, integer, or string, then it is returned as is.
+        - If it is a list or set, return that as a list with all of its elements mapped to a JSON-valid representation.
+        - If it is a SetValue, convert the set inside the value to a list, with all of its elements also
+            mapped to a JSON-valid representation.
+        - If it is a dictionary value:
+            - Check if any of its keys JSON-mapped value are not hashable,
+                convert the dictionary into an association list.
+            - Otherwise, convert the DictValue dictionary into a literal dictionary with
+                JSON-valid values.
     """
-    if isinstance(v, list):
-        return [json_valid_value(z, typings) for z in v]
-    elif isinstance(v, (bool, int, str)):
+    if isinstance(v, (bool, int, str)):
         return v
+    elif isinstance(v, (list, set)):
+        return [json_valid_value(z, typings) for z in v]
     elif isinstance(v, typings['SetValue']):
         return [json_valid_value(z, typings) for z in v.s]
     elif isinstance(v, typings['DictValue']):
         if any(not isinstance(json_valid_value(k, typings), Hashable) for k in v.d.keys()):
             return [(json_valid_value(k, typings), json_valid_value(v, typings)) for k, v in v.d.items()]
         else:
-            dictionary = {json_valid_value(k, typings): json_valid_value(v, typings) for k, v in v.d.items()}
-            keys = dictionary.keys()
-            if all(isinstance(k, int) for k in keys) and all(i in keys for i in range(len(keys))):
-                return [dictionary[i] for i in range(len(keys))]
-            else:
-                return dictionary
+            return {json_valid_value(k, typings): json_valid_value(v, typings) for k, v in v.d.items()}
     else:
         return str(v)
 

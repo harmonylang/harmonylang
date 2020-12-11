@@ -6,15 +6,14 @@ from analysis.util import nametag_to_str, str_of_value, json_valid_value
 
 def get_trace(code, scope, ctx, files, trace_id: List[int], typings, novalue):
     """
-    Read htmlloc for the function this is based on.
-    :param code:
-    :param scope:
-    :param ctx:
-    :param files:
-    :param trace_id:
-    :param typings:
-    :param novalue:
-    :return:
+    See htmlloc(code, scope, ctx, traceid, f) for the function this is based on.
+
+    Returns:
+        A dictionary with two fields:
+            - lines: A list whose elements represent each stack trace level in a process, where the details of that
+                process are provided in the given [ctx].
+            - failure: An optional string which contains the error message if an error occurred at this stack
+                during Harmony program execution.
     """
     pc = ctx.pc
     fp = ctx.fp

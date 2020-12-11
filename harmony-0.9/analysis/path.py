@@ -5,11 +5,20 @@ from value import NodeType
 
 
 class StepValue:
+    """
+    An object which represents a specific step in a process. There are 3 types of states that can be represented:
+
+    - RangeStep: The usual type of step, where the process executes from the first step to the last step in order.
+            The first to last steps are denoted by PC-values.
+    - Choose: Occurs at a choose statement. Holds the particular number and the string
+            representation of the value is chose.
+    - Error: Holds an error encountered during the execution of a step.
+    """
 
     def __init__(self, steps: Tuple[int, int] = None, choose: Tuple[int, str] = None, error: str = None):
         self.steps = steps
-        self.error = error
         self.choose = choose
+        self.error = error
 
     @staticmethod
     def make_error(s: str):
@@ -58,10 +67,10 @@ class StepValue:
 
 def process_steps(steps, typings) -> List[StepValue]:
     """
-    Returns a list of steps in processes. This is based on the strsteps(steps) function in harmony.py
-    :param typings:
-    :param steps:
-    :return:
+    See strsteps(steps) in harmony.py for its html counterpart.
+
+    Returns:
+        - A list of steps executed in a process, represented as a StepValue.
     """
     if steps is None:
         return []
@@ -93,9 +102,8 @@ def process_steps(steps, typings) -> List[StepValue]:
 
 def get_path_to_node(n: NodeType) -> List[Tuple[int, NodeType]]:
     """
-    Returns a list of the nodes and associated process taken to reach the given node.
-    :param n:
-    :return:
+    Returns:
+        - A list of the nodes and associated process taken to reach the given node.
     """
     path = []
     while n is not None and n.after is not None:
@@ -116,7 +124,10 @@ def get_path_to_node(n: NodeType) -> List[Tuple[int, NodeType]]:
 
 def gen_path(n):
     """
-    Extracts the path to node n. See genpath(n) in harmony.py for its html counterpart
+    See genpath(n) in harmony.py for its html counterpart.
+
+    Returns:
+        - A list of contexts and states, representing the path to node [n].
     """
     path = []
     while n is not None and n.after is not None:
@@ -147,19 +158,16 @@ def gen_path(n):
     return path2
 
 
-def get_path(n, typings, nodes: List[NodeType], code):
+def get_path(n, typings):
     """
-    See htmlpath(n, color, f) in harmony.py for the html version of the function
-    Returns a dictionary of the processes and steps that led to the node n.
-    {
-        issues: string list;
-        shared_vars: string list;
-        processes: {
-            name: string;
-            sid: int;
-        } list;
-        height: int;
-    }
+    See htmlpath(n, color, f) in harmony.py for the html version of this function.
+
+    Returns:
+    Dictionary with the following fields:
+        - issues: A list of issues encountered during execution.
+        - shared_vars: A list of variables that are shared among processes.
+        - processes: Process object list with fields such as "pid", "name", and "values".
+            This list forms a path to the node n.
     """
     issues = [str(s) for s in n.issues]
     shared_variables = sorted(n.state.vars.d.keys(), key=key_value)
@@ -194,7 +202,7 @@ def get_path(n, typings, nodes: List[NodeType], code):
                 "duration": slice_duration,
                 "uid": node.uid
             })
-        total_duration += sum(map(lambda s: s['duration'], state_slices))
+        total_duration += sum(s['duration'] for s in state_slices)
         processes.append({
             "pid": pid,
             "name": process_name,

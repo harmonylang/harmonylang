@@ -5,8 +5,15 @@ from analysis.util import str_of_value
 
 
 class MacroStep:
-    def __init__(self, filename: str,
-                 line_number: int, executed_line: str, code: List[Tuple[int, str, str, Optional[int]]]):
+    """
+    A MacroStep represents a line in Harmony source code and its list of bytecode.
+
+    In order, each element in the list of bytecode contains the pc-value, the code itself, the explanation of
+    what that code does, and an optional jump (pc-value) target value should executing the code cause it to
+    goto a specific pc-value.
+    """
+    def __init__(self, filename: str, line_number: int, executed_line: str,
+                 code: List[Tuple[int, str, str, Optional[int]]]):
         self.filename = filename
         self.line_number = line_number
         self.executed_line = executed_line.strip()
@@ -29,13 +36,10 @@ class MacroStep:
 
 def get_code(code, scope, files, typings) -> List[MacroStep]:
     """
-    Returns a list of the macro-steps run in the program.
     Based on the htmlcode(code, scope, f) function in harmony.py.
-    :param code:
-    :param scope:
-    :param files:
-    :param typings: The class definitions of types used in Harmony.
-    :return:
+
+    Returns:
+        - A list of the macro-steps run in the program.
     """
     last_loc = None
     executed_line: Optional[str] = None

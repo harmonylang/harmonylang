@@ -150,13 +150,7 @@ export default class HarmonyJson {
       executed_code: json.executed_code,
       nodes: nodes
     });
-
-    this.allCode = [];
-    this.json.executed_code.forEach(step => {
-      step.code.forEach(c => {
-        this.allCode.push(c);
-      });
-    });
+    this.allCode = this.json.executed_code.map(step => step.code.map(c => c)).flat(1);
 
     const processes = this.getProcesses();
     const inOrderCode: (HarmonyCode & {pc: number})[] = [];

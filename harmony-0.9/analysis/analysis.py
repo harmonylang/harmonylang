@@ -15,24 +15,26 @@ def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code,
     :param nodes: A list of all nodes created during execution.
     :param bad_node: A bad node that is encountered when an issue occurs.
     :param code: A list of all executed code, where the index is the PC of that code.
-    :param scope:
-    :param fulldump:
+    :param scope: A Scope object that contains metadata information about code, e.g. the line number and filename.
+    :param fulldump: A flag to tell the analysis to generate a much more detailed report for all nodes.
+        NOTE: a fulldump may take significantly longer to complete. Non-fulldumps will only provide reports using
+        only the nodes in the path to the [bad_node]
     :param files: A set of all files used in the Harmony program.
     :param typings: Dictionary of classes for isinstance checks, where the key is the string of the class name, and
     the value is class constructor.
-    :param verbose:
-    :param novalue: No dictionary value.
+    :param verbose: A flag to tell the analysis to produce context details in the stack trace.
+    :param novalue: An empty dictionary DictValue value.
     :return:
     """
-
     dump_name = "harmony.json"
     nodes = sorted(nodes, key=lambda n: n.uid)
-    path_to_node = get_path(bad_node, typings, nodes, code)
+    path_to_node = get_path(bad_node, typings)
     data = {
         'bad_node': None if bad_node is None else bad_node.uid,
         'path_to_bad_node': path_to_node,
         'executed_code': get_code(code, scope, files, typings),
-        'nodes': full_dump(nodes, code, scope, files, verbose, typings, novalue, fulldump, bad_node.uid, path_to_node)
+        'nodes': full_dump(nodes, code, scope, files, verbose, typings,
+                           novalue, fulldump, bad_node.uid, path_to_node)
     }
 
     def default_encoder(v):
@@ -43,10 +45,9 @@ def get_html_content(nodes: List[NodeType], bad_node: Optional[NodeType], code,
 
     try:
         json_encoded = JSONEncoder(default=default_encoder).encode(data)
+        with gzip.open(dump_name + '.gzip', 'w') as f:
+            f.write(json_encoded.encode('utf-8'))
+            print(f"Open file://{cwd}/{dump_name}.gzip for more information in json format")
     except TypeError as e:
         print(e)
         exit(1)
-
-    with gzip.open(dump_name + '.gzip', 'w') as f:
-        f.write(json_encoded.encode('utf-8'))
-        print(f"Open file://{cwd}/{dump_name}.gzip for more information in json format")

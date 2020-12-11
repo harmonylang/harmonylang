@@ -144,5 +144,12 @@ export default class HarmonyOutputPanel {
             createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, jsonData);
         }
         webview.postMessage({ command: 'load', jsonData: jsonData });
+        webview.onDidReceiveMessage( message => {
+            switch (message.command) {
+                case 'alert':
+                  vscode.window.showErrorMessage(message.text);
+                  return;
+            }
+        }, undefined, undefined);
     }
 }
