@@ -432,6 +432,9 @@
   });
 
   /**
+   * This function initializes the state and callback functions for the resize
+   * bar. This is done by modifying the height attribute of the process window
+   * in response to the bar being dragged.
    * Source: https://stackoverflow.com/a/55202728
    */
   function initResizeBar()
@@ -571,6 +574,11 @@
     line.scrollIntoView();
   }
 
+  /**
+   * Initializes the window and displays the execution [data] about the program.
+   * See the _loadData() function in src/outputPanel.ts for the data given
+   * to initialize the window.
+   */
   let initWindow = (data) => {
     harmonyData = data;
     initResizeBar();
@@ -680,6 +688,14 @@
     updateWindow(time);
   }
 
+  /**
+   * Plays the execution video. This is done by running this callback which increments
+   * the current time and other related visual properties. This is done until the
+   * time value reaches the maximum time.
+   *
+   * The function is wrapped in the playTimer function, which is the callback function
+   * used for setInterval and clearInterval.
+   */
   let playExecution = () => {
     if (time < maxTime) {
       time++;
@@ -711,7 +727,11 @@
     });
   }
 
-
+  /**
+   * Updates the stack trace table for a specific node.
+   * This will display all of the running/blocked processes, as well as the stack for
+   * each of those processes at that point.
+   */
   function updateStackTrace(nodeId) {
     const node = harmonyData.nodes[nodeId];
     const contextBag = node.context_bag;
@@ -787,6 +807,9 @@
     });
   }
 
+  /**
+   * The primary function which updates the overall state of the window.
+   */
   let updateWindow = (newTime) => {
     if (newTime != null) time = newTime;
     timeSlider.value = time;
@@ -849,6 +872,10 @@
     };
   }
 
+  /**
+   * Listens for an event posted from either src/outputPanel.ts or from
+   * src/feature/standaloneHtml.ts
+   */
   window.addEventListener('message', event => {
     const message = event.data; // The command and JSON data our extension sent
     switch (message.command) {
@@ -869,6 +896,11 @@
 
   // Utility Functions
 
+  /**
+   * Given the time in seconds, convert it to a readable string that shows the
+   * hours, minutes, and seconds. Each time unit value should be represented with
+   * two digits at minimum, e.g. 3 seconds should be displayed as "03".
+   */
   let timeFormat = (t) => {
     let hours = Math.floor(t / 3600);
     let minutes = Math.floor((t - (hours * 3600)) / 60);
