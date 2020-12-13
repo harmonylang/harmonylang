@@ -245,7 +245,6 @@ def get_path(n, typings) -> NodePathData:
         prev = None
         for p in processes:
             for s in p['slices']:
-                print(s['values'])
                 value = s['values'][v]
                 if prev is not None and prev != value:
                     did_change = True
