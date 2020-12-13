@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Any
+from typing import List, Optional, Tuple, Any, TypedDict, Dict
 
 from analysis.util import key_value, nametag_to_str, json_valid_value
 from value import NodeType
@@ -158,7 +158,31 @@ def gen_path(n):
     return path2
 
 
-def get_path(n, typings):
+class SliceState(TypedDict):
+    duration: int
+    values: Dict[str, Any]
+    uid: int
+
+
+class ProcessStep(TypedDict):
+    pid: int
+    name: str
+    values: Dict[str, Any]
+    final_values: Dict[str, Any]
+    sid: int
+    steps: List[StepValue]
+    duration: int
+    states: list
+    slices: List[SliceState]
+
+
+class NodePathData(TypedDict):
+    issues: List[str]
+    processes: List[ProcessStep]
+    shared_vars: List[str]
+
+
+def get_path(n, typings) -> NodePathData:
     """
     See htmlpath(n, color, f) in harmony.py for the html version of this function.
 
@@ -173,7 +197,7 @@ def get_path(n, typings):
     shared_variables = sorted(n.state.vars.d.keys(), key=key_value)
     mecrostep_path = get_path_to_node(n)
     path = gen_path(n)
-    processes = []
+    processes: List[ProcessStep] = []
     pids = []
     for (first_ctx, last_ctx, steps, all_states, variables) in path:
         states = [s for s in all_states]
@@ -214,8 +238,29 @@ def get_path(n, typings):
             "states": states,
             "slices": state_slices
         })
+
+    real_shared_variables: List[str] = []
+    for v in shared_variables:
+        did_change = False
+        prev = None
+        for p in processes:
+            for s in p['slices']:
+                print(s['values'])
+                value = s['values'][v]
+                if prev is not None and prev != value:
+                    did_change = True
+                    break
+                elif prev is None:
+                    prev = value
+        if not did_change:
+            for p in processes:
+                for s in p['slices']:
+                    del s['values'][v]
+        else:
+            real_shared_variables.append(v)
+
     return {
         'issues': issues,
         'processes': processes,
-        'shared_vars': shared_variables,
+        'shared_vars': real_shared_variables,
     }

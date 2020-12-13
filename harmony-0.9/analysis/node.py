@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, TypedDict, Union
 
 from analysis.path import get_path, process_steps
 from analysis.util import nametag_to_str, str_of_value, json_valid_value
@@ -146,7 +146,7 @@ def parse_context(ctx, bag, node, code, scope, verbose, files, trace_id: List[in
 
 def get_node_data(n, code, scope, verbose, files, typings, trace_id, novalue, nodes):
     uid = n.uid
-    path_to_n = get_path(n, typings, nodes, code) if verbose else None
+    path_to_n = get_path(n, typings) if verbose else None
 
     ctxbag = []
     stopbag = []
@@ -164,7 +164,18 @@ def get_node_data(n, code, scope, verbose, files, typings, trace_id, novalue, no
     }
 
 
-def full_dump(nodes, code, scope, files, verbose, typings, novalue, fulldump: bool, bad_node_id: int, path):
+class HarmonyNode(TypedDict):
+    uid: int
+    path_to_n: Union[list, None]
+    context_bag: list
+    stop_bag: list
+
+
+def full_dump(nodes, code, scope, files, verbose: bool, typings,
+              novalue, fulldump: bool, bad_node_id, path) -> List[HarmonyNode]:
+    """
+    See the htmlnode(n, code, scope, f, verbose) in harmony.py for the basis of this function.
+    """
     if fulldump:
         return [get_node_data(n, code, scope, verbose, files, typings, [0], novalue, nodes) for n in nodes]
     else:
