@@ -39,6 +39,10 @@ See your Harmony Output results, right in VS Code!
 
 - Anthony Yang     `@ayang4114`
 
+## Additional Documentation
+
+You can find more information about the HarmonyLang extension project in [this document](https://docs.google.com/document/d/16pO-tNLfNebIAuqb_vy_z0dJyIFX_Nb-xYDXRfMqOfE/edit?usp=sharing). Furthermore, you can find the Harmony Python compiler, as well as additional documentation regarding the Harmony language, at this [link](https://www.cs.cornell.edu/home/rvr/harmony/).
+
 ## Release Notes
 
 ### 0.1.0
