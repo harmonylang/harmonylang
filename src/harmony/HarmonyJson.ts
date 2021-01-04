@@ -44,9 +44,9 @@ type HarmonyNodePath = {
  * if the code refers to another PC value, such as PUSH <PC> or JUMP <PC>.
  */
 type HarmonyCode = {
-  "code": string,
-  "explanation": string,
-  "jump_target": number | null
+  code: string,
+  explanation: string,
+  jump_target: number | null
 };
 
 /**
