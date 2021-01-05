@@ -860,7 +860,7 @@
     for (const slice of currentProcess.slices) {
       duration += slice.duration;
       if (duration >= time) {
-        currentSlice = slice.values;
+        currentSlice = slice.shared_values;
         currentUid = slice.uid
         break;
       }

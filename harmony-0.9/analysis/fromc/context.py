@@ -8,15 +8,13 @@ def parse_context(contexts: List[Context]):
     for c in contexts:
         pid = c['tid']
         process_name = c['name']
-        failure = 'failure' in c
+        failure = c['failure'] if 'failure' in c else None
         mode = c['mode']
         traces = []
         for t in c['trace']:
-            display = "block"
             variables = {k: get_value(v) for k, v in t['vars'].items()}
             method = t['method']
             traces.append({
-                "display": display,
                 "variables": variables,
                 "method": method
             })

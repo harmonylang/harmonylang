@@ -28,12 +28,12 @@ from analysis.fromc.jsontypes import IntermediateJson, get_value
 
 
 def get_path(json: IntermediateJson):
-    issues: List[str] = [json['issue']]
+    issue = json['issue']
     shared_variable_names: Set[str] = set()
     processes = []
 
     for megastep in json['megasteps']:
-        pid = int(megastep['tid'])
+        pid = megastep['tid']
         name = megastep['name']
         final_values = {k: get_value(v) for k, v in megastep['shared'].items()}
         shared_variable_names.update(final_values.keys())
@@ -77,17 +77,13 @@ def get_path(json: IntermediateJson):
 
             if 'choose' in microstep:
                 choose_value = get_value(microstep['choose'])
-                microsteps.append({
-                    "choose": [pc, choose_value]
-                })
+                microsteps.append({"choose": [pc, choose_value]})
             else:
-                microsteps.append({
-                    "step": [pc, npc]
-                })
+                microsteps.append({"step": [pc, npc]})
 
         slices.append({
             "duration": slice_duration,
-            "values": previous_json
+            "shared_values": previous_json
         })
 
         assert duration == sum(s['duration'] for s in slices)
@@ -95,7 +91,7 @@ def get_path(json: IntermediateJson):
         megastep = {
             "pid": pid,
             "name": name,
-            "final_values": final_values,
+            "final_shared_values": final_values,
             "slices": slices,
             "duration": duration,
             "steps": microsteps,
@@ -104,7 +100,7 @@ def get_path(json: IntermediateJson):
         processes.append(megastep)
 
     return {
-        "issues": issues,
-        "shared_vars": shared_variable_names,
+        "issue": issue,
+        "shared_variable_names": list(shared_variable_names),
         "processes": processes
     }
