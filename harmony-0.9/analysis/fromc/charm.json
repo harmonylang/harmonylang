@@ -375,7 +375,6 @@
       "tid": "1",
       "name": "thread(0)",
       "microsteps": [
-
         {
           "shared": { "flags": { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "bool", "value": "True" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "bool", "value": "True" } } ] }, "turn": { "type": "int", "value": "0" } },
           "npc": "19",

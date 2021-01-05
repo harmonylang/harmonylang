@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TypedDict, List, Dict, Optional, Union
+from typing import TypedDict, List, Dict, Optional, Union, Hashable
 
 
 class IntermediateJson(TypedDict):
@@ -10,7 +10,34 @@ class IntermediateJson(TypedDict):
 
 class ValueRep(TypedDict):
     type: str
-    value: Union[str, List[ValueRep]]
+    value: Union[str, List[ValueRep], List[KeyValueRep]]
+
+
+def get_value(v: ValueRep):
+    value_type = v['type']
+    if value_type == 'int':
+        return int(v['value'])
+    if value_type == 'atom':
+        return v['value']
+    if value_type == 'bool':
+        return bool(v['value'])
+    if value_type == 'pc':
+        return v['value']
+    if value_type == 'address':
+        return list(map(get_value, v['value']))
+    if value_type == 'set':
+        return list(map(get_value, v['value']))
+    if value_type == 'dict':
+        values: List[KeyValueRep] = v['value']
+        if any(not isinstance(get_value(e['value']), Hashable) for e in values):
+            return [(get_value(e['key']), get_value(e['value'])) for e in values]
+        else:
+            return {get_value(e['key']): get_value(e['value']) for e in values}
+
+
+class KeyValueRep(TypedDict):
+    key: ValueRep
+    value: ValueRep
 
 
 class Switch(TypedDict):
