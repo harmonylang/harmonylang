@@ -17,22 +17,20 @@ def get_value(v: ValueRep):
     value_type = v['type']
     if value_type == 'int':
         return int(v['value'])
-    if value_type == 'atom':
+    elif value_type == 'atom':
         return v['value']
-    if value_type == 'bool':
-        return bool(v['value'])
-    if value_type == 'pc':
+    elif value_type == 'bool':
+        return v['value'] == "True"
+    elif value_type == 'pc':
         return v['value']
-    if value_type == 'address':
+    elif value_type == 'address':
         return list(map(get_value, v['value']))
-    if value_type == 'set':
+    elif value_type == 'set':
         return list(map(get_value, v['value']))
-    if value_type == 'dict':
-        values: List[KeyValueRep] = v['value']
-        if any(not isinstance(get_value(e['value']), Hashable) for e in values):
-            return [(get_value(e['key']), get_value(e['value'])) for e in values]
-        else:
-            return {get_value(e['key']): get_value(e['value']) for e in values}
+    elif value_type == 'dict':
+        return {str(get_value(e['key'])): get_value(e['value']) for e in v['value']}
+    else:
+        raise ValueError("Cannot parse this value")
 
 
 class KeyValueRep(TypedDict):
