@@ -1,16 +1,5 @@
 from __future__ import annotations
-from typing import TypedDict, List, Dict, Optional, Union, Hashable
-
-
-class IntermediateJson(TypedDict):
-    issue: str
-    megasteps: List[Switch]
-    code: List[str]
-
-
-class ValueRep(TypedDict):
-    type: str
-    value: Union[str, List[ValueRep], List[KeyValueRep]]
+from typing import TypedDict, List, Dict, Optional, Union
 
 
 def get_value(v: ValueRep):
@@ -33,6 +22,18 @@ def get_value(v: ValueRep):
         raise ValueError("Cannot parse this value")
 
 
+class IntermediateJson(TypedDict):
+    issue: str
+    megasteps: List[Switch]
+    code: List[str]
+    explain: List[str]
+
+
+class ValueRep(TypedDict):
+    type: str
+    value: Union[str, List[ValueRep], List[KeyValueRep]]
+
+
 class KeyValueRep(TypedDict):
     key: ValueRep
     value: ValueRep
@@ -42,19 +43,20 @@ class Switch(TypedDict):
     tid: str
     name: str
     microsteps: List[MicroStep]
-    shared: Dict[str, str]
+    shared: Dict[str, ValueRep]
     contexts: List[Context]
 
 
 class MicroStep(TypedDict):
+    npc: str
     pc: str
-    shared: Dict[str, str]
-    local: Dict[str, str]
-    pop: str
-    push: List[str]
+    choose: Optional[ValueRep]
+
+    shared: Optional[Dict[str, ValueRep]]
+    local: Optional[Dict[str, ValueRep]]
 
 
-class Context:
+class Context(TypedDict):
     tid: str
     name: str
     entry: str
@@ -62,7 +64,7 @@ class Context:
     fp: str
     trace: List[Trace]
     this: str
-    stack: List[str]
+    mode: str
     failure: Optional[str]
     atomic: Optional[int]
     readonly: Optional[int]
@@ -70,4 +72,4 @@ class Context:
 
 class Trace(TypedDict):
     method: str
-    vars: Dict[str, str]
+    vars: Dict[str, ValueRep]
