@@ -1,0 +1,685 @@
+{
+  "issue": "Safety violation",
+  "megasteps": [
+    {
+      "tid": "0",
+      "name": "__init__()",
+      "microsteps": [
+        {
+          "shared": { },
+          "npc": "1",
+          "this": { "type": "dict", "value": [] },
+          "local": { },
+          "atomic": "1",
+          "pc": "0"
+        },
+        {
+          "shared": { "flags": { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "bool", "value": "False" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "bool", "value": "False" } } ] } },
+          "npc": "2",
+          "pc": "1"
+        },
+        {
+          "npc": "3",
+          "pc": "2"
+        },
+        {
+          "choose": { "type": "int", "value": "1" },
+          "npc": "4",
+          "pc": "3"
+        },
+        {
+          "shared": { "flags": { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "bool", "value": "False" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "bool", "value": "False" } } ] }, "turn": { "type": "int", "value": "1" } },
+          "npc": "5",
+          "pc": "4"
+        },
+        {
+          "npc": "57",
+          "pc": "5"
+        },
+        {
+          "npc": "58",
+          "pc": "57"
+        },
+        {
+          "npc": "59",
+          "pc": "58"
+        },
+        {
+          "npc": "60",
+          "pc": "59"
+        },
+        {
+          "npc": "61",
+          "pc": "60"
+        },
+        {
+          "npc": "62",
+          "pc": "61"
+        },
+        {
+          "npc": "63",
+          "pc": "62"
+        },
+        {
+          "npc": "64",
+          "pc": "63"
+        },
+        {
+          "npc": "65",
+          "pc": "64"
+        },
+        {
+          "npc": "66",
+          "pc": "65"
+        },
+        {
+          "npc": "67",
+          "pc": "66"
+        },
+        {
+          "mode": "terminated",
+          "pc": "67"
+        }
+      ],
+      "shared": { "flags": { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "bool", "value": "False" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "bool", "value": "False" } } ] }, "turn": { "type": "int", "value": "1" } },
+      "contexts": [
+        {
+          "tid": "0",
+          "name": "__init__()",
+          "entry": "0",
+          "pc": "67",
+          "fp": "0",
+          "trace": [
+
+          ],
+          "atomic": "1",
+          "mode": "terminated",
+          "this": { "type": "dict", "value": [] }
+        },
+        {
+          "tid": "1",
+          "name": "thread(0)",
+          "entry": "6",
+          "pc": "6",
+          "fp": "0",
+          "trace": [
+            {
+              "method": "thread(0)",
+              "vars": { }
+            }
+          ],
+          "mode": "running",
+          "this": { "type": "dict", "value": [] }
+        },
+        {
+          "tid": "2",
+          "name": "thread(1)",
+          "entry": "6",
+          "pc": "6",
+          "fp": "0",
+          "trace": [
+            {
+              "method": "thread(1)",
+              "vars": { }
+            }
+          ],
+          "mode": "running",
+          "this": { "type": "dict", "value": [] }
+        }
+      ]
+    },
+    {
+      "tid": "1",
+      "name": "thread(0)",
+      "microsteps": [
+
+        {
+          "npc": "7",
+          "fp": "4",
+          "this": { "type": "dict", "value": [] },
+          "local": { "result": { "type": "dict", "value": [] }, "self": { "type": "int", "value": "0" } },
+          "pc": "6"
+        },
+        {
+          "npc": "8",
+          "pc": "7"
+        },
+        {
+          "choose": { "type": "bool", "value": "True" },
+          "npc": "9",
+          "pc": "8"
+        },
+        {
+          "npc": "10",
+          "pc": "9"
+        },
+        {
+          "npc": "11",
+          "pc": "10"
+        },
+        {
+          "npc": "12",
+          "pc": "11"
+        },
+        {
+          "npc": "13",
+          "pc": "12"
+        },
+        {
+          "npc": "14",
+          "pc": "13"
+        },
+        {
+          "npc": "15",
+          "pc": "14"
+        },
+        {
+          "npc": "16",
+          "pc": "15"
+        },
+        {
+          "npc": "17",
+          "pc": "16"
+        },
+        {
+          "npc": "18",
+          "pc": "17"
+        }
+      ],
+      "shared": { "flags": { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "bool", "value": "False" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "bool", "value": "False" } } ] }, "turn": { "type": "int", "value": "1" } },
+      "contexts": [
+        {
+          "tid": "0",
+          "name": "__init__()",
+          "entry": "0",
+          "pc": "67",
+          "fp": "0",
+          "trace": [
+
+          ],
+          "atomic": "1",
+          "mode": "terminated",
+          "this": { "type": "dict", "value": [] }
+        },
+        {
+          "tid": "1",
+          "name": "thread(0)",
+          "entry": "6",
+          "pc": "18",
+          "fp": "4",
+          "trace": [
+
+          ],
+          "mode": "running",
+          "this": { "type": "dict", "value": [] }
+        },
+        {
+          "tid": "2",
+          "name": "thread(1)",
+          "entry": "6",
+          "pc": "6",
+          "fp": "0",
+          "trace": [
+            {
+              "method": "thread(1)",
+              "vars": { }
+            }
+          ],
+          "mode": "running",
+          "this": { "type": "dict", "value": [] }
+        }
+      ]
+    },
+    {
+      "tid": "2",
+      "name": "thread(1)",
+      "microsteps": [
+
+        {
+          "npc": "7",
+          "fp": "4",
+          "this": { "type": "dict", "value": [] },
+          "local": { "result": { "type": "dict", "value": [] }, "self": { "type": "int", "value": "1" } },
+          "pc": "6"
+        },
+        {
+          "npc": "8",
+          "pc": "7"
+        },
+        {
+          "choose": { "type": "bool", "value": "True" },
+          "npc": "9",
+          "pc": "8"
+        },
+        {
+          "npc": "10",
+          "pc": "9"
+        },
+        {
+          "npc": "11",
+          "pc": "10"
+        },
+        {
+          "npc": "12",
+          "pc": "11"
+        },
+        {
+          "npc": "13",
+          "pc": "12"
+        },
+        {
+          "shared": { "flags": { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "bool", "value": "False" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "bool", "value": "False" } } ] }, "turn": { "type": "int", "value": "0" } },
+          "npc": "14",
+          "pc": "13"
+        },
+        {
+          "npc": "15",
+          "pc": "14"
+        },
+        {
+          "npc": "16",
+          "pc": "15"
+        },
+        {
+          "npc": "17",
+          "pc": "16"
+        },
+        {
+          "npc": "18",
+          "pc": "17"
+        },
+        {
+          "shared": { "flags": { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "bool", "value": "False" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "bool", "value": "True" } } ] }, "turn": { "type": "int", "value": "0" } },
+          "npc": "19",
+          "pc": "18"
+        },
+        {
+          "npc": "20",
+          "pc": "19"
+        },
+        {
+          "npc": "21",
+          "pc": "20"
+        },
+        {
+          "npc": "22",
+          "pc": "21"
+        },
+        {
+          "npc": "23",
+          "pc": "22"
+        },
+        {
+          "npc": "24",
+          "pc": "23"
+        },
+        {
+          "npc": "25",
+          "pc": "24"
+        },
+        {
+          "npc": "30",
+          "pc": "25"
+        },
+        {
+          "npc": "31",
+          "pc": "30"
+        },
+        {
+          "npc": "32",
+          "pc": "31"
+        }
+      ],
+      "shared": { "flags": { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "bool", "value": "False" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "bool", "value": "True" } } ] }, "turn": { "type": "int", "value": "0" } },
+      "contexts": [
+        {
+          "tid": "0",
+          "name": "__init__()",
+          "entry": "0",
+          "pc": "67",
+          "fp": "0",
+          "trace": [
+
+          ],
+          "atomic": "1",
+          "mode": "terminated",
+          "this": { "type": "dict", "value": [] }
+        },
+        {
+          "tid": "1",
+          "name": "thread(0)",
+          "entry": "6",
+          "pc": "18",
+          "fp": "4",
+          "trace": [
+
+          ],
+          "mode": "running",
+          "this": { "type": "dict", "value": [] }
+        },
+        {
+          "tid": "2",
+          "name": "thread(1)",
+          "entry": "6",
+          "pc": "32",
+          "fp": "4",
+          "trace": [
+
+          ],
+          "mode": "running",
+          "this": { "type": "dict", "value": [] }
+        }
+      ]
+    },
+    {
+      "tid": "1",
+      "name": "thread(0)",
+      "microsteps": [
+
+        {
+          "shared": { "flags": { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "bool", "value": "True" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "bool", "value": "True" } } ] }, "turn": { "type": "int", "value": "0" } },
+          "npc": "19",
+          "fp": "4",
+          "this": { "type": "dict", "value": [] },
+          "local": { "result": { "type": "dict", "value": [] }, "self": { "type": "int", "value": "0" } },
+          "pc": "18"
+        },
+        {
+          "npc": "20",
+          "pc": "19"
+        },
+        {
+          "npc": "21",
+          "pc": "20"
+        },
+        {
+          "npc": "22",
+          "pc": "21"
+        },
+        {
+          "npc": "23",
+          "pc": "22"
+        },
+        {
+          "npc": "24",
+          "pc": "23"
+        },
+        {
+          "npc": "25",
+          "pc": "24"
+        },
+        {
+          "npc": "26",
+          "pc": "25"
+        },
+        {
+          "npc": "27",
+          "pc": "26"
+        },
+        {
+          "npc": "28",
+          "pc": "27"
+        },
+        {
+          "npc": "29",
+          "pc": "28"
+        },
+        {
+          "npc": "31",
+          "pc": "29"
+        },
+        {
+          "npc": "32",
+          "pc": "31"
+        },
+        {
+          "npc": "33",
+          "atomic": "1",
+          "pc": "32"
+        },
+        {
+          "npc": "34",
+          "readonly": "1",
+          "pc": "33"
+        },
+        {
+          "npc": "35",
+          "atomic": "2",
+          "pc": "34"
+        },
+        {
+          "npc": "36",
+          "pc": "35"
+        },
+        {
+          "npc": "37",
+          "pc": "36"
+        },
+        {
+          "npc": "38",
+          "pc": "37"
+        },
+        {
+          "npc": "39",
+          "pc": "38"
+        },
+        {
+          "npc": "40",
+          "pc": "39"
+        },
+        {
+          "npc": "41",
+          "pc": "40"
+        },
+        {
+          "npc": "42",
+          "pc": "41"
+        },
+        {
+          "npc": "43",
+          "pc": "42"
+        },
+        {
+          "npc": "44",
+          "pc": "43"
+        },
+        {
+          "npc": "45",
+          "pc": "44"
+        },
+        {
+          "npc": "46",
+          "pc": "45"
+        },
+        {
+          "failure": "Harmony assertion failed",
+          "mode": "failed",
+          "pc": "46"
+        }
+      ],
+      "shared": { "flags": { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "bool", "value": "True" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "bool", "value": "True" } } ] }, "turn": { "type": "int", "value": "0" } },
+      "contexts": [
+        {
+          "tid": "0",
+          "name": "__init__()",
+          "entry": "0",
+          "pc": "67",
+          "fp": "0",
+          "trace": [
+
+          ],
+          "atomic": "1",
+          "mode": "terminated",
+          "this": { "type": "dict", "value": [] }
+        },
+        {
+          "tid": "1",
+          "name": "thread(0)",
+          "entry": "6",
+          "pc": "46",
+          "fp": "4",
+          "trace": [
+
+          ],
+          "failure": "Harmony assertion failed",
+          "atomic": "2",
+          "readonly": "1",
+          "mode": "failed",
+          "this": { "type": "dict", "value": [] }
+        },
+        {
+          "tid": "2",
+          "name": "thread(1)",
+          "entry": "6",
+          "pc": "32",
+          "fp": "4",
+          "trace": [
+
+          ],
+          "mode": "running",
+          "this": { "type": "dict", "value": [] }
+        }
+      ]
+    }
+  ],
+  "code": [
+    "Push [False, False]",
+    "Store flags",
+    "Push { 0, 1 }",
+    "Choose",
+    "Store turn",
+    "Jump 57",
+    "Frame thread self",
+    "Push { False, True }",
+    "Choose",
+    "JumpCond False 56",
+    "Push 1",
+    "LoadVar self",
+    "2-ary -",
+    "Store turn",
+    "Push ?flags",
+    "LoadVar self",
+    "Address",
+    "Push True",
+    "Store",
+    "Push 1",
+    "LoadVar self",
+    "2-ary -",
+    "Load flags",
+    "Apply",
+    "1-ary not",
+    "JumpCond True 30",
+    "Load turn",
+    "LoadVar self",
+    "2-ary ==",
+    "Jump 31",
+    "Push True",
+    "JumpCond False 19",
+    "AtomicInc",
+    "ReadonlyInc",
+    "AtomicInc",
+    "Push PC(32)",
+    "1-ary atLabel",
+    "Push 0",
+    "Push PC(6)",
+    "Push 1",
+    "LoadVar self",
+    "Push 2",
+    "Dict",
+    "Push 1",
+    "Bag",
+    "2-ary ==",
+    "Assert",
+    "AtomicDec",
+    "ReadonlyDec",
+    "AtomicDec",
+    "Push ?flags",
+    "LoadVar self",
+    "Address",
+    "Push False",
+    "Store",
+    "Jump 7",
+    "Return",
+    "Push 0",
+    "Dict",
+    "Push 0",
+    "Push PC(6)",
+    "Spawn",
+    "Push 0",
+    "Dict",
+    "Push 1",
+    "Push PC(6)",
+    "Spawn",
+    "Return"
+  ],
+  "explain": [
+    "push constant [False, False]",
+    "pop a value and store it in shared variable flags",
+    "push constant { 0, 1 }",
+    "pop a set value and push one of its elements",
+    "pop a value and store it in shared variable turn",
+    "set program counter to 57",
+    "start of method thread",
+    "push constant { False, True }",
+    "pop a set value and push one of its elements",
+    "pop a value and jump to 56 if the value is False",
+    "push constant 1",
+    "push the value of self",
+    "pop 2 values and push the result of applying -",
+    "pop a value and store it in shared variable turn",
+    "push constant ?flags",
+    "push the value of self",
+    "combine the top two values on the stack into an address and push the result",
+    "push constant True",
+    "pop a value and an address and store the value at the address",
+    "push constant 1",
+    "push the value of self",
+    "pop 2 values and push the result of applying -",
+    "push value of shared variable flags",
+    "pop a pc or dictionary f and an index i and push f(i)",
+    "pop 1 value and push the result of applying not",
+    "pop a value and jump to 30 if the value is True",
+    "push value of shared variable turn",
+    "push the value of self",
+    "pop 2 values and push the result of applying ==",
+    "set program counter to 31",
+    "push constant True",
+    "pop a value and jump to 19 if the value is False",
+    "increment atomic counter of context; process runs uninterrupted if larger than 0",
+    "increment readonly counter of context; process can't mutate shared variables if > 0",
+    "increment atomic counter of context; process runs uninterrupted if larger than 0",
+    "push constant PC(32)",
+    "pop 1 value and push the result of applying atLabel",
+    "push constant 0",
+    "push constant PC(6)",
+    "push constant 1",
+    "push the value of self",
+    "push constant 2",
+    "pop a number n and n key/value pairs and push a dictionary",
+    "push constant 1",
+    "pop a number n and n values and push a bag",
+    "pop 2 values and push the result of applying ==",
+    "pop a condition and raise exception if condition is false",
+    "decrement atomic counter of context",
+    "decrement readonly counter of context",
+    "decrement atomic counter of context",
+    "push constant ?flags",
+    "push the value of self",
+    "combine the top two values on the stack into an address and push the result",
+    "push constant False",
+    "pop a value and an address and store the value at the address",
+    "set program counter to 7",
+    "restore caller method state and push result",
+    "push constant 0",
+    "pop a number n and n key/value pairs and push a dictionary",
+    "push constant 0",
+    "push constant PC(6)",
+    "pop a pc, argument, and tag and spawn a new process",
+    "push constant 0",
+    "pop a number n and n key/value pairs and push a dictionary",
+    "push constant 1",
+    "push constant PC(6)",
+    "pop a pc, argument, and tag and spawn a new process",
+    "restore caller method state and push result"
+  ]
+}
