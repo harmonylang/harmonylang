@@ -48,7 +48,7 @@ type HarmonyContext = {
   pid: string;
   process_name: string;
   failure?: string;
-  mod: string;
+  mode: string;
   traces: HarmonyTrace[];
 };
 

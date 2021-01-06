@@ -7,6 +7,7 @@ import { ProcessManagerImpl } from './processManager';
 const processManager = ProcessManagerImpl.init();
 const processConfig = { cwd: Path.join(__dirname, '..', 'harmony-0.9') };
 const compilerPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.py');
+const compilerTestPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.test.py');
 
 export const activate = (context: vscode.ExtensionContext) => {
     const runHarmonyCommand = vscode.commands.registerCommand('harmonylang.run', () => {
@@ -101,6 +102,7 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
     processManager.startCommand(compileCommand, processConfig, (err, stdout, stderr) => {
         HarmonyOutputPanel.currentPanel?.dispose();
         HarmonyOutputPanel.createOrShow(context.extensionUri);
+        console.log(stderr, err);
         if (stderr) {
             // System errors, includes division by zero.
             HarmonyOutputPanel.currentPanel?.updateMessage(`Error: ${stderr}`);
@@ -109,13 +111,11 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
             // Parse error feedback is also in standard output (it's just outputted by python's print function)
             HarmonyOutputPanel.currentPanel?.updateMessage(`Error: ${stdout}`);
         } else {
-            const runCommand = `${pythonPath} "${compilerPath}" "${fullFileName}"`;
+            const runCommand = `${pythonPath} "${compilerTestPath}" "${fullFileName}"`;
             processManager.startCommand(runCommand, processConfig, (error, stdout, stderr) => {
                 if (processManager.processesAreKilled) return;
-                // if (runningInterval !== undefined) {
-                //     processManager.end(runningInterval);
-                // }
                 if (stderr || error) {
+                    console.log("Print the errors");
                     HarmonyOutputPanel.currentPanel?.updateResults();
                 } else {
                     // Output Panel will include the stdout output.

@@ -4,6 +4,7 @@ import * as Fs from 'fs';
 import HarmonyJson from './harmony/HarmonyJson';
 import { Webview } from "vscode";
 import {createStandaloneHtml} from "./feature/standaloneHtml";
+import {parse} from "./harmony/IntermediateHarmonyJson";
 
 export default class HarmonyOutputPanel {
     public static currentPanel: HarmonyOutputPanel | undefined;
@@ -47,7 +48,7 @@ export default class HarmonyOutputPanel {
         this._extensionUri = extensionUri;
 
         // Set the webview's initial html content
-        this._update();
+        this._update_c();
 
         // Listen for when the panel is disposed
         // This happens when the user closes the panel or when the panel is closed programatically
@@ -77,7 +78,8 @@ export default class HarmonyOutputPanel {
     public updateResults() {
         // Send a message to the webview webview.
         // You can send any JSON serializable data.
-        this._update(true);
+        console.log("Presenting the webview");
+        this._update_c(true);
     }
 
     public updateMessage(message: string) {
@@ -99,6 +101,49 @@ export default class HarmonyOutputPanel {
         }
     }
 
+    private _update_c(hasData = false) {
+        const webview = this._panel.webview;
+        const harmonyPanel = this._panel;
+
+        const uiPath = Path.join(__dirname, '..', 'harmony-0.9', 'web', 'charmony.html');
+        const dataPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.json.gz');
+        if (!hasData){
+            Fs.readFile(uiPath, 'utf-8', function (err, data) {
+                if (err) {
+                    vscode.window.showInformationMessage(err.message);
+                } else {
+                    harmonyPanel.webview.html = data;
+                }
+            });
+        }
+        if (hasData){
+            console.log(uiPath, dataPath);
+            this._loadData_c(dataPath, webview);
+        }
+    }
+
+    private _loadData_c(dataPath: string, webview: Webview) {
+        const jsonData = parse(dataPath);
+        Fs.writeFileSync("error.txt", jsonData);
+        // if (vscode.workspace.workspaceFolders) {
+        //     createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, jsonData);
+        // }
+        console.log(jsonData);
+        webview.postMessage({ command: 'load', jsonData });
+        webview.onDidReceiveMessage( message => {
+            switch (message.command) {
+                case 'alert':
+                    vscode.window.showErrorMessage(message.text);
+                    return;
+            }
+        }, undefined, undefined);
+    }
+
+    /**
+     * @param hasData
+     * @private
+     * @deprecated Use _update_c
+     */
     private _update(hasData = false) {
         const webview = this._panel.webview;
         const harmonyPanel = this._panel;
