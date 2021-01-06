@@ -667,14 +667,6 @@
         updateWindow(time - 1);
       }
     }, false);
-
-    // processSlider.addEventListener('drag', (e, drag) => {
-    //     e.preventDefault();
-    //     console.log(drag.offsetX);
-    //     let timeDelta = Math.floor((drag.offsetX / processLengthPx) * maxTime);
-    //     time += timeDelta;
-    //     updateWindow();
-    // }, false);
     updateWindow(time);
   }
 
@@ -709,9 +701,9 @@
     const trace = globalCurrentContexts[row].traces[level];
     const cell = document.getElementById(id);
     while (cell.firstChild != null) cell.removeChild(cell.firstChild);
-    trace.variables.forEach(v => {
+    Object.entries(trace.variables).forEach(([name, value]) => {
       const line = document.createElement("div");
-      line.innerHTML = `${v.name} = ${createHtmlValue(v.value)}`;
+      line.innerHTML = `${name} = ${createHtmlValue(value)}`;
       cell.appendChild(line);
     });
   }
@@ -742,7 +734,6 @@
 
     contexts.forEach((context, rowNumber) => {
       let processName = `${context.process_name}`
-      // if (bag.number_of_copies > 1) processName += `: [${bag.number_of_copies} copies]`
       const processCell = makeTableCell(processName);
 
       const statusCell = document.createElement("td");
@@ -754,7 +745,7 @@
           statusCell.style.color = "#d71616"; break;
         case "blocked":
           statusCell.style.color = "#701f1f"; break;
-        case "stopped":
+        case "terminated":
           statusCell.style.color = "#fff000"; break;
         case "choosing":
           statusCell.style.color = "#19a7ee"; break;
@@ -804,6 +795,9 @@
       const [pc] = currentStep;
       moveAndHighlightCode(pc);
     }
+
+    // console.log(newTime, currentStep, currentSlice, currentContext);
+
     setSharedVariablesTable(currentSlice);
     updateStackTrace(currentContext);
   }
@@ -826,22 +820,19 @@
     }
     let steps = [];
     for (const step of currentProcess.steps) {
-      if (step.steps != null) {
-        for (let i = step.steps[0]; i <= step.steps[1]; i++) {
-          steps.push([i, null]);
-        }
+      if (step.step != null) {
+        steps.push([step.step[0], null]);
       } else {
         steps.push(step.choose);
       }
     }
     let currentStep = steps[time - duration];
     let currentSlice = null;
-    let currentUid = null;
     for (const slice of currentProcess.slices) {
       duration += slice.duration;
       if (duration >= time) {
+        console.log(slice);
         currentSlice = slice.shared_values;
-        currentUid = slice.uid
         break;
       }
     }

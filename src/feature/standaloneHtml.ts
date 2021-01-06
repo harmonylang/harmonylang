@@ -13,9 +13,8 @@ import Node from "node-html-parser/dist/nodes/node";
  * @param jsonData Object with Harmony data.
  */
 export function createStandaloneHtml(target_directory: PathLike, jsonData: Record<string, unknown>): void {
-  const htmlFilename = path.join(__dirname, '..', '..', 'harmony-0.9', 'web', 'index.html');
+  const htmlFilename = path.join(__dirname, '..', '..', 'harmony-0.9', 'web', 'charmony.html');
   const htmlString = fs.readFileSync(htmlFilename).toString();
-
   const html = addScript(removeOverlayTag(parse(htmlString)), jsonData);
   fs.writeFileSync(path.join(target_directory.toString(), 'harmony.html'), html.innerHTML);
 }

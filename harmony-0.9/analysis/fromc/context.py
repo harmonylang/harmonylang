@@ -22,7 +22,7 @@ def parse_context(contexts: List[Context]):
             "pid": pid,
             "process_name": process_name,
             "failure": failure,
-            "mod": mode,
+            "mode": mode,
             "traces": traces
         })
     return parsed_context

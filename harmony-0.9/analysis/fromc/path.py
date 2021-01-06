@@ -31,7 +31,7 @@ def get_path(json: IntermediateJson):
     issue = json['issue']
     shared_variable_names: Set[str] = set()
     processes = []
-
+    previous_json = {}
     for megastep in json['megasteps']:
         pid = megastep['tid']
         name = megastep['name']
@@ -44,12 +44,12 @@ def get_path(json: IntermediateJson):
         duration = 0
         slice_duration = 0
         microsteps = []
-        previous_json = {}
         if megastep['microsteps']:
             first_step = megastep['microsteps'][0]
             if 'shared' not in first_step:
                 first_step['shared'] = {}
-            previous_json = {k: get_value(v) for k, v in first_step['shared'].items()}
+            json = {k: get_value(v) for k, v in first_step['shared'].items()}
+            previous_json.update(json)
             duration += 1
             slice_duration += 1
 
@@ -63,17 +63,14 @@ def get_path(json: IntermediateJson):
             if 'shared' in microstep:
                 slices.append({
                     "duration": slice_duration,
-                    "values": previous_json
+                    "shared_values": previous_json.copy()
                 })
                 slice_duration = 0
-                previous_json = {k: get_value(v) for k, v in microstep['shared'].items()}
+                json = {k: get_value(v) for k, v in microstep['shared'].items()}
+                previous_json.update(json)
 
             duration += 1
             slice_duration += 1
-
-            if 'local' in microstep:
-                local_dict = {k: get_value(v) for k, v in microstep['local'].items()}
-                pprint(local_dict)
 
             if 'choose' in microstep:
                 choose_value = get_value(microstep['choose'])
@@ -83,7 +80,7 @@ def get_path(json: IntermediateJson):
 
         slices.append({
             "duration": slice_duration,
-            "shared_values": previous_json
+            "shared_values": previous_json.copy()
         })
 
         assert duration == sum(s['duration'] for s in slices)

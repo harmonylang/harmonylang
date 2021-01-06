@@ -124,10 +124,10 @@ export default class HarmonyOutputPanel {
 
     private _loadData_c(dataPath: string, webview: Webview) {
         const jsonData = parse(dataPath);
-        Fs.writeFileSync("error.txt", jsonData);
-        // if (vscode.workspace.workspaceFolders) {
-        //     createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, jsonData);
-        // }
+        if (vscode.workspace.workspaceFolders) {
+            console.log("Creating standadlone file");
+            createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, jsonData);
+        }
         console.log(jsonData);
         webview.postMessage({ command: 'load', jsonData });
         webview.onDidReceiveMessage( message => {
@@ -135,65 +135,6 @@ export default class HarmonyOutputPanel {
                 case 'alert':
                     vscode.window.showErrorMessage(message.text);
                     return;
-            }
-        }, undefined, undefined);
-    }
-
-    /**
-     * @param hasData
-     * @private
-     * @deprecated Use _update_c
-     */
-    private _update(hasData = false) {
-        const webview = this._panel.webview;
-        const harmonyPanel = this._panel;
-
-        const uiPath = Path.join(__dirname, '..', 'harmony-0.9', 'web', 'index.html');
-        const dataPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.json.gzip');
-
-        if (!hasData){
-            Fs.readFile(uiPath, 'utf-8', function (err, data) {
-                if (err) {
-                    vscode.window.showInformationMessage(err.message);
-                }
-                harmonyPanel.webview.html = data;
-            });
-        }
-
-        if (hasData){
-            this._loadData(dataPath, webview);
-        }
-    }
-
-    private _loadData(dataPath: string, webview: Webview) {
-        const dataInterface = new HarmonyJson(dataPath);
-        const inOrderCode = dataInterface.getInOrderCode();
-        const codeBlock = dataInterface.getAllMacroSteps();
-        const processes = dataInterface.getProcesses();
-        const sharedVariables = dataInterface.getSharedVariables();
-        const nodes = dataInterface.getAllNodes();
-        const allCode = dataInterface.getAllCode();
-        const issues = dataInterface.getIssues();
-
-        const jsonData = {
-            processes,
-            sharedVariables,
-            inOrderCode,
-            codeBlock,
-            nodes,
-            allCode,
-            issues
-        };
-
-        if (vscode.workspace.workspaceFolders) {
-            createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, jsonData);
-        }
-        webview.postMessage({ command: 'load', jsonData: jsonData });
-        webview.onDidReceiveMessage( message => {
-            switch (message.command) {
-                case 'alert':
-                  vscode.window.showErrorMessage(message.text);
-                  return;
             }
         }, undefined, undefined);
     }
