@@ -17,7 +17,7 @@ def get_html_content(
     :param intermediate_json_filepath: Filepath to the intermediate JSON
     :return:
     """
-    dump_name = destination_path.joinpath(pathlib.Path("harmony.json.gzip"))
+    dump_name = destination_path.joinpath(pathlib.Path("harmony.json.gz"))
     with open(intermediate_json_filepath, 'r') as f:
         data = f.read()
         json_decoded: IntermediateJson = JSONDecoder().decode(data)
