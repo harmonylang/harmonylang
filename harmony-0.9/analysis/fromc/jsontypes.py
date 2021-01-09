@@ -27,6 +27,13 @@ class IntermediateJson(TypedDict):
     megasteps: List[Switch]
     code: List[str]
     explain: List[str]
+    locations: Dict[str, HarmonyCode]
+
+
+class HarmonyCode(TypedDict):
+    file: str
+    line: str
+    code: str
 
 
 class ValueRep(TypedDict):

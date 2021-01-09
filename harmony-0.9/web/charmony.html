@@ -472,19 +472,31 @@
   }
 
   /**
-   * Inserts a code line into the code table.
+   * Inserts a code block into the code table.
    */
-  function insertCodeLine(codeLine, pc) {
-    const pcCell = makeTableCell(pc);
-    const {code, explanation} = codeLine;
-    pcCell.style.fontFamily = '"Courier New", Courier, monospace';
-    pcCell.style.color = '#788585';
-    const codeCell = makeTableCell(`<span title="${explanation}">${code}</span>`);
-    codeCell.style.fontFamily = '"Courier New", Courier, monospace';
-    codeCell.style.color = '#E7E7E7'
-    const tableRow = makeTableRow(pcCell, codeCell);
-    tableRow.setAttribute("id", `code-pc-${pc}`);
+  function insertCodeBlock(block, pc) {
+
+    const header =
+      `<span style="color: #A5D6A7">${block.file}<span>: <span style="color: #788585">${block.line} ${block.source_code}</span>`
+    const emptyCell = makeTableCell();
+    const contentCell = makeTableCell(header);
+    contentCell.style.fontFamily = '"Courier New", Courier, monospace';
+    const tableRow = makeTableRow(emptyCell, contentCell);
     codeTable.appendChild(tableRow);
+
+    const firstPc = block.start_pc;
+    block.assembly.forEach((c, idx) => {
+      const pc = idx + firstPc;
+      const pcCell = makeTableCell(pc);
+      pcCell.style.fontFamily = '"Courier New", Courier, monospace';
+      pcCell.style.color = '#788585';
+      const codeCell = makeTableCell(`<span title="${c.explain}">${c.code}</span>`);
+      codeCell.style.fontFamily = '"Courier New", Courier, monospace';
+      codeCell.style.color = '#E7E7E7'
+      const tableRow = makeTableRow(pcCell, codeCell);
+      tableRow.setAttribute("id", `code-pc-${pc}`);
+      codeTable.appendChild(tableRow);
+    });
   }
 
   /**
@@ -579,7 +591,7 @@
     if (data.path_to_bad_node.issue != null) {
       issueDisplay.textContent = data.path_to_bad_node.issue;
     }
-    data.executed_code.forEach((code, idx) => insertCodeLine(code, idx));
+    data.executed_code.forEach((block, idx) => insertCodeBlock(block, idx));
 
     // Builds the process blocks on the bottom.
     data.path_to_bad_node.processes.forEach(p => {

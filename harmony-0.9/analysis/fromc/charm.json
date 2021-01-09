@@ -5,6 +5,7 @@
       "tid": "0",
       "name": "__init__()",
       "microsteps": [
+
         {
           "shared": { },
           "npc": "1",
@@ -375,6 +376,7 @@
       "tid": "1",
       "name": "thread(0)",
       "microsteps": [
+
         {
           "shared": { "flags": { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "bool", "value": "True" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "bool", "value": "True" } } ] }, "turn": { "type": "int", "value": "0" } },
           "npc": "19",
@@ -680,5 +682,18 @@
     "push constant PC(6)",
     "pop a pc, argument, and tag and spawn a new process",
     "restore caller method state and push result"
-  ]
+  ],
+  "locations": {
+    "50": { "file": "test/PetersonBroken.hny", "line": "12", "code": "        flags[self] = False;" },
+    "62": { "file": "test/PetersonBroken.hny", "line": "17", "code": "spawn thread(1);" },
+    "2": { "file": "test/PetersonBroken.hny", "line": "4", "code": "turn = choose({0, 1});" },
+    "10": { "file": "test/PetersonBroken.hny", "line": "8", "code": "        turn = 1 - self;" },
+    "7": { "file": "test/PetersonBroken.hny", "line": "7", "code": "    while choose({ False, True }):" },
+    "32": { "file": "test/PetersonBroken.hny", "line": "11", "code": "        @cs: assert atLabel(cs) == bag{ (thread, self) };" },
+    "0": { "file": "test/PetersonBroken.hny", "line": "3", "code": "flags = [ False, False ];" },
+    "57": { "file": "test/PetersonBroken.hny", "line": "16", "code": "spawn thread(0);" },
+    "5": { "file": "test/PetersonBroken.hny", "line": "6", "code": "def thread(self):" },
+    "19": { "file": "test/PetersonBroken.hny", "line": "10", "code": "        await (not flags[1 - self]) or (turn == self);" },
+    "14": { "file": "test/PetersonBroken.hny", "line": "9", "code": "        flags[self] = True;" }
+  }
 }

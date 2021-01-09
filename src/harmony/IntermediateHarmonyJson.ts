@@ -10,12 +10,18 @@ export const parse = (path: PathLike): HarmonyTopLevel => {
 
 export type HarmonyTopLevel = {
   path_to_bad_node: ProcessPathDetail;
-  executed_code: HarmonyCode;
+  executed_code: HarmonyCode[];
 };
 
 type HarmonyCode = {
-  code: string;
-  explanation: string;
+  assembly: {
+    code: string;
+    explain: string;
+  }[];
+  file: string;
+  line: string;
+  source_code: string;
+  start_pc: number;
 };
 
 type ProcessPathDetail = {
