@@ -5,7 +5,6 @@
       "tid": "0",
       "name": "__init__()",
       "microsteps": [
-
         {
           "shared": { },
           "npc": "1",
