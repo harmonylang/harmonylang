@@ -6,6 +6,7 @@ import * as createHtmlElement from 'create-html-element';
 import HTMLElement from "node-html-parser/dist/nodes/html";
 import NodeType from "node-html-parser/dist/nodes/type";
 import Node from "node-html-parser/dist/nodes/node";
+import {CHARMONY_HTML_FILE} from "../config";
 
 /**
  * Creates an HTML file that displays the information shown in VS Code as a standalone file.
@@ -13,8 +14,7 @@ import Node from "node-html-parser/dist/nodes/node";
  * @param jsonData Object with Harmony data.
  */
 export function createStandaloneHtml(target_directory: PathLike, jsonData: Record<string, unknown>): void {
-  const htmlFilename = path.join(__dirname, '..', '..', 'resource', 'charmony.html');
-  const htmlString = fs.readFileSync(htmlFilename).toString();
+  const htmlString = fs.readFileSync(CHARMONY_HTML_FILE).toString();
   const html = addScript(removeOverlayTag(parse(htmlString)), jsonData);
   fs.writeFileSync(path.join(target_directory.toString(), 'harmony.html'), html.innerHTML);
 }

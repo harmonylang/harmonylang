@@ -16,9 +16,9 @@ async function update() {
   const response = await axios.get(HARMONY_SOURCE);
   if (200 <= response.status && response.status < 300) {
     const rawData = response.data.toString();
-    const utilizedHarmonyPath = path.join(__dirname, 'harmony-0.9', 'harmony.py');
-    const destination = path.join(__dirname, 'harmony-0.9', 'harmony_updated.py');
-    const diffOutput = path.join(__dirname, 'harmony-0.9', 'harmony_diff.txt');
+    const utilizedHarmonyPath = path.join(__dirname, 'charmony-0.9', 'charmony.py');
+    const destination = path.join(__dirname, 'charmony-0.9', 'harmony_updated.py');
+    const diffOutput = path.join(__dirname, 'charmony-0.9', 'harmony_diff.txt');
     fs.writeFileSync(destination, rawData);
     child_process.exec(`diff '${utilizedHarmonyPath}' ${destination}`, (_, stdout) => {
       fs.writeFileSync(diffOutput, stdout);

@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import {Webview} from 'vscode';
 import * as fs from 'fs';
 import {createStandaloneHtml} from "../feature/standaloneHtml";
-import {parse} from "../harmony/CharmonyJson";
+import {parse} from "../charmony/CharmonyJson";
 import {CHARMONY_HTML_FILE, CHARMONY_JSON_OUTPUT, RESOURCE_DIR} from "../config";
 
 export default class CharmonyPanelController {

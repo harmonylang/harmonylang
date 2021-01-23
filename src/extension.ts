@@ -3,7 +3,6 @@ import * as path from 'path';
 import CharmonyPanelController from './outputPanel/PanelController';
 import {ProcessManagerImpl} from './processManager';
 import {CHARMONY_COMPILER_DIR, CHARMONY_SCRIPT_PATH, GENERATED_FILES} from "./config";
-import * as fs from "fs";
 import * as rimraf from "rimraf";
 
 const processManager = ProcessManagerImpl.init();
@@ -87,7 +86,7 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
         } else {
             // Output Panel will include the stdout output.
             CharmonyPanelController.currentPanel?.updateMessage(`No Errors Found`);
-            // Show the output panel with the contents of harmony.html because the compilation succeeded.
+            // Show the output panel with the contents of charmony.html because the compilation succeeded.
         }
         GENERATED_FILES.forEach(f => rimraf.sync(f));
     });

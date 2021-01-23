@@ -1,5 +1,5 @@
 import {PathLike} from "fs";
-import {getHtmlContent} from "./charm/analysis";
+import {getHtmlContent} from "./analysis";
 
 /**
  * Parses an intermediate JSON file into a HarmonyTopLevel object.
