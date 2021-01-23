@@ -4,7 +4,7 @@ from typing import TypedDict, List, Dict, Optional, Union
 
 class IntermediateJson(TypedDict):
     issue: str
-    megasteps: List[Switch]
+    macrosteps: List[Switch]
     code: List[str]
     explain: List[str]
     locations: Dict[str, HarmonyCode]
@@ -40,7 +40,7 @@ class MicroStep(TypedDict):
     choose: Optional[ValueRep]
 
     shared: Optional[Dict[str, ValueRep]]
-    trace: Optional[Dict[str, List[Trace]]]
+    trace: Optional[List[Trace]]
     local: Optional[Dict[str, ValueRep]]
 
 

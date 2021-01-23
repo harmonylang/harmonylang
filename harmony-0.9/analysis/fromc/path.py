@@ -2,19 +2,19 @@ from typing import Set
 
 from analysis.fromc.context import parse_context
 from analysis.fromc.jsonify import get_value, jsonify_trace
-from analysis.fromc.jsontypes import IntermediateJson
+from analysis.fromc.jsontypes import IntermediateJson, MicroStep
 
 
-def get_shared_values(micro_step: dict) -> dict:
+def get_shared_values(micro_step: MicroStep) -> dict:
     if 'shared' in micro_step:
         return {k: get_value(v) for k, v in micro_step['shared'].items()}
     else:
         return {}
 
 
-def get_trace(micro_step: dict) -> dict:
+def get_trace(pid: str, micro_step: MicroStep) -> dict:
     if 'local' in micro_step:
-        return {k: [jsonify_trace(t) for t in v] for k, v in micro_step['trace'].items()}
+        return {pid: [jsonify_trace(t) for t in micro_step['trace']]}
     else:
         return {}
 
@@ -26,71 +26,69 @@ def get_path(json: IntermediateJson):
     previous_shared_values = {}
     previous_traces = {}
 
-    for megastep in json['megasteps']:
-        pid = megastep['tid']
-        name = megastep['name']
-        final_values = {k: get_value(v) for k, v in megastep['shared'].items()}
+    for macro_step in json['macrosteps']:
+        pid = macro_step['tid']
+        name = macro_step['name']
+        final_values = {k: get_value(v) for k, v in macro_step['shared'].items()} if 'shared' in macro_step else {}
         shared_variable_names.update(final_values.keys())
-
-        contexts = parse_context(megastep['contexts'])
 
         slices = []
         duration = 0
         slice_duration = 0
-        microsteps = []
+        micro_steps = []
 
         # For the first step
-        if megastep['microsteps']:
-            first_step = megastep['microsteps'][0]
+        if macro_step['microsteps']:
+            first_step = macro_step['microsteps'][0]
             previous_shared_values.update(get_shared_values(first_step))
-            previous_traces.update(get_trace(first_step))
+            previous_traces.update(get_trace(pid, first_step))
             duration += 1
             slice_duration += 1
 
         # For the remaining steps
-        for i in range(1, len(megastep['microsteps'])):
-            microstep = megastep['microsteps'][i]
-            pc = int(microstep['pc'])
-            if 'npc' not in microstep:
+        for i in range(1, len(macro_step['microsteps'])):
+            micro_step = macro_step['microsteps'][i]
+            pc = int(micro_step['pc'])
+            if 'npc' not in micro_step:
                 npc = None
             else:
-                npc = int(microstep['npc'])
-            if 'shared' in microstep or 'trace' in microstep:
+                npc = int(micro_step['npc'])
+            if 'shared' in micro_step or 'trace' in micro_step:
                 slices.append({
                     "duration": slice_duration,
                     "shared_values": previous_shared_values.copy(),
-                    "trace": previous_shared_values.copy()
+                    "trace": previous_traces.copy()
                 })
                 slice_duration = 0
-                previous_shared_values.update(get_shared_values(microstep))
-                previous_traces.update(get_trace(microstep))
+                previous_shared_values.update(get_shared_values(micro_step))
+                previous_traces.update(get_trace(pid, micro_step))
 
             duration += 1
             slice_duration += 1
 
-            if 'choose' in microstep:
-                choose_value = get_value(microstep['choose'])
-                microsteps.append({"choose": [pc, choose_value]})
+            if 'choose' in micro_step:
+                choose_value = get_value(micro_step['choose'])
+                micro_steps.append({"choose": [pc, choose_value]})
             else:
-                microsteps.append({"step": [pc, npc]})
+                micro_steps.append({"step": [pc, npc]})
 
         slices.append({
             "duration": slice_duration,
-            "shared_values": previous_shared_values.copy()
+            "shared_values": previous_shared_values.copy(),
+            "trace": previous_traces.copy()
         })
 
         assert duration == sum(s['duration'] for s in slices)
 
-        megastep = {
+        macro_step = {
             "pid": pid,
             "name": name,
             "final_shared_values": final_values,
             "slices": slices,
             "duration": duration,
-            "steps": microsteps,
-            "context": contexts
+            "steps": micro_steps,
         }
-        processes.append(megastep)
+        processes.append(macro_step)
 
     return {
         "issue": issue,
