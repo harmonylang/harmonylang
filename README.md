@@ -31,19 +31,24 @@ See your Harmony Output results, right in VS Code!
 - Auto-formatter
   - Format on save
   - Format via `Alt+Shift+F`
-- Intellicode Support
+- Intellisense Support
 
 ## Developers
 
-- Kevin Sun     `@kevinsun-dev`
+- Kevin Sun`@kevinsun-dev`
 
-- Anthony Yang     `@ayang4114`
+- Anthony Yang`@anthonyyangdev`
 
 ## Additional Documentation
 
 You can find more information about the HarmonyLang extension project in [this document](https://docs.google.com/document/d/16pO-tNLfNebIAuqb_vy_z0dJyIFX_Nb-xYDXRfMqOfE/edit?usp=sharing). Furthermore, you can find the Harmony Python compiler, as well as additional documentation regarding the Harmony language, at this [link](https://www.cs.cornell.edu/home/rvr/harmony/).
 
 ## Release Notes
+
+### 0.2.0
+ - New `(C)Harmony` compiler, which uses `C/Python` to optimize model-checking.
+    - This will require `Python3` and a `C` compiler to be installed.
+ - Fix bugs in the Interactive Process Visualizer.
 
 ### 0.1.0
  - Massive UI overhaul with compiler output rewrite.
