@@ -29,14 +29,12 @@ export type HarmonyAssembly = {
 
 export type ProcessPathDetail = {
   issue: string,
-  shared_variable_names: string[];
   processes: HarmonyProcess[]
 };
 
 export type HarmonyProcess = {
   pid: string;
   name: string;
-  final_shared_values: Record<string, unknown>;
   slices: HarmonySlice[];
   duration: number;
   steps: HarmonyStep[];
@@ -45,7 +43,9 @@ export type HarmonyProcess = {
 export type HarmonySlice = {
   duration: number;
   shared_values: Record<string, unknown>;
-  trace: Record<string, unknown>
+  trace: Record<string, HarmonyTrace[]>;
+  mode: string | null;
+  failure: string | null;
 };
 
 export type HarmonyStep = {
@@ -56,12 +56,14 @@ export type HarmonyStep = {
 export type HarmonyContext = {
   pid: string;
   process_name: string;
-  failure?: string;
+  failure: string | null;
   mode: string;
   traces: HarmonyTrace[];
 };
 
 export type HarmonyTrace = {
-  variables: Record<string, unknown>;
+  vars: Record<string, unknown>;
   method: string;
+  pc: string;
+  calltype: string;
 };

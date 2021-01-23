@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import * as Path from 'path';
 import * as Fs from 'fs';
-import HarmonyJson from './harmony/HarmonyJson';
 import { Webview } from "vscode";
 import {createStandaloneHtml} from "./feature/standaloneHtml";
 import {parse} from "./harmony/CharmonyJson";
@@ -32,10 +31,9 @@ export default class HarmonyOutputPanel {
             {
                 // Enable javascript in the webview
                 enableScripts: true,
-                localResourceRoots: [vscode.Uri.file(Path.join(__dirname, '..', 'harmony-0.9', 'web'))]
+                localResourceRoots: [vscode.Uri.file(Path.join(__dirname, '..', 'harmony-0.9', 'resource'))]
             }
         );
-
         HarmonyOutputPanel.currentPanel = new HarmonyOutputPanel(panel, extensionUri);
     }
 
@@ -105,7 +103,7 @@ export default class HarmonyOutputPanel {
         const webview = this._panel.webview;
         const harmonyPanel = this._panel;
 
-        const uiPath = Path.join(__dirname, '..', 'harmony-0.9', 'web', 'charmony.html');
+        const uiPath = Path.join(__dirname, '..', 'harmony-0.9', 'resource', 'charmony.html');
         const dataPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.json.gz');
         if (!hasData){
             Fs.readFile(uiPath, 'utf-8', function (err, data) {

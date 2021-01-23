@@ -474,8 +474,7 @@
   /**
    * Inserts a code block into the code table.
    */
-  function insertCodeBlock(block, pc) {
-
+  function insertCodeBlock(block) {
     const header =
       `<span style="color: #A5D6A7">${block.file}<span>: <span style="color: #788585">${block.line} ${block.source_code}</span>`
     const emptyCell = makeTableCell();
@@ -581,16 +580,20 @@
    * See the _loadData() function in src/outputPanel.ts for the data given
    * to initialize the window.
    */
-  let initWindow = (data) => {
+  function initWindow(data) {
     harmonyData = data;
     initResizeBar();
 
     // Get all process names in order
     let totalDuration = 0;
     let processObjects = new Map();
+
+    // GOOD
     if (data.path_to_bad_node.issue != null) {
       issueDisplay.textContent = data.path_to_bad_node.issue;
     }
+
+    // GOOD
     data.executed_code.forEach((block, idx) => insertCodeBlock(block, idx));
 
     // Builds the process blocks on the bottom.
@@ -635,7 +638,7 @@
     maxTime = totalDuration;
 
     let processNum = 0;
-    processObjects.forEach((processBar, processId) => {
+    processObjects.forEach((processBar) => {
       processBar.style.width = `${maxTime / BAR_LEN_FACTOR}rem`;
       const blocks = processBar.childNodes;
       blocks.forEach((block) => {
@@ -690,7 +693,7 @@
    * The function is wrapped in the playTimer function, which is the callback function
    * used for setInterval and clearInterval.
    */
-  let playExecution = () => {
+  function playExecution() {
     if (time < maxTime) {
       time++;
     } else {
@@ -725,14 +728,13 @@
    * This will display all of the running/blocked processes, as well as the stack for
    * each of those processes at that point.
    */
-  function updateStackTrace(contexts) {
+  function updateStackTrace(slice) {
     const tbl = stackTraceTable;
-    globalCurrentContexts = contexts;
+    const traces = slice.trace;
     tbl.style.fontFamily = '"Courier New", Courier, monospace';
 
     while (tbl.firstChild != null) tbl.removeChild(tbl.firstChild);
-
-    const buildHeader = (...headers) => {
+    function buildHeader(...headers) {
       const row = document.createElement("tr");
       headers.forEach(h => {
         const header = document.createElement("th");
@@ -744,12 +746,12 @@
     const header = buildHeader('Process', 'Status', 'Stack Trace', 'Variables');
     tbl.appendChild(header);
 
-    contexts.forEach((context, rowNumber) => {
-      let processName = `${context.process_name}`
+    Object.entries(traces).forEach(([pid, stacks], rowNumber) => {
+      let processName = `${pid}`
       const processCell = makeTableCell(processName);
 
       const statusCell = document.createElement("td");
-      statusCell.innerText = context.mode;
+      statusCell.innerText = slice.mode;
       switch (statusCell.innerText) {
         case "running":
           statusCell.style.color = "#30ea30"; break;
@@ -765,21 +767,20 @@
           statusCell.style.color = "#ffffff"; break;
       }
 
-      const traces = context.traces;
       const variablesCell = makeTableCell();
       const variableCellId = `trace-variables-row-${rowNumber}`;
       variablesCell.id = variableCellId;
 
       const stackTraceCell = makeTableCell();
-      traces.forEach((trace, level) => {
-        const {method} = trace;
+      stacks.forEach((stack, level) => {
+        const {method} = stack;
         const line = document.createElement("div");
         line.innerHTML = `<span style="cursor: pointer; color: rgb(71,226,92); text-decoration: underline" onclick="showStackTraceVariables(${level}, '${variableCellId}', ${rowNumber});">${method}</span>`
         stackTraceCell.appendChild(line);
       });
-      if (context.failure != null) {
+      if (slice.failure != null) {
         const line = document.createElement("div");
-        line.innerText = context.failure;
+        line.innerText = slice.failure;
         line.style.color = "#d71616";
         stackTraceCell.appendChild(line);
       }
@@ -792,8 +793,10 @@
   /**
    * The primary function which updates the overall state of the window.
    */
-  let updateWindow = (newTime) => {
-    if (newTime != null) time = newTime;
+  function updateWindow(newTime) {
+    if (newTime != null) {
+      time = newTime;
+    }
     timeSlider.value = time;
     timeStartText.innerHTML = timeFormat(time);
     processSlider.style.left = `${convertRemToPixels(time / BAR_LEN_FACTOR)}px`;
@@ -801,7 +804,6 @@
     const {
       currentStep,
       currentSlice,
-      currentContext
     } = getStateAtTime();
     if (currentStep != null) {
       const [pc] = currentStep;
@@ -811,14 +813,14 @@
     // console.log(newTime, currentStep, currentSlice, currentContext);
 
     setSharedVariablesTable(currentSlice);
-    updateStackTrace(currentContext);
+    updateStackTrace(currentSlice);
   }
 
   /**
    * Returns the state of the program at the current time shown in the bottom progress bars.
    * @returns {{currentStep: *, currentContext: HarmonyContext[], currentSlice: null}}
    */
-  const getStateAtTime = () => {
+  function getStateAtTime() {
     let duration = 0;
     const processes = harmonyData.path_to_bad_node.processes
     let currentProcess = processes[0];
@@ -843,40 +845,15 @@
     for (const slice of currentProcess.slices) {
       duration += slice.duration;
       if (duration >= time) {
-        console.log(slice);
         currentSlice = slice.shared_values;
         break;
       }
     }
     return {
       "currentStep": currentStep,
-      "currentSlice": currentSlice,
-      "currentContext": currentProcess.context
+      "currentSlice": currentSlice
     };
   }
-
-  /**
-   * Listens for an event posted from either src/outputPanel.ts or from
-   * src/feature/standaloneHtml.ts
-   */
-  window.addEventListener('message', event => {
-    const {command, jsonData} = event.data; // The command and JSON data our extension sent
-      console.log("Hear message", event.data)
-      switch (command) {
-      case 'load':
-        overlay.addEventListener("transitionend", (event) => {
-          overlay.style.display = "none";
-        }, false);
-        overlay.style.opacity = 0;
-        initWindow(jsonData);
-        break;
-      case 'message':
-        overlayLoader.style.display = "none";
-        overlayText.style.top = "50%";
-        overlayText.textContent = jsonData;
-        break;
-    }
-  });
 
   // Utility Functions
 
@@ -944,6 +921,31 @@
     }
     return tableRow;
   }
+</script>
+
+<script>
+  /**
+   * Listens for an event posted from either src/outputPanel.ts or from
+   * src/feature/standaloneHtml.ts
+   */
+  window.addEventListener('message', event => {
+    const {command, jsonData} = event.data; // The command and JSON data our extension sent
+    console.log("Hear message", event.data)
+    switch (command) {
+      case 'load':
+        overlay.addEventListener("transitionend", () => {
+          overlay.style.display = "none";
+        }, false);
+        overlay.style.opacity = 0;
+        initWindow(jsonData);
+        break;
+      case 'message':
+        overlayLoader.style.display = "none";
+        overlayText.style.top = "50%";
+        overlayText.textContent = jsonData;
+        break;
+    }
+  });
 </script>
 
 </html>

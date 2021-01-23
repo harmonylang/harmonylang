@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as Path from 'path';
+import * as path from 'path';
 import * as fs from 'fs';
 import { Webview } from "vscode";
 import {createStandaloneHtml} from "../feature/standaloneHtml";
@@ -31,7 +31,7 @@ export default class CharmonyPanelController {
       {
         // Enable javascript in the webview
         enableScripts: true,
-        localResourceRoots: [vscode.Uri.file(Path.join(__dirname, '..', 'harmony-0.9', 'web'))]
+        localResourceRoots: [vscode.Uri.file(path.join(__dirname, '..', '..', 'resource'))]
       }
     );
     CharmonyPanelController.currentPanel = new CharmonyPanelController(panel, extensionUri);
@@ -45,7 +45,7 @@ export default class CharmonyPanelController {
     this.panel = panel;
     this.extensionUri = extensionUri;
 
-    // Set the web-view's initial html content
+    // Set the resource-view's initial html content
     this.update();
 
     // Listen for when the panel is disposed
@@ -83,11 +83,13 @@ export default class CharmonyPanelController {
     const webview = this.panel.webview;
     const harmonyPanel = this.panel;
 
-    const uiPath = Path.join(__dirname, '..', 'web', 'charmony.html');
-    const dataPath = Path.join(__dirname, '..', 'harmony', 'charm', 'example', 'charm.json');
+    const uiPath = path.join(__dirname, '..', '..', 'resource', 'charmony.html');
+    const dataPath = path.join(__dirname, '..', '..', 'resource', 'charm.json');
     if (!hasData){
+      console.log("Looking for data");
       fs.readFile(uiPath, 'utf-8', function (err, data) {
         if (err) {
+          console.log(err);
           vscode.window.showInformationMessage(err.message);
         } else {
           harmonyPanel.webview.html = data;
@@ -101,7 +103,9 @@ export default class CharmonyPanelController {
   }
 
   private loadData(dataPath: string, webview: Webview) {
+    console.log("Step 1");
     const jsonData = parse(dataPath);
+    console.log("Step 2");
     if (vscode.workspace.workspaceFolders) {
       console.log("Creating a standalone HTML file");
       createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, jsonData);

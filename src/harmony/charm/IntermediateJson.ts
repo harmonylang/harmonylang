@@ -29,7 +29,6 @@ export type IntermediateSwitch = {
   tid: string;
   name: string;
   microsteps: IntermediateMicroStep[];
-  shared: Record<string, IntermediateValueRepresentation>;
   contexts: IntermediateContext[];
 };
 
@@ -42,6 +41,9 @@ export type IntermediateMicroStep = {
   shared: Record<string, IntermediateValueRepresentation> | null;
   trace: IntermediateTrace[] | null;
   local: Record<string, IntermediateValueRepresentation> | null;
+
+  mode: string | null;
+  failure: string | null;
 };
 
 

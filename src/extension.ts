@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as Path from 'path';
-import HarmonyOutputPanel from './outputPanel';
+import CharmonyPanelController from './outputPanel/PanelController';
 import { install, uninstall } from './feature/install';
 import { ProcessManagerImpl } from './processManager';
 
@@ -50,9 +50,9 @@ export const activate = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(uninstallHarmony);
 
     if (vscode.window.registerWebviewPanelSerializer) {
-        vscode.window.registerWebviewPanelSerializer(HarmonyOutputPanel.viewType, {
+        vscode.window.registerWebviewPanelSerializer(CharmonyPanelController.viewType, {
             async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
-                HarmonyOutputPanel.revive(webviewPanel, context.extensionUri);
+                CharmonyPanelController.revive(webviewPanel, context.extensionUri);
             }
         });
     }
@@ -97,32 +97,7 @@ const getPythonPath = (): string => {
 
 export function runHarmony(context: vscode.ExtensionContext, fullFileName: string) {
     // Use python3 by default if configurations are not set.
-    const pythonPath = getPythonPath();
-    const compileCommand = `${pythonPath} "${compilerPath}" -A "${fullFileName}"`;
-    processManager.startCommand(compileCommand, processConfig, (err, stdout, stderr) => {
-        HarmonyOutputPanel.currentPanel?.dispose();
-        HarmonyOutputPanel.createOrShow(context.extensionUri);
-        console.log(stderr, err);
-        if (stderr) {
-            // System errors, includes division by zero.
-            HarmonyOutputPanel.currentPanel?.updateMessage(`Error: ${stderr}`);
-        } else if (err) {
-            // error is non-null when process exits on code 1, i.e. a parser error.
-            // Parse error feedback is also in standard output (it's just outputted by python's print function)
-            HarmonyOutputPanel.currentPanel?.updateMessage(`Error: ${stdout}`);
-        } else {
-            const runCommand = `${pythonPath} "${compilerTestPath}" "${fullFileName}"`;
-            processManager.startCommand(runCommand, processConfig, (error, stdout, stderr) => {
-                if (processManager.processesAreKilled) return;
-                if (stderr || error) {
-                    console.log("Print the errors");
-                    HarmonyOutputPanel.currentPanel?.updateResults();
-                } else {
-                    // Output Panel will include the stdout output.
-                    HarmonyOutputPanel.currentPanel?.updateMessage(`No Errors Found`);
-                    // Show the output panel with the contents of harmony.html because the compilation succeeded.
-                }
-            });
-        }
-    });
+    CharmonyPanelController.currentPanel?.dispose();
+    CharmonyPanelController.createOrShow(context.extensionUri);
+    CharmonyPanelController.currentPanel?.updateResults();
 }
