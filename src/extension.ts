@@ -1,30 +1,27 @@
 import * as vscode from 'vscode';
-import * as Path from 'path';
+import * as path from 'path';
 import CharmonyPanelController from './outputPanel/PanelController';
-import { install, uninstall } from './feature/install';
-import { ProcessManagerImpl } from './processManager';
+import {install, uninstall} from './feature/install';
+import {ProcessManagerImpl} from './processManager';
 
 const processManager = ProcessManagerImpl.init();
-const processConfig = { cwd: Path.join(__dirname, '..', 'harmony-0.9') };
-const compilerPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.py');
-const compilerTestPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.test.py');
+const processConfig = { cwd: path.join(__dirname, '..', 'harmony-0.9') };
+const compilerPath = path.join(__dirname, '..', 'harmony-0.9', 'harmony.py');
 
 export const activate = (context: vscode.ExtensionContext) => {
     const runHarmonyCommand = vscode.commands.registerCommand('harmonylang.run', () => {
-        const editor = vscode.window.activeTextEditor;
-        const doc = editor != null ? editor.document : null;
-        const path = doc != null ? doc.fileName : null;
-        const ext = Path.extname(path || '');
-        const harmonyExt = ".hny .sab";
-        if (harmonyExt.indexOf(ext) < 0) {
-            vscode.window.showInformationMessage('Target file must be an Harmony (.hmy) file');
+        const filename = vscode.window.activeTextEditor?.document?.fileName;
+        const ext = path.extname(filename || '');
+        const harmonyExt = [".hny", ".sab"];
+        if (!harmonyExt.includes(ext)) {
+            vscode.window.showInformationMessage('Target file must be an Harmony (.hny) file.');
             return;
         }
-        if (path === null) {
+        if (filename == null) {
             vscode.window.showInformationMessage('Could not locate target file.');
             return;
         }
-        runHarmony(context, path);
+        runHarmony(context, filename);
     });
 
     const endHarmonyProcessesCommand = vscode.commands.registerCommand('harmonylang.end', () => {
