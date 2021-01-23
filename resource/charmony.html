@@ -13,258 +13,258 @@
     <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300;400;500;600&display=swap"
           rel="stylesheet" />
     <style type="text/css">
-      body {
-        background-color: #1e1e1e;
-        color: #fff;
-      }
+        body {
+            background-color: #1e1e1e;
+            color: #fff;
+        }
 
-      h2 {
-        font-family: 'Source Code Pro', monospace;
-        font-size: 13pt;
-      }
+        h2 {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 13pt;
+        }
 
-      #process-window {
-        position: fixed;
-        bottom: 0%;
-        right: 0px;
-        left: 0px;
-        width: 100%;
-        height: 40%;
-      }
+        #process-window {
+            position: fixed;
+            bottom: 0%;
+            right: 0px;
+            left: 0px;
+            width: 100%;
+            height: 40%;
+        }
 
-      #processes {
-        position: relative;
-        padding-top: 1rem;
-        height: calc(100% - 4rem);
-      }
+        #processes {
+            position: relative;
+            padding-top: 1rem;
+            height: calc(100% - 4rem);
+        }
 
-      .process-labels {
-        height: 100%;
-      }
+        .process-labels {
+            height: 100%;
+        }
 
-      .process-label-row {
-        background-color: #252525;
-        height: 3rem;
-        width: 100%;
-      }
+        .process-label-row {
+            background-color: #252525;
+            height: 3rem;
+            width: 100%;
+        }
 
-      .process-label-text {
-        margin-top: 0;
-        margin-bottom: 0;
-        padding-left: 1rem;
-        line-height: 3rem;
-        font-weight: 600;
-      }
+        .process-label-text {
+            margin-top: 0;
+            margin-bottom: 0;
+            padding-left: 1rem;
+            line-height: 3rem;
+            font-weight: 600;
+        }
 
-      .process-bars {
-        position: absolute;
-        top: 0;
-        padding-top: 1rem;
-        left: 20.83333%;
-        bottom: 0;
-        overflow-x: scroll;
-        overflow-y: visible;
-      }
+        .process-bars {
+            position: absolute;
+            top: 0;
+            padding-top: 1rem;
+            left: 20.83333%;
+            bottom: 0;
+            overflow-x: scroll;
+            overflow-y: visible;
+        }
 
-      .process-bar-row {
-        margin-top: 0.5rem;
-        margin-bottom: 1rem;
-        padding-left: 12px;
-        padding-right: 1rem;
-        width: fit-content;
-      }
+        .process-bar-row {
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            padding-left: 12px;
+            padding-right: 1rem;
+            width: fit-content;
+        }
 
-      .process-bar {
-        position: relative;
-        background: #323232;
-        border-radius: 5px;
-        height: 2rem;
-      }
+        .process-bar {
+            position: relative;
+            background: #323232;
+            border-radius: 5px;
+            height: 2rem;
+        }
 
-      .process-block {
-        position: absolute;
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        border-radius: 5px;
-        height: 2rem;
-      }
+        .process-block {
+            position: absolute;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            height: 2rem;
+        }
 
-      .seekbar-button {
-        background: #252525;
-        color: #fff;
-        width: 2.5rem;
-        height: 2.5rem;
-        margin-top: .25rem;
-        margin-bottom: .25rem;
-        margin-left: .25rem;
-      }
+        .seekbar-button {
+            background: #252525;
+            color: #fff;
+            width: 2.5rem;
+            height: 2.5rem;
+            margin-top: .25rem;
+            margin-bottom: .25rem;
+            margin-left: .25rem;
+        }
 
-      .seekbar-time {
-        margin-top: 0;
-        margin-bottom: 0;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        letter-spacing: normal;
-        line-height: 3rem;
-        font-weight: 600;
-      }
+        .seekbar-time {
+            margin-top: 0;
+            margin-bottom: 0;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            letter-spacing: normal;
+            line-height: 3rem;
+            font-weight: 600;
+        }
 
-      #seekbar-div {
-        background-color: #3c3c3c;
-        position: relative;
-        top: 0%;
-        width: 100%;
-        height: 3rem;
-      }
+        #seekbar-div {
+            background-color: #3c3c3c;
+            position: relative;
+            top: 0%;
+            width: 100%;
+            height: 3rem;
+        }
 
-      #time-slider {
-        flex-grow: 1;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-      }
+        #time-slider {
+            flex-grow: 1;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
 
-      #time-slider:focus {
-        outline: none;
-      }
+        #time-slider:focus {
+            outline: none;
+        }
 
-      #issue-box {
-        display: flex;
-        height: 2.5rem;
-        line-height: .7rem;
-        margin-top: 1rem;
-        align-items: center;
-        justify-content: center;
-      }
+        #issue-box {
+            display: flex;
+            height: 2.5rem;
+            line-height: .7rem;
+            margin-top: 1rem;
+            align-items: center;
+            justify-content: center;
+        }
 
-      #issue-box-container {
-        height: 5%;
-      }
+        #issue-box-container {
+            height: 5%;
+        }
 
-      #all-code {
-        height: 40%
-      }
+        #all-code {
+            height: 40%
+        }
 
-      #shared-var-table {
-        overflow-y: auto;
-        height: calc(100% - 20px - 14pt);
-      }
+        #shared-var-table {
+            overflow-y: auto;
+            height: calc(100% - 20px - 14pt);
+        }
 
-      details {
-        font: 20px Calibri;
-      }
+        details {
+            font: 20px Calibri;
+        }
 
-      #shared-variables {
-        height: calc(55% - 40px - 23pt);
-        margin-top: calc(20px + 15pt);
-      }
+        #shared-variables {
+            height: calc(55% - 40px - 23pt);
+            margin-top: calc(20px + 15pt);
+        }
 
-      #stack-trace-table {
-        overflow: scroll;
-        height: 100%;
-        border: none;
-        padding: 1rem;
-      }
+        #stack-trace-table {
+            overflow: scroll;
+            height: 100%;
+            border: none;
+            padding: 1rem;
+        }
 
-      #overlay {
-        position: fixed; /* Sit on top of the page content */
-        /* display: none; /* Hidden by default */
-        width: 100%; /* Full width (cover the whole page) */
-        height: 100%; /* Full height (cover the whole page) */
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #1e1e1e;
-        transition: opacity 1s ease-in-out;
-        z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-      }
+        #overlay {
+            position: fixed; /* Sit on top of the page content */
+            /* display: none; /* Hidden by default */
+            width: 100%; /* Full width (cover the whole page) */
+            height: 100%; /* Full height (cover the whole page) */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #1e1e1e;
+            transition: opacity 1s ease-in-out;
+            z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+        }
 
-      #harmonyLangIcon {
-        position: absolute;
-        top: calc(50% - 10rem);
-        left: calc(50% - 4rem);
-        width: 8rem;
-        height: 8rem;
-      }
+        #harmonyLangIcon {
+            position: absolute;
+            top: calc(50% - 10rem);
+            left: calc(50% - 4rem);
+            width: 8rem;
+            height: 8rem;
+        }
 
-      #loader {
-        position: absolute;
-        top: calc(50%);
-        left: calc(50% - 2rem - 10px);
-        border: 8px solid #00000000;
-        border-radius: 50%;
-        border-top: 8px solid #E7E7E7;
-        border-bottom: 8px solid #E7E7E7;
-        width: 4rem;
-        height: 4rem;
-        -webkit-animation: spin 2s linear infinite;
-        animation: spin 2s linear infinite;
-      }
+        #loader {
+            position: absolute;
+            top: calc(50%);
+            left: calc(50% - 2rem - 10px);
+            border: 8px solid #00000000;
+            border-radius: 50%;
+            border-top: 8px solid #E7E7E7;
+            border-bottom: 8px solid #E7E7E7;
+            width: 4rem;
+            height: 4rem;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
 
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-      #overlay-text {
-        position: absolute;
-        top: calc(50% + 6rem);
-        left: calc(50% - 10rem);
-        width: 20rem;
-        text-align: center;
-        transition: all 0.3s ease-in-out;
-      }
+        #overlay-text {
+            position: absolute;
+            top: calc(50% + 6rem);
+            left: calc(50% - 10rem);
+            width: 20rem;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+        }
 
-      details>summary {
-        font-family: "Courier New", Courier, monospace;
-        color: white;
-        padding: 2px 6px;
-        width: 15em;
-        /*background-color: lightblue;*/
-        border: none;
-        /*box-shadow: 3px 3px 4px green;*/
-        cursor: pointer;
-        transition: color 1s;
-      }
+        details>summary {
+            font-family: "Courier New", Courier, monospace;
+            color: white;
+            padding: 2px 6px;
+            width: 15em;
+            /*background-color: lightblue;*/
+            border: none;
+            /*box-shadow: 3px 3px 4px green;*/
+            cursor: pointer;
+            transition: color 1s;
+        }
 
-      details>p {
-        font-family: "Courier New", Courier, monospace;
-        color: white;
-        padding: 2px 6px;
-        width: 15em;
-        margin-top: 2px;
-        margin-bottom: 2px;
-        margin-left: 40px;
-      }
+        details>p {
+            font-family: "Courier New", Courier, monospace;
+            color: white;
+            padding: 2px 6px;
+            width: 15em;
+            margin-top: 2px;
+            margin-bottom: 2px;
+            margin-left: 40px;
+        }
 
-      details>* {
-        margin-left: 20px;
-      }
+        details>* {
+            margin-left: 20px;
+        }
 
-      details[open]>summary {
-        color: #a3a3ff;
-      }
+        details[open]>summary {
+            color: #a3a3ff;
+        }
 
-      #data-window {
-        position: absolute;
-        height: 60%;
-        width: 100%;
-        left: 0;
-      }
+        #data-window {
+            position: absolute;
+            height: 60%;
+            width: 100%;
+            left: 0;
+        }
 
-      #separator {
-        cursor: row-resize;
-        background-color: #b1b1b1;
-        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20'><path d='M0 6 h20 M0 10 h20 M0 14 h20' fill='none' stroke='black'/></svg>");
-        background-repeat: no-repeat;
-        background-position: center;
-        width: 100%;
-        height: 18px;
+        #separator {
+            cursor: row-resize;
+            background-color: #b1b1b1;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20'><path d='M0 6 h20 M0 10 h20 M0 14 h20' fill='none' stroke='black'/></svg>");
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 100%;
+            height: 18px;
 
-        /* Prevent the browser's built-in drag from interfering */
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
+            /* Prevent the browser's built-in drag from interfering */
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
     </style>
 </head>
 
@@ -376,581 +376,584 @@
 </body>
 
 <script>
-  const BAR_LEN_FACTOR = 5;
-  const PLAY_SPEED = 200;
-  const COLOR_MAP = ['#c62828', '#AD1457', '#6A1B9A', '#4527A0', '#283593', '#1565C0', '#0277BD', '#00838F',
-    '#00695C', '#2E7D32', '#558B2F', '#9E9D24', '#F9A825', '#FF8F00', '#EF6C00', '#D84315', '#4E342E',
-    '#424242', '#37474F'
-  ];
-  let time = 0;
-  let maxTime = 0;
-  let processLengthPx = 0;
+    const BAR_LEN_FACTOR = 5;
+    const PLAY_SPEED = 200;
+    const COLOR_MAP = ['#c62828', '#AD1457', '#6A1B9A', '#4527A0', '#283593', '#1565C0', '#0277BD', '#00838F',
+        '#00695C', '#2E7D32', '#558B2F', '#9E9D24', '#F9A825', '#FF8F00', '#EF6C00', '#D84315', '#4E342E',
+        '#424242', '#37474F'
+    ];
+    let time = 0;
+    let maxTime = 0;
+    let processLengthPx = 0;
 
-  let harmonyData = {};
-  let globalCurrentStackTrace = {};
+    let harmonyData = {};
+    let globalCurrentStackTrace = {};
 
-  let timeStartText;
-  let timeEndText;
-  let timeSlider;
-  let playButton;
-  let backButton;
-  let forwardButton;
+    let timeStartText;
+    let timeEndText;
+    let timeSlider;
+    let playButton;
+    let backButton;
+    let forwardButton;
 
-  let processLabels;
-  let processBars;
-  let processSlider;
+    let processLabels;
+    let processBars;
+    let processSlider;
 
-  let playTimer;
-  let playing = false;
+    let playTimer;
+    let playing = false;
 
-  let codeTable;
-  let sharedVariableTable;
-  let stackTraceTable;
+    let codeTable;
+    let sharedVariableTable;
+    let stackTraceTable;
 
-  let issueDisplay;
+    let issueDisplay;
 
-  let overlay;
-  let overlayLoader;
-  let overlayText;
+    let overlay;
+    let overlayLoader;
+    let overlayText;
 
-  document.addEventListener('DOMContentLoaded', (event) => {
-    timeStartText = document.getElementById("start-time");
-    timeEndText = document.getElementById("end-time");
-    timeSlider = document.getElementById("time-slider");
-    playButton = document.getElementById("button-play");
-    backButton = document.getElementById("button-back");
-    forwardButton = document.getElementById("button-forward");
-    processBars = document.getElementById("process-bars");
-    processLabels = document.getElementById("process-labels");
-    processSlider = document.getElementById("process-slider");
-    codeTable = document.getElementById("code-table");
-    sharedVariableTable = document.getElementById("shared-var-table");
-    stackTraceTable = document.getElementById("stack-trace-table");
-    issueDisplay = document.getElementById("issue-value");
-    overlay = document.getElementById("overlay");
-    overlayLoader = document.getElementById("loader");
-    overlayText = document.getElementById("overlay-text");
-  });
+    let vscode;
 
-  /**
-   * This function initializes the state and callback functions for the resize
-   * bar. This is done by modifying the height attribute of the process window
-   * in response to the bar being dragged.
-   * Source: https://stackoverflow.com/a/55202728
-   */
-  function initResizeBar()
-  {
-    let   mouseDetails; // remember mouse down info
-    const resizeBar = document.getElementById("separator");
-    const resizeBarHeight = resizeBar.clientHeight;
-    const processWindow = document.getElementById("process-window");
-    const dataWindow = document.getElementById("data-window");
+    document.addEventListener('DOMContentLoaded', () => {
+        vscode = acquireVsCodeApi();
+        timeStartText = document.getElementById("start-time");
+        timeEndText = document.getElementById("end-time");
+        timeSlider = document.getElementById("time-slider");
+        playButton = document.getElementById("button-play");
+        backButton = document.getElementById("button-back");
+        forwardButton = document.getElementById("button-forward");
+        processBars = document.getElementById("process-bars");
+        processLabels = document.getElementById("process-labels");
+        processSlider = document.getElementById("process-slider");
+        codeTable = document.getElementById("code-table");
+        sharedVariableTable = document.getElementById("shared-var-table");
+        stackTraceTable = document.getElementById("stack-trace-table");
+        issueDisplay = document.getElementById("issue-value");
+        overlay = document.getElementById("overlay");
+        overlayLoader = document.getElementById("loader");
+        overlayText = document.getElementById("overlay-text");
+    });
 
-    resizeBar.onmousedown = onMouseDown;
-    function onMouseDown(e)
+    /**
+     * This function initializes the state and callback functions for the resize
+     * bar. This is done by modifying the height attribute of the process window
+     * in response to the bar being dragged.
+     * Source: https://stackoverflow.com/a/55202728
+     */
+    function initResizeBar()
     {
-      mouseDetails = {
-        e,
-        initialHeight: processWindow.offsetHeight
-      };
-      document.onmousemove = onMouseMove;
-      document.onmouseup = () => {
-        document.onmousemove = document.onmouseup = null;
-      }
-    }
-    function onMouseMove(e) {
-      const deltaY = e.clientY - mouseDetails.e.clientY;
-      const documentHeight = getDocumentHeight();
+        let   mouseDetails; // remember mouse down info
+        const resizeBar = document.getElementById("separator");
+        const resizeBarHeight = resizeBar.clientHeight;
+        const processWindow = document.getElementById("process-window");
+        const dataWindow = document.getElementById("data-window");
 
-      const newHeight = fitInBounds(mouseDetails.initialHeight - deltaY, resizeBarHeight, documentHeight);
-      console.log("Body Height", documentHeight);
-      const heightPercentage = (newHeight / documentHeight) * 100;
-      dataWindow.style.height = (100 - heightPercentage).toString() + '%';
-      processWindow.style.height = heightPercentage.toString() + '%';
-      console.log(dataWindow, dataWindow.style.height);
-    }
-  }
+        resizeBar.onmousedown = onMouseDown;
+        function onMouseDown(e)
+        {
+            mouseDetails = {
+                e,
+                initialHeight: processWindow.offsetHeight
+            };
+            document.onmousemove = onMouseMove;
+            document.onmouseup = () => {
+                document.onmousemove = document.onmouseup = null;
+            }
+        }
+        function onMouseMove(e) {
+            const deltaY = e.clientY - mouseDetails.e.clientY;
+            const documentHeight = getDocumentHeight();
 
-  /**
-   * Inserts a code block into the code table.
-   */
-  function insertCodeBlock(block) {
-    const header =
-      `<span style="color: #A5D6A7">${block.file}<span>: <span style="color: #788585">${block.line} ${block.source_code}</span>`
-    const emptyCell = makeTableCell();
-    const contentCell = makeTableCell(header);
-    contentCell.style.fontFamily = '"Courier New", Courier, monospace';
-    const tableRow = makeTableRow(emptyCell, contentCell);
-    codeTable.appendChild(tableRow);
-
-    const firstPc = block.start_pc;
-    block.assembly.forEach((c, idx) => {
-      const pc = idx + firstPc;
-      const pcCell = makeTableCell(pc);
-      pcCell.style.fontFamily = '"Courier New", Courier, monospace';
-      pcCell.style.color = '#788585';
-      const codeCell = makeTableCell(`<span title="${c.explain}">${c.code}</span>`);
-      codeCell.style.fontFamily = '"Courier New", Courier, monospace';
-      codeCell.style.color = '#E7E7E7'
-      const tableRow = makeTableRow(pcCell, codeCell);
-      tableRow.setAttribute("id", `code-pc-${pc}`);
-      codeTable.appendChild(tableRow);
-    });
-  }
-
-  /**
-   * Creates an html-tag string which is customized for colors based on
-   * the type of the given value.
-   */
-  function createHtmlValue(v) {
-    const typeofV = typeof v;
-    const create = (color, value) => `<span style="color: ${color}">${value}</span>`;
-    if (typeofV === "string") {
-      if (v.startsWith("?")) {
-        return create("#ed85ff", `${v}`);
-      } else {
-        return create("#bc6021", `"${v}"`);
-      }
-    }
-    if (typeofV === "boolean" || typeofV === "number") {
-      const s = v.toString()
-      return create("#24a583", s[0].toUpperCase() + s.substring(1));
-    }
-    if (v == null) {
-      return create("#a01c1c", 'None');
-    } else {
-      return create("#ffffff", JSON.stringify(v));
-    }
-  }
-  /**
-   * Creates a collapseable html entry that represents the values in the
-   * given object.
-   */
-  function makeCollapseable(summary, obj) {
-    const collapseable = document.createElement("details");
-    const summaryElement = document.createElement("summary");
-    summaryElement.innerText = summary;
-    summaryElement.style.fontSize = "15px";
-    collapseable.appendChild(summaryElement);
-    Object.entries(obj).forEach(([k, v]) => {
-      if (v == null || typeof v !== 'object') {
-        const p = document.createElement("p");
-        p.innerHTML = `${k}: ${createHtmlValue(v)}`;
-        p.style.fontSize = "15px";
-        collapseable.appendChild(p);
-      } else {
-        const header = Array.isArray(v) ? "[Array]" : "[object Object]"
-        const subcollapseable = makeCollapseable(`${k}: ${header}`, v);
-        collapseable.appendChild(subcollapseable);
-      }
-    });
-    collapseable.setAttribute("open", "true");
-    return collapseable;
-  }
-
-  /**
-   * Displays the shared variables on the the current state.
-   */
-  let lastSlice = null;
-  function setSharedVariablesTable(slice) {
-    if (slice === lastSlice) return;
-    const collapseable = makeCollapseable("Shared Variables", slice ?? {});
-    while (sharedVariableTable.firstChild != null) sharedVariableTable.removeChild(sharedVariableTable.firstChild);
-    sharedVariableTable.appendChild(collapseable);
-    lastSlice = slice;
-  }
-
-  /**
-   * Scrolls the code-table to the given pc and highlights that line of code.
-   */
-  let lastHighlighted = null;
-  function moveAndHighlightCode(pc) {
-    if (lastHighlighted != null) {
-      const line = document.getElementById(`code-pc-${lastHighlighted}`)
-      line.style.backgroundColor = "";
-    }
-    const line = document.getElementById(`code-pc-${pc}`)
-    line.style.backgroundColor = "rgba(0, 255, 255, 0.2)";
-    lastHighlighted = pc;
-    line.scrollIntoView();
-  }
-
-  /**
-   * Initializes the window and displays the execution [data] about the program.
-   * See the _loadData() function in src/outputPanel.ts for the data given
-   * to initialize the window.
-   */
-  function initWindow(data) {
-    harmonyData = data;
-    initResizeBar();
-
-    // Get all process names in order
-    let totalDuration = 0;
-    let processObjects = new Map();
-
-    // GOOD
-    if (data.path_to_bad_node.issue != null) {
-      issueDisplay.textContent = data.path_to_bad_node.issue;
+            const newHeight = fitInBounds(mouseDetails.initialHeight - deltaY, resizeBarHeight, documentHeight);
+            console.log("Body Height", documentHeight);
+            const heightPercentage = (newHeight / documentHeight) * 100;
+            dataWindow.style.height = (100 - heightPercentage).toString() + '%';
+            processWindow.style.height = heightPercentage.toString() + '%';
+            console.log(dataWindow, dataWindow.style.height);
+        }
     }
 
-    // GOOD
-    data.executed_code.forEach((block, idx) => insertCodeBlock(block, idx));
+    /**
+     * Inserts a code block into the code table.
+     */
+    function insertCodeBlock(block) {
+        const header =
+                `<span style="color: #A5D6A7">${block.file}<span>: <span style="color: #788585">${block.line} ${block.source_code}</span>`
+        const emptyCell = makeTableCell();
+        const contentCell = makeTableCell(header);
+        contentCell.style.fontFamily = '"Courier New", Courier, monospace';
+        const tableRow = makeTableRow(emptyCell, contentCell);
+        codeTable.appendChild(tableRow);
 
-    // Builds the process blocks on the bottom.
-    data.path_to_bad_node.processes.forEach(p => {
-      if (!processObjects.has(p.pid)) {
-        // Label Generation
-        const labelContainer = document.createElement("div");
-        labelContainer.setAttribute('class', 'process-label-row');
-        const label = document.createElement('p');
-        label.setAttribute('class', 'process-label-text');
-        label.textContent = p.name;
-        labelContainer.appendChild(label);
-        processLabels.appendChild(labelContainer);
-        // Row Generation
-        const row = document.createElement("div");
-        row.setAttribute('class', 'process-bar-row');
-        const bar = document.createElement("div");
-        bar.setAttribute('class', "process-bar");
-        row.appendChild(bar);
-        processObjects.set(p.pid, bar);
-        processBars.appendChild(row);
-      }
-
-      const processBar = processObjects.get(p.pid);
-      p.slices.forEach(s => {
-        const processBlock = document.createElement("div");
-        processBlock.setAttribute('class', 'process-block');
-        processBlock.style.left = `${totalDuration / BAR_LEN_FACTOR}rem`;
-        processBlock.style.width = `${s.duration / BAR_LEN_FACTOR}rem`;
-        processBlock.style.cursor = "pointer";
-        const currentTime = totalDuration;
-        processBlock.addEventListener("click", (e) => {
-          e.preventDefault();
-          updateWindow(currentTime);
-        })
-        // processBlock.style.border = "2px solid rgb(255, 255, 255, 0.2)";
-        processBar.appendChild(processBlock);
-        totalDuration += s.duration;
-      });
-    });
-
-    maxTime = totalDuration;
-
-    let processNum = 0;
-    processObjects.forEach((processBar) => {
-      processBar.style.width = `${maxTime / BAR_LEN_FACTOR}rem`;
-      const blocks = processBar.childNodes;
-      blocks.forEach((block) => {
-        block.style.background = COLOR_MAP[processNum % COLOR_MAP.length];
-      });
-      processNum++;
-    });
-    processLengthPx = convertRemToPixels(maxTime / BAR_LEN_FACTOR);
-
-    timeSlider.max = maxTime;
-    timeEndText.innerHTML = timeFormat(maxTime);
-
-    timeSlider.addEventListener('input', (e) => {
-      e.preventDefault();
-      updateWindow(timeSlider.value);
-    }, false);
-
-    playButton.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (playing) {
-        window.clearInterval(playTimer);
-        playButton.firstElementChild.setAttribute('class', 'fas fa-play');
-        playing = false;
-      } else {
-        playTimer = window.setInterval(playExecution, PLAY_SPEED);
-        playButton.firstElementChild.setAttribute('class', 'fas fa-pause');
-        playing = true;
-      }
-    }, false);
-
-    forwardButton.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (time < maxTime) {
-        updateWindow(time + 1);
-      }
-    }, false);
-
-    backButton.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (time > 0) {
-        updateWindow(time - 1);
-      }
-    }, false);
-    updateWindow(time);
-  }
-
-  /**
-   * Plays the execution video. This is done by running this callback which increments
-   * the current time and other related visual properties. This is done until the
-   * time value reaches the maximum time.
-   *
-   * The function is wrapped in the playTimer function, which is the callback function
-   * used for setInterval and clearInterval.
-   */
-  function playExecution() {
-    if (time < maxTime) {
-      time++;
-    } else {
-      window.clearInterval(playTimer);
-      playButton.firstElementChild.setAttribute('class', 'fas fa-play');
-      playing = false;
-    }
-    updateWindow(time);
-  }
-
-  /**
-   * Updates the current stack trace table's list of variables.
-   *
-   * - level is a number denoting position of the corresponding stack trace scope on the table, where the top row is 0
-   * and each row after increases by 1.
-   * - id is the HTML id of the table cell displaying the variables, in the form `trace-variables-row-${row}`.
-   * - row is a the table row, starting at 0 from the top row and skipping the header row.
-   */
-  function showStackTraceVariables(level, id, pid) {
-    console.log(level, id, pid, globalCurrentStackTrace);
-    const trace = globalCurrentStackTrace[pid].traces[level];
-    const cell = document.getElementById(id);
-    while (cell.firstChild != null) cell.removeChild(cell.firstChild);
-    Object.entries(trace.vars).forEach(([name, value]) => {
-      const line = document.createElement("div");
-      line.innerHTML = `${name} = ${createHtmlValue(value)}`;
-      cell.appendChild(line);
-    });
-  }
-
-  /**
-   * Updates the stack trace table for a specific node.
-   * This will display all of the running/blocked processes, as well as the stack for
-   * each of those processes at that point.
-   */
-  function updateStackTrace(slice) {
-    console.log("Slice", slice);
-    const tbl = stackTraceTable;
-    const traces = slice.trace;
-    globalCurrentStackTrace = traces;
-    tbl.style.fontFamily = '"Courier New", Courier, monospace';
-
-    while (tbl.firstChild != null) tbl.removeChild(tbl.firstChild);
-    function buildHeader(...headers) {
-      const row = document.createElement("tr");
-      headers.forEach(h => {
-        const header = document.createElement("th");
-        header.innerText = h;
-        row.appendChild(header);
-      });
-      return row;
-    }
-    const header = buildHeader('Process', 'Status', 'Stack Trace', 'Variables');
-    tbl.appendChild(header);
-
-    Object.entries(traces).forEach(([pid, traceData], rowNumber) => {
-      let processName = `${harmonyData.path_to_bad_node.pid_to_name[pid]}`
-      const processCell = makeTableCell(processName);
-
-      const statusCell = document.createElement("td");
-      statusCell.innerText = traceData.mode;
-      switch (statusCell.innerText) {
-        case "running":
-          statusCell.style.color = "#30ea30"; break;
-        case "failed":
-          statusCell.style.color = "#d71616"; break;
-        case "blocked":
-          statusCell.style.color = "#701f1f"; break;
-        case "terminated":
-          statusCell.style.color = "#fff000"; break;
-        case "choosing":
-          statusCell.style.color = "#19a7ee"; break;
-        default:
-          statusCell.style.color = "#ffffff"; break;
-      }
-
-      const variablesCell = makeTableCell();
-      const variableCellId = `trace-variables-row-${rowNumber}`;
-      variablesCell.id = variableCellId;
-
-      const stackTraceCell = makeTableCell();
-      traceData.traces.forEach((stack, level) => {
-        const {method} = stack;
-        const line = document.createElement("div");
-        line.innerHTML = `<span style="cursor: pointer; color: rgb(71,226,92); text-decoration: underline" onclick="showStackTraceVariables(${level}, '${variableCellId}', ${pid});">${method}</span>`
-        stackTraceCell.appendChild(line);
-      });
-      if (traceData.failure != null) {
-        const line = document.createElement("div");
-        line.innerText = traceData.failure;
-        line.style.color = "#d71616";
-        stackTraceCell.appendChild(line);
-      }
-
-      tbl.appendChild(makeTableRow(processCell, statusCell, stackTraceCell, variablesCell));
-      if (traceData.traces != null && traceData.traces.length > 0) {
-        showStackTraceVariables(0, variableCellId, pid);
-      }
-    });
-  }
-
-  /**
-   * The primary function which updates the overall state of the window.
-   */
-  function updateWindow(newTime) {
-    if (newTime != null) {
-      time = newTime;
-    }
-    timeSlider.value = time;
-    timeStartText.innerHTML = timeFormat(time);
-    processSlider.style.left = `${convertRemToPixels(time / BAR_LEN_FACTOR)}px`;
-
-    const {
-      currentStep,
-      currentSlice,
-    } = getStateAtTime();
-    if (currentStep != null) {
-      const [pc] = currentStep;
-      moveAndHighlightCode(pc);
+        const firstPc = block.start_pc;
+        block.assembly.forEach((c, idx) => {
+            const pc = idx + firstPc;
+            const pcCell = makeTableCell(pc);
+            pcCell.style.fontFamily = '"Courier New", Courier, monospace';
+            pcCell.style.color = '#788585';
+            const codeCell = makeTableCell(`<span title="${c.explain}">${c.code}</span>`);
+            codeCell.style.fontFamily = '"Courier New", Courier, monospace';
+            codeCell.style.color = '#E7E7E7'
+            const tableRow = makeTableRow(pcCell, codeCell);
+            tableRow.setAttribute("id", `code-pc-${pc}`);
+            codeTable.appendChild(tableRow);
+        });
     }
 
-    // console.log(newTime, currentStep, currentSlice, currentContext);
-
-    setSharedVariablesTable(currentSlice.shared_values);
-    updateStackTrace(currentSlice);
-  }
-
-  /**
-   * Returns the state of the program at the current time shown in the bottom progress bars.
-   * @returns {{currentStep: *, currentContext: HarmonyContext[], currentSlice: null}}
-   */
-  function getStateAtTime() {
-    let duration = 0;
-    const processes = harmonyData.path_to_bad_node.processes
-    let currentProcess = processes[0];
-    for (const p of processes) {
-      duration += p.duration;
-      currentProcess = p;
-      if (duration >= time) {
-        duration -= p.duration;
-        break;
-      }
+    /**
+     * Creates an html-tag string which is customized for colors based on
+     * the type of the given value.
+     */
+    function createHtmlValue(v) {
+        const typeofV = typeof v;
+        const create = (color, value) => `<span style="color: ${color}">${value}</span>`;
+        if (typeofV === "string") {
+            if (v.startsWith("?")) {
+                return create("#ed85ff", `${v}`);
+            } else {
+                return create("#bc6021", `"${v}"`);
+            }
+        }
+        if (typeofV === "boolean" || typeofV === "number") {
+            const s = v.toString()
+            return create("#24a583", s[0].toUpperCase() + s.substring(1));
+        }
+        if (v == null) {
+            return create("#a01c1c", 'None');
+        } else {
+            return create("#ffffff", JSON.stringify(v));
+        }
     }
-    let steps = [];
-    for (const step of currentProcess.steps) {
-      if (step.step != null) {
-        steps.push([step.step[0], null]);
-      } else {
-        steps.push(step.choose);
-      }
+    /**
+     * Creates a collapseable html entry that represents the values in the
+     * given object.
+     */
+    function makeCollapseable(summary, obj) {
+        const collapseable = document.createElement("details");
+        const summaryElement = document.createElement("summary");
+        summaryElement.innerText = summary;
+        summaryElement.style.fontSize = "15px";
+        collapseable.appendChild(summaryElement);
+        Object.entries(obj).forEach(([k, v]) => {
+            if (v == null || typeof v !== 'object') {
+                const p = document.createElement("p");
+                p.innerHTML = `${k}: ${createHtmlValue(v)}`;
+                p.style.fontSize = "15px";
+                collapseable.appendChild(p);
+            } else {
+                const header = Array.isArray(v) ? "[Array]" : "[object Object]"
+                const subcollapseable = makeCollapseable(`${k}: ${header}`, v);
+                collapseable.appendChild(subcollapseable);
+            }
+        });
+        collapseable.setAttribute("open", "true");
+        return collapseable;
     }
-    let currentStep = steps[time - duration];
-    let currentSlice = null;
-    for (const slice of currentProcess.slices) {
-      duration += slice.duration;
-      if (duration >= time) {
-        currentSlice = slice;
-        break;
-      }
+
+    /**
+     * Displays the shared variables on the the current state.
+     */
+    let lastSlice = null;
+    function setSharedVariablesTable(slice) {
+        if (slice === lastSlice) return;
+        const collapseable = makeCollapseable("Shared Variables", slice ?? {});
+        while (sharedVariableTable.firstChild != null) sharedVariableTable.removeChild(sharedVariableTable.firstChild);
+        sharedVariableTable.appendChild(collapseable);
+        lastSlice = slice;
     }
-    return {
-      "currentStep": currentStep,
-      "currentSlice": currentSlice
-    };
-  }
 
-  // Utility Functions
-
-  /**
-   * Given the time in seconds, convert it to a readable string that shows the
-   * hours, minutes, and seconds. Each time unit value should be represented with
-   * two digits at minimum, e.g. 3 seconds should be displayed as "03".
-   */
-  let timeFormat = (t) => {
-    let hours = Math.floor(t / 3600);
-    let minutes = Math.floor((t - (hours * 3600)) / 60);
-    let seconds = t - (hours * 3600) - (minutes * 60);
-
-    if (hours < 10) {
-      hours = "0" + hours;
+    /**
+     * Scrolls the code-table to the given pc and highlights that line of code.
+     */
+    let lastHighlighted = null;
+    function moveAndHighlightCode(pc) {
+        if (lastHighlighted != null) {
+            const line = document.getElementById(`code-pc-${lastHighlighted}`)
+            line.style.backgroundColor = "";
+        }
+        const line = document.getElementById(`code-pc-${pc}`)
+        line.style.backgroundColor = "rgba(0, 255, 255, 0.2)";
+        lastHighlighted = pc;
+        line.scrollIntoView();
     }
-    if (minutes < 10) {
-      minutes = "0" + minutes;
-    }
-    if (seconds < 10) {
-      seconds = "0" + seconds;
-    }
-    return hours + ':' + minutes + ':' + seconds;
-  }
 
-  function convertRemToPixels(rem) {
-    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
-  }
+    /**
+     * Initializes the window and displays the execution [data] about the program.
+     * See the _loadData() function in src/outputPanel.ts for the data given
+     * to initialize the window.
+     */
+    function initWindow(data) {
+        harmonyData = data;
+        initResizeBar();
 
-  /**
-   * Gets the height of the current document. Uses JQuery's implementation.
-   * @returns {number} A pixel measurement.
-   */
-  function getDocumentHeight() {
-    const body = document.body, html = document.documentElement;
-    return Math.max( body.scrollHeight, body.offsetHeight,
-      html.clientHeight, html.scrollHeight, html.offsetHeight);
-  }
+        // Get all process names in order
+        let totalDuration = 0;
+        let processObjects = new Map();
 
-  /**
-   * Fits the value in between a lower and upper bound.
-   * @param value The value to fit.
-   * @param min The lower bound.
-   * @param max The upper bound.
-   * @requires min <= max
-   * @returns {number} value if (min <= value <= max) else min if (value < min) else max if (value > max).
-   */
-  function fitInBounds(value, min, max) {
-    return Math.min(Math.max(value, min), max);
-  }
+        // GOOD
+        if (data.path_to_bad_node.issue != null) {
+            issueDisplay.textContent = data.path_to_bad_node.issue;
+        }
 
-  const makeTableCell = (content) => {
-    const cell = document.createElement("td");
-    if (content != null) {
-      cell.innerHTML = content;
+        // GOOD
+        data.executed_code.forEach((block, idx) => insertCodeBlock(block, idx));
+
+        // Builds the process blocks on the bottom.
+        data.path_to_bad_node.processes.forEach(p => {
+            if (!processObjects.has(p.pid)) {
+                // Label Generation
+                const labelContainer = document.createElement("div");
+                labelContainer.setAttribute('class', 'process-label-row');
+                const label = document.createElement('p');
+                label.setAttribute('class', 'process-label-text');
+                label.textContent = p.name;
+                labelContainer.appendChild(label);
+                processLabels.appendChild(labelContainer);
+                // Row Generation
+                const row = document.createElement("div");
+                row.setAttribute('class', 'process-bar-row');
+                const bar = document.createElement("div");
+                bar.setAttribute('class', "process-bar");
+                row.appendChild(bar);
+                processObjects.set(p.pid, bar);
+                processBars.appendChild(row);
+            }
+
+            const processBar = processObjects.get(p.pid);
+            p.slices.forEach(s => {
+                const processBlock = document.createElement("div");
+                processBlock.setAttribute('class', 'process-block');
+                processBlock.style.left = `${totalDuration / BAR_LEN_FACTOR}rem`;
+                processBlock.style.width = `${s.duration / BAR_LEN_FACTOR}rem`;
+                processBlock.style.cursor = "pointer";
+                const currentTime = totalDuration;
+                processBlock.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    updateWindow(currentTime);
+                })
+                // processBlock.style.border = "2px solid rgb(255, 255, 255, 0.2)";
+                processBar.appendChild(processBlock);
+                totalDuration += s.duration;
+            });
+        });
+
+        maxTime = totalDuration;
+
+        let processNum = 0;
+        processObjects.forEach((processBar) => {
+            processBar.style.width = `${maxTime / BAR_LEN_FACTOR}rem`;
+            const blocks = processBar.childNodes;
+            blocks.forEach((block) => {
+                block.style.background = COLOR_MAP[processNum % COLOR_MAP.length];
+            });
+            processNum++;
+        });
+        processLengthPx = convertRemToPixels(maxTime / BAR_LEN_FACTOR);
+
+        timeSlider.max = maxTime;
+        timeEndText.innerHTML = timeFormat(maxTime);
+
+        timeSlider.addEventListener('input', (e) => {
+            e.preventDefault();
+            updateWindow(timeSlider.value);
+        }, false);
+
+        playButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (playing) {
+                window.clearInterval(playTimer);
+                playButton.firstElementChild.setAttribute('class', 'fas fa-play');
+                playing = false;
+            } else {
+                playTimer = window.setInterval(playExecution, PLAY_SPEED);
+                playButton.firstElementChild.setAttribute('class', 'fas fa-pause');
+                playing = true;
+            }
+        }, false);
+
+        forwardButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (time < maxTime) {
+                updateWindow(time + 1);
+            }
+        }, false);
+
+        backButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (time > 0) {
+                updateWindow(time - 1);
+            }
+        }, false);
+        updateWindow(time);
     }
-    return cell;
-  }
-  const makeTableRow = (...cells) => {
-    const tableRow = document.createElement("tr");
-    if (cells != null) {
-      cells.forEach(c => {
-        tableRow.appendChild(c);
-      });
+
+    /**
+     * Plays the execution video. This is done by running this callback which increments
+     * the current time and other related visual properties. This is done until the
+     * time value reaches the maximum time.
+     *
+     * The function is wrapped in the playTimer function, which is the callback function
+     * used for setInterval and clearInterval.
+     */
+    function playExecution() {
+        if (time < maxTime) {
+            time++;
+        } else {
+            window.clearInterval(playTimer);
+            playButton.firstElementChild.setAttribute('class', 'fas fa-play');
+            playing = false;
+        }
+        updateWindow(time);
     }
-    return tableRow;
-  }
+
+    /**
+     * Updates the current stack trace table's list of variables.
+     *
+     * - level is a number denoting position of the corresponding stack trace scope on the table, where the top row is 0
+     * and each row after increases by 1.
+     * - id is the HTML id of the table cell displaying the variables, in the form `trace-variables-row-${row}`.
+     * - row is a the table row, starting at 0 from the top row and skipping the header row.
+     */
+    function showStackTraceVariables(level, id, pid) {
+        console.log(level, id, pid, globalCurrentStackTrace);
+        const trace = globalCurrentStackTrace[pid].traces[level];
+        const cell = document.getElementById(id);
+        while (cell.firstChild != null) cell.removeChild(cell.firstChild);
+        Object.entries(trace.vars).forEach(([name, value]) => {
+            const line = document.createElement("div");
+            line.innerHTML = `${name} = ${createHtmlValue(value)}`;
+            cell.appendChild(line);
+        });
+    }
+
+    /**
+     * Updates the stack trace table for a specific node.
+     * This will display all of the running/blocked processes, as well as the stack for
+     * each of those processes at that point.
+     */
+    function updateStackTrace(slice) {
+        console.log("Slice", slice);
+        const tbl = stackTraceTable;
+        const traces = slice.trace;
+        globalCurrentStackTrace = traces;
+        tbl.style.fontFamily = '"Courier New", Courier, monospace';
+
+        while (tbl.firstChild != null) tbl.removeChild(tbl.firstChild);
+        function buildHeader(...headers) {
+            const row = document.createElement("tr");
+            headers.forEach(h => {
+                const header = document.createElement("th");
+                header.innerText = h;
+                row.appendChild(header);
+            });
+            return row;
+        }
+        const header = buildHeader('Process', 'Status', 'Stack Trace', 'Variables');
+        tbl.appendChild(header);
+
+        Object.entries(traces).forEach(([pid, traceData], rowNumber) => {
+            let processName = `${harmonyData.path_to_bad_node.pid_to_name[pid]}`
+            const processCell = makeTableCell(processName);
+
+            const statusCell = document.createElement("td");
+            statusCell.innerText = traceData.mode;
+            switch (statusCell.innerText) {
+                case "running":
+                    statusCell.style.color = "#30ea30"; break;
+                case "failed":
+                    statusCell.style.color = "#d71616"; break;
+                case "blocked":
+                    statusCell.style.color = "#701f1f"; break;
+                case "terminated":
+                    statusCell.style.color = "#fff000"; break;
+                case "choosing":
+                    statusCell.style.color = "#19a7ee"; break;
+                default:
+                    statusCell.style.color = "#ffffff"; break;
+            }
+
+            const variablesCell = makeTableCell();
+            const variableCellId = `trace-variables-row-${rowNumber}`;
+            variablesCell.id = variableCellId;
+
+            const stackTraceCell = makeTableCell();
+            traceData.traces.forEach((stack, level) => {
+                const {method} = stack;
+                const line = document.createElement("div");
+                line.innerHTML = `<span style="cursor: pointer; color: rgb(71,226,92); text-decoration: underline" onclick="showStackTraceVariables(${level}, '${variableCellId}', ${pid});">${method}</span>`
+                stackTraceCell.appendChild(line);
+            });
+            if (traceData.failure != null) {
+                const line = document.createElement("div");
+                line.innerText = traceData.failure;
+                line.style.color = "#d71616";
+                stackTraceCell.appendChild(line);
+            }
+
+            tbl.appendChild(makeTableRow(processCell, statusCell, stackTraceCell, variablesCell));
+            if (traceData.traces != null && traceData.traces.length > 0) {
+                showStackTraceVariables(0, variableCellId, pid);
+            }
+        });
+    }
+
+    /**
+     * The primary function which updates the overall state of the window.
+     */
+    function updateWindow(newTime) {
+        if (newTime != null) {
+            time = newTime;
+        }
+        timeSlider.value = time;
+        timeStartText.innerHTML = timeFormat(time);
+        processSlider.style.left = `${convertRemToPixels(time / BAR_LEN_FACTOR)}px`;
+
+        const {
+            currentStep,
+            currentSlice,
+        } = getStateAtTime();
+        if (currentStep != null) {
+            const [pc] = currentStep;
+            moveAndHighlightCode(pc);
+        }
+
+        // console.log(newTime, currentStep, currentSlice, currentContext);
+
+        setSharedVariablesTable(currentSlice.shared_values);
+        updateStackTrace(currentSlice);
+    }
+
+    /**
+     * Returns the state of the program at the current time shown in the bottom progress bars.
+     * @returns {{currentStep: *, currentContext: HarmonyContext[], currentSlice: null}}
+     */
+    function getStateAtTime() {
+        let duration = 0;
+        const processes = harmonyData.path_to_bad_node.processes
+        let currentProcess = processes[0];
+        for (const p of processes) {
+            duration += p.duration;
+            currentProcess = p;
+            if (duration >= time) {
+                duration -= p.duration;
+                break;
+            }
+        }
+        let steps = [];
+        for (const step of currentProcess.steps) {
+            if (step.step != null) {
+                steps.push([step.step[0], null]);
+            } else {
+                steps.push(step.choose);
+            }
+        }
+        let currentStep = steps[time - duration];
+        let currentSlice = null;
+        for (const slice of currentProcess.slices) {
+            duration += slice.duration;
+            if (duration >= time) {
+                currentSlice = slice;
+                break;
+            }
+        }
+        return {
+            "currentStep": currentStep,
+            "currentSlice": currentSlice
+        };
+    }
+
+    // Utility Functions
+
+    /**
+     * Given the time in seconds, convert it to a readable string that shows the
+     * hours, minutes, and seconds. Each time unit value should be represented with
+     * two digits at minimum, e.g. 3 seconds should be displayed as "03".
+     */
+    let timeFormat = (t) => {
+        let hours = Math.floor(t / 3600);
+        let minutes = Math.floor((t - (hours * 3600)) / 60);
+        let seconds = t - (hours * 3600) - (minutes * 60);
+
+        if (hours < 10) {
+            hours = "0" + hours;
+        }
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+        if (seconds < 10) {
+            seconds = "0" + seconds;
+        }
+        return hours + ':' + minutes + ':' + seconds;
+    }
+
+    function convertRemToPixels(rem) {
+        return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+    }
+
+    /**
+     * Gets the height of the current document. Uses JQuery's implementation.
+     * @returns {number} A pixel measurement.
+     */
+    function getDocumentHeight() {
+        const body = document.body, html = document.documentElement;
+        return Math.max( body.scrollHeight, body.offsetHeight,
+                html.clientHeight, html.scrollHeight, html.offsetHeight);
+    }
+
+    /**
+     * Fits the value in between a lower and upper bound.
+     * @param value The value to fit.
+     * @param min The lower bound.
+     * @param max The upper bound.
+     * @requires min <= max
+     * @returns {number} value if (min <= value <= max) else min if (value < min) else max if (value > max).
+     */
+    function fitInBounds(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+    }
+
+    const makeTableCell = (content) => {
+        const cell = document.createElement("td");
+        if (content != null) {
+            cell.innerHTML = content;
+        }
+        return cell;
+    }
+    const makeTableRow = (...cells) => {
+        const tableRow = document.createElement("tr");
+        if (cells != null) {
+            cells.forEach(c => {
+                tableRow.appendChild(c);
+            });
+        }
+        return tableRow;
+    }
 </script>
 
 <script>
-  /**
-   * Listens for an event posted from either src/outputPanel.ts or from
-   * src/feature/standaloneHtml.ts
-   */
-  window.addEventListener('message', event => {
-    const {command, jsonData} = event.data; // The command and JSON data our extension sent
-    console.log("Hear message", event.data)
-    switch (command) {
-      case 'load':
-        overlay.addEventListener("transitionend", () => {
-          overlay.style.display = "none";
-        }, false);
-        overlay.style.opacity = 0;
-        initWindow(jsonData);
-        break;
-      case 'message':
-        overlayLoader.style.display = "none";
-        overlayText.style.top = "50%";
-        overlayText.textContent = jsonData;
-        break;
-    }
-  });
+    /**
+     * Listens for an event posted from either src/outputPanel.ts or from
+     * src/feature/standaloneHtml.ts
+     */
+    window.addEventListener('message', event => {
+        const {command, jsonData} = event.data; // The command and JSON data our extension sent
+        console.log("Hear message", event.data)
+        switch (command) {
+            case 'load':
+                overlay.addEventListener("transitionend", () => {
+                    overlay.style.display = "none";
+                }, false);
+                overlay.style.opacity = 0;
+                initWindow(jsonData);
+                break;
+            case 'message':
+                overlayLoader.style.display = "none";
+                overlayText.style.top = "50%";
+                overlayText.textContent = jsonData;
+                break;
+        }
+    });
 </script>
 
 </html>
