@@ -14,4 +14,3 @@ if __name__ == "__main__":
         print("Error occurred here :/")
         with open("error.txt", 'w') as f:
             f.write(str(e))
-    # exit(1)

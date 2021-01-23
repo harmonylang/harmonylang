@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
+import {Webview} from 'vscode';
 import * as fs from 'fs';
-import { Webview } from "vscode";
 import {createStandaloneHtml} from "../feature/standaloneHtml";
 import {parse} from "../harmony/CharmonyJson";
-import {CHARMONY_HTML_FILE, EXAMPLE_CHARM_JSON, RESOURCE_DIR} from "../config";
+import {CHARMONY_HTML_FILE, CHARMONY_JSON_OUTPUT, RESOURCE_DIR} from "../config";
 
 export default class CharmonyPanelController {
     public static currentPanel: CharmonyPanelController | undefined;
@@ -82,19 +82,17 @@ export default class CharmonyPanelController {
         const webview = this.panel.webview;
         const harmonyPanel = this.panel;
 
-        const dataPath = EXAMPLE_CHARM_JSON;
+        const dataPath = CHARMONY_JSON_OUTPUT;
         if (!hasData){
             console.log("Looking for data");
-            fs.readFile(CHARMONY_HTML_FILE, 'utf-8', function (err, data) {
-                if (err) {
-                    console.log(err);
-                    vscode.window.showInformationMessage(err.message);
-                } else {
-                    harmonyPanel.webview.html = data;
-                }
-            });
+            try {
+                harmonyPanel.webview.html = fs.readFileSync(CHARMONY_HTML_FILE, 'utf-8');
+            } catch (err) {
+                console.log(err);
+                vscode.window.showInformationMessage(err.message);
+            }
         }
-        if (hasData){
+        if (hasData) {
             console.log(CHARMONY_HTML_FILE, dataPath);
             this.loadData(dataPath, webview);
         }

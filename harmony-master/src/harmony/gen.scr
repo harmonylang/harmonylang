@@ -1,0 +1,2 @@
+sh getmods.scr > modules
+m4 -P harmony.m4

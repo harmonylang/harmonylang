@@ -1,13 +1,12 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import CharmonyPanelController from './outputPanel/PanelController';
-import {install, uninstall} from './feature/install';
 import {ProcessManagerImpl} from './processManager';
-import HarmonyOutputPanel from "./outputPanel";
-import {HARMONY_COMPILER_DIR, HARMONY_COMPILER_PATH} from "./config";
+import {CHARMONY_COMPILER_DIR, CHARMONY_SCRIPT_PATH, GENERATED_FILES} from "./config";
+import * as fs from "fs";
+import * as rimraf from "rimraf";
 
 const processManager = ProcessManagerImpl.init();
-const processConfig = {cwd: HARMONY_COMPILER_DIR};
 
 export const activate = (context: vscode.ExtensionContext) => {
     const runHarmonyCommand = vscode.commands.registerCommand('harmonylang.run', () => {
@@ -71,45 +70,25 @@ const showMessage = (main: string, subHeader?: string, subtext?: string) => {
     return showVscodeMessage(false, main, subHeader, subtext);
 };
 
-const getPythonPath = (): string => {
-    // Same configuration for vscode's Python extension
-    const config = vscode.workspace.getConfiguration('python').get('pythonPath');
-    // Use python3 by default if configurations are not set.
-    return config === undefined || typeof config !== 'string' ? 'python3' : config;
-};
-
 export function runHarmony(context: vscode.ExtensionContext, fullFileName: string) {
     // Use python3 by default if configurations are not set.
-    CharmonyPanelController.currentPanel?.dispose();
-    CharmonyPanelController.createOrShow(context.extensionUri);
-    CharmonyPanelController.currentPanel?.updateResults();
-
-    const pythonPath = getPythonPath();
-    const compileCommand = `${pythonPath} "${HARMONY_COMPILER_PATH}" -A "${fullFileName}"`;
-    processManager.startCommand(compileCommand, processConfig, (err, stdout, stderr) => {
-        HarmonyOutputPanel.currentPanel?.dispose();
-        HarmonyOutputPanel.createOrShow(context.extensionUri);
-        console.log(stderr, err);
-        if (stderr) {
+    // const pythonPath = getPythonPath();
+    const charmonyCompileCommand = `${CHARMONY_SCRIPT_PATH} ${fullFileName}`;
+    processManager.startCommand(charmonyCompileCommand, {
+        cwd: CHARMONY_COMPILER_DIR
+    }, (error, stdout, stderr) => {
+        CharmonyPanelController.currentPanel?.dispose();
+        if (processManager.processesAreKilled) return;
+        CharmonyPanelController.createOrShow(context.extensionUri);
+        console.log(stderr, error);
+        if (stdout.includes("Safety Violation")) {
             // System errors, includes division by zero.
-            HarmonyOutputPanel.currentPanel?.updateMessage(`Error: ${stderr}`);
-        } else if (err) {
-            // error is non-null when process exits on code 1, i.e. a parser error.
-            // Parse error feedback is also in standard output (it's just outputted by python's print function)
-            HarmonyOutputPanel.currentPanel?.updateMessage(`Error: ${stdout}`);
+            CharmonyPanelController.currentPanel?.updateResults();
         } else {
-            const runCommand = `${pythonPath} "${HARMONY_COMPILER_PATH}" "${fullFileName}"`;
-            processManager.startCommand(runCommand, processConfig, (error, stdout, stderr) => {
-                if (processManager.processesAreKilled) return;
-                if (stderr || error) {
-                    console.log("Print the errors");
-                    HarmonyOutputPanel.currentPanel?.updateResults();
-                } else {
-                    // Output Panel will include the stdout output.
-                    HarmonyOutputPanel.currentPanel?.updateMessage(`No Errors Found`);
-                    // Show the output panel with the contents of harmony.html because the compilation succeeded.
-                }
-            });
+            // Output Panel will include the stdout output.
+            CharmonyPanelController.currentPanel?.updateMessage(`No Errors Found`);
+            // Show the output panel with the contents of harmony.html because the compilation succeeded.
         }
+        GENERATED_FILES.forEach(f => rimraf.sync(f));
     });
 }
