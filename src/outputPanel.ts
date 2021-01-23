@@ -4,7 +4,7 @@ import * as Fs from 'fs';
 import HarmonyJson from './harmony/HarmonyJson';
 import { Webview } from "vscode";
 import {createStandaloneHtml} from "./feature/standaloneHtml";
-import {parse} from "./harmony/IntermediateHarmonyJson";
+import {parse} from "./harmony/CharmonyJson";
 
 export default class HarmonyOutputPanel {
     public static currentPanel: HarmonyOutputPanel | undefined;
