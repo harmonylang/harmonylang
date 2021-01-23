@@ -1,6 +1,7 @@
 import unittest
 
-from analysis.fromc.jsontypes import ValueRep, get_value
+from analysis.fromc.jsonify import get_value
+from analysis.fromc.jsontypes import ValueRep
 
 
 class TestGetValue(unittest.TestCase):

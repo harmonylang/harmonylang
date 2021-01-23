@@ -1,37 +1,31 @@
-from pprint import pprint
-from typing import List, TypedDict, Any, Dict, Set
+from typing import Set
 
 from analysis.fromc.context import parse_context
-from analysis.fromc.jsontypes import IntermediateJson, get_value
+from analysis.fromc.jsonify import get_value, jsonify_trace
+from analysis.fromc.jsontypes import IntermediateJson
 
 
-# class StepValue(TypedDict):
-#     steps: [pc, pc]
-#     choose: [pc, ValueRep]
-#     error: str
-
-# class SliceState(TypedDict):
-#     duration: int
-#     values: Dict[str, Any]
-#     uid: int
+def get_shared_values(micro_step: dict) -> dict:
+    if 'shared' in micro_step:
+        return {k: get_value(v) for k, v in micro_step['shared'].items()}
+    else:
+        return {}
 
 
-# class ProcessStep(TypedDict):
-#     pid: int
-#     name: str
-#     final_values: Dict[str, Any]
-#     sid: int
-#     steps: List[StepValue]
-#     duration: int
-#     states: list
-#     slices: List[SliceState]
+def get_trace(micro_step: dict) -> dict:
+    if 'local' in micro_step:
+        return {k: [jsonify_trace(t) for t in v] for k, v in micro_step['trace'].items()}
+    else:
+        return {}
 
 
 def get_path(json: IntermediateJson):
     issue = json['issue']
     shared_variable_names: Set[str] = set()
     processes = []
-    previous_json = {}
+    previous_shared_values = {}
+    previous_traces = {}
+
     for megastep in json['megasteps']:
         pid = megastep['tid']
         name = megastep['name']
@@ -44,15 +38,16 @@ def get_path(json: IntermediateJson):
         duration = 0
         slice_duration = 0
         microsteps = []
+
+        # For the first step
         if megastep['microsteps']:
             first_step = megastep['microsteps'][0]
-            if 'shared' not in first_step:
-                first_step['shared'] = {}
-            json = {k: get_value(v) for k, v in first_step['shared'].items()}
-            previous_json.update(json)
+            previous_shared_values.update(get_shared_values(first_step))
+            previous_traces.update(get_trace(first_step))
             duration += 1
             slice_duration += 1
 
+        # For the remaining steps
         for i in range(1, len(megastep['microsteps'])):
             microstep = megastep['microsteps'][i]
             pc = int(microstep['pc'])
@@ -60,14 +55,15 @@ def get_path(json: IntermediateJson):
                 npc = None
             else:
                 npc = int(microstep['npc'])
-            if 'shared' in microstep:
+            if 'shared' in microstep or 'trace' in microstep:
                 slices.append({
                     "duration": slice_duration,
-                    "shared_values": previous_json.copy()
+                    "shared_values": previous_shared_values.copy(),
+                    "trace": previous_shared_values.copy()
                 })
                 slice_duration = 0
-                json = {k: get_value(v) for k, v in microstep['shared'].items()}
-                previous_json.update(json)
+                previous_shared_values.update(get_shared_values(microstep))
+                previous_traces.update(get_trace(microstep))
 
             duration += 1
             slice_duration += 1
@@ -80,7 +76,7 @@ def get_path(json: IntermediateJson):
 
         slices.append({
             "duration": slice_duration,
-            "shared_values": previous_json.copy()
+            "shared_values": previous_shared_values.copy()
         })
 
         assert duration == sum(s['duration'] for s in slices)

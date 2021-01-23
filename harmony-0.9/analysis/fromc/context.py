@@ -1,6 +1,7 @@
 from typing import List
 
-from analysis.fromc.jsontypes import Context, get_value
+from analysis.fromc.jsonify import get_value
+from analysis.fromc.jsontypes import Context
 
 
 def parse_context(contexts: List[Context]):
