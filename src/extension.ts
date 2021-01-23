@@ -5,8 +5,6 @@ import {install, uninstall} from './feature/install';
 import {ProcessManagerImpl} from './processManager';
 
 const processManager = ProcessManagerImpl.init();
-const processConfig = { cwd: path.join(__dirname, '..', 'harmony-0.9') };
-const compilerPath = path.join(__dirname, '..', 'harmony-0.9', 'harmony.py');
 
 export const activate = (context: vscode.ExtensionContext) => {
     const runHarmonyCommand = vscode.commands.registerCommand('harmonylang.run', () => {

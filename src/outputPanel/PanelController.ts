@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
 import * as fs from 'fs';
 import { Webview } from "vscode";
 import {createStandaloneHtml} from "../feature/standaloneHtml";
 import {parse} from "../harmony/CharmonyJson";
+import {CHARMONY_HTML_FILE, EXAMPLE_CHARM_JSON, RESOURCE_DIR} from "../config";
 
 export default class CharmonyPanelController {
     public static currentPanel: CharmonyPanelController | undefined;
@@ -30,7 +30,7 @@ export default class CharmonyPanelController {
             {
                 // Enable javascript in the webview
                 enableScripts: true,
-                localResourceRoots: [vscode.Uri.file(path.join(__dirname, '..', '..', 'resource'))]
+                localResourceRoots: [vscode.Uri.file(RESOURCE_DIR)]
             }
         );
         CharmonyPanelController.currentPanel = new CharmonyPanelController(panel, extensionUri);
@@ -82,11 +82,10 @@ export default class CharmonyPanelController {
         const webview = this.panel.webview;
         const harmonyPanel = this.panel;
 
-        const uiPath = path.join(__dirname, '..', '..', 'resource', 'charmony.html');
-        const dataPath = path.join(__dirname, '..', '..', 'resource', 'charm.json');
+        const dataPath = EXAMPLE_CHARM_JSON;
         if (!hasData){
             console.log("Looking for data");
-            fs.readFile(uiPath, 'utf-8', function (err, data) {
+            fs.readFile(CHARMONY_HTML_FILE, 'utf-8', function (err, data) {
                 if (err) {
                     console.log(err);
                     vscode.window.showInformationMessage(err.message);
@@ -96,7 +95,7 @@ export default class CharmonyPanelController {
             });
         }
         if (hasData){
-            console.log(uiPath, dataPath);
+            console.log(CHARMONY_HTML_FILE, dataPath);
             this.loadData(dataPath, webview);
         }
     }
