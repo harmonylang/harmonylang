@@ -3,8 +3,11 @@ import * as path from 'path';
 import CharmonyPanelController from './outputPanel/PanelController';
 import {install, uninstall} from './feature/install';
 import {ProcessManagerImpl} from './processManager';
+import HarmonyOutputPanel from "./outputPanel";
+import {HARMONY_COMPILER_DIR, HARMONY_COMPILER_PATH} from "./config";
 
 const processManager = ProcessManagerImpl.init();
+const processConfig = {cwd: HARMONY_COMPILER_DIR};
 
 export const activate = (context: vscode.ExtensionContext) => {
     const runHarmonyCommand = vscode.commands.registerCommand('harmonylang.run', () => {
@@ -26,23 +29,8 @@ export const activate = (context: vscode.ExtensionContext) => {
         endHarmonyProcesses();
     });
 
-    const installHarmony = vscode.commands.registerCommand('harmonylang.install', () => {
-        install(() => showVscodeMessage(false, 'Added Harmony locally to the device. Run with the command `harmony`'),
-            () => showVscodeMessage(true, 'Harmony could not be added locally to the device.'),
-            () => showVscodeMessage(false, 'File already exists'));
-    });
-
-    const uninstallHarmony = vscode.commands.registerCommand('harmonylang.uninstall', () => {
-        uninstall(
-            () => showVscodeMessage(false, 'Removed Harmony from this device.'),
-            () => showVscodeMessage(true, 'Could not remove Harmony from this device'),
-            () => showVscodeMessage(false, 'File does not exist'));
-    });
-
     context.subscriptions.push(runHarmonyCommand);
     context.subscriptions.push(endHarmonyProcessesCommand);
-    context.subscriptions.push(installHarmony);
-    context.subscriptions.push(uninstallHarmony);
 
     if (vscode.window.registerWebviewPanelSerializer) {
         vscode.window.registerWebviewPanelSerializer(CharmonyPanelController.viewType, {
@@ -95,4 +83,33 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
     CharmonyPanelController.currentPanel?.dispose();
     CharmonyPanelController.createOrShow(context.extensionUri);
     CharmonyPanelController.currentPanel?.updateResults();
+
+    const pythonPath = getPythonPath();
+    const compileCommand = `${pythonPath} "${HARMONY_COMPILER_PATH}" -A "${fullFileName}"`;
+    processManager.startCommand(compileCommand, processConfig, (err, stdout, stderr) => {
+        HarmonyOutputPanel.currentPanel?.dispose();
+        HarmonyOutputPanel.createOrShow(context.extensionUri);
+        console.log(stderr, err);
+        if (stderr) {
+            // System errors, includes division by zero.
+            HarmonyOutputPanel.currentPanel?.updateMessage(`Error: ${stderr}`);
+        } else if (err) {
+            // error is non-null when process exits on code 1, i.e. a parser error.
+            // Parse error feedback is also in standard output (it's just outputted by python's print function)
+            HarmonyOutputPanel.currentPanel?.updateMessage(`Error: ${stdout}`);
+        } else {
+            const runCommand = `${pythonPath} "${HARMONY_COMPILER_PATH}" "${fullFileName}"`;
+            processManager.startCommand(runCommand, processConfig, (error, stdout, stderr) => {
+                if (processManager.processesAreKilled) return;
+                if (stderr || error) {
+                    console.log("Print the errors");
+                    HarmonyOutputPanel.currentPanel?.updateResults();
+                } else {
+                    // Output Panel will include the stdout output.
+                    HarmonyOutputPanel.currentPanel?.updateMessage(`No Errors Found`);
+                    // Show the output panel with the contents of harmony.html because the compilation succeeded.
+                }
+            });
+        }
+    });
 }
