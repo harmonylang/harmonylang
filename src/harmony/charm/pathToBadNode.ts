@@ -1,4 +1,4 @@
-import {HarmonyProcess, HarmonySlice, HarmonyStep, HarmonyTrace, ProcessPathDetail} from "../CharmonyJson";
+import {HarmonyProcess, HarmonySlice, HarmonyStep, HarmonyTrace, ProcessPathDetail, TraceData} from "../CharmonyJson";
 import {
   IntermediateJson, IntermediateKeyValueRep,
   IntermediateTrace,
@@ -8,7 +8,6 @@ import {
 
 function parseIntermediateValueRep(v: IntermediateValueRepresentation): unknown {
   const {value, type} = v;
-  console.log("Parse rep value", v);
   switch (type) {
     case "int": return Number.parseInt(value as string);
     case "atom": return value;
@@ -31,7 +30,6 @@ function parseIntermediateValueRep(v: IntermediateValueRepresentation): unknown 
 }
 
 function parseIntermediateTrace(trace: IntermediateTrace): HarmonyTrace {
-  console.log("Parse Trace Value");
   const copiedTrace: IntermediateTrace = Object.assign({}, trace);
   return {
     ...copiedTrace,
@@ -41,23 +39,22 @@ function parseIntermediateTrace(trace: IntermediateTrace): HarmonyTrace {
 
 function parseSharedValues(sharedValues: null | Record<string, IntermediateValueRepresentation>): Record<string, unknown> {
   const result: Record<string, unknown> = {};
-  console.log("Parse Shared Values", sharedValues);
   if (sharedValues != null) {
-    console.log("Pass");
     Object.entries(sharedValues).forEach(([k, v]) => {
-      result[k] = parseIntermediateValueRep(v);
+      if (!k.startsWith("__")) {
+        result[k] = parseIntermediateValueRep(v);
+      }
     });
-    console.log("Yes");
   }
-  console.log(result);
   return result;
 }
 
-function parseIntermediateTraceArray(pid: string, traces: null | IntermediateTrace[]): Record<string, HarmonyTrace[]> {
-  const result: Record<string, HarmonyTrace[]> = {};
-  console.log("Parse Trace Array");
+function parseIntermediateTraceArray(mode: string,
+                                     failure: string | null,
+                                     traces: null | IntermediateTrace[]): Omit<TraceData, 'traces'> & {traces?: HarmonyTrace[]} {
+  const result: Omit<TraceData, 'traces'> & {traces?: HarmonyTrace[]} = {failure, mode};
   if (traces != null) {
-    result[pid] = traces.map(parseIntermediateTrace);
+    result.traces = traces.map(parseIntermediateTrace);
   }
   return result;
 }
@@ -65,30 +62,36 @@ function parseIntermediateTraceArray(pid: string, traces: null | IntermediateTra
 export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
   const {issue, macrosteps} = json;
   const processes: HarmonyProcess[] = [];
+  const pidToName: Record<string, string> = {};
 
   const previousSharedValues: Record<string, unknown> = {};
-  const previousTraces: Record<string, HarmonyTrace[]> = {};
-  let previousMode = "running";
-  let previousFailure = null;
+  const previousTraces: Record<string, TraceData> = {};
 
-  console.log("1.1.1");
   for (const macroStep of macrosteps) {
+    let previousMode = "running";
+    let previousFailure = null;
     const {tid: pid, name} = macroStep;
+    pidToName[pid] = name;
     const slices: HarmonySlice[] = [];
     let duration = 0;
     let sliceDuration = 0;
     const microSteps: HarmonyStep[] = [];
 
     // For the first step
-    console.log("1.1.2");
     if (macroStep.microsteps.length > 0) {
       const firstStep = macroStep.microsteps[0];
       Object.assign(previousSharedValues, parseSharedValues(firstStep.shared));
-      Object.assign(previousTraces, parseIntermediateTraceArray(pid, firstStep.trace));
+      const trace = parseIntermediateTraceArray(firstStep.mode ?? previousMode, firstStep.failure, firstStep.trace);
+      if (trace.traces == null) {
+        if (previousTraces[pid] != null)
+          trace.traces = previousTraces[pid].traces;
+        else
+          trace.traces = [];
+      }
+      Object.assign(previousTraces, {[pid]: trace});
       sliceDuration++;
       duration++;
     }
-    console.log("1.1.3");
     // For the remaining steps
     for (let i = 1; i < macroStep.microsteps.length; i++) {
       const microStep = macroStep.microsteps[i];
@@ -99,7 +102,9 @@ export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
         || microStep.mode != null
         || microStep.failure != null
       ) {
-        console.log("1.1.7", previousTraces, previousSharedValues);
+        if (microStep.failure != null) {
+          microStep.mode = "failed";
+        }
         slices.push({
           duration: sliceDuration,
           shared_values: Object.assign({}, previousSharedValues),
@@ -109,14 +114,23 @@ export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
         });
         sliceDuration = 0;
         Object.assign(previousSharedValues, parseSharedValues(microStep.shared));
-        Object.assign(previousTraces, parseIntermediateTraceArray(pid, microStep.trace));
+
+        const trace = parseIntermediateTraceArray(
+          microStep.mode ?? previousMode,
+          microStep.failure, microStep.trace);
+        if (trace.traces == null) {
+          if (previousTraces[pid] != null)
+            trace.traces = previousTraces[pid].traces;
+          else
+            trace.traces = [];
+        }
+        Object.assign(previousTraces, {[pid]: trace});
         previousMode = microStep.mode ?? previousMode;
         previousFailure = microStep.failure;
       }
       duration++;
       sliceDuration++;
 
-      console.log("1.1.6");
       if (microStep.choose != null) {
         const chooseValue = parseIntermediateValueRep(microStep.choose);
         microSteps.push({choose: [pc, chooseValue]});
@@ -124,7 +138,6 @@ export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
         microSteps.push({step: [pc, npc ?? -1]});
       }
     }
-    console.log("1.1.4");
     slices.push({
       duration: sliceDuration,
       shared_values: Object.assign({}, previousSharedValues),
@@ -132,7 +145,6 @@ export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
       mode: previousMode,
       failure: previousFailure
     });
-    console.log("1.1.5");
     processes.push({
       pid: pid,
       name: name,
@@ -143,6 +155,7 @@ export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
   }
   return {
     issue: issue,
-    processes: processes
+    processes: processes,
+    pid_to_name: pidToName
   };
 }

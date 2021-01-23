@@ -387,7 +387,7 @@
   let processLengthPx = 0;
 
   let harmonyData = {};
-  let globalCurrentContexts = {};
+  let globalCurrentStackTrace = {};
 
   let timeStartText;
   let timeEndText;
@@ -712,11 +712,12 @@
    * - id is the HTML id of the table cell displaying the variables, in the form `trace-variables-row-${row}`.
    * - row is a the table row, starting at 0 from the top row and skipping the header row.
    */
-  function showStackTraceVariables(level, id, row) {
-    const trace = globalCurrentContexts[row].traces[level];
+  function showStackTraceVariables(level, id, pid) {
+    console.log(level, id, pid, globalCurrentStackTrace);
+    const trace = globalCurrentStackTrace[pid].traces[level];
     const cell = document.getElementById(id);
     while (cell.firstChild != null) cell.removeChild(cell.firstChild);
-    Object.entries(trace.variables).forEach(([name, value]) => {
+    Object.entries(trace.vars).forEach(([name, value]) => {
       const line = document.createElement("div");
       line.innerHTML = `${name} = ${createHtmlValue(value)}`;
       cell.appendChild(line);
@@ -729,8 +730,10 @@
    * each of those processes at that point.
    */
   function updateStackTrace(slice) {
+    console.log("Slice", slice);
     const tbl = stackTraceTable;
     const traces = slice.trace;
+    globalCurrentStackTrace = traces;
     tbl.style.fontFamily = '"Courier New", Courier, monospace';
 
     while (tbl.firstChild != null) tbl.removeChild(tbl.firstChild);
@@ -746,12 +749,12 @@
     const header = buildHeader('Process', 'Status', 'Stack Trace', 'Variables');
     tbl.appendChild(header);
 
-    Object.entries(traces).forEach(([pid, stacks], rowNumber) => {
-      let processName = `${pid}`
+    Object.entries(traces).forEach(([pid, traceData], rowNumber) => {
+      let processName = `${harmonyData.path_to_bad_node.pid_to_name[pid]}`
       const processCell = makeTableCell(processName);
 
       const statusCell = document.createElement("td");
-      statusCell.innerText = slice.mode;
+      statusCell.innerText = traceData.mode;
       switch (statusCell.innerText) {
         case "running":
           statusCell.style.color = "#30ea30"; break;
@@ -772,21 +775,23 @@
       variablesCell.id = variableCellId;
 
       const stackTraceCell = makeTableCell();
-      stacks.forEach((stack, level) => {
+      traceData.traces.forEach((stack, level) => {
         const {method} = stack;
         const line = document.createElement("div");
-        line.innerHTML = `<span style="cursor: pointer; color: rgb(71,226,92); text-decoration: underline" onclick="showStackTraceVariables(${level}, '${variableCellId}', ${rowNumber});">${method}</span>`
+        line.innerHTML = `<span style="cursor: pointer; color: rgb(71,226,92); text-decoration: underline" onclick="showStackTraceVariables(${level}, '${variableCellId}', ${pid});">${method}</span>`
         stackTraceCell.appendChild(line);
       });
-      if (slice.failure != null) {
+      if (traceData.failure != null) {
         const line = document.createElement("div");
-        line.innerText = slice.failure;
+        line.innerText = traceData.failure;
         line.style.color = "#d71616";
         stackTraceCell.appendChild(line);
       }
 
       tbl.appendChild(makeTableRow(processCell, statusCell, stackTraceCell, variablesCell));
-      if (traces.length > 0) showStackTraceVariables(0, variableCellId, rowNumber);
+      if (traceData.traces != null && traceData.traces.length > 0) {
+        showStackTraceVariables(0, variableCellId, pid);
+      }
     });
   }
 
@@ -812,7 +817,7 @@
 
     // console.log(newTime, currentStep, currentSlice, currentContext);
 
-    setSharedVariablesTable(currentSlice);
+    setSharedVariablesTable(currentSlice.shared_values);
     updateStackTrace(currentSlice);
   }
 
@@ -845,7 +850,7 @@
     for (const slice of currentProcess.slices) {
       duration += slice.duration;
       if (duration >= time) {
-        currentSlice = slice.shared_values;
+        currentSlice = slice;
         break;
       }
     }

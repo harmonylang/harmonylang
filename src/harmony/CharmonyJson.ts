@@ -28,8 +28,9 @@ export type HarmonyAssembly = {
 };
 
 export type ProcessPathDetail = {
-  issue: string,
-  processes: HarmonyProcess[]
+  issue: string;
+  processes: HarmonyProcess[];
+  pid_to_name: Record<string, string>;
 };
 
 export type HarmonyProcess = {
@@ -43,8 +44,8 @@ export type HarmonyProcess = {
 export type HarmonySlice = {
   duration: number;
   shared_values: Record<string, unknown>;
-  trace: Record<string, HarmonyTrace[]>;
-  mode: string | null;
+  trace: Record<string, TraceData>;
+  mode: string;
   failure: string | null;
 };
 
@@ -59,6 +60,12 @@ export type HarmonyContext = {
   failure: string | null;
   mode: string;
   traces: HarmonyTrace[];
+};
+
+export type TraceData = {
+  mode: string;
+  failure: string | null;
+  traces: HarmonyTrace[]
 };
 
 export type HarmonyTrace = {

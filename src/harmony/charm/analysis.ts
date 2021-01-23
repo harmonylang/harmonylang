@@ -23,6 +23,6 @@ export function getHtmlContent(json_path: PathLike): HarmonyTopLevel {
 
   return {
     path_to_bad_node: pathToBadNode,
-    executed_code: executedCode
+    executed_code: executedCode,
   };
 }
