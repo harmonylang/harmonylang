@@ -1,6 +1,10 @@
 import {PathLike} from "fs";
 import {getHtmlContent} from "./charm/analysis";
 
+/**
+ * Parses an intermediate JSON file into a HarmonyTopLevel object.
+ * @param path
+ */
 export const parse = (path: PathLike): HarmonyTopLevel => {
   return getHtmlContent(path);
 };
