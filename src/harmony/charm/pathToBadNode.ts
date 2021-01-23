@@ -19,8 +19,10 @@ function parseIntermediateValueRep(v: IntermediateValueRepresentation): unknown 
     case "dict": {
       const dict: Record<string, unknown> = {};
       for (const e of value as IntermediateKeyValueRep[]) {
-        const key = parseIntermediateValueRep(e.key);
-        dict[JSON.stringify(key)] = e.value;
+        const key = JSON.stringify(parseIntermediateValueRep(e.key));
+        if (!key.startsWith("__")) {
+          dict[key] = parseIntermediateValueRep(e.value);
+        }
       }
       return dict;
     }
@@ -47,6 +49,7 @@ function parseSharedValues(sharedValues: null | Record<string, IntermediateValue
     });
     console.log("Yes");
   }
+  console.log(result);
   return result;
 }
 
