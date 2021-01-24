@@ -1,4 +1,4 @@
-import {HarmonyProcess, HarmonySlice, HarmonyStep, HarmonyTrace, ProcessPathDetail, TraceData} from "../CharmonyJson";
+import {HarmonyProcess, HarmonySlice, HarmonyStep, ProcessPathDetail} from "../CharmonyJson";
 import {IntermediateJson, IntermediateMicroStep} from "../IntermediateJson";
 import {parseIntermediateValueRep, parseSharedValues} from "./values/parser";
 import StackTraceManager from "./StackTraceManager";

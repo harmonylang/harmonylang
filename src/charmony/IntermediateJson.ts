@@ -15,9 +15,10 @@ export type IntermediateHarmonyCode = {
 
 
 export type IntermediateValueRepresentation = {
-    type: string;
+    type: "bool" | "int" | "atom" | "dict" | "set" | "pc" | "address";
     value: string | IntermediateValueRepresentation[] | IntermediateKeyValueRep[];
 }
+
 
 export type IntermediateKeyValueRep = {
     key: IntermediateValueRepresentation;
@@ -31,7 +32,7 @@ export type IntermediateSwitch = {
     microsteps: IntermediateMicroStep[];
 };
 
-
+type VariableName = string;
 export type IntermediateMicroStep = {
     npc: string;
     pc: string;
@@ -39,9 +40,9 @@ export type IntermediateMicroStep = {
     choose?: IntermediateValueRepresentation;
     shared?: Record<string, IntermediateValueRepresentation>;
     trace?: IntermediateTrace[];
-    local?: Record<string, IntermediateValueRepresentation>; // Local variables at the end of micro-step
+    local?: Record<VariableName, IntermediateValueRepresentation>; // Local variables at the end of micro-step
 
-    mode?: string; // Mode of process.
+    mode?: "choosing" | "blocked" | "runnable"; // Mode of process.
     failure?: string; // Failure setting. Non-empty when a failure occurs. Undefined otherwise.
     atomic?: string; // Atomic setting. "1" if set to atomic. "0" if set back to normal.
     push?: IntermediateValueRepresentation[]; // Values pushed up to the expression stack.
@@ -53,7 +54,7 @@ export type IntermediateTrace = {
     pc: string;
     method: string;
     calltype: string;
-    vars: Record<string, IntermediateValueRepresentation>;
+    vars: Record<VariableName, IntermediateValueRepresentation>;
 };
 
 

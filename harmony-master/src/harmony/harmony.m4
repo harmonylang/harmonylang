@@ -1,7 +1,7 @@
 """
 	This is the Harmony compiler and model checker.
 
-    Copyright (C) 2020  Robbert van Renesse
+    Copyright (C) 2020, 2021  Robbert van Renesse
 
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions
@@ -140,13 +140,17 @@ def doImport(scope, code, module):
 def load_string(all, filename, scope, code):
     files[filename] = all.split("\n")
     tokens = lexer(all, filename)
-    try:
-        (ast, rem) = StatListRule(set()).parse(tokens)
-    except IndexError:
-        # best guess...
-        print("Parsing", filename, "hit EOF (usually missing ';' at end of last line)")
-        # print(traceback.format_exc())
-        exit(1)
+    # assert False, (tokens1, tokens)
+
+    if False:
+        try:
+            (ast, rem) = StatListRule(-1).parse(tokens)
+        except IndexError:
+            # best guess...
+            print("Parsing", filename, "hit EOF")
+            # print(traceback.format_exc())
+            exit(1)
+    (ast, rem) = StatListRule(-1).parse(tokens)
 
     for mod in ast.getImports():
         doImport(scope, code, mod)
@@ -218,7 +222,6 @@ def isreserved(s):
         "contexts",
         "def",
         "del",
-        "dict",
         "elif",
         "else",
         "end",
@@ -284,7 +287,7 @@ assignops = {
 def isbinaryop(s):
     return isxbinop(s) or iscmpop(s) or s == "in"
 
-tokens = { "bag{", "dict{", "==", "!=", "<=", ">=", "=>",
+tokens = { "bag{", "{", "==", "!=", "<=", ">=", "=>",
                         "//", "**", "<<", ">>", "..", "->" } | assignops
 
 def lexer(s, file):
@@ -292,11 +295,25 @@ def lexer(s, file):
     line = 1
     column = 1
     while s != "":
+        if s[0] == "\r":     # msdos...
+            s = s[1:]
+            continue
+
         # see if it's a blank
         if s[0] in { " ", "\t" }:
             s = s[1:]
             column += 1
             continue
+
+        # ignore backslash at end of line
+        if s[0] == "\\":
+            if len(s) == 1:
+                break
+            if s[1] == "\n" or s[1] == "\r":
+                s = s[2:]
+                line += 1
+                column = 1
+                continue
 
         if s[0] == "\n":
             s = s[1:]
@@ -528,7 +545,7 @@ class DictValue(Value):
             if result != "":
                 result += ", ";
             result += strValue(k) + ":" + strValue(self.d[k])
-        return "dict{ " + result + " }"
+        return "{ " + result + " }"
 
     def jdump(self):
         result = ""
@@ -1990,7 +2007,8 @@ class AST:
             if ctype == "list":
                 code.append(LoadVarOp(N))
             elif ctype == "dict":
-                code.append(LoadVarOp(vars[0] if len(vars) == 1 else vars))
+                # code.append(LoadVarOp(vars[0] if len(vars) == 1 else vars))
+                self.key.compile(scope, code)
             self.value.compile(scope, code)
             if ctype == "set":
                 code.append(NaryOp(("SetAdd", file, line, column), 2))
@@ -2309,13 +2327,14 @@ class BagComprehensionAST(AST):
         self.comprehension(scope, code, "bag")
 
 class DictComprehensionAST(AST):
-    def __init__(self, value, iter, token):
+    def __init__(self, key, value, iter, token):
+        self.key = key
         self.value = value
         self.iter = iter
         self.token = token
 
     def __repr__(self):
-        return "DictComprehension(" + str(self.var) + ")"
+        return "DictComprehension(" + str(self.key) + ")"
 
     def compile(self, scope, code):
         self.comprehension(scope, code, "dict")
@@ -2506,7 +2525,7 @@ class NaryRule(Rule):
 
     def parse(self, t):
         (ast, t) = ExpressionRule().parse(t)
-        if ast == False:
+        if ast == False or t == []:
             return (ast, t)
         (lexeme, file, line, column) = t[0]
         if lexeme in self.closers:
@@ -2530,9 +2549,12 @@ class NaryRule(Rule):
                     print("expected an expression after n-ary comparison operation in", op)
                     exit(1)
                 args.append(ast3)
+                if t == []:
+                    break
                 (lexeme, file, line, column) = t[0]
-            self.expect("n-ary operation", lexeme in self.closers, t[0],
-                                "expected one of %s"%self.closers)
+            if t != []:
+                self.expect("n-ary operation", lexeme in self.closers,
+                        t[0], "expected one of %s"%self.closers)
             return (CmpAST(ops, args), t)
         if op[0] == "if":
             (ast2, t) = NaryRule({"else"}).parse(t[1:])
@@ -2542,25 +2564,30 @@ class NaryRule(Rule):
             print("expected an expression after operation", op)
             exit(1)
         args.append(ast2)
-        (lexeme, file, line, column) = t[0]
-        if op[0] == "if":
-            self.expect("n-ary operation", lexeme == "else", t[0], "expected 'else'")
-            (ast3, t) = ExpressionRule().parse(t[1:])
-            if ast3 == False:
-                print("expected an expression after else in", op)
-                exit(1)
-            args.append(ast3)
+        if t != []:
             (lexeme, file, line, column) = t[0]
-        elif (op[0] == lexeme) and (lexeme in { "+", "|", "&", "^", "and", "or" }):
-            while lexeme == op[0]:
+            if op[0] == "if":
+                self.expect("n-ary operation", lexeme == "else", t[0], "expected 'else'")
                 (ast3, t) = ExpressionRule().parse(t[1:])
                 if ast3 == False:
-                    print("expected an expression after n-ary operation in", op)
+                    print("expected an expression after else in", op)
                     exit(1)
                 args.append(ast3)
-                (lexeme, file, line, column) = t[0]
-        self.expect("n-ary operation", lexeme in self.closers, t[0],
-                            "expected one of %s"%self.closers)
+                if t != []:
+                    (lexeme, file, line, column) = t[0]
+            elif (op[0] == lexeme) and (lexeme in { "+", "|", "&", "^", "and", "or" }):
+                while lexeme == op[0]:
+                    (ast3, t) = ExpressionRule().parse(t[1:])
+                    if ast3 == False:
+                        print("expected an expression after n-ary operation in", op)
+                        exit(1)
+                    args.append(ast3)
+                    if t == []:
+                        break
+                    (lexeme, file, line, column) = t[0]
+            if t != []:
+                self.expect("n-ary operation", lexeme in self.closers, t[0],
+                                "expected one of %s"%self.closers)
         ast = NaryAST(op, args)
         if invert != None:
             return (NaryAST(invert, [ast]), t)
@@ -2586,13 +2613,14 @@ class BagComprehensionRule(Rule):
         return (BagComprehensionAST(self.value, lst, token), t[1:])
 
 class DictComprehensionRule(Rule):
-    def __init__(self, value):
+    def __init__(self, key, value):
+        self.key = key
         self.value = value
 
     def parse(self, t):
         token = t[0]
         (lst, t) = self.iterParse(t[1:], {"}"})
-        return (DictComprehensionAST(self.value, lst, token), t[1:])
+        return (DictComprehensionAST(self.key, self.value, lst, token), t[1:])
 
 class ListComprehensionRule(Rule):
     def __init__(self, value, closers):
@@ -2613,11 +2641,15 @@ class SetRule(Rule):
             return (SetAST([]), t[2:])
         s = []
         while True:
-            (next, t) = NaryRule({"for", "..", ",", "}"}).parse(t[1:])
+            (next, t) = NaryRule({":", "for", "..", ",", "}"}).parse(t[1:])
             if next == False:
-                return (next, t)
+                return (False, t)
             s.append(next)
             (lexeme, file, line, column) = t[0]
+            if lexeme == ":":
+                self.expect("set/dict", len(s) == 1, t[0],
+                            "cannot mix set values and value maps")
+                return DictSuffixRule(s[0]).parse(t[1:])
             if lexeme == "for":
                 self.expect("set comprehension", len(s) == 1, t[0],
                     "can have only one expression")
@@ -2662,32 +2694,34 @@ class BagRule(Rule):
             self.expect("bag expression", lexeme == ",", t[0],
                     "expected a comma")
 
-class DictRule(Rule):
+class DictSuffixRule(Rule):
+    def __init__(self, first):
+        self.first = first
+
     def parse(self, t):
-        (lexeme, file, line, column) = t[0]
-        self.expect("dict expression", lexeme == "dict{", t[0],
-                "expected dict{")
-        (lexeme, file, line, column) = t[1]
-        if lexeme == "}":
-            return (DictAST([]), t[2:])
+        key = self.first
         d = []
-        while lexeme != "}":
-            (key, t) = NaryRule({":", "for"}).parse(t[1:])
-            if key == False:
-                return (key, t)
+        while True:
+            (value, t) = NaryRule({",", "}", "for"}).parse(t)
             (lexeme, file, line, column) = t[0]
+            self.expect("dict expression", lexeme in { ",", "}", "for" }, t[0],
+                                    "expected a comma or '}'")
             if lexeme == "for":
                 self.expect("dict comprehension", d == [], t[0],
                     "expected single expression")
-                return DictComprehensionRule(key).parse(t)
+                return DictComprehensionRule(key, value).parse(t)
+
+            d.append((key, value))
+            if lexeme == "}":
+                return (DictAST(d), t[1:])
+
+            (key, t) = NaryRule({":"}).parse(t[1:])
+            if key == False:
+                return (key, t)
+            (lexeme, file, line, column) = t[0]
             self.expect("dict expression", lexeme == ":", t[0],
                                         "expected a colon")
-            (value, t) = NaryRule({",", "}"}).parse(t[1:])
-            (lexeme, file, line, column) = t[0]
-            self.expect("dict expression", lexeme in { ",", "}" }, t[0],
-                                    "expected a comma or '}'")
-            d.append((key, value))
-        return (DictAST(d), t[1:])
+            t = t[1:]
 
 class TupleRule(Rule):
     def __init__(self, closers):
@@ -2699,8 +2733,8 @@ class TupleRule(Rule):
             return (ConstantAST(
                 (novalue, file, line, column)), t)
         (ast, t) = NaryRule(self.closers.union({",", "for"})).parse(t)
-        if not ast:
-            return (False, t)
+        if not ast or t == []:
+            return (ast, t)
         (lexeme, file, line, column) = token = t[0]
         if lexeme in self.closers:
             return (ast, t)
@@ -2713,8 +2747,11 @@ class TupleRule(Rule):
                 return (TupleAST(d, token), t[1:])
             (next, t) = NaryRule(self.closers.union({ "," })).parse(t[1:])
             d.append(next)
+            if t == []:
+                break
             (lexeme, file, line, column) = token = t[0]
-        self.expect("tuple expression", lexeme in self.closers, t[0],
+        if t != []:
+            self.expect("tuple expression", lexeme in self.closers, t[0],
                 "expected %s"%self.closers)
         return (TupleAST(d, token), t)
 
@@ -2732,6 +2769,8 @@ class ArrowExpressionRule(Rule):
                     "expected a name after ->")
             ast = ApplyAST(PointerAST(ast, token), ConstantAST(t[1]), token)
             t = t[2:]
+            if t == []:
+                break
             (lexeme, file, line, column) = token = t[0]
         return (ast, t)
 
@@ -2763,8 +2802,6 @@ class BasicExpressionRule(Rule):
             return (NameAST(t[0]), t[1:])
         if lexeme == "{":
             return SetRule().parse(t)
-        if lexeme == "dict{":
-            return DictRule().parse(t)
         if lexeme == "bag{":
             return BagRule().parse(t)
         if lexeme == "(" or lexeme == "[":
@@ -2955,6 +2992,7 @@ class PassAST(AST):
 
 class BlockAST(AST):
     def __init__(self, b):
+        assert len(b) > 0
         self.b = b
 
     def __repr__(self):
@@ -3402,28 +3440,40 @@ class LabelStatRule(Rule):
         return (LabelStatAST(labels, ast, thefile, theline), t)
 
 class StatListRule(Rule):
-    def __init__(self, delim):
-        self.delim = delim
+    def __init__(self, indent):
+        self.indent = indent
 
     def parse(self, t):
-        b = []
+        if t == []:
+            assert False
+            return (BlockAST([]), [])
+
+        # find all the tokens that are indented more than self.indent
+        slice = []
         (lexeme, file, line, column) = t[0]
-        while lexeme not in self.delim:
-            (ast, t) = LabelStatRule().parse(t)
-            b.append(ast)
-            if t == [] and self.delim == set():
+        while column > self.indent:
+            slice.append(t[0])
+            t = t[1:]
+            if t == []:
                 break
             (lexeme, file, line, column) = t[0]
+        assert slice != [], (t[:3], self.indent)
+
+        b = []
+        while slice != []:
+            (ast, slice) = LabelStatRule().parse(slice)
+            b.append(ast)
+
         return (BlockAST(b), t)
 
 class BlockRule(Rule):
-    def __init__(self, delim):
-        self.delim = delim
+    def __init__(self, indent):
+        self.indent = indent
 
     def parse(self, t):
         (lexeme, file, line, column) = t[0]
         self.expect("block statement", lexeme == ":", t[0], "missing ':'")
-        return StatListRule(self.delim).parse(t[1:])
+        return StatListRule(self.indent).parse(t[1:])
 
 # This parses the lefthand side of an assignment in a let expression.  Grammar:
 #   lhs = (tuple ",")* [tuple]
@@ -3457,163 +3507,194 @@ class BoundVarRule(Rule):
             t = t[2:]
 
 class StatementRule(Rule):
-    def skip(self, token, t):
-        (lex2, file2, line2, col2) = t[0]
-        self.expect("statement", lex2 == ";", t[0], "expected a semicolon")
-        (lex1, file1, line1, col1) = token
-        if not ((line1 == line2) or (col1 == col2)):
-            print("Parse warning: ';' does not line up", token, t[0])
-        return t[1:]
-        
+    def slice(self, t, indent):
+        if t == []:
+            return ([], [])
+        tokens = []
+        (lexeme, file, line, column) = t[0]
+        while column > indent and lexeme != ";":
+            tokens.append(t[0])
+            t = t[1:]
+            if t == []:
+                break
+            (lexeme, file, line, column) = t[0]
+        return (tokens, t)
+
     def parse(self, t):
         token = t[0]
         (lexeme, file, line, column) = token
         if lexeme == ";":
-            print("empty statement", token)
-            exit(1)
+            return (PassAST(), t[1:])
         if lexeme == "const":
-            (const, t) = BoundVarRule().parse(t[1:])
-            (lexeme, file, line, column) = t[0]
-            self.expect("constant definition", lexeme == "=", t[0], "expected '='")
-            (ast, t) = TupleRule({";"}).parse(t[1:])
-            return (ConstAST(const, ast), self.skip(token, t))
+            (tokens, t) = self.slice(t[1:], column)
+            (const, tokens) = BoundVarRule().parse(tokens)
+            (lexeme, file, line, column) = tokens[0]
+            self.expect("constant definition", lexeme == "=", tokens[0], "expected '='")
+            (ast, tokens) = TupleRule(set()).parse(tokens[1:])
+            assert tokens == [], tokens
+            return (ConstAST(const, ast), t)
         if lexeme == "if":
             alts = []
             while True:
                 (cond, t) = NaryRule({":"}).parse(t[1:])
-                (stat, t) = StatListRule({ "else", "elif", ";" }).parse(t[1:])
+                (stat, t) = StatListRule(column).parse(t[1:])
                 alts += [(cond, stat)]
-                (lexeme, file, line, column) = t[0]
-                if lexeme in { "else", ";" }:
+                if t == []:
+                    nextColumn = column
                     break
-                self.expect("if statement", lexeme == "elif", t[0],
-                            "expected 'else' or 'elif' or semicolon")
-            if lexeme == "else":
-                (stat, t) = BlockRule({";"}).parse(t[1:])
+                (lexeme, file, line, nextColumn) = t[0]
+                assert nextColumn <= column
+                if nextColumn < column:
+                    break
+                if lexeme != "elif":
+                    break
+            if nextColumn == column and lexeme == "else":
+                (stat, t) = BlockRule(column).parse(t[1:])
             else:
                 stat = None
-            return (IfAST(alts, stat), self.skip(token, t))
+            return (IfAST(alts, stat), t)
         if lexeme == "while":
             (cond, t) = NaryRule({":"}).parse(t[1:])
-            (stat, t) = StatListRule({";"}).parse(t[1:])
-            return (WhileAST(cond, stat), self.skip(token, t))
+            (stat, t) = StatListRule(column).parse(t[1:])
+            return (WhileAST(cond, stat), t)
         if lexeme == "await":
-            (cond, t) = NaryRule({";"}).parse(t[1:])
-            return (AwaitAST(cond), self.skip(token, t))
+            (tokens, t) = self.slice(t[1:], column)
+            (cond, tokens) = NaryRule(set()).parse(tokens)
+            assert tokens == []
+            return (AwaitAST(cond), t)
         if lexeme == "invariant":
-            (cond, t) = NaryRule({";"}).parse(t[1:])
-            return (InvariantAST(cond, token), self.skip(token, t))
+            (tokens, t) = self.slice(t[1:], column)
+            (cond, tokens) = NaryRule(set()).parse(tokens)
+            assert tokens == []
+            return (InvariantAST(cond, token), t)
         if lexeme == "for":
             (lst, t) = self.iterParse(t[1:], {":"})
-            (stat, t) = StatListRule({";"}).parse(t[1:])
-            return (ForAST(lst, stat, token), self.skip(token, t))
+            (stat, t) = StatListRule(column).parse(t[1:])
+            return (ForAST(lst, stat, token), t)
         if lexeme == "let":
             vars = []
             while True:
                 (bv, t) = BoundVarRule().parse(t[1:])
-                (lexeme, file, line, column) = t[0]
+                (lexeme, file, line, nextColumn) = t[0]
                 self.expect("let statement", lexeme == "=", t[0], "expected '='")
                 (ast, t) = TupleRule({":", "let"}).parse(t[1:])
                 vars.append((bv, ast))
-                (lexeme, file, line, column) = t[0]
+                (lexeme, file, line, nextColumn) = t[0]
                 if lexeme == ":":
                     break
                 self.expect("let statement", lexeme == "let", t[0], "expected 'let' or ':'")
-            (stat, t) = StatListRule({";"}).parse(t[1:])
-            return (LetAST(vars, stat), self.skip(token, t))
+            (stat, t) = StatListRule(column).parse(t[1:])
+            return (LetAST(vars, stat), t)
         if lexeme == "atomic":
-            (stat, t) = BlockRule({";"}).parse(t[1:])
-            return (AtomicAST(stat), self.skip(token, t))
+            (stat, t) = BlockRule(column).parse(t[1:])
+            return (AtomicAST(stat), t)
         if lexeme == "del":
             (ast, t) = ExpressionRule().parse(t[1:])
-            return (DelAST(ast), self.skip(token, t))
-        if lexeme == "def": # or lexeme == "fun":
-            # map = lexeme == "fun"
+            return (DelAST(ast), t)
+        if lexeme == "def":
             name = t[1]
-            (lexeme, file, line, column) = name
+            (lexeme, file, line, nextColumn) = name
             self.expect("method definition", isname(lexeme), name, "expected name")
             (bv, t) = BoundVarRule().parse(t[2:])
-            (stat, t) = BlockRule({";"}).parse(t)
-            return (MethodAST(name, bv, stat), self.skip(token, t))
-        if False and lexeme == "call":
-            (expr, t) = ExpressionRule().parse(t[1:])
-            return (CallAST(expr), self.skip(token, t))
+            (stat, t) = BlockRule(column).parse(t)
+            return (MethodAST(name, bv, stat), t)
         if lexeme == "spawn":
-            (method, t) = ArrowExpressionRule().parse(t[1:])
-            (arg, t) = ArrowExpressionRule().parse(t)
-            (lexeme, file, line, column) = t[0]
-            if lexeme == ",":
-                (this, t) = NaryRule({";"}).parse(t[1:])
-                (lexeme, file, line, column) = t[0]
-            else:
+            (tokens, t) = self.slice(t[1:], column)
+            (method, tokens) = ArrowExpressionRule().parse(tokens)
+            (arg, tokens) = ArrowExpressionRule().parse(tokens)
+            if tokens == []:
                 this = None
-            return (SpawnAST(method, arg, this), self.skip(token, t))
-        if lexeme == "trap":
-            (method, t) = ArrowExpressionRule().parse(t[1:])
-            (arg, t) = ArrowExpressionRule().parse(t)
-            return (TrapAST(method, arg), self.skip(token, t))
-        if lexeme == "go":
-            (ctx, t) = ArrowExpressionRule().parse(t[1:])
-            (result, t) = ArrowExpressionRule().parse(t)
-            return (GoAST(ctx, result), self.skip(token, t))
-        if lexeme == "pass":
-            return (PassAST(), self.skip(token, t[1:]))
-        if lexeme == "import":
-            mods = [t[1]]
-            t = t[2:]
-            (lexeme, file, line, column) = t[0]
-            while lexeme == ',':
-                mods.append(t[1])
-                t = t[2:]
-                (lexeme, file, line, column) = t[0]
-            return (ImportAST(mods), self.skip(token, t))
-        if lexeme == "from":
-            (lexeme, file, line, column) = module = t[1]
-            self.expect("from statement", isname(lexeme), module, "expected module name")
-            (lexeme, file, line, column) = t[2]
-            self.expect("from statement", lexeme == "import", t[2], "expected 'import'")
-            (lexeme, file, line, column) = t[3]
-            if lexeme == '*':
-                return (FromAST(module, []), self.skip(token, t[4:]))
-            items = [t[3]]
-            t = t[4:]
-            (lexeme, file, line, column) = t[0]
-            while lexeme == ',':
-                items.append(t[1])
-                t = t[2:]
-                (lexeme, file, line, column) = t[0]
-            return (FromAST(module, items), self.skip(token, t))
-        if lexeme == "assert":
-            (cond, t) = NaryRule({",", ";"}).parse(t[1:])
-            (lexeme, file, line, column) = t[0]
-            if lexeme == ",":
-                (expr, t) = NaryRule({";"}).parse(t[1:])
             else:
+                (lexeme, file, line, column) = tokens[0]
+                assert lexeme == ","
+                (this, tokens) = NaryRule(set()).parse(tokens[1:])
+                assert tokens == []
+            return (SpawnAST(method, arg, this), t)
+        if lexeme == "trap":
+            (tokens, t) = self.slice(t[1:], column)
+            (method, tokens) = ArrowExpressionRule().parse(tokens)
+            (arg, tokens) = ArrowExpressionRule().parse(tokens)
+            assert tokens == []
+            return (TrapAST(method, arg), t)
+        if lexeme == "go":
+            (tokens, t) = self.slice(t[1:], column)
+            (ctx, tokens) = ArrowExpressionRule().parse(tokens)
+            (result, tokens) = ArrowExpressionRule().parse(tokens)
+            assert tokens == []
+            return (GoAST(ctx, result), t)
+        if lexeme == "pass":
+            return (PassAST(), t[1:])
+        if lexeme == "import":
+            (tokens, t) = self.slice(t[1:], column)
+            mods = [tokens[0]]
+            tokens = tokens[1:]
+            if tokens != []:
+                (lexeme, file, line, column) = tokens[0]
+                while lexeme == ',':
+                    mods.append(tokens[1])
+                    tokens = tokens[2:]
+                    if tokens == []:
+                        break
+                    (lexeme, file, line, column) = tokens[0]
+                assert tokens == []
+            return (ImportAST(mods), t)
+        if lexeme == "from":
+            (tokens, t) = self.slice(t[1:], column)
+            (lexeme, file, line, column) = module = tokens[0]
+            self.expect("from statement", isname(lexeme), module, "expected module name")
+            (lexeme, file, line, column) = tokens[1]
+            self.expect("from statement", lexeme == "import", tokens[1], "expected 'import'")
+            (lexeme, file, line, column) = tokens[2]
+            if lexeme == '*':
+                assert len(tokens) == 3, tokens
+                return (FromAST(module, []), t)
+            items = [tokens[2]]
+            tokens = tokens[3:]
+            (lexeme, file, line, column) = tokens[0]
+            while lexeme == ',':
+                items.append(tokens[1])
+                tokens = tokens[2:]
+                if tokens == []:
+                    break;
+                (lexeme, file, line, column) = tokens[0]
+            assert tokens == [], tokens
+            return (FromAST(module, items), t)
+        if lexeme == "assert":
+            (tokens, t) = self.slice(t[1:], column)
+            (cond, tokens) = NaryRule({","}).parse(tokens)
+            if tokens == []:
                 expr = None
-            return (AssertAST(token, cond, expr), self.skip(token, t))
+            else:
+                (lexeme, file, line, column) = tokens[0]
+                assert lexeme == ","
+                (expr, tokens) = NaryRule(set()).parse(tokens[1:])
+                assert tokens == []
+            return (AssertAST(token, cond, expr), t)
         
         # If we get here, the next statement is either an expression
         # or an assignment.  The grammar is either
-        #   (tuple_expression '=')* tuple_expression ';'
+        #   (tuple_expression '=')* tuple_expression
         # or
         #   tuple_expression 'op=' tuple_expression
+        (tokens, t) = self.slice(t[1:], column)
+        tokens = [token] + tokens
         exprs = []
         assignop = None
-        while True:
-            (ast, t) = TupleRule({ "=", ";" } | assignops).parse(t)
-            self.expect("statement", ast != False, t[0], "expected expression")
+        while tokens != []:
+            tk = tokens[0]
+            (ast, tokens) = TupleRule({ "=" } | assignops).parse(tokens)
+            self.expect("statement", ast != False, tk, "expected expression")
             exprs.append(ast)
-            (lexeme, file, line, column) = t[0]
-            if lexeme == ";":
+            if tokens == []:
                 break
-            if assignop != None and assignop[0] != "=":
-                self.expect("special assignment expression", lexeme == ";", t[0], "expected ';'")
-            assignop = t[0]
-            t = t[1:]
+            (lexeme, file, line, column) = tokens[0]
+            assert assignop == None or assignop[0] == "="
+            assignop = tokens[0]
+            tokens = tokens[1:]
         if len(exprs) == 1:
-            return (CallAST(exprs[0]), self.skip(token, t))
+            return (CallAST(exprs[0]), t)
         else:
-            return (AssignmentAST(exprs[:-1], exprs[-1], assignop), self.skip(token, t))
+            return (AssignmentAST(exprs[:-1], exprs[-1], assignop), t)
 
 class ContextValue(Value):
     def __init__(self, name, entry, arg, this):
