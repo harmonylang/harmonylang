@@ -1,7 +1,7 @@
 import * as mocha from 'mocha';
 import * as chai from 'chai';
 import {IntermediateJson} from "../../src/charmony/IntermediateJson";
-import {HarmonyCode, HarmonyTopLevel, parse} from "../../src/charmony/CharmonyJson";
+import {HarmonyCode, parse} from "../../src/charmony/CharmonyJson";
 
 const {describe, it} = mocha;
 const {expect} = chai;
