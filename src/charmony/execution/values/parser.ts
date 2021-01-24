@@ -28,11 +28,11 @@ export function parseIntermediateTrace(trace: IntermediateTrace): HarmonyTrace {
     const copiedTrace: IntermediateTrace = Object.assign({}, trace);
     return {
         ...copiedTrace,
-        vars: parseSharedValues(trace.vars)
+        vars: parseVariableSet(trace.vars)
     };
 }
 
-export function parseSharedValues(sharedValues: undefined | Record<string, IntermediateValueRepresentation>): Record<string, unknown> {
+export function parseVariableSet(sharedValues: undefined | Record<string, IntermediateValueRepresentation>): Record<string, unknown> {
     const result: Record<string, unknown> = {};
     if (sharedValues != null) {
         Object.entries(sharedValues).forEach(([k, v]) => {

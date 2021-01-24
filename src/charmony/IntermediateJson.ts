@@ -43,6 +43,8 @@ export type IntermediateMicroStep = {
     local?: Record<VariableName, IntermediateValueRepresentation>; // Local variables at the end of micro-step
 
     mode?: "choosing" | "blocked" | "runnable"; // Mode of process.
+    readonly?: string;
+    interruptlevel?: string;
     failure?: string; // Failure setting. Non-empty when a failure occurs. Undefined otherwise.
     atomic?: string; // Atomic setting. "1" if set to atomic. "0" if set back to normal.
     push?: IntermediateValueRepresentation[]; // Values pushed up to the expression stack.

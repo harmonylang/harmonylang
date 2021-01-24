@@ -1,6 +1,6 @@
 import {TraceData} from "../CharmonyJson";
 import {IntermediateTrace, IntermediateValueRepresentation} from "../IntermediateJson";
-import {parseSharedValues} from "./values/parser";
+import {parseVariableSet} from "./values/parser";
 
 type TID = string;
 const BAD_STATES = ["blocked", "terminated", "failed"];
@@ -28,7 +28,7 @@ export default class StackTraceManager {
         console.log("Call stack", callStack);
         callStack[callStack.length - 1] = {
             ...callStack[callStack.length - 1],
-            vars: parseSharedValues(local)
+            vars: parseVariableSet(local)
         };
     }
 
@@ -43,7 +43,7 @@ export default class StackTraceManager {
             traces: callStack.map(cs => {
                 return {
                     ...cs,
-                    vars: parseSharedValues(cs.vars)
+                    vars: parseVariableSet(cs.vars)
                 };
             })
         };

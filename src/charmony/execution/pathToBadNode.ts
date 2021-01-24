@@ -1,6 +1,6 @@
 import {HarmonyProcess, HarmonySlice, HarmonyStep, ProcessPathDetail} from "../CharmonyJson";
 import {IntermediateJson, IntermediateMicroStep} from "../IntermediateJson";
-import {parseIntermediateValueRep, parseSharedValues} from "./values/parser";
+import {parseIntermediateValueRep, parseVariableSet} from "./values/parser";
 import StackTraceManager from "./StackTraceManager";
 
 
@@ -30,7 +30,7 @@ export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
         // For the first step
         if (macroStep.microsteps.length > 0) {
             const firstStep = macroStep.microsteps[0];
-            Object.assign(previousSharedValues, parseSharedValues(firstStep.shared));
+            Object.assign(previousSharedValues, parseVariableSet(firstStep.shared));
             console.log("Setting stack trace values", firstStep.trace);
             stackTraceManager.setCallStack(firstStep.trace);
             console.log("Stack process 1");
@@ -50,7 +50,7 @@ export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
         for (let i = 1; i < macroStep.microsteps.length; i++) {
             const microStep = macroStep.microsteps[i];
             const pc = Number.parseInt(microStep.pc);
-            const npc = microStep.pc === null ? null : Number.parseInt(microStep.npc);
+            const npc = microStep.pc ? Number.parseInt(microStep.npc) : pc;
             if (processStateChange(microStep)) {
                 slices.push({
                     duration: sliceDuration,
@@ -72,7 +72,7 @@ export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
                 stackTraceManager.setLocal(microStep.local);
                 console.log("Stack process 2.4");
                 sliceDuration = 0;
-                Object.assign(previousSharedValues, parseSharedValues(microStep.shared));
+                Object.assign(previousSharedValues, parseVariableSet(microStep.shared));
 
                 console.log(stackTraceManager.clone());
             }
@@ -84,7 +84,7 @@ export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
                 const chooseValue = parseIntermediateValueRep(microStep.choose);
                 microSteps.push({choose: [pc, chooseValue]});
             } else {
-                microSteps.push({step: [pc, npc ?? -1]});
+                microSteps.push({step: [pc, npc]});
             }
         }
         slices.push({
