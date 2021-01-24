@@ -56,18 +56,14 @@ export default class StackTraceManager {
         mode: string | undefined;
         atomic: string | undefined;
         failure: string | undefined;
-        choose: IntermediateValueRepresentation | undefined;
     }) {
         let {mode} = props;
-        const {atomic, failure, choose} = props;
+        const {atomic, failure} = props;
         if (atomic == "1") {
             mode = "running atomic";
         }
         if (atomic == "0") {
             mode = "running";
-        }
-        if (choose != null) {
-            mode = "choosing";
         }
         if (failure != null) {
             mode = "failed";

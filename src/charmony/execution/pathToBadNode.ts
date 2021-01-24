@@ -5,8 +5,8 @@ import StackTraceManager from "./StackTraceManager";
 
 
 function processStateChange(microStepDiff: IntermediateMicroStep) {
-    const {shared, trace, mode, failure} = microStepDiff;
-    return shared != null || trace != null || mode != null || failure != null;
+    const {shared, trace, mode, failure, atomic} = microStepDiff;
+    return shared != null || trace != null || mode != null || failure != null || atomic != null;
 }
 
 
@@ -36,7 +36,6 @@ export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
             console.log("Stack process 1");
             stackTraceManager.setMode({
                 atomic: firstStep.atomic,
-                choose: firstStep.choose,
                 failure: firstStep.failure,
                 mode: firstStep.mode
             });
@@ -66,7 +65,6 @@ export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
                 console.log("Stack process 2.2");
                 stackTraceManager.setMode({
                     atomic: microStep.atomic,
-                    choose: microStep.choose,
                     failure: microStep.failure,
                     mode: microStep.mode
                 });
