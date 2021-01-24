@@ -761,6 +761,10 @@
             switch (statusCell.innerText) {
                 case "running":
                     statusCell.style.color = "#30ea30"; break;
+                case "running atomic":
+                    statusCell.style.color = "#12dd96"; break;
+                case "runnable":
+                    statusCell.style.color = "#0b3fcf"; break;
                 case "failed":
                     statusCell.style.color = "#d71616"; break;
                 case "blocked":
@@ -770,7 +774,7 @@
                 case "choosing":
                     statusCell.style.color = "#19a7ee"; break;
                 default:
-                    statusCell.style.color = "#ffffff"; break;
+                    statusCell.style.color = "#9b9b9b"; break;
             }
 
             const variablesCell = makeTableCell();
