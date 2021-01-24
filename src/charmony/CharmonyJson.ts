@@ -47,7 +47,7 @@ export type HarmonySlice = {
     shared_values: Record<string, unknown>;
     trace: Record<string, TraceData>;
     mode: string;
-    failure: string | null;
+    failure?: string;
 };
 
 export type HarmonyStep = {
@@ -58,14 +58,14 @@ export type HarmonyStep = {
 export type HarmonyContext = {
     pid: string;
     process_name: string;
-    failure: string | null;
+    failure?: string;
     mode: string;
     traces: HarmonyTrace[];
 };
 
 export type TraceData = {
     mode: string;
-    failure: string | null;
+    failure: string | undefined;
     traces: HarmonyTrace[]
 };
 

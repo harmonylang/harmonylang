@@ -37,7 +37,7 @@ function parseIntermediateTrace(trace: IntermediateTrace): HarmonyTrace {
     };
 }
 
-function parseSharedValues(sharedValues: null | Record<string, IntermediateValueRepresentation>): Record<string, unknown> {
+function parseSharedValues(sharedValues: undefined | Record<string, IntermediateValueRepresentation>): Record<string, unknown> {
     const result: Record<string, unknown> = {};
     if (sharedValues != null) {
         Object.entries(sharedValues).forEach(([k, v]) => {
@@ -50,8 +50,8 @@ function parseSharedValues(sharedValues: null | Record<string, IntermediateValue
 }
 
 function parseIntermediateTraceArray(mode: string,
-                                     failure: string | null,
-                                     traces: null | IntermediateTrace[]): Omit<TraceData, 'traces'> & {traces?: HarmonyTrace[]} {
+                                     failure: string | undefined,
+                                     traces: undefined | IntermediateTrace[]): Omit<TraceData, 'traces'> & {traces?: HarmonyTrace[]} {
     const result: Omit<TraceData, 'traces'> & {traces?: HarmonyTrace[]} = {failure, mode};
     if (traces != null) {
         result.traces = traces.map(parseIntermediateTrace);
@@ -69,7 +69,7 @@ export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
 
     for (const macroStep of macrosteps) {
         let previousMode = "running";
-        let previousFailure = null;
+        let previousFailure = undefined;
         const {tid: pid, name} = macroStep;
         pidToName[pid] = name;
         const slices: HarmonySlice[] = [];

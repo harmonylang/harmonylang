@@ -29,21 +29,20 @@ export type IntermediateSwitch = {
     tid: string;
     name: string;
     microsteps: IntermediateMicroStep[];
-    contexts: IntermediateContext[];
 };
 
 
 export type IntermediateMicroStep = {
     npc: string;
     pc: string;
-    choose: IntermediateValueRepresentation | null;
 
-    shared: Record<string, IntermediateValueRepresentation> | null;
-    trace: IntermediateTrace[] | null;
-    local: Record<string, IntermediateValueRepresentation> | null;
+    choose?: IntermediateValueRepresentation;
+    shared?: Record<string, IntermediateValueRepresentation>;
+    trace?: IntermediateTrace[];
+    local?: Record<string, IntermediateValueRepresentation>;
 
-    mode: string | null;
-    failure: string | null;
+    mode?: string;
+    failure?: string;
 };
 
 
