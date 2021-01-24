@@ -7,12 +7,9 @@ import {IntermediateJson} from "./IntermediateJson";
 
 /**
  * Converts the data from an intermediate JSON file into the Harmony Lang display JSON file.
- * @param json_path
+ * @param decodedJson
  */
-export function getHtmlContent(json_path: PathLike): HarmonyTopLevel {
-    console.log(json_path);
-    const decodedJson: IntermediateJson = JSON.parse(fs.readFileSync(json_path).toString('utf-8'));
-
+export function getHtmlContent(decodedJson: IntermediateJson): HarmonyTopLevel {
     console.log(decodedJson);
 
     console.log("Step 1.1");

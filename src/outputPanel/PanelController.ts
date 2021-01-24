@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import {createStandaloneHtml} from "../feature/standaloneHtml";
 import {parse} from "../charmony/CharmonyJson";
 import {CHARMONY_HTML_FILE, CHARMONY_JSON_OUTPUT, RESOURCE_DIR} from "../config";
+import {IntermediateJson} from "../charmony/IntermediateJson";
 
 export default class CharmonyPanelController {
     public static currentPanel: CharmonyPanelController | undefined;
@@ -100,14 +101,16 @@ export default class CharmonyPanelController {
 
     private loadData(dataPath: string, webview: Webview) {
         console.log("Step 1");
-        const jsonData = parse(dataPath);
+        console.log(dataPath);
+        const decodedJson: IntermediateJson = JSON.parse(fs.readFileSync(dataPath).toString('utf-8'));
+        const harmonyJsonData = parse(decodedJson);
         console.log("Step 2");
         if (vscode.workspace.workspaceFolders) {
             console.log("Creating a standalone HTML file");
-            createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, jsonData);
+            createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, harmonyJsonData);
         }
-        console.log(jsonData);
-        webview.postMessage({ command: 'load', jsonData });
+        console.log(harmonyJsonData);
+        webview.postMessage({ command: 'load', jsonData: harmonyJsonData });
         webview.onDidReceiveMessage( message => {
             switch (message.command) {
                 case 'alert':

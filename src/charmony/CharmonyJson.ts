@@ -1,12 +1,13 @@
 import {PathLike} from "fs";
 import {getHtmlContent} from "./analysis";
+import {IntermediateJson} from "./IntermediateJson";
 
 /**
  * Parses an intermediate JSON file into a HarmonyTopLevel object.
- * @param path
+ * @param decodedJson
  */
-export const parse = (path: PathLike): HarmonyTopLevel => {
-    return getHtmlContent(path);
+export const parse = (decodedJson: IntermediateJson): HarmonyTopLevel => {
+    return getHtmlContent(decodedJson);
 };
 
 export type HarmonyTopLevel = {
