@@ -1,5 +1,5 @@
-import {HarmonyAssembly, HarmonyCode} from "./CharmonyJson";
-import {IntermediateHarmonyCode, IntermediateJson} from "./IntermediateJson";
+import {HarmonyAssembly, HarmonyCode} from "../CharmonyJson";
+import {IntermediateHarmonyCode, IntermediateJson} from "../IntermediateJson";
 
 export function getExecutedCode(json: IntermediateJson): HarmonyCode[] {
     const {explain, code} = json;

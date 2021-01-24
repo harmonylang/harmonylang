@@ -1,9 +1,9 @@
-import {HarmonyProcess, HarmonySlice, HarmonyStep, HarmonyTrace, ProcessPathDetail, TraceData} from "./CharmonyJson";
+import {HarmonyProcess, HarmonySlice, HarmonyStep, HarmonyTrace, ProcessPathDetail, TraceData} from "../CharmonyJson";
 import {
     IntermediateJson, IntermediateKeyValueRep,
     IntermediateTrace,
     IntermediateValueRepresentation
-} from "./IntermediateJson";
+} from "../IntermediateJson";
 
 
 function parseIntermediateValueRep(v: IntermediateValueRepresentation): unknown {

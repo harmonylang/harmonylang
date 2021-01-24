@@ -39,10 +39,13 @@ export type IntermediateMicroStep = {
     choose?: IntermediateValueRepresentation;
     shared?: Record<string, IntermediateValueRepresentation>;
     trace?: IntermediateTrace[];
-    local?: Record<string, IntermediateValueRepresentation>;
+    local?: Record<string, IntermediateValueRepresentation>; // Local variables at the end of micro-step
 
-    mode?: string;
-    failure?: string;
+    mode?: string; // Mode of process.
+    failure?: string; // Failure setting. Non-empty when a failure occurs. Undefined otherwise.
+    atomic?: string; // Atomic setting. "1" if set to atomic. "0" if set back to normal.
+    push?: IntermediateValueRepresentation[]; // Values pushed up to the expression stack.
+    pop?: string  // Number of elements popped from expression stack
 };
 
 

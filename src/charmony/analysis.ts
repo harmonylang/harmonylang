@@ -1,8 +1,8 @@
 import {PathLike} from "fs";
 import {HarmonyTopLevel} from "./CharmonyJson";
 import * as fs from "fs";
-import {getPathToBadNode} from "./pathToBadNode";
-import {getExecutedCode} from "./getExecutedCode";
+import {getPathToBadNode} from "./execution/pathToBadNode";
+import {getExecutedCode} from "./code/getExecutedCode";
 import {IntermediateJson} from "./IntermediateJson";
 
 /**
