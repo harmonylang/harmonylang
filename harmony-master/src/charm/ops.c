@@ -666,6 +666,10 @@ void op_Frame(const void *env, struct state *state, struct context **pctx){
 }
 
 void op_Go(const void *env, struct state *state, struct context **pctx){
+    ctx_failure(*pctx, "op_Go");
+    if (true) {
+        return;
+    }
     panic("op_Go");
 }
 
@@ -1832,7 +1836,7 @@ uint64_t f_len(struct state *state, struct context *ctx, uint64_t *args, int n){
     assert(n == 1);
     uint64_t e = args[0];
 	if (e == VALUE_SET || e == VALUE_DICT) {
-		return 0;
+		return VALUE_INT;
 	}
     if ((e & VALUE_MASK) == VALUE_SET) {
         int size;

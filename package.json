@@ -83,7 +83,7 @@
         "lint": "eslint . --ext .ts,.tsx",
         "watch": "tsc -watch -p ./",
         "clean": "rm -rf out",
-        "update-harmony": "node update_harmony.js",
+        "update-harmony": "./update_harmony.sh",
         "test": "mocha -r ts-node/register tests/**/*.test.ts"
     },
     "devDependencies": {
