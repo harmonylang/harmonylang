@@ -416,7 +416,6 @@
     let vscode;
 
     document.addEventListener('DOMContentLoaded', () => {
-        vscode = acquireVsCodeApi();
         timeStartText = document.getElementById("start-time");
         timeEndText = document.getElementById("end-time");
         timeSlider = document.getElementById("time-slider");
@@ -433,6 +432,7 @@
         overlay = document.getElementById("overlay");
         overlayLoader = document.getElementById("loader");
         overlayText = document.getElementById("overlay-text");
+        vscode = acquireVsCodeApi();
     });
 
     /**
