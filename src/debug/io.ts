@@ -1,8 +1,11 @@
 import * as path from "path";
 import * as dotenv from 'dotenv';
 import * as fs from "fs";
+import {EXTENSION_DIR} from "../config";
 
-dotenv.config();
+dotenv.config({
+    path: path.join(EXTENSION_DIR, ".env")
+});
 
 /**
  * If false, then all of the following functions are no-ops.
@@ -12,7 +15,7 @@ const __isDevelopment = process.env.DEVELOPMENT !== undefined && process.env.DEV
 /**
  * The debug functions writes debug information into the following directory.
  */
-const __DEBUG_DIR = path.join(__dirname, "debug");
+const __DEBUG_DIR = path.join(EXTENSION_DIR, "debug");
 if (__isDevelopment && !fs.existsSync(__DEBUG_DIR)) {
     fs.mkdirSync(__DEBUG_DIR);
 }

@@ -3,7 +3,7 @@ import {Webview} from 'vscode';
 import * as fs from 'fs';
 import {createStandaloneHtml} from "../feature/standaloneHtml";
 import {parse} from "../charmony/CharmonyJson";
-import {CHARMONY_HTML_FILE, CHARMONY_JSON_OUTPUT, RESOURCE_DIR} from "../config";
+import {CHARMONY_HTML_FILE, RESOURCE_DIR} from "../config";
 import {IntermediateJson} from "../charmony/IntermediateJson";
 
 export default class CharmonyPanelController {
@@ -53,11 +53,11 @@ export default class CharmonyPanelController {
         this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
     }
 
-    public updateResults() {
+    public updateResults(data: IntermediateJson) {
         // Send a message to the webview webview.
         // You can send any JSON serializable data.
         console.log("Presenting the webview");
-        this.update(true);
+        this.update(data);
     }
 
     public updateMessage(message: string) {
@@ -79,12 +79,11 @@ export default class CharmonyPanelController {
         }
     }
 
-    private update(hasData = false) {
+    private update(data?: IntermediateJson) {
         const webview = this.panel.webview;
         const harmonyPanel = this.panel;
 
-        const dataPath = CHARMONY_JSON_OUTPUT;
-        if (!hasData){
+        if (data == null){
             console.log("Looking for data");
             try {
                 harmonyPanel.webview.html = fs.readFileSync(CHARMONY_HTML_FILE, 'utf-8');
@@ -93,17 +92,15 @@ export default class CharmonyPanelController {
                 vscode.window.showInformationMessage(err.message);
             }
         }
-        if (hasData) {
-            console.log(CHARMONY_HTML_FILE, dataPath);
-            this.loadData(dataPath, webview);
+        if (data != null) {
+            console.log(CHARMONY_HTML_FILE, data);
+            this.loadData(data, webview);
         }
     }
 
-    private loadData(dataPath: string, webview: Webview) {
+    private loadData(data: IntermediateJson, webview: Webview) {
         console.log("Step 1");
-        console.log(dataPath);
-        const decodedJson: IntermediateJson = JSON.parse(fs.readFileSync(dataPath).toString('utf-8'));
-        const harmonyJsonData = parse(decodedJson);
+        const harmonyJsonData = parse(data);
         console.log("Step 2");
         if (vscode.workspace.workspaceFolders) {
             console.log("Creating a standalone HTML file");

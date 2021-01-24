@@ -20,6 +20,7 @@ export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
     for (const macroStep of macrosteps) {
         const {tid: pid, name} = macroStep;
         pidToName[pid] = name;
+        console.log(pid);
         stackTraceManager.setTid(pid);
         const slices: HarmonySlice[] = [];
         let duration = 0;
@@ -30,16 +31,21 @@ export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
         if (macroStep.microsteps.length > 0) {
             const firstStep = macroStep.microsteps[0];
             Object.assign(previousSharedValues, parseSharedValues(firstStep.shared));
+            console.log("Setting stack trace values", firstStep.trace);
             stackTraceManager.setCallStack(firstStep.trace);
+            console.log("Stack process 1");
             stackTraceManager.setMode({
                 atomic: firstStep.atomic,
                 choose: firstStep.choose,
                 failure: firstStep.failure,
                 mode: firstStep.mode
             });
+            console.log("Stack process 2");
             stackTraceManager.setLocal(firstStep.local);
+            console.log("Stack process 3");
             sliceDuration++;
             duration++;
+            console.log(stackTraceManager.clone());
         }
         // For the remaining steps
         for (let i = 1; i < macroStep.microsteps.length; i++) {
@@ -47,14 +53,6 @@ export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
             const pc = Number.parseInt(microStep.pc);
             const npc = microStep.pc === null ? null : Number.parseInt(microStep.npc);
             if (processStateChange(microStep)) {
-                stackTraceManager.setCallStack(microStep.trace);
-                stackTraceManager.setMode({
-                    atomic: microStep.atomic,
-                    choose: microStep.choose,
-                    failure: microStep.failure,
-                    mode: microStep.mode
-                });
-                stackTraceManager.setLocal(microStep.local);
                 slices.push({
                     duration: sliceDuration,
                     shared_values: Object.assign({}, previousSharedValues),
@@ -62,11 +60,27 @@ export function getPathToBadNode(json: IntermediateJson): ProcessPathDetail {
                     mode: stackTraceManager.getCurrentMode(),
                     failure: stackTraceManager.getCurrentFailure()
                 });
+
+                console.log("Stack process 2.1");
+                stackTraceManager.setCallStack(microStep.trace);
+                console.log("Stack process 2.2");
+                stackTraceManager.setMode({
+                    atomic: microStep.atomic,
+                    choose: microStep.choose,
+                    failure: microStep.failure,
+                    mode: microStep.mode
+                });
+                console.log("Stack process 2.3");
+                stackTraceManager.setLocal(microStep.local);
+                console.log("Stack process 2.4");
                 sliceDuration = 0;
                 Object.assign(previousSharedValues, parseSharedValues(microStep.shared));
+
+                console.log(stackTraceManager.clone());
             }
             duration++;
             sliceDuration++;
+            console.log(stackTraceManager.clone());
 
             if (microStep.choose != null) {
                 const chooseValue = parseIntermediateValueRep(microStep.choose);

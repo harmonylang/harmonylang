@@ -22,3 +22,5 @@ harmony-master/charm
 **/charm.json
 **/harmony.json
 **/charm.dSYM/
+
+debug/

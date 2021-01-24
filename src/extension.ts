@@ -2,8 +2,11 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import CharmonyPanelController from './outputPanel/PanelController';
 import {ProcessManagerImpl} from './processManager';
-import {CHARMONY_COMPILER_DIR, CHARMONY_SCRIPT_PATH, GENERATED_FILES} from "./config";
+import {CHARMONY_COMPILER_DIR, CHARMONY_JSON_OUTPUT, CHARMONY_SCRIPT_PATH, GENERATED_FILES} from "./config";
 import * as rimraf from "rimraf";
+import { LOG } from './debug/io';
+import * as fs from "fs";
+import {IntermediateJson} from "./charmony/IntermediateJson";
 
 const processManager = ProcessManagerImpl.init();
 
@@ -79,16 +82,22 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
         CharmonyPanelController.currentPanel?.dispose();
         if (processManager.processesAreKilled) return;
         CharmonyPanelController.createOrShow(context.extensionUri);
+        LOG("finished processing", {error, stdout});
         if (error) {
             CharmonyPanelController.currentPanel?.updateMessage(stdout);
-        } else if (stdout.includes("Safety Violation")) {
-            // System errors, includes division by zero.
-            CharmonyPanelController.currentPanel?.updateResults();
-        } else {
-            // Output Panel will include the stdout output.
-            CharmonyPanelController.currentPanel?.updateMessage(`No Errors Found`);
-            // Show the output panel with the contents of charmony.html because the compilation succeeded.
         }
-        GENERATED_FILES.forEach(f => rimraf.sync(f));
+        try {
+            const results: IntermediateJson = JSON.parse(fs.readFileSync(CHARMONY_JSON_OUTPUT, {encoding: 'utf-8'}));
+            LOG("Opened charm.json", {results});
+            if (results != null && results.issue != null && results.issue != "No issues") {
+                CharmonyPanelController.currentPanel?.updateResults(results);
+            } else {
+                CharmonyPanelController.currentPanel?.updateMessage(`No Errors Found.`);
+            }
+            GENERATED_FILES.forEach(f => rimraf.sync(f));
+        } catch (error) {
+            LOG("error when trying to open charm.json", {error, CHARMONY_JSON_OUTPUT});
+            CharmonyPanelController.currentPanel?.updateMessage(`Could not create analysis file.`);
+        }
     });
 }

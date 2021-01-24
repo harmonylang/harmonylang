@@ -24,7 +24,12 @@ export default class StackTraceManager {
     setLocal(local: undefined | Record<string, IntermediateValueRepresentation>) {
         if (local == null) return;
         const callStack = this.stackTrace[this.currentTid].traces;
-        callStack[callStack.length - 1].vars = parseSharedValues(local);
+        console.log("Trace", this.stackTrace);
+        console.log("Call stack", callStack);
+        callStack[callStack.length - 1] = {
+            ...callStack[callStack.length - 1],
+            vars: parseSharedValues(local)
+        };
     }
 
     /**
@@ -35,7 +40,12 @@ export default class StackTraceManager {
         if (callStack == null) return;
         this.stackTrace[this.currentTid] = {
             ...this.stackTrace[this.currentTid],
-            traces: callStack
+            traces: callStack.map(cs => {
+                return {
+                    ...cs,
+                    vars: parseSharedValues(cs.vars)
+                };
+            })
         };
     }
 
