@@ -75,12 +75,13 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
     const charmonyCompileCommand = `${CHARMONY_SCRIPT_PATH} ${fullFileName}`;
     processManager.startCommand(charmonyCompileCommand, {
         cwd: CHARMONY_COMPILER_DIR
-    }, (error, stdout, stderr) => {
+    }, (error, stdout) => {
         CharmonyPanelController.currentPanel?.dispose();
         if (processManager.processesAreKilled) return;
         CharmonyPanelController.createOrShow(context.extensionUri);
-        console.log(stderr, error);
-        if (stdout.includes("Safety Violation")) {
+        if (error) {
+            CharmonyPanelController.currentPanel?.updateMessage(stdout);
+        } else if (stdout.includes("Safety Violation")) {
             // System errors, includes division by zero.
             CharmonyPanelController.currentPanel?.updateResults();
         } else {
