@@ -30,6 +30,7 @@ export type IntermediateSwitch = {
     tid: string;
     name: string;
     microsteps: IntermediateMicroStep[];
+    contexts: IntermediateContext[];
 };
 
 type VariableName = string;
@@ -68,8 +69,9 @@ export type IntermediateContext = {
     fp: string;
     trace: IntermediateTrace[];
     this: string;
-    mode: string;
-    failure: string | null;
-    atomic: number | null;
-    readonly: number | null;
+    mode?: "choosing" | "blocked" | "runnable"; // Mode of process.
+    readonly?: string;
+    interruptlevel?: string;
+    failure?: string; // Failure setting. Non-empty when a failure occurs. Undefined otherwise.
+    atomic?: string; // Atomic setting. "1" if set to atomic. "0" if set back to normal.
 }

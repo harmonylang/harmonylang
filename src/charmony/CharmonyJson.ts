@@ -1,4 +1,3 @@
-import {PathLike} from "fs";
 import {getHtmlContent} from "./analysis";
 import {IntermediateJson} from "./IntermediateJson";
 
