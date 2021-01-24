@@ -35,19 +35,25 @@ export function genExecutionPath(json: IntermediateJson): Omit<CharmonyTopLevel,
     let overallTime = 0;
     for (const macroStep of macrosteps) {
         let sliceDuration = 0;
-        const {tid, name} = macroStep;
+        const {tid, name, contexts} = macroStep;
         idToName[tid] = name;
-        stackTraceManager.setTid(tid);
+        stackTraceManager.setNewTid(tid, contexts);
+
+        const tidContext = contexts.find(x => x.tid === tid);
+        if (tidContext != null) {
+            stackTraceManager.setCallStack(tidContext.trace);
+            stackTraceManager.setStatus(tid, tidContext);
+        }
         const microSteps: CharmonyMicroStep[] = [];
 
         // For the first step
         if (macroStep.microsteps.length > 0) {
             const firstStep = macroStep.microsteps[0];
-            const {pc, npc, atomic, failure, mode, interruptlevel, readonly} = firstStep;
+            const {pc, npc} = firstStep;
             // Assign any existing shared variables to the sharedVariables map.
             Object.assign(previousSharedValues, parseVariableSet(firstStep.shared));
             stackTraceManager.setCallStack(firstStep.trace);
-            stackTraceManager.setStatus({atomic, failure, mode, interruptlevel, readonly });
+            stackTraceManager.setStatus(tid, firstStep);
             stackTraceManager.setLocal(firstStep.local);
 
             sliceDuration++;
@@ -73,13 +79,7 @@ export function genExecutionPath(json: IntermediateJson): Omit<CharmonyTopLevel,
                     steps: microSteps
                 });
                 stackTraceManager.setCallStack(microStep.trace);
-                stackTraceManager.setStatus({
-                    atomic: microStep.atomic,
-                    failure: microStep.failure,
-                    mode: microStep.mode,
-                    readonly: microStep.readonly,
-                    interruptlevel: microStep.interruptlevel
-                });
+                stackTraceManager.setStatus(tid, microStep);
                 stackTraceManager.setLocal(microStep.local);
 
                 sliceDuration = 0;

@@ -71,6 +71,7 @@ export type IntermediateContext = {
     this: string;
     mode?: "choosing" | "blocked" | "runnable"; // Mode of process.
     readonly?: string;
+    choose?: IntermediateValueRepresentation;
     interruptlevel?: string;
     failure?: string; // Failure setting. Non-empty when a failure occurs. Undefined otherwise.
     atomic?: string; // Atomic setting. "1" if set to atomic. "0" if set back to normal.

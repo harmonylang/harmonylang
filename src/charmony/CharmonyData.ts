@@ -1,6 +1,37 @@
+import {IntermediateJson} from "./IntermediateJson";
+import {getExecutedCode} from "./code/getExecutedCode";
+import {genExecutionPath} from "./new_exec/genExecutionPath";
 
 type thread_id = string;
 type variable_name = string;
+
+
+export default function parseCharmony(json: IntermediateJson): CharmonyTopLevel {
+    const executedCode: CharmonyExecutedCode[] = getExecutedCode(json).map(c => {
+        const {source_code, file, assembly, line, start_pc} = c;
+        return {
+            sourceCode: source_code,
+            initialPc: start_pc,
+            file, line,
+            assembly: assembly.map(a => {
+                return {
+                    assembly: a.code,
+                    explain: a.explain
+                };
+            })
+        };
+    });
+
+    const {idToThreadName, executionPath, issue, macroSteps} = genExecutionPath(json);
+
+    return {
+        executionPath,
+        idToThreadName,
+        issue,
+        macroSteps,
+        executedCode
+    };
+}
 
 export type CharmonyTopLevel = {
     issue: string;
@@ -38,9 +69,9 @@ export type CharmonyStackTrace = {
     mode?: string;
     chosen?: unknown;
     failure?: string;
-    atomic?: number;
-    readonly?: number;
-    interruptLevel?: number;
+    atomic: number;
+    readonly: number;
+    interruptLevel: number;
 
     callStack: CharmonyCallStack[];
 }
