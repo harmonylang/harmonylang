@@ -3,9 +3,10 @@ import {Webview} from 'vscode';
 import * as fs from 'fs';
 import {createStandaloneHtml} from "../feature/standaloneHtml";
 import {parse} from "../charmony/CharmonyJson";
-import {CHARMONY_HTML_FILE, RESOURCE_DIR} from "../config";
+import {CHARMONY_HTML_FILE, DEBUG_DIR, RESOURCE_DIR} from "../config";
 import {IntermediateJson} from "../charmony/IntermediateJson";
 import parseCharmony from "../charmony/CharmonyData";
+import * as path from "path";
 
 export default class CharmonyPanelController_v2 {
     public static currentPanel: CharmonyPanelController_v2 | undefined;
@@ -102,6 +103,12 @@ export default class CharmonyPanelController_v2 {
     private loadData(data: IntermediateJson, webview: Webview) {
         console.log("Step 1");
         const harmonyJsonData = parseCharmony(data);
+
+        if (fs.existsSync(DEBUG_DIR)) {
+            fs.writeFileSync(path.join(DEBUG_DIR, "visual.json"),
+                JSON.stringify(harmonyJsonData, undefined, 4));
+        }
+
         console.log("Step 2");
         if (vscode.workspace.workspaceFolders) {
             console.log("Creating a standalone HTML file");
