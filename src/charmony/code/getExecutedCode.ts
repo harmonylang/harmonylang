@@ -12,8 +12,7 @@ export function getExecutedCode(json: IntermediateJson): HarmonyCode[] {
     for (let i = 0; i < locations.length; i++) {
         const [startingPc, sourceCode] = locations[i];
         const {file, line} = sourceCode;
-        const lineNumber = Number.parseInt(line);
-        firstEvaluatedPc = firstEvaluatedPc ? Math.min(lineNumber, firstEvaluatedPc) : lineNumber;
+        firstEvaluatedPc = firstEvaluatedPc !== undefined ? Math.min(startingPc, firstEvaluatedPc) : startingPc;
 
         const lastPc = i < locations.length - 1 ? locations[i + 1][0] : code.length;
         const executedAssembly: HarmonyAssembly[] = [];
@@ -29,7 +28,6 @@ export function getExecutedCode(json: IntermediateJson): HarmonyCode[] {
             assembly: executedAssembly
         });
     }
-    console.log(firstEvaluatedPc);
     if (firstEvaluatedPc !== undefined && firstEvaluatedPc !== 0) {
         const executedAssembly: HarmonyAssembly[] = [];
         for (let pc = 0; pc < firstEvaluatedPc; pc++) {

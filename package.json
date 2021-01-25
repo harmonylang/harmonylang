@@ -100,6 +100,7 @@
         "axios": "^0.21.0",
         "dotenv": "^8.2.0",
         "eslint": "^7.1.0",
+        "ts-node": "^9.1.1",
         "typescript": "^3.9.7"
     },
     "dependencies": {
