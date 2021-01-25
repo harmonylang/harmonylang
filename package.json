@@ -89,6 +89,7 @@
     "devDependencies": {
         "@types/chai": "^4.2.14",
         "@types/create-html-element": "^2.1.0",
+        "@types/lodash": "^4.14.168",
         "@types/mocha": "^8.2.0",
         "@types/node": "^12.19.11",
         "@types/rimraf": "^3.0.0",
@@ -104,6 +105,7 @@
     "dependencies": {
         "chai": "^4.2.0",
         "create-html-element": "^3.0.0",
+        "lodash": "^4.17.20",
         "mocha": "^8.2.1",
         "node": "^15.4.0",
         "node-html-parser": "^2.0.0",

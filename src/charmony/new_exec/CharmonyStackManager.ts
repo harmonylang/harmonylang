@@ -5,6 +5,7 @@ import {
     IntermediateValueRepresentation
 } from "../IntermediateJson";
 import {CharmonyStackTrace} from "../CharmonyData";
+import {cloneDeep} from 'lodash';
 import {parseIntermediateValueRep, parseVariableSet} from "../execution/values/parser";
 
 type thread_id = string;
@@ -32,6 +33,7 @@ export default class CharmonyStackManager {
     setLocal(local: undefined | Record<string, IntermediateValueRepresentation>) {
         if (local == null) return;
         const stackTrace = this.stackTrace[this.currentTid];
+        if (stackTrace.callStack.length === 0) return;
         const [toReplace, ...rest] = stackTrace.callStack;
 
         this.stackTrace[this.currentTid] = {
@@ -53,7 +55,8 @@ export default class CharmonyStackManager {
             ...this.stackTrace[this.currentTid],
             callStack: callStack.map(cs => {
                 return {
-                    ...cs,
+                    method: cs.method,
+                    pc: cs.pc,
                     callType: cs.calltype,
                     vars: parseVariableSet(cs.vars)
                 };
@@ -72,18 +75,16 @@ export default class CharmonyStackManager {
         const ongoingTrace = this.stackTrace[tid];
         const status = mode === undefined ? this.stackTrace[tid].status : mode;
         const augments: string[] = [];
+        const atomicLevel = atomic != null ? Number.parseInt(atomic): ongoingTrace.atomic;
+        const readLevel = readonly != null ? Number.parseInt(readonly): ongoingTrace.readonly;
+        const interruptLevelValue = interruptlevel != null ? Number.parseInt(interruptlevel) : ongoingTrace.interruptLevel;
         if (status != "terminated") {
-            const atomicLevel = atomic != null ? Number.parseInt(atomic): ongoingTrace.atomic;
             if (atomicLevel > 0) {
                 augments.push("atomic");
             }
-            const readLevel = readonly != null ? Number.parseInt(readonly): ongoingTrace.readonly;
             if (readLevel > 0) {
                 augments.push("read-only");
             }
-            const interruptLevelValue = interruptlevel != null
-                ? Number.parseInt(interruptlevel)
-                : ongoingTrace.interruptLevel;
             if (interruptLevelValue > 0) {
                 augments.push("interrupts-disabled");
             }
@@ -92,14 +93,17 @@ export default class CharmonyStackManager {
         const currentStackTrace = this.stackTrace[tid];
         this.stackTrace[tid] = {
             ...currentStackTrace,
+            callStack: currentStackTrace.callStack.map(x => {
+                return {...x};
+            }),
             chosen: choose != null ? parseIntermediateValueRep(choose) : undefined,
             fullStatus: fullStatus,
             status: status,
             mode: mode,
             failure: failure,
-            atomic: atomic != null ? Number.parseInt(atomic) : currentStackTrace.atomic,
-            interruptLevel: interruptlevel != null ? Number.parseInt(interruptlevel) : currentStackTrace.interruptLevel,
-            readonly: readonly != null ? Number.parseInt(readonly) : currentStackTrace.readonly
+            atomic: atomicLevel,
+            interruptLevel: interruptLevelValue,
+            readonly: readLevel
         };
     }
 
@@ -112,7 +116,7 @@ export default class CharmonyStackManager {
     setNewTid(newTid: thread_id, contexts: IntermediateContext[]) {
         Object.assign(this.contexts, Object.fromEntries(contexts.map(c => [c.tid, c])));
         this.currentTid = newTid;
-        if (this.stackTrace[newTid] != null) {
+        if (this.stackTrace[newTid] == null) {
             this.stackTrace[newTid] = {
                 failure: undefined,
                 mode: "running",
@@ -144,6 +148,6 @@ export default class CharmonyStackManager {
      * Creates a shallow copy of the current stack trace.
      */
     clone() {
-        return Object.assign({}, this.stackTrace);
+        return cloneDeep(this.stackTrace);
     }
 }
