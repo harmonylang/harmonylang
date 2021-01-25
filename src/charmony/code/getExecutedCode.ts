@@ -1,12 +1,12 @@
-import {HarmonyAssembly, HarmonyCode} from "../CharmonyJson";
 import {IntermediateHarmonyCode, IntermediateJson} from "../IntermediateJson";
+import {CharmonyAssemblyCode, CharmonyExecutedCode} from "../CharmonyData";
 
-export function getExecutedCode(json: IntermediateJson): HarmonyCode[] {
+export function getExecutedCode(json: IntermediateJson): CharmonyExecutedCode[] {
     const {explain, code} = json;
     const locations = Object.entries(json.locations)
         .map(([k, v]) => [Number.parseInt(k), v] as [number, IntermediateHarmonyCode])
         .sort(([k1], [k2]) => k1 - k2);
-    const executedCode: HarmonyCode[] = [];
+    const executedCode: CharmonyExecutedCode[] = [];
     let firstEvaluatedPc: undefined | number = undefined;
 
     for (let i = 0; i < locations.length; i++) {
@@ -15,31 +15,31 @@ export function getExecutedCode(json: IntermediateJson): HarmonyCode[] {
         firstEvaluatedPc = firstEvaluatedPc !== undefined ? Math.min(startingPc, firstEvaluatedPc) : startingPc;
 
         const lastPc = i < locations.length - 1 ? locations[i + 1][0] : code.length;
-        const executedAssembly: HarmonyAssembly[] = [];
+        const executedAssembly: CharmonyAssemblyCode[] = [];
         for (let pc = startingPc; pc < lastPc; pc++) {
             const codeAtPc = code[pc].trim();
             const explainAtPc = explain[pc];
-            executedAssembly.push({code: codeAtPc, explain: explainAtPc});
+            executedAssembly.push({assembly: codeAtPc, explain: explainAtPc});
         }
         executedCode.push({
-            start_pc: startingPc,
+            initialPc: startingPc,
             file, line,
-            source_code: sourceCode['code'],
+            sourceCode: sourceCode['code'],
             assembly: executedAssembly
         });
     }
     if (firstEvaluatedPc !== undefined && firstEvaluatedPc !== 0) {
-        const executedAssembly: HarmonyAssembly[] = [];
+        const executedAssembly: CharmonyAssemblyCode[] = [];
         for (let pc = 0; pc < firstEvaluatedPc; pc++) {
             const codeAtPc = code[pc].trim();
             const explainAtPc = explain[pc];
-            executedAssembly.push({code: codeAtPc, explain: explainAtPc});
+            executedAssembly.push({assembly: codeAtPc, explain: explainAtPc});
         }
         executedCode.unshift({
-            start_pc: 0,
+            initialPc: 0,
             file: "#internal",
             line: "0",
-            source_code: "#internal_setup()",
+            sourceCode: "#internal_setup()",
             assembly: executedAssembly
         });
     }

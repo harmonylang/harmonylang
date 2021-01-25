@@ -7,21 +7,7 @@ type variable_name = string;
 
 
 export default function parseCharmony(json: IntermediateJson): CharmonyTopLevel {
-    const executedCode: CharmonyExecutedCode[] = getExecutedCode(json).map(c => {
-        const {source_code, file, assembly, line, start_pc} = c;
-        return {
-            sourceCode: source_code,
-            initialPc: start_pc,
-            file, line,
-            assembly: assembly.map(a => {
-                return {
-                    assembly: a.code,
-                    explain: a.explain
-                };
-            })
-        };
-    });
-
+    const executedCode: CharmonyExecutedCode[] = getExecutedCode(json);
     const {idToThreadName, slices, issue, macroSteps, microSteps} = genExecutionPath(json);
 
     console.log({
