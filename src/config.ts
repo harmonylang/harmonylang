@@ -13,9 +13,9 @@ export const CHARMONY_JSON_OUTPUT = path.join(CHARMONY_COMPILER_DIR, "charm.json
 
 export const GENERATED_FILES = [
     path.join(CHARMONY_COMPILER_DIR, "charm.dSYM"),
-    path.join(CHARMONY_COMPILER_DIR, "charm"),
-    // path.join(CHARMONY_COMPILER_DIR, "charm.json"),
+    // path.join(CHARMONY_COMPILER_DIR, "charm"),
+    path.join(CHARMONY_COMPILER_DIR, "charm.json"),
     // path.join(CHARMONY_COMPILER_DIR, "charm.c"),
-    // path.join(CHARMONY_COMPILER_DIR, "harmony.html"),
+    path.join(CHARMONY_COMPILER_DIR, "harmony.html"),
     path.join(CHARMONY_COMPILER_DIR, "harmony.json"),
 ];

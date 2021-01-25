@@ -68,7 +68,12 @@ export class ProcessManagerImpl implements ProcessManager {
     ): string {
         this.processesAreKilled = false;
         const id = `command_${this.commandCount}`;
-        this.runningCommands[id] = child_process.exec(cmd, options, callback);
+        this.runningCommands[id] = child_process.exec(cmd, options,
+            (err, stdout, stderr) => {
+            delete this.runningCommands[id];
+            this.commandCount--;
+            callback(err, stdout, stderr);
+        });
         this.commandCount++;
         return id;
     }
@@ -91,7 +96,6 @@ export class ProcessManagerImpl implements ProcessManager {
             clearInterval(this.runningIntervals[id]);
             delete this.runningIntervals[id];
             this.intervalCount--;
-            delete this.runningIntervals[id];
         }
     }
 
@@ -102,7 +106,6 @@ export class ProcessManagerImpl implements ProcessManager {
             }
             delete this.runningCommands[id];
             this.commandCount--;
-            delete this.runningCommands[id];
         }
     }
 

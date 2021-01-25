@@ -7,6 +7,9 @@ import { LOG } from './debug/io';
 import * as fs from "fs";
 import {IntermediateJson} from "./charmony/IntermediateJson";
 import CharmonyPanelController_v2 from "./outputPanel/PanelController_v2";
+import * as os from "os";
+import {ExecException} from "child_process";
+import * as commandExists from "command-exists";
 
 const processManager = ProcessManagerImpl.init();
 
@@ -48,17 +51,6 @@ export function endHarmonyProcesses() {
     showMessage('All Harmony processes have ended.');
 }
 
-const launchRunningMessage = (msLag: number): string => {
-    const startTime = Date.now();
-    return processManager.startInterval(() => {
-        const elapsed = (Date.now() - startTime) / 1000;
-        vscode.window.showInformationMessage(
-            `Running the Harmony program...\n${elapsed.toFixed()} seconds have elapsed.`
-        );
-    }, msLag);
-};
-
-
 const showVscodeMessage = (isError: boolean, main: string, subHeader?: string, subtext?: string) => {
     const show = isError ? vscode.window.showErrorMessage : vscode.window.showInformationMessage;
     if (subHeader == null || subtext == null) {
@@ -68,36 +60,73 @@ const showVscodeMessage = (isError: boolean, main: string, subHeader?: string, s
     }
 };
 
+function checkIfPython3Exists(
+    ifItExists: () => void,
+    otherwise: () => void,
+) {
+    commandExists("python3", (err, exists) => {
+        if (exists) ifItExists();
+        else otherwise();
+    });
+}
+
+/**
+ * Based on the following answer:
+ * Source: https://stackoverflow.com/questions/34953168/node-check-existence-of-command-in-path
+ */
+function checkIfCompilerForCExists(
+    ifItExists: () => void,
+    otherwise: () => void,
+): void {
+    commandExists("cc", (err, exists) => {
+        if (exists) ifItExists();
+        else otherwise();
+    });
+}
+
 const showMessage = (main: string, subHeader?: string, subtext?: string) => {
     return showVscodeMessage(false, main, subHeader, subtext);
 };
 
 export function runHarmony(context: vscode.ExtensionContext, fullFileName: string) {
-    // Use python3 by default if configurations are not set.
-    // const pythonPath = getPythonPath();
-    const charmonyCompileCommand = `${CHARMONY_SCRIPT_PATH} ${fullFileName}`;
-    processManager.startCommand(charmonyCompileCommand, {
-        cwd: CHARMONY_COMPILER_DIR
-    }, (error, stdout) => {
-        CharmonyPanelController_v2.currentPanel?.dispose();
-        if (processManager.processesAreKilled) return;
-        CharmonyPanelController_v2.createOrShow(context.extensionUri);
-        LOG("finished processing", {error, stdout});
-        if (error) {
-            CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
-        }
-        try {
-            const results: IntermediateJson = JSON.parse(fs.readFileSync(CHARMONY_JSON_OUTPUT, {encoding: 'utf-8'}));
-            LOG("Opened charm.json", {results});
-            if (results != null && results.issue != null && results.issue != "No issues") {
-                CharmonyPanelController_v2.currentPanel?.updateResults(results);
-            } else {
-                CharmonyPanelController_v2.currentPanel?.updateMessage(`No Errors Found.`);
-            }
-            GENERATED_FILES.forEach(f => rimraf.sync(f));
-        } catch (error) {
-            LOG("error when trying to open charm.json", {error, CHARMONY_JSON_OUTPUT});
-            CharmonyPanelController_v2.currentPanel?.updateMessage(`Could not create analysis file.`);
-        }
+    checkIfPython3Exists(() => {
+        console.log("Check for Python3");
+        checkIfCompilerForCExists(() => {
+            console.log("Check for CC");
+            const charmonyCompileCommand = `${CHARMONY_SCRIPT_PATH} ${fullFileName}`;
+            processManager.startCommand(charmonyCompileCommand, {
+                cwd: CHARMONY_COMPILER_DIR
+            }, (error, stdout) => {
+                CharmonyPanelController_v2.currentPanel?.dispose();
+                if (processManager.processesAreKilled) return;
+                CharmonyPanelController_v2.createOrShow(context.extensionUri);
+                LOG("finished processing", {error, stdout});
+                if (error) {CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);}
+                try {
+                    const results: IntermediateJson = JSON.parse(fs.readFileSync(CHARMONY_JSON_OUTPUT, {
+                        encoding: 'utf-8'
+                    }));
+                    if (results != null && results.issue != null && results.issue != "No issues") {
+                        CharmonyPanelController_v2.currentPanel?.updateResults(results);
+                    } else {
+                        CharmonyPanelController_v2.currentPanel?.updateMessage(`No Errors Found.`);
+                    }
+                    GENERATED_FILES.forEach(f => rimraf.sync(f));
+                } catch (error) {
+                    CharmonyPanelController_v2.currentPanel?.updateMessage(`Could not create analysis file.`);
+                }
+            });
+        }, () => {
+            showVscodeMessage(false,
+                "Missing dependency",
+                "Target for cc C-compiler cannot be found",
+                "The Harmony compiler uses C for optimal performance.\nWill default to Python3 compiler.");
+            // Use the original distribution of Harmony.
+        });
+    }, () => {
+        showVscodeMessage(true,
+            "Missing dependency",
+            "Target for python3 cannot be found",
+            "The runner requires Python3. Please install Python3 and try again.");
     });
 }
