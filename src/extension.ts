@@ -117,16 +117,15 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                 }
             });
         }, () => {
-            showVscodeMessage(false,
+            showVscodeMessage(true,
                 "Missing dependency",
                 "Target for cc C-compiler cannot be found",
-                "The Harmony compiler uses C for optimal performance.\nWill default to Python3 compiler.");
-            // Use the original distribution of Harmony.
+                "The model checker requires C. Please check you have a C-compiler before continuing.");
         });
     }, () => {
         showVscodeMessage(true,
             "Missing dependency",
             "Target for python3 cannot be found",
-            "The runner requires Python3. Please install Python3 and try again.");
+            "The model checker requires Python3. Please install Python3 and try again.");
     });
 }
