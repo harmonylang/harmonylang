@@ -1,5 +1,4 @@
-import {IntermediateKeyValueRep, IntermediateTrace, IntermediateValueRepresentation} from "../../IntermediateJson";
-import {HarmonyTrace, TraceData} from "../../CharmonyJson";
+import {IntermediateKeyValueRep, IntermediateValueRepresentation} from "../IntermediateJson";
 
 export function parseIntermediateValueRep(v: IntermediateValueRepresentation): unknown {
     const {value, type} = v;
@@ -24,14 +23,6 @@ export function parseIntermediateValueRep(v: IntermediateValueRepresentation): u
     throw TypeError("Cannot parse this value");
 }
 
-export function parseIntermediateTrace(trace: IntermediateTrace): HarmonyTrace {
-    const copiedTrace: IntermediateTrace = Object.assign({}, trace);
-    return {
-        ...copiedTrace,
-        vars: parseVariableSet(trace.vars)
-    };
-}
-
 export function parseVariableSet(sharedValues: undefined | Record<string, IntermediateValueRepresentation>): Record<string, unknown> {
     const result: Record<string, unknown> = {};
     if (sharedValues != null) {
@@ -40,16 +31,6 @@ export function parseVariableSet(sharedValues: undefined | Record<string, Interm
                 result[k] = parseIntermediateValueRep(v);
             }
         });
-    }
-    return result;
-}
-
-export function parseIntermediateTraceArray(mode: string,
-                                     failure: string | undefined,
-                                     traces: undefined | IntermediateTrace[]): Omit<TraceData, 'traces'> & {traces?: HarmonyTrace[]} {
-    const result: Omit<TraceData, 'traces'> & {traces?: HarmonyTrace[]} = {failure, mode};
-    if (traces != null) {
-        result.traces = traces.map(parseIntermediateTrace);
     }
     return result;
 }

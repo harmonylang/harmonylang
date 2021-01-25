@@ -61,6 +61,7 @@ m4_include(../charm/value.c)
 
 import sys
 import os
+import pathlib
 import getopt
 import traceback
 import collections
@@ -104,6 +105,7 @@ def doImport(scope, code, module):
     (lexeme, file, line, column) = module
     # assert lexeme not in scope.names        # TODO
     if lexeme not in imported:
+        # TODO.  Only do the following if the modules have variables?
         code.append(PushOp((novalue, file, line, column)))
         code.append(StoreOp(module, module, []))
 
@@ -142,15 +144,13 @@ def load_string(all, filename, scope, code):
     tokens = lexer(all, filename)
     # assert False, (tokens1, tokens)
 
-    if False:
-        try:
-            (ast, rem) = StatListRule(-1).parse(tokens)
-        except IndexError:
-            # best guess...
-            print("Parsing", filename, "hit EOF")
-            # print(traceback.format_exc())
-            exit(1)
-    (ast, rem) = StatListRule(-1).parse(tokens)
+    try:
+        (ast, rem) = StatListRule(-1).parse(tokens)
+    except IndexError:
+        # best guess...
+        print("Parsing", filename, "hit EOF")
+        # print(traceback.format_exc())
+        exit(1)
 
     for mod in ast.getImports():
         doImport(scope, code, mod)
@@ -287,7 +287,7 @@ assignops = {
 def isbinaryop(s):
     return isxbinop(s) or iscmpop(s) or s == "in"
 
-tokens = { "bag{", "{", "==", "!=", "<=", ">=", "=>",
+tokens = { "{", "==", "!=", "<=", ">=", "=>",
                         "//", "**", "<<", ">>", "..", "->" } | assignops
 
 def lexer(s, file):
@@ -2046,7 +2046,7 @@ class AST:
 
             # Evaluate the set and store in a temporary variable
             expr.compile(scope, code)
-            S = ("__set__"+str(uid), file, line, column)
+            S = ("$s"+str(uid), file, line, column)
             code.append(StoreVarOp(S))
 
             # Now generate the code:
@@ -2078,7 +2078,7 @@ class AST:
         # Keep track of the size
         uid = len(code)
         (lexeme, file, line, column) = self.token
-        N = ("__size__"+str(uid), file, line, column)
+        N = ("$n"+str(uid), file, line, column)
         if ctype == "set":
             code.append(PushOp((SetValue(set()), file, line, column)))
         elif ctype == "dict":
@@ -2802,8 +2802,8 @@ class BasicExpressionRule(Rule):
             return (NameAST(t[0]), t[1:])
         if lexeme == "{":
             return SetRule().parse(t)
-        if lexeme == "bag{":
-            return BagRule().parse(t)
+        # if lexeme == "bag{":
+        #     return BagRule().parse(t)
         if lexeme == "(" or lexeme == "[":
             closer = ")" if lexeme == "(" else "]"
             (ast, t) = TupleRule({closer}).parse(t[1:])
@@ -3507,17 +3507,60 @@ class BoundVarRule(Rule):
             t = t[2:]
 
 class StatementRule(Rule):
+    def rec_slice(self, t):
+        (lexeme, file, line, column) = first = t[0]
+        if lexeme == '(':
+            bracket = ')'
+        elif lexeme == '[':
+            bracket = ']'
+        else:
+            assert lexeme == '{'
+            bracket = '}'
+        t = t[1:]
+        tokens = []
+        while t != []:
+            tokens.append(t[0])
+            (lexeme, file, line, column) = t[0]
+            if lexeme == bracket:
+                return (tokens, t[1:])
+            if lexeme in [')', ']', '}']:
+                print("unmatched bracket:", t[0])
+                exit(1)
+            if lexeme in ['(', '[', '{']:
+                (more, t) = self.rec_slice(t)
+                tokens += more
+                if t == []:
+                    break
+            else:
+                t = t[1:]
+        print("closing bracket missing:", first, tokens, t)
+        exit(1)
+
     def slice(self, t, indent):
         if t == []:
             return ([], [])
         tokens = []
         (lexeme, file, line, column) = t[0]
+        if lexeme in ['(', '[', '{']:
+            tokens.append(t[0])
+            (more, t) = self.rec_slice(t)
+            tokens += more
+            if t == []:
+                return (tokens, [])
+            (lexeme, file, line, column) = t[0]
         while column > indent and lexeme != ";":
             tokens.append(t[0])
             t = t[1:]
             if t == []:
                 break
             (lexeme, file, line, column) = t[0]
+            if lexeme in ['(', '[', '{']:
+                tokens.append(t[0])
+                (more, t) = self.rec_slice(t)
+                tokens += more
+                if t == []:
+                    break
+                (lexeme, file, line, column) = t[0]
         return (tokens, t)
 
     def parse(self, t):
@@ -3672,12 +3715,16 @@ class StatementRule(Rule):
             return (AssertAST(token, cond, expr), t)
         
         # If we get here, the next statement is either an expression
-        # or an assignment.  The grammar is either
+        # or an assignment.  The assignment grammar is either
         #   (tuple_expression '=')* tuple_expression
         # or
         #   tuple_expression 'op=' tuple_expression
-        (tokens, t) = self.slice(t[1:], column)
-        tokens = [token] + tokens
+        (lexeme, file, line, column) = t[0]
+        if lexeme in ['(', '[', '{']:
+            (tokens, t) = self.slice(t, column)
+        else:
+            (tokens, t) = self.slice(t[1:], column)
+            tokens = [token] + tokens
         exprs = []
         assignop = None
         while tokens != []:
@@ -5272,15 +5319,16 @@ def main():
     if charmflag:
         with open("harmony.json", "w") as fd:
             dumpCode("json", code, scope, f=fd)
-        if not os.path.exists("charm"):
+        charm = "%s/.charm"%pathlib.Path.home()
+        if not os.path.exists(charm):
             with open("charm.c", "w") as fd:
                 print(charm_src, file=fd)
-            # r = os.system("cc -O3 -DNDEBUG -DHARMONY_COMBINE charm.c -o charm");
-            r = os.system("cc -g -DHARMONY_COMBINE charm.c -o charm");
+            # r = os.system("cc -O3 -DNDEBUG -DHARMONY_COMBINE charm.c -o %s"%charm);
+            r = os.system("cc -g -DHARMONY_COMBINE charm.c -o %s"%charm);
             if r != 0:
                 print("can't create charm model checker")
                 sys.exit(r);
-        r = os.system("./charm harmony.json");
+        r = os.system("%s harmony.json"%charm);
         if r != 0:
             print("charm model checker failed")
             sys.exit(r);

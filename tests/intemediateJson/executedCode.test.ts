@@ -1,7 +1,7 @@
 import * as mocha from 'mocha';
 import * as chai from 'chai';
 import {IntermediateJson} from "../../src/charmony/IntermediateJson";
-import {HarmonyCode, parse} from "../../src/charmony/CharmonyJson";
+import parseCharmony, {CharmonyExecutedCode} from "../../src/charmony/CharmonyData";
 
 const {describe, it} = mocha;
 const {expect} = chai;
@@ -14,15 +14,15 @@ describe('Code execution', function () {
             locations: {"0": {line: "1", code: "echo hello world", file: "hello.hny"}},
             macrosteps: []
         };
-        const expected: HarmonyCode[] = [{
-            assembly: [{code: "hello", explain: "first word"}, {code: "world", explain: "second word"}],
+        const expected: CharmonyExecutedCode[] = [{
+            assembly: [{assembly: "hello", explain: "first word"}, {assembly: "world", explain: "second word"}],
             file: "hello.hny",
             line: "1",
-            source_code: "echo hello world",
-            start_pc: 0
+            sourceCode: "echo hello world",
+            initialPc: 0
         }];
-        const {executed_code} = parse(intermediateJson);
-        expect(executed_code).deep.equals(expected);
+        const {executedCode} = parseCharmony(intermediateJson);
+        expect(executedCode).deep.equals(expected);
     });
 
     it('should generate code execution objects for multiple source code lines', function () {
@@ -37,30 +37,30 @@ describe('Code execution', function () {
             },
             macrosteps: []
         };
-        const expected: HarmonyCode[] = [{
-            start_pc: 0,
-            source_code: "begin",
+        const expected: CharmonyExecutedCode[] = [{
+            initialPc: 0,
+            sourceCode: "begin",
             file: "cs.hny",
             line: "1",
             assembly: [
-                {code: "cs", explain: "dept"},
-                {code: "4410", explain: "number"},
-                {code: "is", explain: "is"}
+                {assembly: "cs", explain: "dept"},
+                {assembly: "4410", explain: "number"},
+                {assembly: "is", explain: "is"}
             ]
         }, {
-            start_pc: 3,
-            source_code: "start",
+            initialPc: 3,
+            sourceCode: "start",
             file: "cs.hny",
             line: "3",
-            assembly: [{code: "in", explain: "in"}]
+            assembly: [{assembly: "in", explain: "in"}]
         }, {
-            start_pc: 4,
-            source_code: "done",
+            initialPc: 4,
+            sourceCode: "done",
             file: "cs.hny",
             line: "9",
-            assembly: [{code: "cornell", explain: "school"}]
+            assembly: [{assembly: "cornell", explain: "school"}]
         }];
-        const {executed_code} = parse(intermediateJson);
-        expect(executed_code).to.deep.equal(expected);
+        const {executedCode} = parseCharmony(intermediateJson);
+        expect(executedCode).to.deep.equal(expected);
     });
 });

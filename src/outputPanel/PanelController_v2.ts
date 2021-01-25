@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import {Webview} from 'vscode';
 import * as fs from 'fs';
 import {createStandaloneHtml} from "../feature/standaloneHtml";
-import {parse} from "../charmony/CharmonyJson";
 import {CHARMONY_HTML_FILE, DEBUG_DIR, RESOURCE_DIR} from "../config";
 import {IntermediateJson} from "../charmony/IntermediateJson";
 import parseCharmony from "../charmony/CharmonyData";

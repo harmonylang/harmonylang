@@ -6,7 +6,7 @@ import {
 } from "../IntermediateJson";
 import {CharmonyStackTrace} from "../CharmonyData";
 import {cloneDeep} from 'lodash';
-import {parseIntermediateValueRep, parseVariableSet} from "../execution/values/parser";
+import {parseIntermediateValueRep, parseVariableSet} from "./valueParser";
 
 type thread_id = string;
 

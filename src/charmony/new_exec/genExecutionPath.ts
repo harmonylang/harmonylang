@@ -1,6 +1,6 @@
 import {IntermediateJson, IntermediateMicroStep} from "../IntermediateJson";
 import {CharmonyMacroStep, CharmonyMicroStep, CharmonySlice, CharmonyTopLevel} from "../CharmonyData";
-import {parseVariableSet} from "../execution/values/parser";
+import {parseVariableSet} from "./valueParser";
 import CharmonyStackManager from "./CharmonyStackManager";
 
 /**

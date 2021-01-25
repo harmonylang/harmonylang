@@ -84,10 +84,13 @@ function json_string_dict(obj) {
     var v = json_string(kv.value);
     result += k + ": " + v;
   }
-  return "dict{ " + result + " }";
+  return "{ " + result + " }";
 }
 
 function json_string_address(obj) {
+  if (obj.length == 0) {
+    return "None";
+  }
   var result = "?" + obj[0].value;
   for (var i = 1; i < obj.length; i++) {
     if (obj[i].type == "atom") {
