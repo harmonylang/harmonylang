@@ -792,7 +792,7 @@
             const processCell = makeTableCell(processName);
 
             const statusCell = document.createElement("td");
-            statusCell.innerText = traceData.status;
+            statusCell.innerText = traceData.fullStatus;
             switch (statusCell.innerText) {
                 case "running":
                     statusCell.style.color = "#30ea30"; break;
@@ -820,6 +820,8 @@
                 const {method} = stack;
                 const line = document.createElement("div");
                 line.innerHTML = `<span style="cursor: pointer; color: rgb(71,226,92); text-decoration: underline" onclick="showStackTraceVariables(${level},'${variableCellId}', ${pid}, ${time});">${method}</span>`
+                line.style.marginTop = "1rem";
+                line.style.marginBottom = "1rem";
                 stackTraceCell.appendChild(line);
             });
             if (traceData.failure != null) {

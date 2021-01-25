@@ -85,9 +85,6 @@ export type CharmonyStackTrace = {
     atomic: number;
     readonly: number;
     interruptLevel: number;
-
-    augments: string[];
-
     callStack: CharmonyCallStack[];
 }
 

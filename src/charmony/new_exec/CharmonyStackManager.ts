@@ -69,25 +69,33 @@ export default class CharmonyStackManager {
             mode, atomic, failure,
             interruptlevel, readonly, choose
         } = props;
-        console.log("Stack", this.stackTrace[tid]);
-        let status = mode === undefined ? this.stackTrace[tid].status : mode;
+        const ongoingTrace = this.stackTrace[tid];
+        const status = mode === undefined ? this.stackTrace[tid].status : mode;
+        const augments: string[] = [];
         if (status != "terminated") {
-            if (atomic != null && Number.parseInt(atomic) > 0) {
-                status += " atomic";
+            const atomicLevel = atomic != null ? Number.parseInt(atomic): ongoingTrace.atomic;
+            if (atomicLevel > 0) {
+                augments.push("atomic");
             }
-            if (readonly != null && Number.parseInt(readonly) > 0) {
-                status += " read-only";
+            const readLevel = readonly != null ? Number.parseInt(readonly): ongoingTrace.readonly;
+            if (readLevel > 0) {
+                augments.push("read-only");
             }
-            if (interruptlevel != null && Number.parseInt(interruptlevel) > 0) {
-                status += " interrupts-disabled";
+            const interruptLevelValue = interruptlevel != null
+                ? Number.parseInt(interruptlevel)
+                : ongoingTrace.interruptLevel;
+            if (interruptLevelValue > 0) {
+                augments.push("interrupts-disabled");
             }
         }
+        const fullStatus = status + (augments.length > 0 ? " " + augments.join(" ") : "");
         const currentStackTrace = this.stackTrace[tid];
         this.stackTrace[tid] = {
             ...currentStackTrace,
             chosen: choose != null ? parseIntermediateValueRep(choose) : undefined,
-            mode: mode,
+            fullStatus: fullStatus,
             status: status,
+            mode: mode,
             failure: failure,
             atomic: atomic != null ? Number.parseInt(atomic) : currentStackTrace.atomic,
             interruptLevel: interruptlevel != null ? Number.parseInt(interruptlevel) : currentStackTrace.interruptLevel,
@@ -115,14 +123,14 @@ export default class CharmonyStackManager {
                 readonly: 0,
                 interruptLevel: 0,
                 atomic: 0,
-                chosen: undefined,
-                augments: []
+                chosen: undefined
             };
         } else {
             this.stackTrace[newTid] = {
                 ...this.stackTrace[newTid],
                 mode: "running",
-                status: "running"
+                status: "running",
+                fullStatus: "running"
             };
         }
         Object.keys(this.stackTrace).forEach(tid => {
