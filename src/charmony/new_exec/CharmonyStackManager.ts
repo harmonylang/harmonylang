@@ -30,7 +30,7 @@ export default class CharmonyStackManager {
      * Sets a new set of local variables to the current process's top call stack.
      * @param local
      */
-    setLocal(local: undefined | Record<string, IntermediateValueRepresentation>) {
+    private setLocal(local: undefined | Record<string, IntermediateValueRepresentation>) {
         if (local == null) return;
         const stackTrace = this.stackTrace[this.currentTid];
         if (stackTrace.callStack.length === 0) return;
@@ -49,7 +49,7 @@ export default class CharmonyStackManager {
      * Sets the current call stack for the current thread.
      * @param callStack
      */
-    setCallStack(callStack: undefined | IntermediateTrace[]) {
+    private setCallStack(callStack: undefined | IntermediateTrace[]) {
         if (callStack == null) return;
         this.stackTrace[this.currentTid] = {
             ...this.stackTrace[this.currentTid],
@@ -64,16 +64,41 @@ export default class CharmonyStackManager {
         };
     }
 
-    /**
-     * Sets the status of the current thread.
-     */
-    setStatus(tid: string, props: IntermediateMicroStep | IntermediateContext) {
+    updateStack(tid: string, props: IntermediateMicroStep, isLastMicroStep: boolean) {
+        if (isLastMicroStep) {
+            const {
+                atomic, fullStatus,
+                interruptLevel, readonly, status
+            } = this.getFullStatus(tid, this.contexts[tid]);
+            const {trace, mode, choose, failure} = this.contexts[tid];
+            this.stackTrace[tid] = {
+                atomic, fullStatus,
+                interruptLevel, readonly, status,
+                mode, failure, tid,
+                callStack: trace.map(t => {
+                    return {
+                        callType: t.calltype,
+                        method: t.method,
+                        vars: parseVariableSet(t.vars),
+                        pc: t.pc
+                    };
+                }),
+                chosen: choose != null ? parseIntermediateValueRep(choose) : undefined,
+            };
+        } else {
+            this.setCallStack(props.trace);
+            this.setStatus(tid, props);
+            this.setLocal(props.local);
+        }
+    }
+
+    private getFullStatus(tid: string, props: IntermediateMicroStep | IntermediateContext) {
         const {
             mode, atomic, failure,
             interruptlevel, readonly, choose
         } = props;
         const ongoingTrace = this.stackTrace[tid];
-        const status = mode === undefined ? this.stackTrace[tid].status : mode;
+        const status = mode === undefined ? ongoingTrace.status : mode;
         const augments: string[] = [];
         const atomicLevel = atomic != null ? Number.parseInt(atomic): ongoingTrace.atomic;
         const readLevel = readonly != null ? Number.parseInt(readonly): ongoingTrace.readonly;
@@ -90,10 +115,26 @@ export default class CharmonyStackManager {
             }
         }
         const fullStatus = status + (augments.length > 0 ? " " + augments.join(" ") : "");
-        const currentStackTrace = this.stackTrace[tid];
+
+        return {
+            fullStatus,
+            status,
+            atomic: atomicLevel,
+            interruptLevel: interruptLevelValue,
+            readonly: readLevel
+        };
+    }
+
+    /**
+     * Sets the status of the current thread.
+     */
+    private setStatus(tid: string, props: IntermediateMicroStep | IntermediateContext) {
+        const {mode, failure, choose} = props;
+        const ongoingTrace = this.stackTrace[tid];
+        const {fullStatus, status, readonly, atomic, interruptLevel} = this.getFullStatus(tid, props);
         this.stackTrace[tid] = {
-            ...currentStackTrace,
-            callStack: currentStackTrace.callStack.map(x => {
+            ...ongoingTrace,
+            callStack: ongoingTrace.callStack.map(x => {
                 return {...x};
             }),
             chosen: choose != null ? parseIntermediateValueRep(choose) : undefined,
@@ -101,9 +142,7 @@ export default class CharmonyStackManager {
             status: status,
             mode: mode,
             failure: failure,
-            atomic: atomicLevel,
-            interruptLevel: interruptLevelValue,
-            readonly: readLevel
+            atomic, interruptLevel, readonly
         };
     }
 

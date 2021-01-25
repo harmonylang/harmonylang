@@ -49,10 +49,9 @@ export function genExecutionPath(json: IntermediateJson): Omit<CharmonyTopLevel,
             const firstStep = macroStep.microsteps[0];
             const {pc, npc} = firstStep;
             // Assign any existing shared variables to the sharedVariables map.
+
+            stackTraceManager.updateStack(tid, firstStep, 1 === macroStep.microsteps.length);
             Object.assign(previousSharedValues, parseVariableSet(firstStep.shared));
-            stackTraceManager.setCallStack(firstStep.trace);
-            stackTraceManager.setStatus(tid, firstStep);
-            stackTraceManager.setLocal(firstStep.local);
             const pcValue = Number.parseInt(pc);
             const npcValue = npc != null ? Number.parseInt(npc) : pcValue;
             microSteps.push({
@@ -78,10 +77,7 @@ export function genExecutionPath(json: IntermediateJson): Omit<CharmonyTopLevel,
                     name: macroStep.name,
                     macroStepIdx: 0
                 });
-                stackTraceManager.setCallStack(microStep.trace);
-                stackTraceManager.setStatus(tid, microStep);
-                stackTraceManager.setLocal(microStep.local);
-
+                stackTraceManager.updateStack(tid, microStep, i === macroStep.microsteps.length - 1);
                 sliceDuration = 0;
                 Object.assign(previousSharedValues, parseVariableSet(microStep.shared));
             }
