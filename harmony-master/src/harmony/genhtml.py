@@ -14,11 +14,11 @@ m4_include(charm.js)
         """
 
     def json_kv(self, js):
-        return json_string(js["key"]) + ": " + json_string(js["value"])
+        return self.json_string(js["key"]) + ": " + self.json_string(js["value"])
 
     def json_idx(self, js):
         if js["type"] == "atom":
-            return json_string(js)
+            return self.json_string(js)
         return "[" + self.json_string(js) + "]"
 
     def json_string(self, js):
@@ -31,11 +31,11 @@ m4_include(charm.js)
         if type == "set":
             if v == []:
                 return "{}"
-            return "{ " + ", ".join(v) + " }"
+            return "{ " + ", ".join([ self.json_string(val) for val in v]) + " }"
         if type == "dict":
             if v == []:
                 return "()"
-            return "dict{ " + ", ".join([ self.json_kv(kv) for kv in v ]) + " }" 
+            return "{ " + ", ".join([ self.json_kv(kv) for kv in v ]) + " }" 
         if type == "pc":
             return "PC(%s)"%v
         if type == "address":
@@ -76,17 +76,19 @@ m4_include(charm.js)
         print("</tr>", file=f)
 
     def vardim(self, d):
-        totalwidth = 0
-        maxheight = 0
         if isinstance(d, dict):
+            if d == {}:
+                return (1, 0)
+            totalwidth = 0
+            maxheight = 0
             for k in sorted(d.keys()):
                 (w, h) = self.vardim(d[k])
                 totalwidth += w
                 if h + 1 > maxheight:
                     maxheight = h + 1
+            return (totalwidth, maxheight)
         else:
             return (1, 0)
-        return (totalwidth, maxheight)
 
     def varhdr(self, d, name, nrows, f):
         q = queue.Queue()
@@ -246,7 +248,7 @@ m4_include(charm.js)
         print("</table>", file=f)
 
     def vardir_dump(self, d, path, index, f):
-        if isinstance(d, dict):
+        if isinstance(d, dict) and d != {}:
             for k in sorted(d.keys()):
                 index = self.vardir_dump(d[k], path + [k], index, f)
             return index
@@ -302,7 +304,7 @@ m4_include(charm.js)
         for (k, v) in d.items():
             if not isinstance(v, dict):
                 vardir[k] = v
-            elif v != {}:
+            else:
                 if k not in vardir:
                     vardir[k] = {}
                 elif not isinstance(vardir[k], dict):
@@ -312,7 +314,9 @@ m4_include(charm.js)
     def vars_add(self, vardir, shared):
         d = {}
         for (k, v) in shared.items():
-            d[k] = self.var_convert(v)
+            val = self.var_convert(v)
+            if val != {}:
+                d[k] = val
         self.dict_merge(vardir, d)
 
     def run(self):
