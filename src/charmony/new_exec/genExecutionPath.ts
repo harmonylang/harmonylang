@@ -1,5 +1,5 @@
 import {IntermediateJson, IntermediateMicroStep} from "../IntermediateJson";
-import {CharmonyMicroStep, CharmonySlice, CharmonyTopLevel} from "../CharmonyData";
+import {CharmonyMacroStep, CharmonyMicroStep, CharmonySlice, CharmonyTopLevel} from "../CharmonyData";
 import {parseVariableSet} from "../execution/values/parser";
 import CharmonyStackManager from "./CharmonyStackManager";
 
@@ -29,23 +29,25 @@ export function genExecutionPath(json: IntermediateJson): Omit<CharmonyTopLevel,
     const stackTraceManager = new CharmonyStackManager();
     const {issue, macrosteps} = json;
     const slices: CharmonySlice[] = [];
-    const idToName: Record<string, string> = {};
+    const idToThreadName: Record<string, string> = {};
     const previousSharedValues: Record<string, unknown> = {};
 
     let overallTime = 0;
-    for (const macroStep of macrosteps) {
+    const microSteps: CharmonyMicroStep[] = [];
+    const macroSteps: CharmonyMacroStep[] =  [];
+
+    macrosteps.forEach((macroStep, macroIdx) => {
         let sliceDuration = 0;
         const {tid, name, contexts} = macroStep;
-        idToName[tid] = name;
+        idToThreadName[tid] = name;
         stackTraceManager.setNewTid(tid, contexts);
+        const firstSliceIdx = slices.length;
 
         const tidContext = contexts.find(x => x.tid === tid);
         if (tidContext != null) {
             stackTraceManager.setCallStack(tidContext.trace);
             stackTraceManager.setStatus(tid, tidContext);
         }
-        const microSteps: CharmonyMicroStep[] = [];
-
         // For the first step
         if (macroStep.microsteps.length > 0) {
             const firstStep = macroStep.microsteps[0];
@@ -55,13 +57,16 @@ export function genExecutionPath(json: IntermediateJson): Omit<CharmonyTopLevel,
             stackTraceManager.setCallStack(firstStep.trace);
             stackTraceManager.setStatus(tid, firstStep);
             stackTraceManager.setLocal(firstStep.local);
-
-            sliceDuration++;
-            overallTime++;
-
             const pcValue = Number.parseInt(pc);
             const npcValue = npc != null ? Number.parseInt(npc) : pcValue;
-            microSteps.push({pc: pcValue, npc: npcValue});
+            microSteps.push({
+                pc: pcValue,
+                npc: npcValue,
+                sliceIdx: slices.length,
+                time: overallTime
+            });
+            sliceDuration++;
+            overallTime++;
         }
         // Repeat for any remaining microsteps.
         for (let i = 1; i < macroStep.microsteps.length; i++) {
@@ -74,9 +79,8 @@ export function genExecutionPath(json: IntermediateJson): Omit<CharmonyTopLevel,
                     sharedValues: Object.assign({}, previousSharedValues),
                     idToStackTrace: stackTraceManager.clone(),
                     tid: tid,
-                    startingTime: overallTime,
                     name: macroStep.name,
-                    steps: microSteps
+                    macroStepIdx: 0
                 });
                 stackTraceManager.setCallStack(microStep.trace);
                 stackTraceManager.setStatus(tid, microStep);
@@ -85,24 +89,32 @@ export function genExecutionPath(json: IntermediateJson): Omit<CharmonyTopLevel,
                 sliceDuration = 0;
                 Object.assign(previousSharedValues, parseVariableSet(microStep.shared));
             }
+            microSteps.push({
+                sliceIdx: slices.length,
+                time: overallTime,
+                pc, npc
+            });
             sliceDuration++;
             overallTime++;
-            microSteps.push({pc, npc});
         }
         slices.push({
             duration: sliceDuration,
             sharedValues: Object.assign({}, previousSharedValues),
             idToStackTrace: stackTraceManager.clone(),
             tid: tid,
-            startingTime: overallTime,
             name: macroStep.name,
-            steps: microSteps,
+            macroStepIdx: macroIdx
         });
-    }
+        macroSteps.push({
+            tid, name,
+            duration: overallTime,
+            startSliceIdx: firstSliceIdx,
+            lastSliceIdx: slices.length
+        });
+    });
     return {
-        issue: issue,
-        executionPath: slices,
-        macroSteps: [],
-        idToThreadName: idToName
+        issue, slices,
+        microSteps, macroSteps,
+        idToThreadName
     };
 }

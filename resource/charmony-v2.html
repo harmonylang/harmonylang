@@ -382,11 +382,19 @@
         '#00695C', '#2E7D32', '#558B2F', '#9E9D24', '#F9A825', '#FF8F00', '#EF6C00', '#D84315', '#4E342E',
         '#424242', '#37474F'
     ];
+
+    /**
+     * Current time of the visualizer
+     * @type number
+     */
     let time = 0;
     let maxTime = 0;
     let processLengthPx = 0;
 
-    let harmonyData = {};
+    /**
+     * @type CharmonyTopLevel
+     */
+    let harmonyData;
     let globalCurrentStackTrace = {};
 
     let timeStartText;
@@ -432,7 +440,6 @@
         overlay = document.getElementById("overlay");
         overlayLoader = document.getElementById("loader");
         overlayText = document.getElementById("overlay-text");
-        vscode = acquireVsCodeApi();
     });
 
     /**
@@ -476,23 +483,25 @@
 
     /**
      * Inserts a code block into the code table.
+     * @param {CharmonyExecutedCode} block
      */
     function insertCodeBlock(block) {
-        const header =
-                `<span style="color: #A5D6A7">${block.file}<span>: <span style="color: #788585">${block.line} ${block.source_code}</span>`
+        const {line, file, sourceCode, initialPc} = block;
+        const header = `<span style="color: #A5D6A7">${file}<span>: <span style="color: #788585">${line} ${sourceCode}</span>`
         const emptyCell = makeTableCell();
         const contentCell = makeTableCell(header);
         contentCell.style.fontFamily = '"Courier New", Courier, monospace';
         const tableRow = makeTableRow(emptyCell, contentCell);
         codeTable.appendChild(tableRow);
 
-        const firstPc = block.start_pc;
+        const firstPc = initialPc;
         block.assembly.forEach((c, idx) => {
+            const {assembly, explain} = c;
             const pc = idx + firstPc;
             const pcCell = makeTableCell(pc);
             pcCell.style.fontFamily = '"Courier New", Courier, monospace';
             pcCell.style.color = '#788585';
-            const codeCell = makeTableCell(`<span title="${c.explain}">${c.code}</span>`);
+            const codeCell = makeTableCell(`<span title="${explain}">${assembly}</span>`);
             codeCell.style.fontFamily = '"Courier New", Courier, monospace';
             codeCell.style.color = '#E7E7E7'
             const tableRow = makeTableRow(pcCell, codeCell);
@@ -528,6 +537,8 @@
     /**
      * Creates a collapseable html entry that represents the values in the
      * given object.
+     * @param {string} summary
+     * @param {Record<string, unknown>} obj
      */
     function makeCollapseable(summary, obj) {
         const collapseable = document.createElement("details");
@@ -555,9 +566,13 @@
      * Displays the shared variables on the the current state.
      */
     let lastSlice = null;
+
+    /**
+     * @param {Record<string, unknown>} slice
+     */
     function setSharedVariablesTable(slice) {
         if (slice === lastSlice) return;
-        const collapseable = makeCollapseable("Shared Variables", slice ?? {});
+        const collapseable = makeCollapseable("Shared Variables", slice);
         while (sharedVariableTable.firstChild != null) sharedVariableTable.removeChild(sharedVariableTable.firstChild);
         sharedVariableTable.appendChild(collapseable);
         lastSlice = slice;
@@ -582,6 +597,7 @@
      * Initializes the window and displays the execution [data] about the program.
      * See the _loadData() function in src/outputPanel.ts for the data given
      * to initialize the window.
+     * @param {CharmonyTopLevel} data
      */
     function initWindow(data) {
         harmonyData = data;
@@ -591,53 +607,60 @@
         let totalDuration = 0;
         let processObjects = new Map();
 
-        // GOOD
-        if (data.path_to_bad_node.issue != null) {
-            issueDisplay.textContent = data.path_to_bad_node.issue;
+        if (data.issue != null) {
+            issueDisplay.textContent = data.issue;
         }
 
         // GOOD
-        data.executed_code.forEach((block, idx) => insertCodeBlock(block, idx));
+        data.executedCode.forEach(block => {
+            console.log(block);
+            insertCodeBlock(block);
+        });
 
         // Builds the process blocks on the bottom.
-        data.path_to_bad_node.processes.forEach(p => {
-            if (!processObjects.has(p.pid)) {
+        // For each macro-step.
+        data.macroSteps.forEach(mas => {
+            const {tid, name, startSliceIdx, lastSliceIdx} = mas;
+            if (!processObjects.has(tid)) {
                 // Label Generation
                 const labelContainer = document.createElement("div");
                 labelContainer.setAttribute('class', 'process-label-row');
                 const label = document.createElement('p');
                 label.setAttribute('class', 'process-label-text');
-                label.textContent = p.name;
+                label.textContent = name;
+
                 labelContainer.appendChild(label);
                 processLabels.appendChild(labelContainer);
+
                 // Row Generation
                 const row = document.createElement("div");
                 row.setAttribute('class', 'process-bar-row');
                 const bar = document.createElement("div");
                 bar.setAttribute('class', "process-bar");
                 row.appendChild(bar);
-                processObjects.set(p.pid, bar);
+                processObjects.set(tid, bar);
                 processBars.appendChild(row);
             }
 
-            const processBar = processObjects.get(p.pid);
-            p.slices.forEach(s => {
+            const processBar = processObjects.get(tid);
+
+            for (let i = startSliceIdx; i < lastSliceIdx; i++) {
+                const s = data.slices[i];
                 const processBlock = document.createElement("div");
                 processBlock.setAttribute('class', 'process-block');
                 processBlock.style.left = `${totalDuration / BAR_LEN_FACTOR}rem`;
                 processBlock.style.width = `${s.duration / BAR_LEN_FACTOR}rem`;
                 processBlock.style.cursor = "pointer";
                 const currentTime = totalDuration;
-                processBlock.addEventListener("click", (e) => {
+                processBlock.addEventListener("click", e => {
                     e.preventDefault();
                     updateWindow(currentTime);
                 })
                 // processBlock.style.border = "2px solid rgb(255, 255, 255, 0.2)";
                 processBar.appendChild(processBlock);
                 totalDuration += s.duration;
-            });
+            }
         });
-
         maxTime = totalDuration;
 
         let processNum = 0;
@@ -710,12 +733,12 @@
     /**
      * Updates the current stack trace table's list of variables.
      *
-     * - level is a number denoting position of the corresponding stack trace scope on the table, where the top row is 0
-     * and each row after increases by 1.
-     * - id is the HTML id of the table cell displaying the variables, in the form `trace-variables-row-${row}`.
-     * - row is a the table row, starting at 0 from the top row and skipping the header row.
+     * @param {number} level A number denoting position of the corresponding stack trace scope on the table.
+     * @param {string} id The HTML id of the table cell which displays the variables, in the form `trace-variables-row-${row}`.
+     * @param {number} pid The id of the selected process in the stack.
+     * @param {number} time The time of the stack trace.
      */
-    function showStackTraceVariables(level, id, pid) {
+    function showStackTraceVariables(level, id, pid, time) {
         console.log(level, id, pid, globalCurrentStackTrace);
         const trace = globalCurrentStackTrace[pid].traces[level];
         const cell = document.getElementById(id);
@@ -731,11 +754,12 @@
      * Updates the stack trace table for a specific node.
      * This will display all of the running/blocked processes, as well as the stack for
      * each of those processes at that point.
+     * @param {CharmonySlice} slice
      */
     function updateStackTrace(slice) {
         console.log("Slice", slice);
         const tbl = stackTraceTable;
-        const traces = slice.trace;
+        const traces = slice.idToStackTrace;
         globalCurrentStackTrace = traces;
         tbl.style.fontFamily = '"Courier New", Courier, monospace';
 
@@ -752,8 +776,12 @@
         const header = buildHeader('Process', 'Status', 'Stack Trace', 'Variables');
         tbl.appendChild(header);
 
-        Object.entries(traces).forEach(([pid, traceData], rowNumber) => {
-            let processName = `${harmonyData.path_to_bad_node.pid_to_name[pid]}`
+        Object.keys(traces).forEach((pid, rowNumber) => {
+            /**
+             * @type CharmonyStackTrace
+             */
+            const traceData = traces[pid];
+            let processName = `${harmonyData.idToThreadName[pid]}`
             const processCell = makeTableCell(processName);
 
             const statusCell = document.createElement("td");
@@ -776,16 +804,15 @@
                 default:
                     statusCell.style.color = "#9b9b9b"; break;
             }
-
             const variablesCell = makeTableCell();
             const variableCellId = `trace-variables-row-${rowNumber}`;
             variablesCell.id = variableCellId;
 
             const stackTraceCell = makeTableCell();
-            traceData.traces.forEach((stack, level) => {
+            traceData.callStack.forEach((stack, level) => {
                 const {method} = stack;
                 const line = document.createElement("div");
-                line.innerHTML = `<span style="cursor: pointer; color: rgb(71,226,92); text-decoration: underline" onclick="showStackTraceVariables(${level}, '${variableCellId}', ${pid});">${method}</span>`
+                line.innerHTML = `<span style="cursor: pointer; color: rgb(71,226,92); text-decoration: underline" onclick="showStackTraceVariables(${level},'${variableCellId}', ${pid}, ${time});">${method}</span>`
                 stackTraceCell.appendChild(line);
             });
             if (traceData.failure != null) {
@@ -794,16 +821,16 @@
                 line.style.color = "#d71616";
                 stackTraceCell.appendChild(line);
             }
-
             tbl.appendChild(makeTableRow(processCell, statusCell, stackTraceCell, variablesCell));
-            if (traceData.traces != null && traceData.traces.length > 0) {
-                showStackTraceVariables(0, variableCellId, pid);
+            if (traceData.callStack.length > 0) {
+                showStackTraceVariables(0, variableCellId, pid, time);
             }
         });
     }
 
     /**
      * The primary function which updates the overall state of the window.
+     * @param {number} newTime
      */
     function updateWindow(newTime) {
         if (newTime != null) {
@@ -817,54 +844,23 @@
             currentStep,
             currentSlice,
         } = getStateAtTime();
-        if (currentStep != null) {
+        if (currentStep) {
             const [pc] = currentStep;
             moveAndHighlightCode(pc);
         }
 
-        // console.log(newTime, currentStep, currentSlice, currentContext);
-
-        setSharedVariablesTable(currentSlice.shared_values);
+        setSharedVariablesTable(currentSlice.sharedValues);
         updateStackTrace(currentSlice);
     }
 
     /**
      * Returns the state of the program at the current time shown in the bottom progress bars.
-     * @returns {{currentStep: *, currentContext: HarmonyContext[], currentSlice: null}}
+     * @return {{currentStep: CharmonyMicroStep, currentSlice: CharmonySlice}}
      */
     function getStateAtTime() {
-        let duration = 0;
-        const processes = harmonyData.path_to_bad_node.processes
-        let currentProcess = processes[0];
-        for (const p of processes) {
-            duration += p.duration;
-            currentProcess = p;
-            if (duration >= time) {
-                duration -= p.duration;
-                break;
-            }
-        }
-        let steps = [];
-        for (const step of currentProcess.steps) {
-            if (step.step != null) {
-                steps.push([step.step[0], null]);
-            } else {
-                steps.push(step.choose);
-            }
-        }
-        let currentStep = steps[time - duration];
-        let currentSlice = null;
-        for (const slice of currentProcess.slices) {
-            duration += slice.duration;
-            if (duration >= time) {
-                currentSlice = slice;
-                break;
-            }
-        }
-        return {
-            "currentStep": currentStep,
-            "currentSlice": currentSlice
-        };
+        const currentStep = harmonyData.microSteps[time];
+        const currentSlice = harmonyData.slices[currentStep.sliceIdx];
+        return {currentStep, currentSlice};
     }
 
     // Utility Functions
@@ -873,6 +869,8 @@
      * Given the time in seconds, convert it to a readable string that shows the
      * hours, minutes, and seconds. Each time unit value should be represented with
      * two digits at minimum, e.g. 3 seconds should be displayed as "03".
+     * @param {number} t
+     * @return {string}
      */
     let timeFormat = (t) => {
         let hours = Math.floor(t / 3600);
@@ -891,6 +889,9 @@
         return hours + ':' + minutes + ':' + seconds;
     }
 
+    /**
+     * @return {number}
+     */
     function convertRemToPixels(rem) {
         return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
     }

@@ -22,45 +22,52 @@ export default function parseCharmony(json: IntermediateJson): CharmonyTopLevel 
         };
     });
 
-    const {idToThreadName, executionPath, issue, macroSteps} = genExecutionPath(json);
+    const {idToThreadName, slices, issue, macroSteps, microSteps} = genExecutionPath(json);
 
     return {
-        executionPath,
+        slices,
         idToThreadName,
         issue,
         macroSteps,
-        executedCode
+        executedCode,
+        microSteps
     };
 }
 
 export type CharmonyTopLevel = {
     issue: string;
     idToThreadName: Record<thread_id, string>;
-    executionPath: CharmonySlice[];
+    slices: CharmonySlice[];
     macroSteps: CharmonyMacroStep[];
     executedCode: CharmonyExecutedCode[];
+    microSteps: CharmonyMicroStep[];
 };
 
 export type CharmonyMacroStep = {
     tid: string;
     name: string;
     duration: number;
-    startingSliceIdx: number;
+    startSliceIdx: number;
+    lastSliceIdx: number;  // Exclusive
 }
 
 export type CharmonySlice = {
     tid: string;
     name: string;
 
-    startingTime: number;
-    steps: CharmonyMicroStep[];
+    macroStepIdx: number;
     duration: number;
 
     idToStackTrace: Record<thread_id, CharmonyStackTrace>;
     sharedValues: Record<variable_name, unknown>;
 };
 
-export type CharmonyMicroStep = { pc: number; npc: number; };
+export type CharmonyMicroStep = {
+    time: number;
+    sliceIdx: number;
+    pc: number;
+    npc: number;
+};
 
 export type CharmonyStackTrace = {
     tid: string;
