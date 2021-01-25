@@ -395,7 +395,6 @@
      * @type CharmonyTopLevel
      */
     let harmonyData;
-    let globalCurrentStackTrace = {};
 
     let timeStartText;
     let timeEndText;
@@ -582,6 +581,10 @@
      * Scrolls the code-table to the given pc and highlights that line of code.
      */
     let lastHighlighted = null;
+
+    /**
+     * @param {number} pc
+     */
     function moveAndHighlightCode(pc) {
         if (lastHighlighted != null) {
             const line = document.getElementById(`code-pc-${lastHighlighted}`)
@@ -739,8 +742,13 @@
      * @param {number} time The time of the stack trace.
      */
     function showStackTraceVariables(level, id, pid, time) {
-        console.log(level, id, pid, globalCurrentStackTrace);
-        const trace = globalCurrentStackTrace[pid].traces[level];
+        const slice = harmonyData.slices[harmonyData.microSteps[time].sliceIdx]
+
+        /**
+         * @type CharmonyStackTrace
+         */
+        const stackTrace = slice.idToStackTrace[pid];
+        const trace = stackTrace.callStack[level];
         const cell = document.getElementById(id);
         while (cell.firstChild != null) cell.removeChild(cell.firstChild);
         Object.entries(trace.vars).forEach(([name, value]) => {
@@ -760,7 +768,6 @@
         console.log("Slice", slice);
         const tbl = stackTraceTable;
         const traces = slice.idToStackTrace;
-        globalCurrentStackTrace = traces;
         tbl.style.fontFamily = '"Courier New", Courier, monospace';
 
         while (tbl.firstChild != null) tbl.removeChild(tbl.firstChild);
@@ -844,11 +851,8 @@
             currentStep,
             currentSlice,
         } = getStateAtTime();
-        if (currentStep) {
-            const [pc] = currentStep;
-            moveAndHighlightCode(pc);
-        }
-
+        const {pc} = currentStep;
+        moveAndHighlightCode(pc);
         setSharedVariablesTable(currentSlice.sharedValues);
         updateStackTrace(currentSlice);
     }

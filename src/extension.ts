@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import CharmonyPanelController from './outputPanel/PanelController';
 import {ProcessManagerImpl} from './processManager';
 import {CHARMONY_COMPILER_DIR, CHARMONY_JSON_OUTPUT, CHARMONY_SCRIPT_PATH, GENERATED_FILES} from "./config";
 import * as rimraf from "rimraf";
 import { LOG } from './debug/io';
 import * as fs from "fs";
 import {IntermediateJson} from "./charmony/IntermediateJson";
+import CharmonyPanelController_v2 from "./outputPanel/PanelController_v2";
 
 const processManager = ProcessManagerImpl.init();
 
@@ -34,9 +34,9 @@ export const activate = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(endHarmonyProcessesCommand);
 
     if (vscode.window.registerWebviewPanelSerializer) {
-        vscode.window.registerWebviewPanelSerializer(CharmonyPanelController.viewType, {
+        vscode.window.registerWebviewPanelSerializer(CharmonyPanelController_v2.viewType, {
             async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
-                CharmonyPanelController.revive(webviewPanel, context.extensionUri);
+                CharmonyPanelController_v2.revive(webviewPanel, context.extensionUri);
             }
         });
     }
@@ -79,25 +79,25 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
     processManager.startCommand(charmonyCompileCommand, {
         cwd: CHARMONY_COMPILER_DIR
     }, (error, stdout) => {
-        CharmonyPanelController.currentPanel?.dispose();
+        CharmonyPanelController_v2.currentPanel?.dispose();
         if (processManager.processesAreKilled) return;
-        CharmonyPanelController.createOrShow(context.extensionUri);
+        CharmonyPanelController_v2.createOrShow(context.extensionUri);
         LOG("finished processing", {error, stdout});
         if (error) {
-            CharmonyPanelController.currentPanel?.updateMessage(stdout);
+            CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
         }
         try {
             const results: IntermediateJson = JSON.parse(fs.readFileSync(CHARMONY_JSON_OUTPUT, {encoding: 'utf-8'}));
             LOG("Opened charm.json", {results});
             if (results != null && results.issue != null && results.issue != "No issues") {
-                CharmonyPanelController.currentPanel?.updateResults(results);
+                CharmonyPanelController_v2.currentPanel?.updateResults(results);
             } else {
-                CharmonyPanelController.currentPanel?.updateMessage(`No Errors Found.`);
+                CharmonyPanelController_v2.currentPanel?.updateMessage(`No Errors Found.`);
             }
             GENERATED_FILES.forEach(f => rimraf.sync(f));
         } catch (error) {
             LOG("error when trying to open charm.json", {error, CHARMONY_JSON_OUTPUT});
-            CharmonyPanelController.currentPanel?.updateMessage(`Could not create analysis file.`);
+            CharmonyPanelController_v2.currentPanel?.updateMessage(`Could not create analysis file.`);
         }
     });
 }
