@@ -43,7 +43,7 @@ export type IntermediateMicroStep = {
     trace?: IntermediateTrace[];
     local?: Record<VariableName, IntermediateValueRepresentation>; // Local variables at the end of micro-step
 
-    mode?: "choosing" | "blocked" | "runnable"; // Mode of process.
+    mode?: "choosing" | "blocked" | "runnable" | "terminated"; // Mode of process.
     readonly?: string;
     interruptlevel?: string;
     failure?: string; // Failure setting. Non-empty when a failure occurs. Undefined otherwise.
@@ -69,7 +69,7 @@ export type IntermediateContext = {
     fp: string;
     trace: IntermediateTrace[];
     this: string;
-    mode?: "choosing" | "blocked" | "runnable"; // Mode of process.
+    mode?: "choosing" | "blocked" | "runnable" | "terminated"; // Mode of process.
     readonly?: string;
     choose?: IntermediateValueRepresentation;
     interruptlevel?: string;

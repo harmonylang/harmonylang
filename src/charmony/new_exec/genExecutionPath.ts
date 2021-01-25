@@ -22,7 +22,7 @@ function processStateChanged(microStep: IntermediateMicroStep) {
     return [
         mode, atomic, readonly, interruptlevel,
         choose, failure, trace, local, shared
-    ].some(x => x == null);
+    ].some(x => x != null);
 }
 
 export function genExecutionPath(json: IntermediateJson): Omit<CharmonyTopLevel, 'executedCode'> {
@@ -37,17 +37,13 @@ export function genExecutionPath(json: IntermediateJson): Omit<CharmonyTopLevel,
     const macroSteps: CharmonyMacroStep[] =  [];
 
     macrosteps.forEach((macroStep, macroIdx) => {
+        const startingOverallTime = overallTime;
         let sliceDuration = 0;
         const {tid, name, contexts} = macroStep;
         idToThreadName[tid] = name;
         stackTraceManager.setNewTid(tid, contexts);
         const firstSliceIdx = slices.length;
 
-        const tidContext = contexts.find(x => x.tid === tid);
-        if (tidContext != null) {
-            stackTraceManager.setCallStack(tidContext.trace);
-            stackTraceManager.setStatus(tid, tidContext);
-        }
         // For the first step
         if (macroStep.microsteps.length > 0) {
             const firstStep = macroStep.microsteps[0];
@@ -107,7 +103,7 @@ export function genExecutionPath(json: IntermediateJson): Omit<CharmonyTopLevel,
         });
         macroSteps.push({
             tid, name,
-            duration: overallTime,
+            duration: overallTime - startingOverallTime,
             startSliceIdx: firstSliceIdx,
             lastSliceIdx: slices.length
         });

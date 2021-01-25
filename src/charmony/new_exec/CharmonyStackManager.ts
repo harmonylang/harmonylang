@@ -8,9 +8,13 @@ import {CharmonyStackTrace} from "../CharmonyData";
 import {parseIntermediateValueRep, parseVariableSet} from "../execution/values/parser";
 
 type thread_id = string;
-export default class StackTraceManager {
-    private stackTrace: Record<thread_id, CharmonyStackTrace>;
-    private contexts: Record<thread_id, IntermediateContext>;
+
+/**
+ * Stack manager for version 2 of the Charmony visualizer
+ */
+export default class CharmonyStackManager {
+    private readonly stackTrace: Record<thread_id, CharmonyStackTrace>;
+    private readonly contexts: Record<thread_id, IntermediateContext>;
 
     private currentTid: thread_id;
     getCurrentTid() {return this.currentTid;}
@@ -27,10 +31,15 @@ export default class StackTraceManager {
      */
     setLocal(local: undefined | Record<string, IntermediateValueRepresentation>) {
         if (local == null) return;
-        const callStack = this.stackTrace[this.currentTid].callStack;
-        callStack[callStack.length - 1] = {
-            ...callStack[callStack.length - 1],
-            vars: parseVariableSet(local)
+        const stackTrace = this.stackTrace[this.currentTid];
+        const [toReplace, ...rest] = stackTrace.callStack;
+
+        this.stackTrace[this.currentTid] = {
+            ...stackTrace,
+            callStack: [{
+                ...toReplace,
+                vars: parseVariableSet(local),
+            }, ...rest]
         };
     }
 
@@ -58,10 +67,10 @@ export default class StackTraceManager {
     setStatus(tid: string, props: IntermediateMicroStep | IntermediateContext) {
         const {
             mode, atomic, failure,
-            interruptlevel, readonly,
-            choose
+            interruptlevel, readonly, choose
         } = props;
-        let status: string = mode ?? "running";
+        console.log("Stack", this.stackTrace[tid]);
+        let status = mode === undefined ? this.stackTrace[tid].status : mode;
         if (status != "terminated") {
             if (atomic != null && Number.parseInt(atomic) > 0) {
                 status += " atomic";
@@ -74,18 +83,15 @@ export default class StackTraceManager {
             }
         }
         const currentStackTrace = this.stackTrace[tid];
-        this.stackTrace = {
-            ...this.stackTrace,
-            [tid]: {
-                ...currentStackTrace,
-                chosen: choose != null ? parseIntermediateValueRep(choose) : undefined,
-                mode: mode,
-                status: status,
-                failure: failure,
-                atomic: atomic != null ? Number.parseInt(atomic) : currentStackTrace.atomic,
-                interruptLevel: interruptlevel != null ? Number.parseInt(interruptlevel) : currentStackTrace.interruptLevel,
-                readonly: readonly != null ? Number.parseInt(readonly) : currentStackTrace.readonly
-            }
+        this.stackTrace[tid] = {
+            ...currentStackTrace,
+            chosen: choose != null ? parseIntermediateValueRep(choose) : undefined,
+            mode: mode,
+            status: status,
+            failure: failure,
+            atomic: atomic != null ? Number.parseInt(atomic) : currentStackTrace.atomic,
+            interruptLevel: interruptlevel != null ? Number.parseInt(interruptlevel) : currentStackTrace.interruptLevel,
+            readonly: readonly != null ? Number.parseInt(readonly) : currentStackTrace.readonly
         };
     }
 
@@ -96,32 +102,27 @@ export default class StackTraceManager {
      * @param contexts
      */
     setNewTid(newTid: thread_id, contexts: IntermediateContext[]) {
-        this.contexts = Object.fromEntries(
-            contexts.map(c => [c.tid, c])
-        );
+        Object.assign(this.contexts, Object.fromEntries(contexts.map(c => [c.tid, c])));
         this.currentTid = newTid;
         if (this.stackTrace[newTid] != null) {
-            this.stackTrace = {
-                ...this.stackTrace,
-                [newTid]: {
-                    failure: undefined,
-                    mode: "running",
-                    callStack: [],
-                    tid: newTid,
-                    readonly: 0,
-                    interruptLevel: 0,
-                    atomic: 0,
-                    status: "running",
-                    chosen: undefined,
-                }
+            this.stackTrace[newTid] = {
+                failure: undefined,
+                mode: "running",
+                fullStatus: "running",
+                status: "running",
+                callStack: [],
+                tid: newTid,
+                readonly: 0,
+                interruptLevel: 0,
+                atomic: 0,
+                chosen: undefined,
+                augments: []
             };
         } else {
-            this.stackTrace = {
-                ...this.stackTrace,
-                [newTid]: {
-                    ...this.stackTrace[newTid],
-                    mode: "running"
-                }
+            this.stackTrace[newTid] = {
+                ...this.stackTrace[newTid],
+                mode: "running",
+                status: "running"
             };
         }
         Object.keys(this.stackTrace).forEach(tid => {

@@ -24,6 +24,11 @@ export default function parseCharmony(json: IntermediateJson): CharmonyTopLevel 
 
     const {idToThreadName, slices, issue, macroSteps, microSteps} = genExecutionPath(json);
 
+    console.log({
+        numberOfSlices: slices.length,
+        numberOfMicroSteps: microSteps.length
+    });
+
     return {
         slices,
         idToThreadName,
@@ -72,6 +77,7 @@ export type CharmonyMicroStep = {
 export type CharmonyStackTrace = {
     tid: string;
 
+    fullStatus: string;
     status: string;
     mode?: string;
     chosen?: unknown;
@@ -79,6 +85,8 @@ export type CharmonyStackTrace = {
     atomic: number;
     readonly: number;
     interruptLevel: number;
+
+    augments: string[];
 
     callStack: CharmonyCallStack[];
 }

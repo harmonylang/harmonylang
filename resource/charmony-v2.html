@@ -792,7 +792,7 @@
             const processCell = makeTableCell(processName);
 
             const statusCell = document.createElement("td");
-            statusCell.innerText = traceData.mode;
+            statusCell.innerText = traceData.status;
             switch (statusCell.innerText) {
                 case "running":
                     statusCell.style.color = "#30ea30"; break;
@@ -852,6 +852,7 @@
             currentSlice,
         } = getStateAtTime();
         const {pc} = currentStep;
+        console.log("Highlight this PC", pc);
         moveAndHighlightCode(pc);
         setSharedVariablesTable(currentSlice.sharedValues);
         updateStackTrace(currentSlice);
