@@ -18,7 +18,6 @@ export default class CharmonyStackManager {
     private readonly contexts: Record<thread_id, IntermediateContext>;
 
     private currentTid: thread_id;
-    getCurrentTid() {return this.currentTid;}
 
     constructor() {
         this.stackTrace = {};
@@ -121,7 +120,9 @@ export default class CharmonyStackManager {
             status,
             atomic: atomicLevel,
             interruptLevel: interruptLevelValue,
-            readonly: readLevel
+            readonly: readLevel,
+            failure,
+            choose
         };
     }
 
@@ -131,7 +132,10 @@ export default class CharmonyStackManager {
     private setStatus(tid: string, props: IntermediateMicroStep | IntermediateContext) {
         const {mode, failure, choose} = props;
         const ongoingTrace = this.stackTrace[tid];
-        const {fullStatus, status, readonly, atomic, interruptLevel} = this.getFullStatus(tid, props);
+        const {
+            fullStatus, status, readonly,
+            atomic, interruptLevel
+        } = this.getFullStatus(tid, props);
         this.stackTrace[tid] = {
             ...ongoingTrace,
             callStack: ongoingTrace.callStack.map(x => {

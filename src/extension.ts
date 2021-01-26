@@ -7,8 +7,6 @@ import { LOG } from './debug/io';
 import * as fs from "fs";
 import {IntermediateJson} from "./charmony/IntermediateJson";
 import CharmonyPanelController_v2 from "./outputPanel/PanelController_v2";
-import * as os from "os";
-import {ExecException} from "child_process";
 import * as commandExists from "command-exists";
 
 const processManager = ProcessManagerImpl.init();
