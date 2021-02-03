@@ -53,38 +53,26 @@ def enumerate(d):
 ;
 
 # quicksort of a list
-def listQsort(a):
+def qsort(a):
     if a == []:
         result = [];
     else:
         let (pivot, rest) = head(a), tail(a)
         let lower = [ v for v in rest such that v < pivot ]
         let higher = [ v for v in rest such that v >= pivot ]:
-            result = listQsort(lower) + [pivot,] + listQsort(higher);
+            result = qsort(lower) + [pivot,] + qsort(higher);
         ;
     ;
 ;
 
 # like Python sorted()
 def sorted(d):
-    result = listQsort(list(d));
+    result = qsort(list(d));
 ;
 
 # like Python reversed()
 def reversed(d):
     let n = len(d):
         result = [ d[n-i] for i in { 1..n } ];
-    ;
-;
-
-# turn a list into a bag (multiset)
-def list2bag(a):
-    result = dict{};
-    for i in keys(a):
-        if a[i] in keys(result):
-            result[a[i]] += 1;
-        else:
-            result[a[i]] = 1;
-        ;
     ;
 ;

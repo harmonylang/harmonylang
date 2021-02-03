@@ -16,6 +16,7 @@ class NodeType:
     issues: List[str]
     before: ContextType
     after: ContextType
+    steps: list
     blocked: Dict[ContextType, bool]
     state: StateType
 
@@ -35,11 +36,12 @@ class ContextType:
     atomic: int
     interruptLevel: bool
     fp: int
+    readonly: int
     trap: Optional[Any]
     terminated: bool
     stopped: bool
     failure: Optional[Any]
-    vars: Dict[str, Value]
+    vars: DictValueType
     stack: List[str]
 
 

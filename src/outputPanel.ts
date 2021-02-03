@@ -1,6 +1,10 @@
 import * as vscode from 'vscode';
 import * as Path from 'path';
 import * as Fs from 'fs';
+import HarmonyJson from './harmony/HarmonyJson';
+import { Webview } from "vscode";
+import {createStandaloneHtml} from "./feature/standaloneHtml";
+import {parse} from "./harmony/CharmonyJson";
 
 export default class HarmonyOutputPanel {
     public static currentPanel: HarmonyOutputPanel | undefined;
@@ -27,7 +31,8 @@ export default class HarmonyOutputPanel {
             column,
             {
                 // Enable javascript in the webview
-                enableScripts: true
+                enableScripts: true,
+                localResourceRoots: [vscode.Uri.file(Path.join(__dirname, '..', 'harmony-0.9', 'web'))]
             }
         );
 
@@ -43,37 +48,43 @@ export default class HarmonyOutputPanel {
         this._extensionUri = extensionUri;
 
         // Set the webview's initial html content
-        this._update();
+        this._update_c();
 
         // Listen for when the panel is disposed
         // This happens when the user closes the panel or when the panel is closed programatically
         this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
         // Update the content based on view changes
-        this._panel.onDidChangeViewState(
-            e => {
-                if (this._panel.visible) {
-                    this._update();
-                }
-            },
-            null,
-            this._disposables
-        );
+        // this._panel.onDidChangeViewState(
+        //     e => {
+        //         if (this._panel.visible) {
+        //             this._update();
+        //         }
+        //     },
+        //     null,
+        //     this._disposables
+        // );
 
         // Handle messages from the webview
-        this._panel.webview.onDidReceiveMessage(
-            message => {
-                this._update();
-            },
-            null,
-            this._disposables
-        );
+        // this._panel.webview.onDidReceiveMessage(
+        //     message => {
+        //         this._update();
+        //     },
+        //     null,
+        //     this._disposables
+        // );
     }
 
     public updateResults() {
         // Send a message to the webview webview.
         // You can send any JSON serializable data.
-        this._panel.webview.postMessage({ command: 'update' });
+        console.log("Presenting the webview");
+        this._update_c(true);
+    }
+
+    public updateMessage(message: string) {
+        const webview = this._panel.webview;
+        webview.postMessage({ command: 'message', jsonData: message });
     }
 
     public dispose() {
@@ -90,37 +101,41 @@ export default class HarmonyOutputPanel {
         }
     }
 
-    private _update() {
+    private _update_c(hasData = false) {
         const webview = this._panel.webview;
         const harmonyPanel = this._panel;
 
-        const harmonyPath = vscode.window.activeTextEditor?.document.fileName;
-        if (typeof harmonyPath === 'string') {
-            const path = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.html');
-
-            Fs.readFile(path, 'utf-8', function (err, data) {
+        const uiPath = Path.join(__dirname, '..', 'harmony-0.9', 'web', 'charmony.html');
+        const dataPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.json.gz');
+        if (!hasData){
+            Fs.readFile(uiPath, 'utf-8', function (err, data) {
                 if (err) {
                     vscode.window.showInformationMessage(err.message);
+                } else {
+                    harmonyPanel.webview.html = data;
                 }
-                const injectableCSS = `\n
-                * {
-                    font-size: 1rem;
-                }
-                html, * {
-                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, sans-serif;
-                    line-height: 1.5;
-                }
-                body {
-                    background-color: #fafafa;
-                }
-                #table-scroll {
-                    height: 80vh !important;
-                }
-                \n`;
-                const injectionPoint = data.indexOf('</style>');
-                const formattedHtml = data.substring(0, injectionPoint) + injectableCSS + data.substring(injectionPoint);
-                harmonyPanel.webview.html = formattedHtml;
             });
         }
+        if (hasData){
+            console.log(uiPath, dataPath);
+            this._loadData_c(dataPath, webview);
+        }
+    }
+
+    private _loadData_c(dataPath: string, webview: Webview) {
+        const jsonData = parse(dataPath);
+        if (vscode.workspace.workspaceFolders) {
+            console.log("Creating standadlone file");
+            createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, jsonData);
+        }
+        console.log(jsonData);
+        webview.postMessage({ command: 'load', jsonData });
+        webview.onDidReceiveMessage( message => {
+            switch (message.command) {
+                case 'alert':
+                    vscode.window.showErrorMessage(message.text);
+                    return;
+            }
+        }, undefined, undefined);
     }
 }

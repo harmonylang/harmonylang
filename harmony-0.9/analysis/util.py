@@ -1,4 +1,5 @@
 from value import Value
+from collections import Hashable
 
 
 def key_value(v):
@@ -12,52 +13,54 @@ def key_value(v):
 
 
 RESERVED_KEYWORDS = {
-    "all",
-    "and",
-    "any",
-    "assert",
-    "atLabel",
-    "atomic",
-    "await",
-    "bagsize",
-    "call",
-    "choose",
-    "const",
-    "def",
-    "del",
-    "dict",
-    "elif",
-    "else",
-    "end",
-    "False",
-    "fun",
-    "for",
-    "go",
-    "hash",
-    "if",
-    "import",
-    "in",
-    "inf",
-    "keys",
-    "lambda",
-    "len",
-    "let",
-    "max",
-    "min",
-    "nametag",
-    "None",
-    "not",
-    "or",
-    "pass",
-    "processes",
-    "setintlevel",
-    "spawn",
-    "stop",
-    "such",
-    "that",
-    "trap",
-    "True",
-    "while"
+        "all",
+        "and",
+        "any",
+        "as",
+        "assert",
+        "atLabel",
+        "atomic",
+        "await",
+        "bagsize",
+        "call",
+        "choose",
+        "const",
+        "def",
+        "del",
+        "dict",
+        "elif",
+        "else",
+        "end",
+        "False",
+        "fun",
+        "for",
+        "from",
+        "go",
+        "hash",
+        "if",
+        "import",
+        "in",
+        "inf",
+        "keys",
+        "lambda",
+        "len",
+        "let",
+        "max",
+        "min",
+        "nametag",
+        "None",
+        "not",
+        "or",
+        "pass",
+        "processes",
+        "setintlevel",
+        "spawn",
+        "stop",
+        "such",
+        "that",
+        "trap",
+        "True",
+        "while"
 }
 
 
@@ -74,7 +77,7 @@ def isname(s):
 
 
 def str_of_value(v):
-    if isinstance(v, Value) or isinstance(v, bool) or isinstance(v, int) or isinstance(v, float):
+    if isinstance(v, Value) or isinstance(v, (bool, int, float, dict)):
         return str(v)
     if isinstance(v, str):
         if isname(v):
@@ -92,17 +95,61 @@ def nametag_to_str(nt):
 def json_valid_value(v, typings):
     """
     Converts the Harmony value into a JSON-valid representation.
-    :param typings:
-    :param v:
-    :return:
+    It performs the following checks:
+        - If it is a boolean, integer, or string, then it is returned as is.
+        - If it is a list or set, return that as a list with all of its elements mapped to a JSON-valid representation.
+        - If it is a SetValue, convert the set inside the value to a list, with all of its elements also
+            mapped to a JSON-valid representation.
+        - If it is a dictionary value:
+            - Check if any of its keys JSON-mapped value are not hashable,
+                convert the dictionary into an association list.
+            - Otherwise, convert the DictValue dictionary into a literal dictionary with
+                JSON-valid values.
     """
-    if isinstance(v, list):
-        return [json_valid_value(z, typings) for z in v]
-    elif isinstance(v, (bool, int, str)):
+    if isinstance(v, (bool, int, str)):
         return v
+    elif isinstance(v, (list, set)):
+        return [json_valid_value(z, typings) for z in v]
     elif isinstance(v, typings['SetValue']):
         return [json_valid_value(z, typings) for z in v.s]
-    if isinstance(v, typings['DictValue']):
-        return {k: json_valid_value(v, typings) for k, v in v.d.items()}
+    elif isinstance(v, typings['DictValue']):
+        if any(not isinstance(json_valid_value(k, typings), Hashable) for k in v.d.keys()):
+            return [(json_valid_value(k, typings), json_valid_value(v, typings)) for k, v in v.d.items()]
+        else:
+            return {json_valid_value(k, typings): json_valid_value(v, typings) for k, v in v.d.items()}
     else:
         return str(v)
+
+
+def str_of_steps(steps):
+    """
+    Returns a string representation of a list of steps.
+    :param steps:
+    :return:
+    """
+    if steps is None:
+        return "[]"
+    result = ""
+    i = 0
+    while i < len(steps):
+        if result != "":
+            result += ","
+        (pc, choice) = steps[i]
+        if pc is None:
+            result += "Interrupt"
+        else:
+            result += str(pc)
+        j = i + 1
+        if choice is not None:
+            result += "(choose %s)" % str_of_value(choice)
+        else:
+            while j < len(steps):
+                (pc2, choice2) = steps[j]
+                if pc is None or pc2 != pc + 1 or choice2 is not None:
+                    break
+                (pc, choice) = (pc2, choice2)
+                j += 1
+            if j > i + 1:
+                result += "-%d" % pc
+        i = j
+    return "[" + result + "]"

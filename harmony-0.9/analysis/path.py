@@ -1,14 +1,24 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Any, TypedDict, Dict
 
-from analysis.util import key_value, str_of_value, nametag_to_str, json_valid_value
+from analysis.util import key_value, nametag_to_str, json_valid_value
+from value import NodeType
 
 
 class StepValue:
+    """
+    An object which represents a specific step in a process. There are 3 types of states that can be represented:
+
+    - RangeStep: The usual type of step, where the process executes from the first step to the last step in order.
+            The first to last steps are denoted by PC-values.
+    - Choose: Occurs at a choose statement. Holds the particular number and the string
+            representation of the value is chose.
+    - Error: Holds an error encountered during the execution of a step.
+    """
 
     def __init__(self, steps: Tuple[int, int] = None, choose: Tuple[int, str] = None, error: str = None):
         self.steps = steps
-        self.error = error
         self.choose = choose
+        self.error = error
 
     @staticmethod
     def make_error(s: str):
@@ -19,7 +29,7 @@ class StepValue:
         return StepValue(steps=steps)
 
     @staticmethod
-    def make_choose(start: int, choose: str):
+    def make_choose(start: int, choose: Any):
         return StepValue(choose=(start, choose))
 
     def get_error(self) -> Optional[str]:
@@ -30,6 +40,15 @@ class StepValue:
 
     def get_choose(self) -> Optional[Tuple[int, str]]:
         return self.choose
+
+    def get_duration(self) -> int:
+        if self.error is not None:
+            return 0
+        if self.steps is not None:
+            start, end = self.steps
+            return end - start + 1
+        if self.choose is not None:
+            return 1
 
     def __str__(self):
         if self.choose is not None:
@@ -46,11 +65,12 @@ class StepValue:
         return str(self)
 
 
-def process_steps(steps) -> List[StepValue]:
+def process_steps(steps, typings) -> List[StepValue]:
     """
-    Returns a list of steps in processes. This is based on the strsteps(steps) function in harmony.py
-    :param steps:
-    :return:
+    See strsteps(steps) in harmony.py for its html counterpart.
+
+    Returns:
+        - A list of steps executed in a process, represented as a StepValue.
     """
     if steps is None:
         return []
@@ -63,7 +83,7 @@ def process_steps(steps) -> List[StepValue]:
         if pc is None:
             result.append(StepValue.make_error("Interrupt"))
         elif choice is not None:
-            result.append(StepValue.make_choose(start, str_of_value(choice)))
+            result.append(StepValue.make_choose(start, json_valid_value(choice, typings)))
             pass
         else:
             while j < len(steps):
@@ -80,67 +100,166 @@ def process_steps(steps) -> List[StepValue]:
     return result
 
 
-def gen_path(n):
+def get_path_to_node(n: NodeType) -> List[Tuple[int, NodeType]]:
     """
-    Extracts the path to node n
+    Returns:
+        - A list of the nodes and associated process taken to reach the given node.
     """
     path = []
     while n is not None and n.after is not None:
         path.insert(0, n)
         n = n.parent
+    pids = []
+    macrosteps = []
+    for n in path:
+        if n.before in pids:
+            pid = pids.index(n.before)
+            pids[pid] = n.after
+        else:
+            pids.append(n.after)
+            pid = len(pids) - 1
+        macrosteps.append((pid, n))
+    return macrosteps
 
+
+def gen_path(n):
+    """
+    See genpath(n) in harmony.py for its html counterpart.
+
+    Returns:
+        - A list of contexts and states, representing the path to node [n].
+    """
+    path = []
+    while n is not None and n.after is not None:
+        path.insert(0, n)
+        n = n.parent
     # Now compress the path, combining macrosteps by the same context
     path2 = []
-    last_context = None
+    last_context = first_context = None
     last_steps = []
     last_states = []
     last_vars = None
     for n in path:
+        if first_context is None:
+            first_context = n.before
         if last_context is None or last_context == n.before:
             last_steps += n.steps
             last_context = n.after
             last_states.append(n.uid)
             last_vars = n.state.vars
         else:
-            path2.append((last_context, last_steps, last_states, last_vars))
+            path2.append((first_context, last_context, last_steps, last_states, last_vars))
+            first_context = n.before
             last_context = n.after
             last_steps = n.steps.copy()
             last_states = [n.uid]
             last_vars = n.state.vars
-    path2.append((last_context, last_steps, last_states, last_vars))
+    path2.append((first_context, last_context, last_steps, last_states, last_vars))
     return path2
 
 
-def get_path(n, typings):
+class SliceState(TypedDict):
+    duration: int
+    values: Dict[str, Any]
+    uid: int
+
+
+class ProcessStep(TypedDict):
+    pid: int
+    name: str
+    values: Dict[str, Any]
+    final_values: Dict[str, Any]
+    sid: int
+    steps: List[StepValue]
+    duration: int
+    states: list
+    slices: List[SliceState]
+
+
+class NodePathData(TypedDict):
+    issues: List[str]
+    processes: List[ProcessStep]
+    shared_vars: List[str]
+
+
+def get_path(n, typings) -> NodePathData:
     """
-    Returns a dictionary of the processes and steps that led to the node n.
-    {
-        issues: string list;
-        shared_vars: string list;
-        processes: {
-            name: string;
-            sid: int;
-        } list;
-        values_at_process: Map<process_name, Map<variable_name, value_as_string>>;
-        steps: Map<process_name, StepValue_object>
-    }
+    See htmlpath(n, color, f) in harmony.py for the html version of this function.
+
+    Returns:
+    Dictionary with the following fields:
+        - issues: A list of issues encountered during execution.
+        - shared_vars: A list of variables that are shared among processes.
+        - processes: Process object list with fields such as "pid", "name", and "values".
+            This list forms a path to the node n.
     """
     issues = [str(s) for s in n.issues]
     shared_variables = sorted(n.state.vars.d.keys(), key=key_value)
+    mecrostep_path = get_path_to_node(n)
     path = gen_path(n)
-    processes = []
-    for (ctx, steps, states, variables) in path:
+    processes: List[ProcessStep] = []
+    pids = []
+    for (first_ctx, last_ctx, steps, all_states, variables) in path:
+        states = [s for s in all_states]
         sid = states[-1] if len(states) > 0 else n.uid
-        process_name = nametag_to_str(ctx.nametag)
+        if first_ctx in pids:
+            pid = pids.index(first_ctx)
+            pids[pid] = last_ctx
+        else:
+            pids.append(last_ctx)
+            pid = len(pids) - 1
+        process_name = nametag_to_str(last_ctx.nametag)
         values = {k: json_valid_value(variables.d[k], typings) for k in shared_variables}
+        all_steps = []
+        total_duration = 0
+        state_slices = []
+        while len(mecrostep_path) > 0 and mecrostep_path[0][0] == pid:
+            _, node = mecrostep_path.pop(0)
+            steps_in_ms = process_steps(node.steps, typings)
+            variables = {k: json_valid_value(v, typings) for k, v in node.state.vars.d.items()}
+            slice_duration = 0
+            for s in steps_in_ms:
+                slice_duration += s.get_duration()
+                all_steps.append(s)
+            state_slices.append({
+                "values": variables,
+                "duration": slice_duration,
+                "uid": node.uid
+            })
+        total_duration += sum(s['duration'] for s in state_slices)
         processes.append({
+            "pid": pid,
             "name": process_name,
             "values": values,
+            "final_values": values,
             "sid": sid,
-            "steps": process_steps(steps)
+            "steps": all_steps,
+            "duration": total_duration,
+            "states": states,
+            "slices": state_slices
         })
+
+    real_shared_variables: List[str] = []
+    for v in shared_variables:
+        did_change = False
+        prev = None
+        for p in processes:
+            for s in p['slices']:
+                value = s['values'][v]
+                if prev is not None and prev != value:
+                    did_change = True
+                    break
+                elif prev is None:
+                    prev = value
+        if not did_change:
+            for p in processes:
+                for s in p['slices']:
+                    del s['values'][v]
+        else:
+            real_shared_variables.append(v)
+
     return {
         'issues': issues,
         'processes': processes,
-        'shared_vars': shared_variables
+        'shared_vars': real_shared_variables,
     }

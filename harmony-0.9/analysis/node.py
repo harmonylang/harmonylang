@@ -1,51 +1,55 @@
-from typing import List
+from typing import List, Optional, TypedDict, Union
 
 from analysis.path import get_path, process_steps
 from analysis.util import nametag_to_str, str_of_value, json_valid_value
 
 
-def htmlloc(code, scope, ctx, files, trace_id: List[int], typings, novalue):
+def get_trace(code, scope, ctx, files, trace_id: List[int], typings, novalue):
+    """
+    See htmlloc(code, scope, ctx, traceid, f) for the function this is based on.
+
+    Returns:
+        A dictionary with two fields:
+            - lines: A list whose elements represent each stack trace level in a process, where the details of that
+                process are provided in the given [ctx].
+            - failure: An optional string which contains the error message if an error occurred at this stack
+                during Harmony program execution.
+    """
     pc = ctx.pc
     fp = ctx.fp
     location = trace_id[0]
-    trace = []
-    while True:
-        trace += [(pc, fp)]
-        if fp < 5:
-            break
+    trace = [(pc, fp)]
+    while fp >= 5:
         pc = ctx.stack[fp - 5]
         assert isinstance(pc, typings['PcValue'])
         pc = pc.pc
         fp = ctx.stack[fp - 1]
+        trace.append((pc, fp))
     trace.reverse()
-    row = 0
     output = []
-    for (pc, fp) in trace:
+    for pc, fp in trace:
+        initial_pc = pc
         while pc >= 0 and pc not in scope.locations:
             pc -= 1
-        (file, line) = scope.locations[pc]
+        file, line = scope.locations[pc]
+        scope_name: Optional[str] = None
         while pc >= 0 and not isinstance(code[pc], typings['FrameOp']):
             pc -= 1
         if fp >= 3:
             arg = ctx.stack[fp-3]
             if arg == novalue:
-                output.append(f"{code[pc].name[0]}()")
+                scope_name = f"{code[pc].name[0]}()"
             else:
-                output.append(f"{code[pc].name[0]}({str_of_value(arg)})")
+                scope_name = f"{code[pc].name[0]}({str_of_value(arg)})"
         lines = files.get(file)
+        scope_line: Optional[str] = None
         if lines is not None and line <= len(lines):
-            output.append(lines[line - 1])
-        row += 1
-    if ctx.failure is not None:
-        return {
-            'lines': output,
-            'failure': ctx.failure
-        }
-    else:
-        return {
-            'lines': output,
-            'failure': None
-        }
+            scope_line = lines[line - 1]
+        output.append((initial_pc, scope_name, scope_line))
+    return {
+        'lines': output,
+        'failure': ctx.failure
+    }
 
 
 def htmlvars(vars, id, row, trace_id: List[int], typings):
@@ -73,7 +77,21 @@ def htmltrace(code, scope, ctx, trace_id, typings) -> list:
     return variables
 
 
-def htmlrow(ctx, bag, node, code, scope, verbose, files, trace_id: List[int], typings, novalue):
+def parse_context(ctx, bag, node, code, scope, verbose, files, trace_id: List[int], typings, novalue):
+    """
+    Read htmlrow for the function this is based on.
+    :param ctx:
+    :param bag:
+    :param node:
+    :param code:
+    :param scope:
+    :param verbose:
+    :param files:
+    :param trace_id:
+    :param typings:
+    :param novalue:
+    :return:
+    """
     trace_id[0] += 1
 
     process = nametag_to_str(ctx.nametag)
@@ -88,7 +106,7 @@ def htmlrow(ctx, bag, node, code, scope, verbose, files, trace_id: List[int], ty
         else:
             failed = True
 
-    locs = htmlloc(code, scope, ctx, files, trace_id, typings, novalue)
+    locs = get_trace(code, scope, ctx, files, trace_id, typings, novalue)
 
     # print variables
     traces = htmltrace(code, scope, ctx, trace_id, typings)
@@ -109,7 +127,7 @@ def htmlrow(ctx, bag, node, code, scope, verbose, files, trace_id: List[int], ty
         uid = None
         if ctx in node.edges:
             nn, nc, steps = node.edges[ctx]
-            steps_in_ctx = process_steps(steps)
+            steps_in_ctx = process_steps(steps, typings)
             uid = nn.uid
         context_details['steps'] = steps_in_ctx
         context_details['uid'] = uid
@@ -126,18 +144,18 @@ def htmlrow(ctx, bag, node, code, scope, verbose, files, trace_id: List[int], ty
     }
 
 
-def get_node_data(n, code, scope, verbose, files, typings, trace_id, novalue):
+def get_node_data(n, code, scope, verbose, files, typings, trace_id, novalue, nodes):
     uid = n.uid
-    path_to_n = get_path(n) if verbose else None
+    path_to_n = get_path(n, typings) if verbose else None
 
     ctxbag = []
     stopbag = []
 
     # print("Number of context bags", len(n.state.ctxbag.keys()))
     for ctx in sorted(n.state.ctxbag.keys(), key=lambda x: nametag_to_str(x.nametag)):
-        ctxbag.append(htmlrow(ctx, n.state.ctxbag, n, code, scope, verbose, files, trace_id, typings, novalue))
+        ctxbag.append(parse_context(ctx, n.state.ctxbag, n, code, scope, verbose, files, trace_id, typings, novalue))
     for ctx in sorted(n.state.stopbag.keys(), key=lambda x: nametag_to_str(x.nametag)):
-        stopbag.append(htmlrow(ctx, n.state.stopbag, n, code, scope, verbose, files, trace_id, typings, novalue))
+        stopbag.append(parse_context(ctx, n.state.stopbag, n, code, scope, verbose, files, trace_id, typings, novalue))
     return {
         'uid': uid,
         'path_to_n': path_to_n,
@@ -146,11 +164,21 @@ def get_node_data(n, code, scope, verbose, files, typings, trace_id, novalue):
     }
 
 
-def full_dump(nodes, code, scope, files, verbose, typings, novalue, fulldump: bool, bad_node_id: int, path):
-    nodes = sorted(nodes, key=lambda n: n.uid)
+class HarmonyNode(TypedDict):
+    uid: int
+    path_to_n: Union[list, None]
+    context_bag: list
+    stop_bag: list
+
+
+def full_dump(nodes, code, scope, files, verbose: bool, typings,
+              novalue, fulldump: bool, bad_node_id, path) -> List[HarmonyNode]:
+    """
+    See the htmlnode(n, code, scope, f, verbose) in harmony.py for the basis of this function.
+    """
     if fulldump:
-        return [get_node_data(n, code, scope, verbose, files, typings, [0], novalue) for n in nodes]
+        return [get_node_data(n, code, scope, verbose, files, typings, [0], novalue, nodes) for n in nodes]
     else:
-        sids = set(map(lambda p: p['sid'], path['processes']))
+        sids = set(s for p in path['processes'] for s in p['states'])
         bad_nodes = filter(lambda n: n.uid == bad_node_id or n.uid in sids, nodes)
-        return [get_node_data(n, code, scope, verbose, files, typings, [0], novalue) for n in bad_nodes]
+        return [get_node_data(n, code, scope, verbose, files, typings, [0], novalue, nodes) for n in bad_nodes]

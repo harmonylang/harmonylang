@@ -7,6 +7,7 @@ import { ProcessManagerImpl } from './processManager';
 const processManager = ProcessManagerImpl.init();
 const processConfig = { cwd: Path.join(__dirname, '..', 'harmony-0.9') };
 const compilerPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.py');
+const compilerTestPath = Path.join(__dirname, '..', 'harmony-0.9', 'harmony.test.py');
 
 export const activate = (context: vscode.ExtensionContext) => {
     const runHarmonyCommand = vscode.commands.registerCommand('harmonylang.run', () => {
@@ -99,36 +100,27 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
     const pythonPath = getPythonPath();
     const compileCommand = `${pythonPath} "${compilerPath}" -A "${fullFileName}"`;
     processManager.startCommand(compileCommand, processConfig, (err, stdout, stderr) => {
+        HarmonyOutputPanel.currentPanel?.dispose();
+        HarmonyOutputPanel.createOrShow(context.extensionUri);
+        console.log(stderr, err);
         if (stderr) {
             // System errors, includes division by zero.
-            showMessage('Error!', 'Message', stderr);
+            HarmonyOutputPanel.currentPanel?.updateMessage(`Error: ${stderr}`);
         } else if (err) {
             // error is non-null when process exits on code 1, i.e. a parser error.
             // Parse error feedback is also in standard output (it's just outputted by python's print function)
-            showMessage('Build Failed!', 'Message', stdout);
+            HarmonyOutputPanel.currentPanel?.updateMessage(`Error: ${stdout}`);
         } else {
-            const runningInterval = launchRunningMessage(5000);
-            // Push the new interval onto the stack.
-            // Close the current output for a new run.
-            showMessage('Build Succeeded!');
-            showMessage(`Starting the Harmony program.`);
-            HarmonyOutputPanel.currentPanel?.dispose();
-            const runCommand = `${pythonPath} "${compilerPath}" "${fullFileName}"`;
+            const runCommand = `${pythonPath} "${compilerTestPath}" "${fullFileName}"`;
             processManager.startCommand(runCommand, processConfig, (error, stdout, stderr) => {
                 if (processManager.processesAreKilled) return;
-                if (runningInterval !== undefined) {
-                    processManager.end(runningInterval);
-                }
                 if (stderr || error) {
-                    console.log(stderr, error);
-                    showMessage('Execution Failed!', 'Message', stdout);
-                    HarmonyOutputPanel.currentPanel?.dispose();
+                    console.log("Print the errors");
+                    HarmonyOutputPanel.currentPanel?.updateResults();
                 } else {
                     // Output Panel will include the stdout output.
-                    showMessage('Execution Finished!');
+                    HarmonyOutputPanel.currentPanel?.updateMessage(`No Errors Found`);
                     // Show the output panel with the contents of harmony.html because the compilation succeeded.
-                    if (stdout.includes('harmony.html'))
-                        HarmonyOutputPanel.createOrShow(context.extensionUri);
                 }
             });
         }
