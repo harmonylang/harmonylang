@@ -123,7 +123,7 @@ m4_include(charm.js)
 
         print("    <tr>", file=f)
         print("      <th align='center' rowspan='%d'>"%height, file=f)
-        print("        Step", file=f)
+        print("        Turn", file=f)
         print("      </th>", file=f)
         print("      <th align='center' rowspan='%d'>"%height, file=f)
         print("        Thread", file=f)
@@ -233,7 +233,10 @@ m4_include(charm.js)
         print("  <tr><td></td></tr>", file=f)
         print("  <tr>", file=f)
         print("    <td colspan='2'>", file=f)
-        print("      <h3 style='color:blue;' id='coderow'>CODE GOES HERE</h3>", file=f)
+        print("      <h3 style='color:blue;'>", file=f)
+        print("        <div id='coderow'>", file=f)
+        print("        </div>", file=f)
+        print("      </h3>", file=f)
         print("    </td>", file=f)
         print("  </tr>", file=f)
         print("  <tr><td></td></tr>", file=f)
@@ -280,6 +283,7 @@ m4_include(charm.js)
 
     def html_head(self, f):
         print("<head>", file=f)
+        print("  <meta charset='UTF-8'></meta>", file=f)
         print("  <style>", file=f)
         print(self.style, file=f)
         print("  </style>", file=f)
@@ -337,6 +341,10 @@ m4_include(charm.js)
                 for mis in mas["microsteps"]:
                     if "shared" in mis:
                         self.vars_add(self.vardir, mis["shared"])
+                for ctx in mas["contexts"]:
+                    tid = int(ctx["tid"])
+                    if tid >= self.nthreads:
+                        self.nthreads = tid + 1
 
         with open("harmony.html", "w") as out:
             self.html(out)

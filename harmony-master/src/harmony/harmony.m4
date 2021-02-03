@@ -62,6 +62,7 @@ m4_include(../charm/value.c)
 import sys
 import os
 import pathlib
+import tempfile
 import getopt
 import traceback
 import collections
@@ -824,7 +825,7 @@ class GoOp(Op):
         return '{ "op": "Go" }'
 
     def explain(self):
-        return "pops a context and a value, restores the corresponding process, and pushes the value on its stack"
+        return "pops a context and a value, restores the corresponding thread, and pushes the value on its stack"
 
     def eval(self, state, context):
         ctx = context.pop()
@@ -1371,7 +1372,7 @@ class SpawnOp(Op):
         return '{ "op": "Spawn" }'
 
     def explain(self):
-        return "pop a pc, argument, and tag and spawn a new process"
+        return "pop a pc, argument, and tag and spawn a new thread"
 
     def eval(self, state, context):
         if context.readonly > 0:
@@ -1416,7 +1417,7 @@ class AtomicIncOp(Op):
         return '{ "op": "AtomicInc" }'
 
     def explain(self):
-        return "increment atomic counter of context; process runs uninterrupted if larger than 0"
+        return "increment atomic counter of context; thread runs uninterrupted if larger than 0"
 
     def eval(self, state, context):
         context.atomic += 1
@@ -1445,7 +1446,7 @@ class ReadonlyIncOp(Op):
         return '{ "op": "ReadonlyInc" }'
 
     def explain(self):
-        return "increment readonly counter of context; process cannot mutate shared variables if > 0"
+        return "increment readonly counter of context; thread cannot mutate shared variables if > 0"
 
     def eval(self, state, context):
         context.readonly += 1
@@ -5281,9 +5282,10 @@ def main():
     blockflag = False
     charmflag = True
     fulldump = False
+    testflag = False
     try:
         opts, args = getopt.getopt(sys.argv[1:],
-                        "Aabc:dfhjm:s", ["const=", "help", "module="])
+                        "Aabc:dfhjm:st", ["const=", "help", "module="])
     except getopt.GetoptError as err:
         print(str(err))
         usage()
@@ -5309,6 +5311,8 @@ def main():
             mods.append(a)
         elif o == "-s":
             silent = True
+        elif o == "-t":
+            testflag = True
         elif o in { "-h", "--help" }:
             usage()
         else:
@@ -5317,18 +5321,34 @@ def main():
     (code, scope) = doCompile(args, consts, mods)
 
     if charmflag:
-        with open("harmony.json", "w") as fd:
+        if testflag:
+            tmpfile = "harmony.json"
+        else:
+            fd, tmpfile = tempfile.mkstemp(".json", prefix="harmony", text=True)
+            os.close(fd)
+        with open(tmpfile, "w") as fd:
             dumpCode("json", code, scope, f=fd)
         charm = "%s/.charm"%pathlib.Path.home()
-        if not os.path.exists(charm):
+        path = pathlib.Path(charm)
+        rebuild = testflag or not path.exists()
+        if not rebuild:
+            st = path.stat()
+            now = time.time()
+            if now - st.st_mtime > 15 * 60:
+                rebuild = True
+        if rebuild:
             with open("charm.c", "w") as fd:
                 print(charm_src, file=fd)
-            # r = os.system("cc -O3 -DNDEBUG -DHARMONY_COMBINE charm.c -o %s"%charm);
-            r = os.system("cc -g -DHARMONY_COMBINE charm.c -o %s"%charm);
+            if testflag:
+                r = os.system("cc -g -DHARMONY_COMBINE charm.c -o %s"%charm);
+            else:
+                r = os.system("cc -O3 -DNDEBUG -DHARMONY_COMBINE charm.c -o %s"%charm);
             if r != 0:
                 print("can't create charm model checker")
                 sys.exit(r);
-        r = os.system("%s harmony.json"%charm);
+        r = os.system("%s %s"%(charm, tmpfile));
+        if not testflag:
+            os.remove(tmpfile)
         if r != 0:
             print("charm model checker failed")
             sys.exit(r);

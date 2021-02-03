@@ -246,12 +246,11 @@ def Queue():
 
 def get(q):
     atomic:
-        let list = q->list:
-            if list == []:
-                stop q->waiters[len q->waiters]
-            
-            result = list.head(list)
-            q->list = list.tail(list)
+        if q->list == []:
+            stop q->waiters[len q->waiters]
+        
+        result = list.head(q->list)
+        q->list = list.tail(q->list)
 
 def put(q, item):
     atomic:
@@ -654,6 +653,7 @@ struct env_StoreVar {
     struct var_tree *args;
 };
 
+uint64_t ctx_failure(struct context *ctx, char *fmt, ...);
 void panic(char *s);
 
 #include <sys/time.h>
@@ -668,6 +668,11 @@ void panic(char *s);
 #endif
 
 #define CHUNKSIZE   (1 << 12)
+
+struct combined {           // combination of current state and current context
+    struct state state;
+    struct context context;
+};
 
 struct component {
     bool good;          // terminating or out-going edge
@@ -793,7 +798,6 @@ void check_invariants(struct node *node, struct context **pctx){
             b = false;
         }
         if (!b) {
-            printf("INVARIANT FAILED\n");
             struct failure *f = new_alloc(struct failure);
             f->type = FAIL_INVARIANT;
             f->ctx = node->before;
@@ -805,7 +809,8 @@ void check_invariants(struct node *node, struct context **pctx){
 }
 
 void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
-        struct dict *visited, struct queue *todo, struct context **pinv_ctx){
+        struct dict *visited, struct queue *todo, struct context **pinv_ctx,
+        bool infloop_detect){
     // Make a copy of the state
     struct state *sc = new_alloc(struct state);
     memcpy(sc, node->state, sizeof(*sc));
@@ -827,13 +832,13 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
         interrupt_invoke(&cc);
     }
     else if (sc->choosing == 0 && cc->trap_pc != 0 && !cc->interruptlevel) {
-        onestep(node, ctx, choice, true, visited, todo, pinv_ctx);
+        onestep(node, ctx, choice, true, visited, todo, pinv_ctx, infloop_detect);
     }
 
     // Copy the choice
     uint64_t choice_copy = choice;
 
-    bool choosing = false;
+    bool choosing = false, infinite_loop = false;;
     struct dict *infloop = NULL;        // infinite loop detector
     for (int loopcnt = 0;; loopcnt++) {
         int pc = cc->pc;
@@ -867,17 +872,32 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
             (*oi->op)(code[pc].env, sc, &cc);
         }
 
-        if ((cc->phase != CTX_END && cc->failure == 0) && loopcnt > 1000) {
+        if (cc->phase != CTX_END && cc->failure == 0 && (infloop_detect || loopcnt > 1000)) {
             if (infloop == NULL) {
                 infloop = dict_new(0);
             }
-            // TODO.  Also add global state?
-            void **p = dict_insert(infloop, cc,
-                            sizeof(*cc) + (cc->sp * sizeof(uint64_t)));
-            if (*p != (void *) 0) {
-                cc->failure = value_put_atom("infinite loop", 13);
+
+            int stacksize = cc->sp * sizeof(uint64_t);
+            int combosize = sizeof(struct combined) + stacksize;
+            struct combined *combo = calloc(1, combosize);
+            combo->state = *sc;
+            memcpy(&combo->context, cc, sizeof(*cc) + stacksize);
+            void **p = dict_insert(infloop, combo, combosize);
+            free(combo);
+            if (*p == (void *) 0) {
+                *p = (void *) 1;
             }
-            *p = (void *) 1;
+            else if (infloop_detect) {
+                cc->failure = value_put_atom("infinite loop", 13);
+                infinite_loop = true;
+            }
+            else {
+                // start over, as twostep does not have loopcnt optimization
+                onestep(node, ctx, choice_copy, interrupt, visited, todo, pinv_ctx, true);
+                free(cc);
+                free(sc);
+                return;
+            }
         }
 
         if (cc->phase == CTX_END || cc->failure != 0 || cc->stopped) {
@@ -893,13 +913,23 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
         oi = code[cc->pc].oi;
         if (code[cc->pc].choose) {
             assert(cc->sp > 0);
+            if (cc->readonly > 0) {
+                ctx_failure(cc, "can't choose in assertion or invariant");
+                break;
+            }
             uint64_t s = cc->stack[cc->sp - 1];
-            assert((s & VALUE_MASK) == VALUE_SET);
+            if ((s & VALUE_MASK) != VALUE_SET) {
+                ctx_failure(cc, "choose operation requires a set");
+                break;
+            }
             int size;
             uint64_t *vals = value_get(s, &size);
             size /= sizeof(uint64_t);
-            assert(size > 0);
-            if (size == 1) {
+            if (size == 0) {
+                ctx_failure(cc, "choose operation requires a non-empty set");
+                break;
+            }
+            if (size == 1) {            // TODO.  This optimization is probably not worth it
                 choice = vals[0];
             }
             else {
@@ -939,7 +969,10 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
     }
 
     // Add new context to state unless it's terminated or stopped
-    if (cc->phase != CTX_END && !cc->stopped) {
+    if (cc->stopped) {
+        sc->stopbag = bag_add(sc->stopbag, after);
+    }
+    else if (cc->phase != CTX_END) {
         sc->ctxbag = bag_add(sc->ctxbag, after);
     }
 
@@ -960,8 +993,7 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
         next->len = node->len + weight;
         graph_add(next);
 
-        // TODO.  Is this the right place?  Don't check when choice?
-        if (sc->invariants != VALUE_SET) {
+        if (sc->choosing == 0 && sc->invariants != VALUE_SET) {
             check_invariants(next, pinv_ctx);
         }
 
@@ -1010,7 +1042,7 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
 
     if (cc->failure != 0) {
         struct failure *f = new_alloc(struct failure);
-        f->type = FAIL_SAFETY;
+        f->type = infinite_loop ? FAIL_TERMINATION : FAIL_SAFETY;
         f->ctx = ctx;
         f->choice = choice_copy;
         f->node = next;
@@ -1062,7 +1094,8 @@ bool print_trace(FILE *file, struct context *ctx, int pc, int fp, uint64_t vars)
             }
             break;
         default:
-            panic("print_trace: bad call type 1");
+            fprintf(stderr, "call type: %"PRIx64"\n", ct >> VALUE_BITS);
+            // panic("print_trace: bad call type 1");
         }
     }
     while (--pc >= 0) {
@@ -1452,8 +1485,8 @@ uint64_t twostep(FILE *file, struct node *node, uint64_t ctx, uint64_t choice,
             cc->pc++;
         }
         else {
-            // printf("--- %d: %s\n", pc, oi->name);
             if (code[pc].breakable) {
+                assert(cc->phase != CTX_END);
                 cc->phase = CTX_MIDDLE;
             }
             (*oi->op)(code[pc].env, sc, &cc);
@@ -1463,13 +1496,20 @@ uint64_t twostep(FILE *file, struct node *node, uint64_t ctx, uint64_t choice,
             if (infloop == NULL) {
                 infloop = dict_new(0);
             }
-            // TODO.  Also add global state?
-            void **p = dict_insert(infloop, cc,
-                            sizeof(*cc) + (cc->sp * sizeof(uint64_t)));
-            if (*p != (void *) 0) {
+
+            int stacksize = cc->sp * sizeof(uint64_t);
+            int combosize = sizeof(struct combined) + stacksize;
+            struct combined *combo = calloc(1, combosize);
+            combo->state = *sc;
+            memcpy(&combo->context, cc, sizeof(*cc) + stacksize);
+            void **p = dict_insert(infloop, combo, combosize);
+            free(combo);
+            if (*p == (void *) 0) {
+                *p = (void *) 1;
+            }
+            else {
                 cc->failure = value_put_atom("infinite loop", 13);
             }
-            *p = (void *) 1;
         }
 
         diff_dump(file, oldstate, sc, oldctx, cc, false, code[pc].choose, choice);
@@ -1486,12 +1526,25 @@ uint64_t twostep(FILE *file, struct node *node, uint64_t ctx, uint64_t choice,
         oi = code[cc->pc].oi;
         if (code[cc->pc].choose) {
             assert(cc->sp > 0);
+            if (cc->readonly > 0) {
+                ctx_failure(cc, "can't choose in assertion or invariant");
+                diff_dump(file, oldstate, sc, oldctx, cc, false, code[pc].choose, choice);
+                break;
+            }
             uint64_t s = cc->stack[cc->sp - 1];
-            assert((s & VALUE_MASK) == VALUE_SET);
+            if ((s & VALUE_MASK) != VALUE_SET) {
+                ctx_failure(cc, "choose operation requires a set");
+                diff_dump(file, oldstate, sc, oldctx, cc, false, code[pc].choose, choice);
+                break;
+            }
             int size;
             uint64_t *vals = value_get(s, &size);
             size /= sizeof(uint64_t);
-            assert(size > 0);
+            if (size == 0) {
+                ctx_failure(cc, "choose operation requires a non-empty set");
+                diff_dump(file, oldstate, sc, oldctx, cc, false, code[pc].choose, choice);
+                break;
+            }
             if (size == 1) {
                 choice = vals[0];
             }
@@ -1666,6 +1719,39 @@ static int find_scc(void){
     return count;
 }
 
+static char *json_string_encode(char *s){
+    char *result = malloc(4 * strlen(s)), *p = result;
+
+    while (*s != 0) {
+        switch (*s) {
+        case '\r':
+            *p++ = '\\'; *p++ = 'r';
+            break;
+        case '\n':
+            *p++ = '\\'; *p++ = 'n';
+            break;
+        case '\f':
+            *p++ = '\\'; *p++ = 'f';
+            break;
+        case '\t':
+            *p++ = '\\'; *p++ = 't';
+            break;
+        case '"':
+            *p++ = '\\'; *p++ = '"';
+            break;
+        case '\\':
+            *p++ = '\\'; *p++ = '\\';
+            break;
+        default:
+            *p++ = *s;
+        }
+        s++;
+    }
+    *p++ = 0;
+    return result;
+}
+            
+
 static void enum_loc(void *env, const void *key, unsigned int key_size,
                                 HASHDICT_VALUE_TYPE value){
     static bool notfirst = false;
@@ -1714,7 +1800,9 @@ static void enum_loc(void *env, const void *key, unsigned int key_size,
             if (len > 0 && buf[len - 1] == '\n') {
                 buf[len - 1] = 0;
             }
-            fprintf(out, ", \"code\": \"%s\"", buf);
+            char *enc = json_string_encode(buf);
+            fprintf(out, ", \"code\": \"%s\"", enc);
+            free(enc);
             break;
         }
     }
@@ -1777,6 +1865,7 @@ int main(int argc, char **argv){
     state->vars = VALUE_DICT;
     uint64_t ictx = value_put_context(init_ctx);
     state->ctxbag = dict_store(VALUE_DICT, ictx, (1 << VALUE_BITS) | VALUE_INT);
+    state->stopbag = VALUE_DICT;
     state->invariants = VALUE_SET;
     processes = new_alloc(uint64_t);
     *processes = ictx;
@@ -1836,7 +1925,7 @@ int main(int argc, char **argv){
                 if (false) {
                     printf("NEXT CHOICE %d %d %"PRIx64"\n", i, size, vals[i]);
                 }
-                onestep(node, state->choosing, vals[i], false, visited, todo, &inv_ctx);
+                onestep(node, state->choosing, vals[i], false, visited, todo, &inv_ctx, false);
                 if (false) {
                     printf("NEXT CHOICE DONE\n");
                 }
@@ -1853,7 +1942,7 @@ int main(int argc, char **argv){
                 }
                 assert((ctxs[i] & VALUE_MASK) == VALUE_CONTEXT);
                 assert((ctxs[i+1] & VALUE_MASK) == VALUE_INT);
-                onestep(node, ctxs[i], 0, false, visited, todo, &inv_ctx);
+                onestep(node, ctxs[i], 0, false, visited, todo, &inv_ctx, false);
                 if (false) {
                     printf("NEXT CONTEXT DONE\n");
                 }
@@ -1876,7 +1965,7 @@ int main(int argc, char **argv){
             if (comp->good) {
                 continue;
             }
-            if (node->state->ctxbag == VALUE_DICT) {
+            if (node->state->ctxbag == VALUE_DICT && node->state->stopbag == VALUE_DICT) {
                 comp->good = true;
                 continue;
             }
@@ -1903,7 +1992,7 @@ int main(int argc, char **argv){
             }
         }
 
-        printf("%d components, %d bad nodes\n", ncomponents, nbad);
+        printf("%d components, %d bad states\n", ncomponents, nbad);
     }
 
     FILE *out = fopen("charm.json", "w");
@@ -2616,8 +2705,7 @@ struct f_info {
 };
 
 struct var_tree {
-    // TODO.  Is VT_LIST really a thing?
-    enum { VT_NAME, VT_TUPLE, VT_LIST } type;
+    enum { VT_NAME, VT_TUPLE } type;
     union {
         uint64_t name;
         struct {
@@ -3096,7 +3184,11 @@ void op_Apply(const void *env, struct state *state, struct context **pctx){
         {
             uint64_t v;
             if (!dict_tryload(method, e, &v)) {
-                ctx_failure(*pctx, "Bad index");
+                char *m = value_string(method);
+                char *x = value_string(e);
+                ctx_failure(*pctx, "Bad index %s: not in %s", x, m);
+                free(m);
+                free(x);
                 return;
             }
             ctx_push(pctx, v);
@@ -3229,6 +3321,8 @@ void op_Dup(const void *env, struct state *state, struct context **pctx){
 }
 
 void op_Frame(const void *env, struct state *state, struct context **pctx){
+    static uint64_t result = 0;
+
     const struct env_Frame *ef = env;
     if (false) {
         printf("FRAME %d %d %"PRIx64" ", (*pctx)->pc, (*pctx)->sp, ef->name);
@@ -3244,8 +3338,10 @@ void op_Frame(const void *env, struct state *state, struct context **pctx){
     struct context *ctx = *pctx;
     ctx->fp = ctx->sp;
 
-    ctx->vars = dict_store(VALUE_DICT,
-        value_put_atom("result", 6), VALUE_DICT);       // TODO "result" atom
+    if (result == 0) {
+        result = value_put_atom("result", 6);
+    }
+    ctx->vars = dict_store(VALUE_DICT, result, VALUE_DICT);
 
     var_match(*pctx, ef->args, arg);
     if ((*pctx)->failure == 0) {
@@ -3259,6 +3355,21 @@ void op_Go(const void *env, struct state *state, struct context **pctx){
         ctx_failure(*pctx, "Go: not a context");
         return;
     }
+
+    // Remove from stopbag if it's there
+    uint64_t count;
+    if (dict_tryload(state->stopbag, ctx, &count)) {
+        assert((count & VALUE_MASK) == VALUE_INT);
+        assert(count != VALUE_INT);
+        count -= 1 << VALUE_BITS;
+        if (count != VALUE_INT) {
+            state->stopbag = dict_store(state->stopbag, ctx, count);
+        }
+        else {
+            state->stopbag = dict_remove(state->stopbag, ctx);
+        }
+    }
+
     uint64_t result = ctx_pop(pctx);
     struct context *copy = value_copy(ctx, NULL);
     ctx_push(&copy, result);
@@ -3457,6 +3568,7 @@ void op_ReadonlyInc(const void *env, struct state *state, struct context **pctx)
 
 void op_Return(const void *env, struct state *state, struct context **pctx){
     if ((*pctx)->sp == 0) {     // __init__    TODO: no longer the case
+        assert(false);
         (*pctx)->phase = CTX_END;
         if (false) {
             printf("RETURN INIT\n");
@@ -4229,13 +4341,16 @@ uint64_t f_intersection(struct state *state, struct context *ctx, uint64_t *args
         }
         return e1;
     }
+	if (e1 == VALUE_SET) {
+		return VALUE_SET;
+	}
     if ((e1 & VALUE_MASK) == VALUE_SET) {
         // get all the sets
+		assert(n > 0);
         struct val_info *vi = malloc(n * sizeof(*vi));
-        int min_size = -1;      // minimum set size
-        uint64_t max_val;       // maximum value over the minima of all sets
-        bool some_empty = false;
-        for (int i = 0; i < n; i++) {
+        int min_size = vi[0].size;              // minimum set size
+        uint64_t max_val = vi[0].vals[0];       // maximum value over the minima of all sets
+        for (int i = 1; i < n; i++) {
             if ((args[i] & VALUE_MASK) != VALUE_SET) {
                 return ctx_failure(ctx, "'&' applied to mix of sets and other types");
             }
@@ -4245,18 +4360,12 @@ uint64_t f_intersection(struct state *state, struct context *ctx, uint64_t *args
             else {
                 vi[i].vals = value_get(args[i], &vi[i].size); 
                 vi[i].index = 0;
-                if (min_size < 0) {
-                    min_size = vi[i].size;
-                    max_val = vi[i].vals[0];
-                }
-                else {
-                    if (vi[i].size < min_size) {
-                        min_size = vi[i].size;
-                    }
-                    if (value_cmp(vi[i].vals[0], max_val) > 0) {
-                        max_val = vi[i].vals[0];
-                    }
-                }
+				if (vi[i].size < min_size) {
+					min_size = vi[i].size;
+				}
+				if (value_cmp(vi[i].vals[0], max_val) > 0) {
+					max_val = vi[i].vals[0];
+				}
             }
         }
 
@@ -4266,7 +4375,7 @@ uint64_t f_intersection(struct state *state, struct context *ctx, uint64_t *args
         }
 
         // Allocate sufficient memory.
-        uint64_t *vals = malloc(min_size), *v = vals;
+        uint64_t *vals = malloc((size_t) min_size), *v = vals;
 
         bool done = false;
         for (int i = 0; i < min_size; i++) {
@@ -4318,6 +4427,9 @@ uint64_t f_intersection(struct state *state, struct context *ctx, uint64_t *args
         return result;
     }
 
+	if (e1 == VALUE_DICT) {
+		return VALUE_DICT;
+	}
     if ((e1 & VALUE_MASK) != VALUE_DICT) {
         return ctx_failure(ctx, "'&' can only be applied to ints and dicts");
     }
@@ -4612,7 +4724,11 @@ uint64_t f_mod(struct state *state, struct context *ctx, uint64_t *args, int n){
     if ((e2 & VALUE_MASK) != VALUE_INT) {
         return ctx_failure(ctx, "left argument to mod not an integer");
     }
-    int64_t result = (e2 >> VALUE_BITS) % (e1 >> VALUE_BITS);
+    int64_t mod = (e1 >> VALUE_BITS);
+    int64_t result = (e2 >> VALUE_BITS) % mod;
+    if (result < 0) {
+        result += mod;
+    }
     return (result << VALUE_BITS) | VALUE_INT;
 }
 
@@ -6045,6 +6161,7 @@ void value_init(){
 import sys
 import os
 import pathlib
+import tempfile
 import getopt
 import traceback
 import collections
@@ -6672,6 +6789,10 @@ function init_macrostep(i) {
   for (var j = 0; j < mas.microsteps.length; j++) {
     init_microstep(i, j);
   }
+  for (var ctx = 0; ctx < mas.contexts.length; ctx++) {
+    var tid = parseInt(mas.contexts[ctx].tid);
+    threads[tid].name = mas.contexts[ctx].name;
+  }
 }
 
 function get_shared(shared, path) {
@@ -6698,6 +6819,15 @@ function get_status(ctx) {
     }
   }
   return status;
+}
+
+function escapeHTML(s) {
+  return s
+     .replace(/&/g, "&amp;")
+     .replace(/</g, "&lt;")
+     .replace(/>/g, "&gt;")
+     .replace(/"/g, "&quot;")
+     .replace(/'/g, "&#039;");
 }
 
 function run_microstep(t) {
@@ -6731,12 +6861,12 @@ function run_microstep(t) {
     inv = mis.invfails[0];
     code = getCode(inv.pc);
     coderow.style.color = "red";
-    coderow.innerHTML = code.file + ":" + code.line + "&nbsp;&nbsp;&nbsp;" + code.code + " (" + inv.reason + ")";
+    coderow.innerHTML = code.file + ":" + code.line + "&nbsp;&nbsp;&nbsp;" + escapeHTML(code.code) + " (" + inv.reason + ")";
     mis.cloc = null;
   }
   else {
     coderow.style.color = "blue";
-    coderow.innerHTML = mis.code.file + ":" + mis.code.line + "&nbsp;&nbsp;&nbsp;" + mis.code.code;
+    coderow.innerHTML = mis.code.file + ":" + mis.code.line + "&nbsp;&nbsp;&nbsp;" + escapeHTML(mis.code.code);
   }
 
   currCloc = mis.cloc;
@@ -6936,7 +7066,7 @@ document.addEventListener('keydown', handleKeyPress);
 
         print("    <tr>", file=f)
         print("      <th align='center' rowspan='%d'>"%height, file=f)
-        print("        Step", file=f)
+        print("        Turn", file=f)
         print("      </th>", file=f)
         print("      <th align='center' rowspan='%d'>"%height, file=f)
         print("        Thread", file=f)
@@ -7046,7 +7176,10 @@ document.addEventListener('keydown', handleKeyPress);
         print("  <tr><td></td></tr>", file=f)
         print("  <tr>", file=f)
         print("    <td colspan='2'>", file=f)
-        print("      <h3 style='color:blue;' id='coderow'>CODE GOES HERE</h3>", file=f)
+        print("      <h3 style='color:blue;'>", file=f)
+        print("        <div id='coderow'>", file=f)
+        print("        </div>", file=f)
+        print("      </h3>", file=f)
         print("    </td>", file=f)
         print("  </tr>", file=f)
         print("  <tr><td></td></tr>", file=f)
@@ -7093,6 +7226,7 @@ document.addEventListener('keydown', handleKeyPress);
 
     def html_head(self, f):
         print("<head>", file=f)
+        print("  <meta charset='UTF-8'></meta>", file=f)
         print("  <style>", file=f)
         print(self.style, file=f)
         print("  </style>", file=f)
@@ -7150,6 +7284,10 @@ document.addEventListener('keydown', handleKeyPress);
                 for mis in mas["microsteps"]:
                     if "shared" in mis:
                         self.vars_add(self.vardir, mis["shared"])
+                for ctx in mas["contexts"]:
+                    tid = int(ctx["tid"])
+                    if tid >= self.nthreads:
+                        self.nthreads = tid + 1
 
         with open("harmony.html", "w") as out:
             self.html(out)
@@ -7893,7 +8031,7 @@ class GoOp(Op):
         return '{ "op": "Go" }'
 
     def explain(self):
-        return "pops a context and a value, restores the corresponding process, and pushes the value on its stack"
+        return "pops a context and a value, restores the corresponding thread, and pushes the value on its stack"
 
     def eval(self, state, context):
         ctx = context.pop()
@@ -8440,7 +8578,7 @@ class SpawnOp(Op):
         return '{ "op": "Spawn" }'
 
     def explain(self):
-        return "pop a pc, argument, and tag and spawn a new process"
+        return "pop a pc, argument, and tag and spawn a new thread"
 
     def eval(self, state, context):
         if context.readonly > 0:
@@ -8485,7 +8623,7 @@ class AtomicIncOp(Op):
         return '{ "op": "AtomicInc" }'
 
     def explain(self):
-        return "increment atomic counter of context; process runs uninterrupted if larger than 0"
+        return "increment atomic counter of context; thread runs uninterrupted if larger than 0"
 
     def eval(self, state, context):
         context.atomic += 1
@@ -8514,7 +8652,7 @@ class ReadonlyIncOp(Op):
         return '{ "op": "ReadonlyInc" }'
 
     def explain(self):
-        return "increment readonly counter of context; process cannot mutate shared variables if > 0"
+        return "increment readonly counter of context; thread cannot mutate shared variables if > 0"
 
     def eval(self, state, context):
         context.readonly += 1
@@ -12350,9 +12488,10 @@ def main():
     blockflag = False
     charmflag = True
     fulldump = False
+    testflag = False
     try:
         opts, args = getopt.getopt(sys.argv[1:],
-                        "Aabc:dfhjm:s", ["const=", "help", "module="])
+                        "Aabc:dfhjm:st", ["const=", "help", "module="])
     except getopt.GetoptError as err:
         print(str(err))
         usage()
@@ -12378,6 +12517,8 @@ def main():
             mods.append(a)
         elif o == "-s":
             silent = True
+        elif o == "-t":
+            testflag = True
         elif o in { "-h", "--help" }:
             usage()
         else:
@@ -12386,18 +12527,34 @@ def main():
     (code, scope) = doCompile(args, consts, mods)
 
     if charmflag:
-        with open("harmony.json", "w") as fd:
+        if testflag:
+            tmpfile = "harmony.json"
+        else:
+            fd, tmpfile = tempfile.mkstemp(".json", prefix="harmony", text=True)
+            os.close(fd)
+        with open(tmpfile, "w") as fd:
             dumpCode("json", code, scope, f=fd)
         charm = "%s/.charm"%pathlib.Path.home()
-        if not os.path.exists(charm):
+        path = pathlib.Path(charm)
+        rebuild = testflag or not path.exists()
+        if not rebuild:
+            st = path.stat()
+            now = time.time()
+            if now - st.st_mtime > 15 * 60:
+                rebuild = True
+        if rebuild:
             with open("charm.c", "w") as fd:
                 print(charm_src, file=fd)
-            # r = os.system("cc -O3 -DNDEBUG -DHARMONY_COMBINE charm.c -o %s"%charm);
-            r = os.system("cc -g -DHARMONY_COMBINE charm.c -o %s"%charm);
+            if testflag:
+                r = os.system("cc -g -DHARMONY_COMBINE charm.c -o %s"%charm);
+            else:
+                r = os.system("cc -O3 -DNDEBUG -DHARMONY_COMBINE charm.c -o %s"%charm);
             if r != 0:
                 print("can't create charm model checker")
                 sys.exit(r);
-        r = os.system("%s harmony.json"%charm);
+        r = os.system("%s %s"%(charm, tmpfile));
+        if not testflag:
+            os.remove(tmpfile)
         if r != 0:
             print("charm model checker failed")
             sys.exit(r);

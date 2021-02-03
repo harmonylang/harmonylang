@@ -27,8 +27,7 @@ struct f_info {
 };
 
 struct var_tree {
-    // TODO.  Is VT_LIST really a thing?
-    enum { VT_NAME, VT_TUPLE, VT_LIST } type;
+    enum { VT_NAME, VT_TUPLE } type;
     union {
         uint64_t name;
         struct {
@@ -507,7 +506,11 @@ void op_Apply(const void *env, struct state *state, struct context **pctx){
         {
             uint64_t v;
             if (!dict_tryload(method, e, &v)) {
-                ctx_failure(*pctx, "Bad index");
+                char *m = value_string(method);
+                char *x = value_string(e);
+                ctx_failure(*pctx, "Bad index %s: not in %s", x, m);
+                free(m);
+                free(x);
                 return;
             }
             ctx_push(pctx, v);
@@ -640,6 +643,8 @@ void op_Dup(const void *env, struct state *state, struct context **pctx){
 }
 
 void op_Frame(const void *env, struct state *state, struct context **pctx){
+    static uint64_t result = 0;
+
     const struct env_Frame *ef = env;
     if (false) {
         printf("FRAME %d %d %"PRIx64" ", (*pctx)->pc, (*pctx)->sp, ef->name);
@@ -655,8 +660,10 @@ void op_Frame(const void *env, struct state *state, struct context **pctx){
     struct context *ctx = *pctx;
     ctx->fp = ctx->sp;
 
-    ctx->vars = dict_store(VALUE_DICT,
-        value_put_atom("result", 6), VALUE_DICT);       // TODO "result" atom
+    if (result == 0) {
+        result = value_put_atom("result", 6);
+    }
+    ctx->vars = dict_store(VALUE_DICT, result, VALUE_DICT);
 
     var_match(*pctx, ef->args, arg);
     if ((*pctx)->failure == 0) {
@@ -670,6 +677,21 @@ void op_Go(const void *env, struct state *state, struct context **pctx){
         ctx_failure(*pctx, "Go: not a context");
         return;
     }
+
+    // Remove from stopbag if it's there
+    uint64_t count;
+    if (dict_tryload(state->stopbag, ctx, &count)) {
+        assert((count & VALUE_MASK) == VALUE_INT);
+        assert(count != VALUE_INT);
+        count -= 1 << VALUE_BITS;
+        if (count != VALUE_INT) {
+            state->stopbag = dict_store(state->stopbag, ctx, count);
+        }
+        else {
+            state->stopbag = dict_remove(state->stopbag, ctx);
+        }
+    }
+
     uint64_t result = ctx_pop(pctx);
     struct context *copy = value_copy(ctx, NULL);
     ctx_push(&copy, result);
@@ -868,6 +890,7 @@ void op_ReadonlyInc(const void *env, struct state *state, struct context **pctx)
 
 void op_Return(const void *env, struct state *state, struct context **pctx){
     if ((*pctx)->sp == 0) {     // __init__    TODO: no longer the case
+        assert(false);
         (*pctx)->phase = CTX_END;
         if (false) {
             printf("RETURN INIT\n");
@@ -1640,13 +1663,16 @@ uint64_t f_intersection(struct state *state, struct context *ctx, uint64_t *args
         }
         return e1;
     }
+	if (e1 == VALUE_SET) {
+		return VALUE_SET;
+	}
     if ((e1 & VALUE_MASK) == VALUE_SET) {
         // get all the sets
+		assert(n > 0);
         struct val_info *vi = malloc(n * sizeof(*vi));
-        int min_size = -1;      // minimum set size
-        uint64_t max_val;       // maximum value over the minima of all sets
-        bool some_empty = false;
-        for (int i = 0; i < n; i++) {
+        int min_size = vi[0].size;              // minimum set size
+        uint64_t max_val = vi[0].vals[0];       // maximum value over the minima of all sets
+        for (int i = 1; i < n; i++) {
             if ((args[i] & VALUE_MASK) != VALUE_SET) {
                 return ctx_failure(ctx, "'&' applied to mix of sets and other types");
             }
@@ -1656,18 +1682,12 @@ uint64_t f_intersection(struct state *state, struct context *ctx, uint64_t *args
             else {
                 vi[i].vals = value_get(args[i], &vi[i].size); 
                 vi[i].index = 0;
-                if (min_size < 0) {
-                    min_size = vi[i].size;
-                    max_val = vi[i].vals[0];
-                }
-                else {
-                    if (vi[i].size < min_size) {
-                        min_size = vi[i].size;
-                    }
-                    if (value_cmp(vi[i].vals[0], max_val) > 0) {
-                        max_val = vi[i].vals[0];
-                    }
-                }
+				if (vi[i].size < min_size) {
+					min_size = vi[i].size;
+				}
+				if (value_cmp(vi[i].vals[0], max_val) > 0) {
+					max_val = vi[i].vals[0];
+				}
             }
         }
 
@@ -1677,7 +1697,7 @@ uint64_t f_intersection(struct state *state, struct context *ctx, uint64_t *args
         }
 
         // Allocate sufficient memory.
-        uint64_t *vals = malloc(min_size), *v = vals;
+        uint64_t *vals = malloc((size_t) min_size), *v = vals;
 
         bool done = false;
         for (int i = 0; i < min_size; i++) {
@@ -1729,6 +1749,9 @@ uint64_t f_intersection(struct state *state, struct context *ctx, uint64_t *args
         return result;
     }
 
+	if (e1 == VALUE_DICT) {
+		return VALUE_DICT;
+	}
     if ((e1 & VALUE_MASK) != VALUE_DICT) {
         return ctx_failure(ctx, "'&' can only be applied to ints and dicts");
     }
@@ -2023,7 +2046,11 @@ uint64_t f_mod(struct state *state, struct context *ctx, uint64_t *args, int n){
     if ((e2 & VALUE_MASK) != VALUE_INT) {
         return ctx_failure(ctx, "left argument to mod not an integer");
     }
-    int64_t result = (e2 >> VALUE_BITS) % (e1 >> VALUE_BITS);
+    int64_t mod = (e1 >> VALUE_BITS);
+    int64_t result = (e2 >> VALUE_BITS) % mod;
+    if (result < 0) {
+        result += mod;
+    }
     return (result << VALUE_BITS) | VALUE_INT;
 }
 

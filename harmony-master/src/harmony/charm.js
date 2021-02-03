@@ -432,6 +432,10 @@ function init_macrostep(i) {
   for (var j = 0; j < mas.microsteps.length; j++) {
     init_microstep(i, j);
   }
+  for (var ctx = 0; ctx < mas.contexts.length; ctx++) {
+    var tid = parseInt(mas.contexts[ctx].tid);
+    threads[tid].name = mas.contexts[ctx].name;
+  }
 }
 
 function get_shared(shared, path) {
@@ -458,6 +462,15 @@ function get_status(ctx) {
     }
   }
   return status;
+}
+
+function escapeHTML(s) {
+  return s
+     .replace(/&/g, "&amp;")
+     .replace(/</g, "&lt;")
+     .replace(/>/g, "&gt;")
+     .replace(/"/g, "&quot;")
+     .replace(/'/g, "&#039;");
 }
 
 function run_microstep(t) {
@@ -491,12 +504,12 @@ function run_microstep(t) {
     inv = mis.invfails[0];
     code = getCode(inv.pc);
     coderow.style.color = "red";
-    coderow.innerHTML = code.file + ":" + code.line + "&nbsp;&nbsp;&nbsp;" + code.code + " (" + inv.reason + ")";
+    coderow.innerHTML = code.file + ":" + code.line + "&nbsp;&nbsp;&nbsp;" + escapeHTML(code.code) + " (" + inv.reason + ")";
     mis.cloc = null;
   }
   else {
     coderow.style.color = "blue";
-    coderow.innerHTML = mis.code.file + ":" + mis.code.line + "&nbsp;&nbsp;&nbsp;" + mis.code.code;
+    coderow.innerHTML = mis.code.file + ":" + mis.code.line + "&nbsp;&nbsp;&nbsp;" + escapeHTML(mis.code.code);
   }
 
   currCloc = mis.cloc;

@@ -11,6 +11,11 @@
 
 #define CHUNKSIZE   (1 << 12)
 
+struct combined {           // combination of current state and current context
+    struct state state;
+    struct context context;
+};
+
 struct component {
     bool good;          // terminating or out-going edge
 };
@@ -135,7 +140,6 @@ void check_invariants(struct node *node, struct context **pctx){
             b = false;
         }
         if (!b) {
-            printf("INVARIANT FAILED\n");
             struct failure *f = new_alloc(struct failure);
             f->type = FAIL_INVARIANT;
             f->ctx = node->before;
@@ -147,7 +151,8 @@ void check_invariants(struct node *node, struct context **pctx){
 }
 
 void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
-        struct dict *visited, struct queue *todo, struct context **pinv_ctx){
+        struct dict *visited, struct queue *todo, struct context **pinv_ctx,
+        bool infloop_detect){
     // Make a copy of the state
     struct state *sc = new_alloc(struct state);
     memcpy(sc, node->state, sizeof(*sc));
@@ -169,13 +174,13 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
         interrupt_invoke(&cc);
     }
     else if (sc->choosing == 0 && cc->trap_pc != 0 && !cc->interruptlevel) {
-        onestep(node, ctx, choice, true, visited, todo, pinv_ctx);
+        onestep(node, ctx, choice, true, visited, todo, pinv_ctx, infloop_detect);
     }
 
     // Copy the choice
     uint64_t choice_copy = choice;
 
-    bool choosing = false;
+    bool choosing = false, infinite_loop = false;;
     struct dict *infloop = NULL;        // infinite loop detector
     for (int loopcnt = 0;; loopcnt++) {
         int pc = cc->pc;
@@ -209,17 +214,32 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
             (*oi->op)(code[pc].env, sc, &cc);
         }
 
-        if ((cc->phase != CTX_END && cc->failure == 0) && loopcnt > 1000) {
+        if (cc->phase != CTX_END && cc->failure == 0 && (infloop_detect || loopcnt > 1000)) {
             if (infloop == NULL) {
                 infloop = dict_new(0);
             }
-            // TODO.  Also add global state?
-            void **p = dict_insert(infloop, cc,
-                            sizeof(*cc) + (cc->sp * sizeof(uint64_t)));
-            if (*p != (void *) 0) {
-                cc->failure = value_put_atom("infinite loop", 13);
+
+            int stacksize = cc->sp * sizeof(uint64_t);
+            int combosize = sizeof(struct combined) + stacksize;
+            struct combined *combo = calloc(1, combosize);
+            combo->state = *sc;
+            memcpy(&combo->context, cc, sizeof(*cc) + stacksize);
+            void **p = dict_insert(infloop, combo, combosize);
+            free(combo);
+            if (*p == (void *) 0) {
+                *p = (void *) 1;
             }
-            *p = (void *) 1;
+            else if (infloop_detect) {
+                cc->failure = value_put_atom("infinite loop", 13);
+                infinite_loop = true;
+            }
+            else {
+                // start over, as twostep does not have loopcnt optimization
+                onestep(node, ctx, choice_copy, interrupt, visited, todo, pinv_ctx, true);
+                free(cc);
+                free(sc);
+                return;
+            }
         }
 
         if (cc->phase == CTX_END || cc->failure != 0 || cc->stopped) {
@@ -235,13 +255,23 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
         oi = code[cc->pc].oi;
         if (code[cc->pc].choose) {
             assert(cc->sp > 0);
+            if (cc->readonly > 0) {
+                ctx_failure(cc, "can't choose in assertion or invariant");
+                break;
+            }
             uint64_t s = cc->stack[cc->sp - 1];
-            assert((s & VALUE_MASK) == VALUE_SET);
+            if ((s & VALUE_MASK) != VALUE_SET) {
+                ctx_failure(cc, "choose operation requires a set");
+                break;
+            }
             int size;
             uint64_t *vals = value_get(s, &size);
             size /= sizeof(uint64_t);
-            assert(size > 0);
-            if (size == 1) {
+            if (size == 0) {
+                ctx_failure(cc, "choose operation requires a non-empty set");
+                break;
+            }
+            if (size == 1) {            // TODO.  This optimization is probably not worth it
                 choice = vals[0];
             }
             else {
@@ -281,7 +311,10 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
     }
 
     // Add new context to state unless it's terminated or stopped
-    if (cc->phase != CTX_END && !cc->stopped) {
+    if (cc->stopped) {
+        sc->stopbag = bag_add(sc->stopbag, after);
+    }
+    else if (cc->phase != CTX_END) {
         sc->ctxbag = bag_add(sc->ctxbag, after);
     }
 
@@ -302,8 +335,7 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
         next->len = node->len + weight;
         graph_add(next);
 
-        // TODO.  Is this the right place?  Don't check when choice?
-        if (sc->invariants != VALUE_SET) {
+        if (sc->choosing == 0 && sc->invariants != VALUE_SET) {
             check_invariants(next, pinv_ctx);
         }
 
@@ -352,7 +384,7 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
 
     if (cc->failure != 0) {
         struct failure *f = new_alloc(struct failure);
-        f->type = FAIL_SAFETY;
+        f->type = infinite_loop ? FAIL_TERMINATION : FAIL_SAFETY;
         f->ctx = ctx;
         f->choice = choice_copy;
         f->node = next;
@@ -404,7 +436,8 @@ bool print_trace(FILE *file, struct context *ctx, int pc, int fp, uint64_t vars)
             }
             break;
         default:
-            panic("print_trace: bad call type 1");
+            fprintf(stderr, "call type: %"PRIx64"\n", ct >> VALUE_BITS);
+            // panic("print_trace: bad call type 1");
         }
     }
     while (--pc >= 0) {
@@ -794,8 +827,8 @@ uint64_t twostep(FILE *file, struct node *node, uint64_t ctx, uint64_t choice,
             cc->pc++;
         }
         else {
-            // printf("--- %d: %s\n", pc, oi->name);
             if (code[pc].breakable) {
+                assert(cc->phase != CTX_END);
                 cc->phase = CTX_MIDDLE;
             }
             (*oi->op)(code[pc].env, sc, &cc);
@@ -805,13 +838,20 @@ uint64_t twostep(FILE *file, struct node *node, uint64_t ctx, uint64_t choice,
             if (infloop == NULL) {
                 infloop = dict_new(0);
             }
-            // TODO.  Also add global state?
-            void **p = dict_insert(infloop, cc,
-                            sizeof(*cc) + (cc->sp * sizeof(uint64_t)));
-            if (*p != (void *) 0) {
+
+            int stacksize = cc->sp * sizeof(uint64_t);
+            int combosize = sizeof(struct combined) + stacksize;
+            struct combined *combo = calloc(1, combosize);
+            combo->state = *sc;
+            memcpy(&combo->context, cc, sizeof(*cc) + stacksize);
+            void **p = dict_insert(infloop, combo, combosize);
+            free(combo);
+            if (*p == (void *) 0) {
+                *p = (void *) 1;
+            }
+            else {
                 cc->failure = value_put_atom("infinite loop", 13);
             }
-            *p = (void *) 1;
         }
 
         diff_dump(file, oldstate, sc, oldctx, cc, false, code[pc].choose, choice);
@@ -828,12 +868,25 @@ uint64_t twostep(FILE *file, struct node *node, uint64_t ctx, uint64_t choice,
         oi = code[cc->pc].oi;
         if (code[cc->pc].choose) {
             assert(cc->sp > 0);
+            if (cc->readonly > 0) {
+                ctx_failure(cc, "can't choose in assertion or invariant");
+                diff_dump(file, oldstate, sc, oldctx, cc, false, code[pc].choose, choice);
+                break;
+            }
             uint64_t s = cc->stack[cc->sp - 1];
-            assert((s & VALUE_MASK) == VALUE_SET);
+            if ((s & VALUE_MASK) != VALUE_SET) {
+                ctx_failure(cc, "choose operation requires a set");
+                diff_dump(file, oldstate, sc, oldctx, cc, false, code[pc].choose, choice);
+                break;
+            }
             int size;
             uint64_t *vals = value_get(s, &size);
             size /= sizeof(uint64_t);
-            assert(size > 0);
+            if (size == 0) {
+                ctx_failure(cc, "choose operation requires a non-empty set");
+                diff_dump(file, oldstate, sc, oldctx, cc, false, code[pc].choose, choice);
+                break;
+            }
             if (size == 1) {
                 choice = vals[0];
             }
@@ -1008,6 +1061,39 @@ static int find_scc(void){
     return count;
 }
 
+static char *json_string_encode(char *s){
+    char *result = malloc(4 * strlen(s)), *p = result;
+
+    while (*s != 0) {
+        switch (*s) {
+        case '\r':
+            *p++ = '\\'; *p++ = 'r';
+            break;
+        case '\n':
+            *p++ = '\\'; *p++ = 'n';
+            break;
+        case '\f':
+            *p++ = '\\'; *p++ = 'f';
+            break;
+        case '\t':
+            *p++ = '\\'; *p++ = 't';
+            break;
+        case '"':
+            *p++ = '\\'; *p++ = '"';
+            break;
+        case '\\':
+            *p++ = '\\'; *p++ = '\\';
+            break;
+        default:
+            *p++ = *s;
+        }
+        s++;
+    }
+    *p++ = 0;
+    return result;
+}
+            
+
 static void enum_loc(void *env, const void *key, unsigned int key_size,
                                 HASHDICT_VALUE_TYPE value){
     static bool notfirst = false;
@@ -1056,7 +1142,9 @@ static void enum_loc(void *env, const void *key, unsigned int key_size,
             if (len > 0 && buf[len - 1] == '\n') {
                 buf[len - 1] = 0;
             }
-            fprintf(out, ", \"code\": \"%s\"", buf);
+            char *enc = json_string_encode(buf);
+            fprintf(out, ", \"code\": \"%s\"", enc);
+            free(enc);
             break;
         }
     }
@@ -1119,6 +1207,7 @@ int main(int argc, char **argv){
     state->vars = VALUE_DICT;
     uint64_t ictx = value_put_context(init_ctx);
     state->ctxbag = dict_store(VALUE_DICT, ictx, (1 << VALUE_BITS) | VALUE_INT);
+    state->stopbag = VALUE_DICT;
     state->invariants = VALUE_SET;
     processes = new_alloc(uint64_t);
     *processes = ictx;
@@ -1178,7 +1267,7 @@ int main(int argc, char **argv){
                 if (false) {
                     printf("NEXT CHOICE %d %d %"PRIx64"\n", i, size, vals[i]);
                 }
-                onestep(node, state->choosing, vals[i], false, visited, todo, &inv_ctx);
+                onestep(node, state->choosing, vals[i], false, visited, todo, &inv_ctx, false);
                 if (false) {
                     printf("NEXT CHOICE DONE\n");
                 }
@@ -1195,7 +1284,7 @@ int main(int argc, char **argv){
                 }
                 assert((ctxs[i] & VALUE_MASK) == VALUE_CONTEXT);
                 assert((ctxs[i+1] & VALUE_MASK) == VALUE_INT);
-                onestep(node, ctxs[i], 0, false, visited, todo, &inv_ctx);
+                onestep(node, ctxs[i], 0, false, visited, todo, &inv_ctx, false);
                 if (false) {
                     printf("NEXT CONTEXT DONE\n");
                 }
@@ -1218,7 +1307,7 @@ int main(int argc, char **argv){
             if (comp->good) {
                 continue;
             }
-            if (node->state->ctxbag == VALUE_DICT) {
+            if (node->state->ctxbag == VALUE_DICT && node->state->stopbag == VALUE_DICT) {
                 comp->good = true;
                 continue;
             }
@@ -1245,7 +1334,7 @@ int main(int argc, char **argv){
             }
         }
 
-        printf("%d components, %d bad nodes\n", ncomponents, nbad);
+        printf("%d components, %d bad states\n", ncomponents, nbad);
     }
 
     FILE *out = fopen("charm.json", "w");
