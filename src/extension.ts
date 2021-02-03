@@ -1,15 +1,18 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import {ProcessManagerImpl} from './processManager';
-import {CHARMONY_COMPILER_DIR, CHARMONY_JSON_OUTPUT, CHARMONY_SCRIPT_PATH, GENERATED_FILES} from "./config";
+import { ProcessManagerImpl } from './processManager';
+import { CHARMONY_COMPILER_DIR, CHARMONY_JSON_OUTPUT, CHARMONY_SCRIPT_PATH, GENERATED_FILES } from "./config";
 import * as rimraf from "rimraf";
 import { LOG } from './debug/io';
 import * as fs from "fs";
-import {IntermediateJson} from "./charmony/IntermediateJson";
+import { IntermediateJson } from "./charmony/IntermediateJson";
 import CharmonyPanelController_v2 from "./outputPanel/PanelController_v2";
 import * as commandExists from "command-exists";
 
 const processManager = ProcessManagerImpl.init();
+const harmonyLangConfig = vscode.workspace.getConfiguration('harmonylang');
+const pythonPath = harmonyLangConfig.get('pythonPath');
+const ccPath = harmonyLangConfig.get('ccPath');
 
 export const activate = (context: vscode.ExtensionContext) => {
     const runHarmonyCommand = vscode.commands.registerCommand('harmonylang.run', () => {
@@ -62,7 +65,7 @@ function checkIfPython3Exists(
     ifItExists: () => void,
     otherwise: () => void,
 ) {
-    commandExists("python3", (err, exists) => {
+    commandExists(pythonPath as string, (err, exists) => {
         if (exists) ifItExists();
         else otherwise();
     });
@@ -76,7 +79,7 @@ function checkIfCompilerForCExists(
     ifItExists: () => void,
     otherwise: () => void,
 ): void {
-    commandExists("cc", (err, exists) => {
+    commandExists(ccPath as string, (err, exists) => {
         if (exists) ifItExists();
         else otherwise();
     });
@@ -91,15 +94,20 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
         console.log("Check for Python3");
         checkIfCompilerForCExists(() => {
             console.log("Check for CC");
-            const charmonyCompileCommand = `${CHARMONY_SCRIPT_PATH} ${fullFileName}`;
+            let osAlias = (process.platform === "win32") ? "doskey" : "alias";
+            let charmonyCompileCommand = "";
+            if (pythonPath != "python3") { charmonyCompileCommand += `${osAlias} python3=${pythonPath} & `; }
+            if (ccPath != "cc") { charmonyCompileCommand += `${osAlias} cc=${ccPath} & `; }
+            charmonyCompileCommand += `${CHARMONY_SCRIPT_PATH} ${fullFileName}`;
             processManager.startCommand(charmonyCompileCommand, {
                 cwd: CHARMONY_COMPILER_DIR
             }, (error, stdout) => {
                 CharmonyPanelController_v2.currentPanel?.dispose();
                 if (processManager.processesAreKilled) return;
                 CharmonyPanelController_v2.createOrShow(context.extensionUri);
-                LOG("finished processing", {error, stdout});
-                if (error) {CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);}
+                LOG("finished processing", { error, stdout });
+                console.log(stdout);
+                if (error) { CharmonyPanelController_v2.currentPanel?.updateMessage(stdout); }
                 try {
                     const results: IntermediateJson = JSON.parse(fs.readFileSync(CHARMONY_JSON_OUTPUT, {
                         encoding: 'utf-8'
@@ -111,6 +119,7 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                     }
                     GENERATED_FILES.forEach(f => rimraf.sync(f));
                 } catch (error) {
+                    console.log(error);
                     CharmonyPanelController_v2.currentPanel?.updateMessage(`Could not create analysis file.`);
                 }
             });
