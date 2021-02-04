@@ -32,15 +32,15 @@
             "title": "HarmonyLang",
             "properties": {
                 "harmonylang.pythonPath": {
-                    "type": "string",
+                    "type": ["string", "null"],
                     "scope": "machine-overridable",
-                    "default": "python3",
+                    "default": null,
                     "description": "Python 3 installation path"
                 },
                 "harmonylang.ccPath": {
-                    "type": "string",
+                    "type": ["string", "null"],
                     "scope": "machine-overridable",
-                    "default": "cc",
+                    "default": null,
                     "description": "C Compiler installation path"
                 }
             }

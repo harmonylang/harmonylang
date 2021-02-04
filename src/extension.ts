@@ -65,7 +65,8 @@ function checkIfPython3Exists(
     ifItExists: () => void,
     otherwise: () => void,
 ) {
-    commandExists(pythonPath as string, (err, exists) => {
+    const command = (pythonPath) ? pythonPath as string : "python3";
+    commandExists(command, (err, exists) => {
         if (exists) ifItExists();
         else otherwise();
     });
@@ -79,7 +80,8 @@ function checkIfCompilerForCExists(
     ifItExists: () => void,
     otherwise: () => void,
 ): void {
-    commandExists(ccPath as string, (err, exists) => {
+    const command = (ccPath) ? ccPath as string : "cc";
+    commandExists(command, (err, exists) => {
         if (exists) ifItExists();
         else otherwise();
     });
