@@ -4,7 +4,7 @@ All notable changes to the "harmonylang" extension will be documented in this fi
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [0.1.0] - Unreleased
+## [0.1.0] - 2021-02-04
  - Massive UI overhaul with compiler output rewrite.
    - Interactive Process Visualizer
    - Crash Timeline Playback
