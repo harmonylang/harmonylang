@@ -2,6 +2,8 @@
 
 HarmonyLang provides general VS compatibility with RvR's [Harmony](http://harmony.cs.cornell.edu), a Python-like programming language for testing and experimenting with concurrent programs designed for Cornell University's CS 4410/4411 course.
 
+> **Warning**: HarmonyLang Beta is currently only known to be compatible with MacOS, due to it's reliance on the `cc` command. We're working to include Windows compatibility, but the model checker is currently non-functional on Windows PCs.
+
 ## Features
 
 Provides advanced syntax highlighting for all flow control, method definition, and literals based on the [default VSCode extension for Python](https://github.com/microsoft/vscode).
@@ -14,6 +16,8 @@ Supported syntax:
 - Binary operators (`and`, `**`, and `>=`)
 - Comments (`#line` and `(* block *)`)
 
+> **Warning**: This release contains the Harmony 1.0 compiler. Code written for Harmony 1.0 is not compatible with Harmony 0.9. To use the Harmony 0.9 compiler, download [HarmonyLang](https://marketplace.visualstudio.com/items?itemName=kevinsun-dev-cornell.harmonylang).
+
 ![Syntax Highlighting](images/syntax-example.png)
 
 Run your Harmony files in VS Code. Press `Alt+Shift+N` to compile and run the current `.hny` file. Alternatively, press `Ctrl+Shift+P` and search `Run Harmony` to find the same command. Kill all running Harmony processes with `Alt+Shift+Q`.
@@ -22,7 +26,7 @@ Run your Harmony files in VS Code. Press `Alt+Shift+N` to compile and run the cu
 
 See your Harmony Output results, right in VS Code!
 
-![Harmony Output](images/build-example.png)
+![Harmony Output](images/build-example.jpg)
 
 > Generated `harmony.html` files are saved to the extension's internal compiler.
 

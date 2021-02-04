@@ -3,7 +3,7 @@
     "displayName": "HarmonyLang Beta",
     "description": "VS Code language support for Harmony, a Python-like concurrent programming language.",
     "icon": "images/harmonylang.png",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "publisher": "kevinsun-dev-cornell",
     "repository": "https://github.com/kevinsun-dev/harmonylang",
     "engines": {
@@ -51,28 +51,23 @@
                 }
             }
         },
-        "languages": [
-            {
-                "id": "harmony",
-                "aliases": [
-                    "Harmony",
-                    "harmony"
-                ],
-                "extensions": [
-                    ".hny"
-                ],
-                "configuration": "./language-configuration.json"
-            }
-        ],
-        "grammars": [
-            {
-                "language": "harmony",
-                "scopeName": "source.harmony",
-                "path": "./syntaxes/harmony.tmLanguage.json"
-            }
-        ],
-        "commands": [
-            {
+        "languages": [{
+            "id": "harmony",
+            "aliases": [
+                "Harmony",
+                "harmony"
+            ],
+            "extensions": [
+                ".hny"
+            ],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "harmony",
+            "scopeName": "source.harmony",
+            "path": "./syntaxes/harmony.tmLanguage.json"
+        }],
+        "commands": [{
                 "command": "harmonylang.run",
                 "title": "Run Harmony"
             },
@@ -89,8 +84,7 @@
                 "title": "Remove `harmony` CLI"
             }
         ],
-        "keybindings": [
-            {
+        "keybindings": [{
                 "command": "harmonylang.run",
                 "key": "alt+shift+n"
             },
