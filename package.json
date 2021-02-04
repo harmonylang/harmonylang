@@ -32,36 +32,47 @@
             "title": "HarmonyLang",
             "properties": {
                 "harmonylang.pythonPath": {
-                    "type": ["string", "null"],
+                    "type": [
+                        "string",
+                        "null"
+                    ],
                     "scope": "machine-overridable",
                     "default": null,
                     "description": "Python 3 installation path"
                 },
                 "harmonylang.ccPath": {
-                    "type": ["string", "null"],
+                    "type": [
+                        "string",
+                        "null"
+                    ],
                     "scope": "machine-overridable",
                     "default": null,
                     "description": "C Compiler installation path"
                 }
             }
         },
-        "languages": [{
-            "id": "harmony",
-            "aliases": [
-                "Harmony",
-                "harmony"
-            ],
-            "extensions": [
-                ".hny"
-            ],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "harmony",
-            "scopeName": "source.harmony",
-            "path": "./syntaxes/harmony.tmLanguage.json"
-        }],
-        "commands": [{
+        "languages": [
+            {
+                "id": "harmony",
+                "aliases": [
+                    "Harmony",
+                    "harmony"
+                ],
+                "extensions": [
+                    ".hny"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "harmony",
+                "scopeName": "source.harmony",
+                "path": "./syntaxes/harmony.tmLanguage.json"
+            }
+        ],
+        "commands": [
+            {
                 "command": "harmonylang.run",
                 "title": "Run Harmony"
             },
@@ -78,7 +89,8 @@
                 "title": "Remove `harmony` CLI"
             }
         ],
-        "keybindings": [{
+        "keybindings": [
+            {
                 "command": "harmonylang.run",
                 "key": "alt+shift+n"
             },

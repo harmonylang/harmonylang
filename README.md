@@ -14,15 +14,15 @@ Supported syntax:
 - Binary operators (`and`, `**`, and `>=`)
 - Comments (`#line` and `(* block *)`)
 
-![Syntax Highlighting](images/syntax-example.jpg)
+![Syntax Highlighting](images/syntax-example.png)
 
 Run your Harmony files in VS Code. Press `Alt+Shift+N` to compile and run the current `.hny` file. Alternatively, press `Ctrl+Shift+P` and search `Run Harmony` to find the same command. Kill all running Harmony processes with `Alt+Shift+Q`.
 
-![Command](images/command-example.jpg)
+![Command](images/command-example.png)
 
 See your Harmony Output results, right in VS Code!
 
-![Harmony Output](images/build-example.jpg)
+![Harmony Output](images/build-example.png)
 
 > Generated `harmony.html` files are saved to the extension's internal compiler.
 
