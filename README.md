@@ -1,4 +1,4 @@
-# HarmonyLang
+# HarmonyLang Beta
 
 HarmonyLang provides general VS compatibility with RvR's [Harmony](http://harmony.cs.cornell.edu), a Python-like programming language for testing and experimenting with concurrent programs designed for Cornell University's CS 4410/4411 course.
 

@@ -1,6 +1,6 @@
 {
-    "name": "harmonylang",
-    "displayName": "HarmonyLang",
+    "name": "harmonylang-beta",
+    "displayName": "HarmonyLang Beta",
     "description": "VS Code language support for Harmony, a Python-like concurrent programming language.",
     "icon": "images/harmonylang.png",
     "version": "0.2.0",
