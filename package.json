@@ -3,7 +3,7 @@
     "displayName": "HarmonyLang Beta",
     "description": "VS Code language support for Harmony, a Python-like concurrent programming language.",
     "icon": "images/harmonylang.png",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "publisher": "kevinsun-dev-cornell",
     "repository": "https://github.com/kevinsun-dev/harmonylang",
     "engines": {
@@ -31,7 +31,7 @@
         "configuration": {
             "title": "HarmonyLang",
             "properties": {
-                "harmonylang.pythonPath": {
+                "harmonylang-beta.pythonPath": {
                     "type": [
                         "string",
                         "null"
@@ -40,7 +40,7 @@
                     "default": null,
                     "description": "Python 3 installation path"
                 },
-                "harmonylang.ccPath": {
+                "harmonylang-beta.ccPath": {
                     "type": [
                         "string",
                         "null"
@@ -73,29 +73,21 @@
         ],
         "commands": [
             {
-                "command": "harmonylang.run",
+                "command": "harmonylang-beta.run",
                 "title": "Run Harmony"
             },
             {
-                "command": "harmonylang.end",
+                "command": "harmonylang-beta.end",
                 "title": "End All Harmony Processes"
-            },
-            {
-                "command": "harmonylang.install",
-                "title": "Add `harmony` to PATH"
-            },
-            {
-                "command": "harmonylang.uninstall​​",
-                "title": "Remove `harmony` CLI"
             }
         ],
         "keybindings": [
             {
-                "command": "harmonylang.run",
+                "command": "harmonylang-beta.run",
                 "key": "alt+shift+n"
             },
             {
-                "command": "harmonylang.end",
+                "command": "harmonylang-beta.end",
                 "key": "alt+shift+q"
             }
         ]
@@ -117,14 +109,12 @@
         "@types/mocha": "^8.2.0",
         "@types/node": "^12.19.11",
         "@types/rimraf": "^3.0.0",
-        "@types/typescript": "^2.0.0",
         "@types/vscode": "^1.34.0",
         "@typescript-eslint/eslint-plugin": "^3.0.2",
         "@typescript-eslint/parser": "^3.0.2",
         "axios": "^0.21.0",
         "dotenv": "^8.2.0",
         "eslint": "^7.1.0",
-        "ts-node": "^9.1.1",
         "typescript": "^3.9.7"
     },
     "dependencies": {
@@ -133,8 +123,7 @@
         "create-html-element": "^3.0.0",
         "lodash": "^4.17.20",
         "mocha": "^8.2.1",
-        "node": "^15.4.0",
-        "node-html-parser": "^2.0.0",
+        "node-html-parser": "^2.1.0",
         "rimraf": "^3.0.2"
     }
 }

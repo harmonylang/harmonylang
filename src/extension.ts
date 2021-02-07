@@ -10,12 +10,12 @@ import CharmonyPanelController_v2 from "./outputPanel/PanelController_v2";
 import * as commandExists from "command-exists";
 
 const processManager = ProcessManagerImpl.init();
-const harmonyLangConfig = vscode.workspace.getConfiguration('harmonylang');
+const harmonyLangConfig = vscode.workspace.getConfiguration('harmonylang-beta');
 const pythonPath = harmonyLangConfig.get('pythonPath');
 const ccPath = harmonyLangConfig.get('ccPath');
 
 export const activate = (context: vscode.ExtensionContext) => {
-    const runHarmonyCommand = vscode.commands.registerCommand('harmonylang.run', () => {
+    const runHarmonyCommand = vscode.commands.registerCommand('harmonylang-beta.run', () => {
         const filename = vscode.window.activeTextEditor?.document?.fileName;
         const ext = path.extname(filename || '');
         const harmonyExt = [".hny", ".sab"];
@@ -30,7 +30,7 @@ export const activate = (context: vscode.ExtensionContext) => {
         runHarmony(context, filename);
     });
 
-    const endHarmonyProcessesCommand = vscode.commands.registerCommand('harmonylang.end', () => {
+    const endHarmonyProcessesCommand = vscode.commands.registerCommand('harmonylang-beta.end', () => {
         endHarmonyProcesses();
     });
 
@@ -119,7 +119,7 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                     } else {
                         CharmonyPanelController_v2.currentPanel?.updateMessage(`No Errors Found.`);
                     }
-                    GENERATED_FILES.forEach(f => rimraf.sync(f));
+                    // GENERATED_FILES.forEach(f => rimraf.sync(f));
                 } catch (error) {
                     console.log(error);
                     CharmonyPanelController_v2.currentPanel?.updateMessage(`Could not create analysis file.`);
