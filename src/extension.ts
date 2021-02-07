@@ -110,7 +110,10 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                 CharmonyPanelController_v2.createOrShow(context.extensionUri);
                 LOG("finished processing", { error, stdout });
                 hlConsole.appendLine(stdout);
-                if (error) { CharmonyPanelController_v2.currentPanel?.updateMessage(stdout); }
+                if (error) {
+                    CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
+                    return;
+                }
                 try {
                     const results: IntermediateJson = JSON.parse(fs.readFileSync(CHARMONY_JSON_OUTPUT, {
                         encoding: 'utf-8'

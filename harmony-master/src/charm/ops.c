@@ -645,6 +645,10 @@ void op_Dup(const void *env, struct state *state, struct context **pctx){
 void op_Frame(const void *env, struct state *state, struct context **pctx){
     static uint64_t result = 0;
 
+    if (result == 0) {
+        result = value_put_atom("result", 6);
+    }
+
     const struct env_Frame *ef = env;
     if (false) {
         printf("FRAME %d %d %"PRIx64" ", (*pctx)->pc, (*pctx)->sp, ef->name);
@@ -652,23 +656,25 @@ void op_Frame(const void *env, struct state *state, struct context **pctx){
         printf("\n");
     }
 
+    // peek at argument
     uint64_t arg = ctx_pop(pctx);
     ctx_push(pctx, arg);
-    ctx_push(pctx, (*pctx)->vars);
+
+    uint64_t oldvars = (*pctx)->vars;
+
+    // try to match against parameters
+    (*pctx)->vars = dict_store(VALUE_DICT, result, VALUE_DICT);
+    var_match(*pctx, ef->args, arg);
+    if ((*pctx)->failure != 0) {
+        return;
+    }
+ 
+    ctx_push(pctx, oldvars);
     ctx_push(pctx, ((*pctx)->fp << VALUE_BITS) | VALUE_INT);
 
     struct context *ctx = *pctx;
     ctx->fp = ctx->sp;
-
-    if (result == 0) {
-        result = value_put_atom("result", 6);
-    }
-    ctx->vars = dict_store(VALUE_DICT, result, VALUE_DICT);
-
-    var_match(*pctx, ef->args, arg);
-    if ((*pctx)->failure == 0) {
-        ctx->pc += 1;
-    }
+    ctx->pc += 1;
 }
 
 void op_Go(const void *env, struct state *state, struct context **pctx){
@@ -781,16 +787,18 @@ void op_Load(const void *env, struct state *state, struct context **pctx){
         size /= sizeof(uint64_t);
 
         if (!ind_tryload(state->vars, indices, size, &v)) {
-            char *x = value_string(state->vars);
-            char *y = value_string(av);
-            ctx_failure(*pctx, "Load: unknown address %s / %s", x, y);
+            char *x = indices_string(indices, size);
+            ctx_failure(*pctx, "Load: unknown address %s", x);
+            free(x);
             return;
         }
         ctx_push(pctx, v);
     }
     else {
         if (!ind_tryload(state->vars, el->indices, el->n, &v)) {
-            ctx_failure(*pctx, "Load: unknown variable");
+            char *x = indices_string(el->indices, el->n);
+            ctx_failure(*pctx, "Load: unknown variable %s", x);
+            free(x);
             return;
         }
         ctx_push(pctx, v);

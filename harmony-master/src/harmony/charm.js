@@ -18,8 +18,9 @@ function drawTimeLine(mes) {
   c.clearRect(0, 0, mes.canvas.width, mes.canvas.height);
   var t = mes.startTime;
   var yboxes = Math.floor((mes.nsteps + 29) / 30);
+  var nsteps = mes.nsteps;
   for (var y = 0; y < yboxes; y++) {
-    var xboxes = y < yboxes - 1 ? 30 : (mes.nsteps % 30);
+    var xboxes = nsteps > 30 ? 30 : nsteps;
     for (var x = 0; x < xboxes; x++) {
       c.fillStyle = t < currentTime ? "orange" : "white";
       c.fillRect(x * boxSize, y * boxSize, boxSize, boxSize);
@@ -27,6 +28,7 @@ function drawTimeLine(mes) {
       c.stroke();
       t += 1;
     }
+    nsteps -= xboxes;
   }
 }
 
@@ -438,12 +440,26 @@ function init_macrostep(i) {
   }
 }
 
+function dict_convert(d) {
+  if (typeof d === "string") {
+    return d;
+  }
+  result = "";
+  for (var k in d) {
+    if (result != "") {
+      result += ", ";
+    }
+    result += dict_convert(k) + ":" + dict_convert(d[k]);;
+  }
+  return "{" + result + "}";
+}
+
 function get_shared(shared, path) {
   if (!shared.hasOwnProperty(path[0])) {
     return "";
   }
   if (path.length == 1) {
-    return shared[path[0]];
+    return dict_convert(shared[path[0]]);
   }
   return get_shared(shared[path[0]], path.slice(1));
 }
