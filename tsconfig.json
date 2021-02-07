@@ -4,9 +4,12 @@
         "target": "ES2019",
         "lib": ["ES2019"],
         "outDir": "out",
-        "sourceMap": true,
-        "strict": true,
-        "rootDir": "src"
+        "sourceMap": false,
+        "strict": true
     },
-    "exclude": ["node_modules", ".vscode-test", "tests"]
+    "exclude": [
+        "node_modules",
+        ".vscode-test",
+        "tests"
+    ]
 }
