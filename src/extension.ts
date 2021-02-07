@@ -97,7 +97,7 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
         hlConsole.appendLine("Check for Python3");
         checkIfCompilerForCExists(() => {
             hlConsole.appendLine("Check for CC");
-            let osAlias = (process.platform === "win32") ? "doskey" : "alias";
+            const osAlias = (process.platform === "win32") ? "doskey" : "alias";
             let charmonyCompileCommand = "";
             if (pythonPath != "python3") { charmonyCompileCommand += `${osAlias} python3=${pythonPath} & `; }
             if (ccPath != "cc") { charmonyCompileCommand += `${osAlias} cc=${ccPath} & `; }
