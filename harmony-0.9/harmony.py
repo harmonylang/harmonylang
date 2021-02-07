@@ -31,8 +31,6 @@
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 """
-from analysis.analysis import get_html_content
-from value import Value
 
 internal_modules = {
 #############################
@@ -49,29 +47,34 @@ def tas(lk):
         !lk = True;
     ;
 ;
+def BinSema(acquired):
+    result = acquired;
+;
 def Lock():
-    result = False;
+    result = BinSema(False);
 ;
-def lock(lk):
-    await not tas(lk);
+def acquire(binsema):
+    await not tas(binsema);
 ;
-def unlock(lk):
-    !lk = False;
+def release(binsema):
+    atomic:
+        assert !binsema;
+        !binsema = False;
+    ;
 ;
 def Condition(lk):
-    result = dict{ .lock: lk, .waiters: bagEmpty() };
+    result = bag.empty();
 ;
-def wait(c):
-    let lk, blocked, cnt = None, True, 0:
+def wait(c, lk):
+    let blocked, cnt = True, 0:
         atomic:
-            lk = c->lock;
-            cnt = bagCount(c->waiters, nametag());
-            bagAdd(?c->waiters, nametag());
+            cnt = bag.count(!c, nametag());
+            bag.add(c, nametag());
             !lk = False;
         ;
         while blocked:
             atomic:
-                if (not !lk) and (bagCount(c->waiters, nametag()) <= cnt):
+                if (not !lk) and (bag.count(!c, nametag()) <= cnt):
                     !lk = True;
                     blocked = False;
                 ;
@@ -81,15 +84,13 @@ def wait(c):
 ;
 def notify(c):
     atomic:
-        let waiters = c->waiters:
-            if waiters != bagEmpty():
-                bagRemove(?c->waiters, bagChoose(waiters));
-            ;
+        if !c != bag.empty():
+            bag.remove(c, bag.bchoose(!c));
         ;
     ;
 ;
 def notifyAll(c):
-    c->waiters = bagEmpty();
+    !c = bag.empty();
 ;
 def Semaphore(cnt):
     result = cnt;
@@ -119,8 +120,8 @@ def dequeue(q):
         while blocked:
             atomic:
                 if !q != []:
-                    result = head(!q);
-                    !q = tail(!q);
+                    result = list.head(!q);
+                    !q = list.tail(!q);
                     blocked = False;
                 ;
             ;
@@ -129,59 +130,61 @@ def dequeue(q):
 ;
 def enqueue(q, item):
     atomic:
-        !q = append(!q, item);
+        !q = list.append(!q, item);
     ;
 ;
 """,
     "synchS": """import list;
 
-def Lock():
-    result = dict{ .locked: False, .suspended: [] };
+def BinSema(acquired):
+    result = dict{ .acquired: acquired, .suspended: [] };
 ;
-def lock(lk):
+def Lock():
+    result = BinSema(False);
+;
+def acquire(lk):
     atomic:
-        if lk->locked:
+        if lk->acquired:
             stop lk->suspended;
-            assert lk->locked;
+            assert lk->acquired;
         else:
-            lk->locked = True;
+            lk->acquired = True;
         ;
     ;
 ;
-def unlock(lk):
+def release(lk):
     atomic:
         if lk->suspended == []:
-            lk->locked = False;
+            lk->acquired = False;
         else:
-            go (head(lk->suspended)) ();
-            lk->suspended = tail(lk->suspended);
+            go (list.head(lk->suspended)) ();
+            lk->suspended = list.tail(lk->suspended);
         ;
     ;
 ;
 def Condition(lk):
-    result = dict{ .lock: lk, .waiters: [] };
+    result = [];
 ;
-def wait(c):
+def wait(c, lk):
     atomic:
-        unlock(c->lock);
-        stop c->waiters;
+        release(lk);
+        stop !c;
     ;
+    acquire(lk);
 ;
 def notify(c):
     atomic:
-        let lk, waiters = c->lock, c->waiters:
-            if waiters != []:
-                lk->suspended += [waiters[0],];
-                c->waiters = tail(waiters);
-            ;
+        if !c != []:
+            go (list.head(!c)) ();
+            !c = list.tail(!c);
         ;
     ;
 ;
 def notifyAll(c):
     atomic:
-        let lk, waiters = c->lock, c->waiters:
-            lk->suspended += waiters;
-            c->waiters = [];
+        while !c != []:
+            go (list.head(!c)) ();
+            !c = list.tail(!c);
         ;
     ;
 ;
@@ -203,7 +206,7 @@ def V(sema):
             if waiters != []:
                 assert cnt == 0;
                 go (waiters[0]) ();
-                (!sema).waiters = tail(waiters);
+                (!sema).waiters = list.tail(waiters);
             else:
                 (!sema).count = cnt + 1;
             ;
@@ -211,7 +214,7 @@ def V(sema):
     ;
 ;
 def Queue():
-    result = dict{ list: [], waiters: [] };
+    result = dict{ .list: [], .waiters: [] };
 ;
 def dequeue(q):
     atomic:
@@ -219,18 +222,18 @@ def dequeue(q):
             if list == []:
                 stop q->waiters;
             ;
-            result = head(list);
-            q->list = tail(list);
+            result = list.head(list);
+            q->list = list.tail(list);
         ;
     ;
 ;
 def enqueue(q, item):
     atomic:
-        q->list = append(q->list, item);
+        q->list = list.append(q->list, item);
         let waiters = q->waiters:
             if waiters != []:
                 go (waiters[0]) item;
-                q->waiters = tail(waiters);
+                q->waiters = list.tail(waiters);
             ;
         ;
     ;
@@ -291,21 +294,21 @@ def enumerate(d):
 ;
 
 # quicksort of a list
-def listQsort(a):
+def qsort(a):
     if a == []:
         result = [];
     else:
         let (pivot, rest) = head(a), tail(a)
         let lower = [ v for v in rest such that v < pivot ]
         let higher = [ v for v in rest such that v >= pivot ]:
-            result = listQsort(lower) + [pivot,] + listQsort(higher);
+            result = qsort(lower) + [pivot,] + qsort(higher);
         ;
     ;
 ;
 
 # like Python sorted()
 def sorted(d):
-    result = listQsort(list(d));
+    result = qsort(list(d));
 ;
 
 # like Python reversed()
@@ -314,9 +317,14 @@ def reversed(d):
         result = [ d[n-i] for i in { 1..n } ];
     ;
 ;
-
-# turn a list into a bag (multiset)
-def list2bag(a):
+""",
+    "bag": """def empty():
+    result = dict{};
+;
+def fromSet(s):
+    result = dict{ 1 for elt in s };
+;
+def fromList(a):
     result = dict{};
     for i in keys(a):
         if a[i] in keys(result):
@@ -326,33 +334,26 @@ def list2bag(a):
         ;
     ;
 ;
-""",
-    "bag": """def bagEmpty():
-    result = dict{};
-;
-def bagFromSet(s):
-    result = dict{ 1 for elt in s };
-;
-def bagCount(bag, elt):
-    if elt in keys(bag):
-        result = bag[elt];
+def count(bg, elt):
+    if elt in keys(bg):
+        result = bg[elt];
     else:
         result = 0;
     ;
 ;
-def bagChoose(bag):
+def bchoose(bg):
     # TODO.  Assert that no elements are mapped to 0
-    assert 0 not in { bag[k] for k in keys(bag) };
-    result = choose(keys(bag));
+    assert 0 not in { bg[k] for k in keys(bg) };
+    result = choose(keys(bg));
 ;
-def bagAdd(pb, elt):
+def add(pb, elt):
     if elt in keys(!pb):
         (!pb)[elt] += 1;
     else:
         (!pb)[elt] = 1;
     ;
 ;
-def bagRemove(pb, elt):
+def remove(pb, elt):
     if (elt in keys(!pb)) and ((!pb)[elt] > 0):
         (!pb)[elt] -= 1;
     ;
@@ -370,29 +371,30 @@ def issuperset(s, t):
 """,
     "alloc": """import synch;
 
+pool = [];
+flist = None;           # free list
+lock = synch.Lock();
+
 def malloc(v):
-    lock(?alloc_lock);
-    if alloc_flist == None:
-        let i = len(alloc_pool):
-            alloc_pool[i] = None;
-            result = ?alloc_pool[i];
+    synch.acquire(?lock);
+    if flist == None:
+        let i = len(pool):
+            pool[i] = None;
+            result = ?pool[i];
         ;
     else:
-        result = alloc_flist;
-        alloc_flist = !result;
+        result = flist;
+        flist = !result;
     ;
-    unlock(?alloc_lock);
+    synch.release(?lock);
     !result = v;
 ;
 def free(r):
-    lock(?alloc_lock);
-    !r = alloc_flist;
-    alloc_flist = r;
-    unlock(?alloc_lock);
+    synch.acquire(?lock);
+    !r = flist;
+    flist = r;
+    synch.release(?lock);
 ;
-alloc_pool = [];
-alloc_flist = None;           # free list
-alloc_lock = Lock();
 """,
 
 #############################
@@ -408,15 +410,17 @@ import collections
 import time
 import math
 import html
+import queue
 
-# TODO.  This should not be global ideally
+# TODO.  These should not be global ideally
 files = {}              # files that have been read already
 constants = {}          # constants modified with -c
 modules = {}            # modules modified with -m
 namestack = []          # stack of module names being compiled
 node_uid = 1            # unique node identifier
 silent = False          # not printing periodic status updates
-lasttime = 0
+lasttime = 0            # last time status update was printed
+imported = {}           # imported modules
 
 def load_string(all, filename, scope, code):
     files[filename] = all.split("\n")
@@ -470,6 +474,7 @@ def isreserved(s):
         "all",
         "and",
         "any",
+        "as",
         "assert",
         "atLabel",
         "atomic",
@@ -487,6 +492,7 @@ def isreserved(s):
         "False",
         "fun",
         "for",
+        "from",
         "go",
         "hash",
         "if",
@@ -719,6 +725,10 @@ def keyValue(v):
         return (2, v)
     assert isinstance(v, Value), v
     return v.key()
+
+class Value:
+    def __str__(self):
+        return self.__repr__()
 
 class PcValue(Value):
     def __init__(self, pc):
@@ -1044,16 +1054,17 @@ class PushOp(Op):
         context.pc += 1
 
 class LoadOp(Op):
-    def __init__(self, name, token):
+    def __init__(self, name, token, prefix):
         self.name = name
         self.token = token
+        self.prefix = prefix
 
     def __repr__(self):
         if self.name == None:
             return "Load"
         else:
             (lexeme, file, line, column) = self.name
-            return "Load " + lexeme
+            return "Load " + ".".join(self.prefix + [lexeme])
 
     def explain(self):
         if self.name == None:
@@ -1071,23 +1082,25 @@ class LoadOp(Op):
             context.push(state.iget(av.indexes))
         else:
             (lexeme, file, line, column) = self.name
-            if lexeme not in state.vars.d:
+            # TODO
+            if False and lexeme not in state.vars.d:
                 context.failure = "Error: no variable " + str(self.token)
                 return
-            context.push(state.get(lexeme))
+            context.push(state.iget(self.prefix + [lexeme]))
         context.pc += 1
 
 class StoreOp(Op):
-    def __init__(self, name, token):
+    def __init__(self, name, token, prefix):
         self.name = name
         self.token = token  # for error reporting
+        self.prefix = prefix
 
     def __repr__(self):
-        if self.name != None:
-            (lexeme, file, line, column) = self.name
-            return "Store " + lexeme
-        else:
+        if self.name == None:
             return "Store"
+        else:
+            (lexeme, file, line, column) = self.name
+            return "Store " + ".".join(self.prefix + [lexeme])
 
     def explain(self):
         if self.name == None:
@@ -1113,10 +1126,11 @@ class StoreOp(Op):
             name = lv[0]
         else:
             (lexeme, file, line, column) = self.name
-            lv = [lexeme]
+            lv = self.prefix + [lexeme]
             name = lexeme
 
-        if not state.initializing and (name not in state.vars.d):
+        # TODO
+        if False and not state.initializing and (name not in state.vars.d):
             context.failure = "Error: using an uninitialized shared variable " \
                     + name + ": " + str(self.token)
         else:
@@ -1127,6 +1141,7 @@ class StoreOp(Op):
                 context.failure = "Error: " + name + " is not a dictionary " + str(self.token)
 
 class DelOp(Op):
+    # TODO: prefix
     def __init__(self, name):
         self.name = name
 
@@ -1186,7 +1201,7 @@ class StopOp(Op):
             av = context.pop()
             if not isinstance(av, AddressValue):
                 context.failure = "Error: not an address " + \
-                                    str(self.token) + " -> " + str(av)
+                                    str(self.name) + " -> " + str(av)
                 return
             lv = av.indexes
             name = lv[0]
@@ -1197,7 +1212,7 @@ class StopOp(Op):
 
         if not state.initializing and (name not in state.vars.d):
             context.failure = "Error: using an uninitialized shared variable " \
-                    + name + ": " + str(self.token)
+                    + name + ": " + str(self.name)
         else:
             # Update the context before saving it
             context.stopped = True
@@ -1417,6 +1432,9 @@ class SpawnOp(Op):
         return "pop a pc, argument, and tag and spawn a new process"
 
     def eval(self, state, context):
+        if context.readonly > 0:
+            context.failure = "Error: no spawn allowed in assert"
+            return
         method = context.pop()
         assert isinstance(method, PcValue)
         arg = context.pop()
@@ -1656,7 +1674,7 @@ class NaryOp(Op):
                         if not self.checktype(state, context, sa, isinstance(e2, SetValue)):
                             return
                         e2 = SetValue(e2.s.union(e1.s))
-                elif op == "^":
+                elif op == "^": 
                     if isinstance(e1, int):
                         if not self.checktype(state, context, sa, isinstance(e2, int)):
                             return
@@ -1906,7 +1924,7 @@ class AST:
         if isinstance(var, tuple):
             scope.checkUnused(var)
             (lexeme, file, line, column) = var
-            scope.names[lexeme] = ("variable", var)
+            scope.names[lexeme] = ("local", var)
         else:
             assert isinstance(var, list)
             for v in var:
@@ -1996,7 +2014,7 @@ class AST:
             tst = len(code)
             code.append(None)       # going to plug in a Jump op here
             code.append(LoadVarOp(S))
-            code.append(CutOp())
+            code.append(CutOp())  
             code.append(StoreVarOp(S))
             code.append(StoreVarOp(var))
 
@@ -2034,6 +2052,43 @@ class AST:
             code.append(DictOp())
             code.append(DelVarOp(N))
 
+    def doImport(self, scope, code, module):
+        (lexeme, file, line, column) = module
+        assert lexeme not in scope.names        # TODO
+        if lexeme not in imported:
+            code.append(PushOp((novalue, file, line, column)))
+            code.append(StoreOp(module, module, []))
+
+            # module name replacement with -m flag
+            modname = modules[lexeme] if lexeme in modules \
+                                else lexeme
+
+            # create a new scope
+            scope2 = Scope(None)
+            scope2.prefix = [lexeme]
+            scope2.locations = scope.locations
+            scope2.labels = scope.labels
+
+            found = False
+            for dir in [ os.path.dirname(namestack[-1]), "modules", "." ]:
+                filename = dir + "/" + modname + ".hny"
+                if os.path.exists(filename):
+                    with open(filename) as f:
+                        load(f, filename, scope2, code)
+                    found = True
+                    break
+            if not found:
+                if modname in internal_modules:
+                    load_string(internal_modules[lexeme],
+                        "<internal>/" + modname + ".hny", scope2, code)
+                else:
+                    print("Can't find module", modname, "imported from", namestack)
+                    exit(1)
+            
+            imported[lexeme] = scope2
+
+        scope.names[lexeme] = ("module", imported[lexeme])
+
 class ConstantAST(AST):
     def __init__(self, const):
         self.const = const
@@ -2056,61 +2111,50 @@ class NameAST(AST):
 
     def compile(self, scope, code):
         (lexeme, file, line, column) = self.name
-        tv = scope.lookup(self.name)
-        if tv == None:
-            code.append(LoadOp(self.name, self.name))
+        (t, v) = scope.lookup(self.name)
+        if t == "local":
+            code.append(LoadVarOp(self.name))
+        elif t == "constant":
+            code.append(PushOp(v))
         else:
-            (t, v) = tv
-            if t == "variable":
-                code.append(LoadVarOp(self.name))
-            elif t == "constant":
-                code.append(PushOp(v))
-            else:
-                assert False, tv
+            assert t in { "global", "module" }
+            code.append(LoadOp(self.name, self.name, scope.prefix))
 
     def isShared(self, scope):
-        tv = scope.lookup(self.name)
-        if tv == None:
-            return True
-        else:
-            (t, v) = tv
-            assert t == "variable", tv
-            return False
+        (t, v) = scope.find(self.name)
+        assert t in { "local", "global", "module" }
+        return t != "local"
 
     def ph1(self, scope, code):
-        tv = scope.lookup(self.name)
-        if tv == None:
-            (lexeme, file, line, column) = self.name
-        else:
-            (t, v) = tv
-            assert t == "variable", (self, tv)
+        (t, v) = scope.lookup(self.name)
+        if t == "local":
             (lexeme, file, line, column) = v
-        code.append(PushOp((AddressValue([lexeme]), file, line, column)))
+            code.append(PushOp((AddressValue([lexeme]), file, line, column)))
+        else:
+            assert t in { "global", "module" }
+            (lexeme, file, line, column) = self.name
+            code.append(PushOp((AddressValue(scope.prefix + [lexeme]), file, line, column)))
 
     def ph2(self, scope, code, skip):
         if skip > 0:
             code.append(MoveOp(skip + 2))
             code.append(MoveOp(2))
-        tv = scope.lookup(self.name)
-        if tv == None:
-            code.append(StoreOp(None, self.name))
-        else:
-            (t, v) = tv
-            assert t == "variable", tv
+        (t, v) = scope.lookup(self.name)
+        if t == "local":
             code.append(StoreVarOp(None))
+        else:
+            assert t == "global", (t, v)
+            code.append(StoreOp(None, self.name, None))
 
     def isConstant(self, scope):
         (lexeme, file, line, column) = self.name
-        tv = scope.lookup(self.name)
-        if tv == None:
-            return False
-        (t, v) = tv
-        if t == "variable":
+        (t, v) = scope.lookup(self.name)
+        if t in { "local", "global", "module" }:
             return False
         elif t == "constant":
             return True
         else:
-            assert False, tv
+            assert False, (t, v, self.name)
 
 class SetAST(AST):
     def __init__(self, collection):
@@ -2295,6 +2339,14 @@ class ApplyAST(AST):
         return "ApplyAST(" + str(self.method) + ", " + str(self.arg) + ")"
 
     def compile(self, scope, code):
+        # See if it's of the form "module.constant":
+        if isinstance(self.method, NameAST):
+            (t, v) = scope.lookup(self.method.name)
+            if t == "module" and isinstance(self.arg, ConstantAST) and isinstance(self.arg.const[0], str):
+                (t2, v2) = v.lookup(self.arg.const)
+                if t2 == "constant":
+                    code.append(PushOp(v2))
+                    return
         self.arg.compile(scope, code)
         self.method.compile(scope, code)
         code.append(ApplyOp(self.token))
@@ -2312,7 +2364,7 @@ class ApplyAST(AST):
             code.append(MoveOp(skip + 2))
             code.append(MoveOp(2))
         shared = self.method.isShared(scope)
-        st = StoreOp(None, self.token) if shared else StoreVarOp(None)
+        st = StoreOp(None, self.token, None) if shared else StoreVarOp(None)
         code.append(st)
 
 class Rule:
@@ -2428,7 +2480,7 @@ class ListComprehensionRule(Rule):
 
     def parse(self, t):
         token = t[0]
-        (lst, t) = self.iterParse(t[1:], self.closers)
+        (lst, t) = self.iterParse(t[1:], self.closers) 
         return (ListComprehensionAST(self.value, lst, token), t)
 
 class SetRule(Rule):
@@ -2549,7 +2601,7 @@ class BasicExpressionRule(Rule):
         if lexeme[0] == '"':
             return (TupleAST([ ConstantAST((c, file, line, column))
                                 for c in lexeme[1:] ], token), t[1:])
-        if lexeme == ".":
+        if lexeme == ".": 
             (lexeme, file, line, column) = t[1]
             if lexeme.startswith("0x"):
                 return (ConstantAST((chr(int(lexeme, 16)), file, line, column)), t[2:])
@@ -2582,7 +2634,7 @@ class PointerAST(AST):
 
     def compile(self, scope, code):
         self.expr.compile(scope, code)
-        code.append(LoadOp(None, self.token))
+        code.append(LoadOp(None, self.token, None))
 
     def ph1(self, scope, code):
         self.expr.compile(scope, code)
@@ -2591,7 +2643,7 @@ class PointerAST(AST):
         if skip > 0:
             code.append(MoveOp(skip + 2))
             code.append(MoveOp(2))
-        code.append(StoreOp(None, self.token))
+        code.append(StoreOp(None, self.token, None))
 
 class ExpressionRule(Rule):
     def parse(self, t):
@@ -2646,19 +2698,19 @@ class AssignmentAST(AST):
         shared = lv.isShared(scope)
         if isinstance(lv, NameAST):
             # handled separately for assembly code readability
-            ld = LoadOp(lv.name, lv.name) if shared else LoadVarOp(lv.name)
+            ld = LoadOp(lv.name, lv.name, scope.prefix) if shared else LoadVarOp(lv.name)
         else:
             lv.ph1(scope, code)
             code.append(DupOp())                  # duplicate the address
-            ld = LoadOp(None, self.op) if shared else LoadVarOp(None)
+            ld = LoadOp(None, self.op, None) if shared else LoadVarOp(None)
         code.append(ld)                       # load the value
         self.rv.compile(scope, code)          # compile the rhs
         (lexeme, file, line, column) = self.op
         code.append(NaryOp((lexeme[:-1], file, line, column), 2))
         if isinstance(lv, NameAST):
-            st = StoreOp(lv.name, lv.name) if shared else StoreVarOp(lv.name)
+            st = StoreOp(lv.name, lv.name, scope.prefix) if shared else StoreVarOp(lv.name)
         else:
-            st = StoreOp(None, self.op) if shared else StoreVarOp(None)
+            st = StoreOp(None, self.op, None) if shared else StoreVarOp(None)
         code.append(st)
 
     def compile(self, scope, code):
@@ -2688,7 +2740,7 @@ class AssignmentAST(AST):
             skip -= 1
             if isinstance(lvs, NameAST):
                 shared = lvs.isShared(scope)
-                st = StoreOp(lvs.name, lvs.name) if shared else StoreVarOp(lvs.name)
+                st = StoreOp(lvs.name, lvs.name, scope.prefix) if shared else StoreVarOp(lvs.name)
                 code.append(st)
             else:
                 lvs.ph2(scope, code, skip)
@@ -2902,7 +2954,7 @@ class MethodAST(AST):
 
         ns = Scope(scope)
         self.assign(ns, self.args)
-        ns.names["result"] = ("variable", ("result", file, line, column))
+        ns.names["result"] = ("local", ("result", file, line, column))
         self.stat.compile(ns, code)
         code.append(ReturnOp())
 
@@ -2929,7 +2981,7 @@ class LambdaAST(AST):
         ns = Scope(scope)
         self.assign(ns, self.args)
         R = ("result", file, line, column)
-        ns.names["result"] = ("variable", R)
+        ns.names["result"] = ("local", R)
         self.stat.compile(ns, code)
         code.append(StoreVarOp(R))
         code.append(ReturnOp())
@@ -2998,28 +3050,38 @@ class GoAST(AST):
         code.append(GoOp())
 
 class ImportAST(AST):
-    def __init__(self, module):
-        self.module = module
+    def __init__(self, modlist):
+        self.modlist = modlist
 
     def __repr__(self):
-        return "Import(" + str(self.module) + ")"
+        return "Import(" + str(self.modlist) + ")"
 
     def compile(self, scope, code):
+        for module in self.modlist:
+            self.doImport(scope, code, module)
+
+class FromAST(AST):
+    def __init__(self, module, items):
+        self.module = module
+        self.items = items
+
+    def __repr__(self):
+        return "FromImport(" + str(self.module) + ", " + str(self.items) + ")"
+
+    def compile(self, scope, code):
+        self.doImport(scope, code, self.module)
         (lexeme, file, line, column) = self.module
-        if lexeme in modules:
-            lexeme = modules[lexeme]
-        for dir in [ os.path.dirname(namestack[-1]), "modules", "." ]:
-            filename = dir + "/" + lexeme + ".hny"
-            if os.path.exists(filename):
-                with open(filename) as f:
-                    load(f, filename, scope, code)
-                return
-        if lexeme in internal_modules:
-            load_string(internal_modules[lexeme],
-                "<internal>/" + lexeme + ".hny", scope, code)
+        names = imported[lexeme].names
+        # TODO.  Check for overlap, existence, etc.
+        if self.items == []:  # from module import *
+            for (item, (t, v)) in names.items():
+                if t == "constant":
+                    scope.names[item] = (t, v)
         else:
-            print("Can't find module", lexeme, "imported from", namestack)
-            exit(1)
+            for (lexeme, file, line, column) in self.items:
+                (t, v) = names[lexeme]
+                assert t == "constant", (lexeme, t, v)
+                scope.names[lexeme] = (t, v)
 
 class LabelStatAST(AST):
     def __init__(self, labels, ast, file, line):
@@ -3173,7 +3235,7 @@ class StatementRule(Rule):
         if not ((line1 == line2) or (col1 == col2)):
             print("Parse warning: ';' does not line up", token, t[0])
         return t[1:]
-
+        
     def parse(self, t):
         token = t[0]
         (lexeme, file, line, column) = token
@@ -3265,7 +3327,30 @@ class StatementRule(Rule):
         if lexeme == "pass":
             return (PassAST(), self.skip(token, t[1:]))
         if lexeme == "import":
-            return (ImportAST(t[1]), self.skip(token, t[2:]))
+            mods = [t[1]]
+            t = t[2:]
+            (lexeme, file, line, column) = t[0]
+            while lexeme == ',':
+                mods.append(t[1])
+                t = t[2:]
+                (lexeme, file, line, column) = t[0]
+            return (ImportAST(mods), self.skip(token, t))
+        if lexeme == "from":
+            (lexeme, file, line, column) = module = t[1]
+            self.expect("from statement", isname(lexeme), module, "expected module name")
+            (lexeme, file, line, column) = t[2]
+            self.expect("from statement", lexeme == "import", t[2], "expected 'import'")
+            (lexeme, file, line, column) = t[3]
+            if lexeme == '*':
+                return (FromAST(module, []), self.skip(token, t[4:]))
+            items = [t[3]]
+            t = t[4:]
+            (lexeme, file, line, column) = t[0]
+            while lexeme == ',':
+                items.append(t[1])
+                t = t[2:]
+                (lexeme, file, line, column) = t[0]
+            return (FromAST(module, items), self.skip(token, t))
         if lexeme == "assert":
             (cond, t) = NaryRule({",", ";"}).parse(t[1:])
             (lexeme, file, line, column) = t[0]
@@ -3274,7 +3359,7 @@ class StatementRule(Rule):
             else:
                 expr = None
             return (AssertAST(token, cond, expr), self.skip(token, t))
-
+        
         # If we get here, the next statement is either an expression
         # or an assignment.  The grammar is either
         #   (tuple_expression '=')* tuple_expression ';'
@@ -3496,7 +3581,6 @@ class State:
             d[indexes[0]] = self.doStop(record.d[indexes[0]], indexes[1:], ctx)
         else:
             # TODO.  Should be print + set failure
-            # TODO.  Make ctx a Harmony value
             list = d[indexes[0]]
             assert(isinstance(list, DictValue))
             d2 = list.d.copy()
@@ -3631,18 +3715,70 @@ def find_shortest(bad):
             best_len = node.len
     return best_node
 
-def strvars(vars):
-    result = ""
-    for k in sorted(vars.keys()):
-        if result != "":
-            result += ", "
-        result += "%s: %s"%(k, strValue(vars[k]))
-    return "{ " + result + " }"
+def varvisit(d, vars, name, r):
+    if isinstance(d, dict):
+        for k in sorted(d.keys()):
+            if isinstance(k, str):
+                nn = name + "." + k
+            else:
+                nn = name + "[" + strValue(k) + "]"
+            if k in vars.d:
+                varvisit(d[k], vars.d[k], nn, r)
+            else:
+                r.append("%s: ---"%nn)
+    else:
+        r.append("%s: %s"%(name, strValue(vars)))
+
+def strvars(d, vars):
+    r = [];
+    for k in sorted(d.keys()):
+        varvisit(d[k], vars.d[k], k, r)
+    return "{ " + ", ".join(r) + " }"
+
+def varmerge(d, vars):
+    assert isinstance(d, dict)
+    assert isinstance(vars, DictValue)
+    for (k, v) in vars.d.items():
+        if k in d and isinstance(d[k], dict) and isinstance(v, DictValue):
+            varmerge(d[k], v)
+        elif k not in d and isinstance(v, DictValue):
+            d[k] = {}
+            varmerge(d[k], v)
+        elif k not in d:
+            d[k] = {v}
+        elif isinstance(d[k], set):
+            d[k] |= {v}
+        else:
+            assert isinstance(d[k], dict)
+            d[k] = { v }
+
+def vartrim(d):
+    pairs = list(d.items())
+    for (k, v) in pairs:
+        if v == {}:
+            del d[k]
+        elif isinstance(d[k], dict):
+            vartrim(d[k])
+
+def pathvars(path):
+    d = {}
+    for (fctx, ctx, steps, states, vars) in path:
+        varmerge(d, vars)
+    vartrim(d)
+    return d
 
 def print_path(bad_node):
     path = genpath(bad_node)
+    d = pathvars(path)
+    pids = []
     for (fctx, ctx, steps, states, vars) in path:
-        print(nametag2str(ctx.nametag), strsteps(steps), ctx.pc, strvars(vars.d))
+        try:
+            pid = pids.index(fctx)
+            pids[pid] = ctx
+        except ValueError:
+            pids.append(ctx)
+            pid = len(pids) - 1
+        print("P%d:"%pid, nametag2str(ctx.nametag), strsteps(steps), ctx.pc, strvars(d, vars))
     if len(path) > 0:
         (fctx, ctx, steps, states, vars) = path[-1]
         if ctx.failure != None:
@@ -3650,10 +3786,11 @@ def print_path(bad_node):
 
 class Scope:
     def __init__(self, parent):
-        self.parent = parent
-        self.names = {}
-        self.locations = {}
-        self.labels = {}
+        self.parent = parent            # parent scope
+        self.names = {}                 # name to (type, x) map
+        self.locations = {} if parent == None else parent.locations
+        self.labels = {} if parent == None else parent.labels
+        self.prefix = [] if parent == None else parent.prefix
 
     def checkUnused(self, name):
         (lexeme, file, line, column) = name
@@ -3671,12 +3808,23 @@ class Scope:
         while ancestor != None:
             tv = ancestor.names.get(lexeme)
             if tv != None:
-                (t, v) = tv
-                # if t == "variable":
+                # (t, v) = tv
+                # if t == "local":
                 #    return None
                 return tv
             ancestor = ancestor.parent
-        return None
+        print("Warning: unknown name:", name, " (assuming global variable)")
+        self.names[lexeme] = ("global", lexeme)
+        return ("global", lexeme)
+
+    def find(self, name):
+        (lexeme, file, line, column) = name
+        tv = self.names.get(lexeme)
+        if tv != None:
+            return tv
+        self.names[lexeme] = ("global", lexeme)
+        # print("Warning: unknown name:", name, " (find)")
+        return ("global", lexeme)
 
     def location(self, pc, file, line, labels):
         if self.parent == None:
@@ -3707,7 +3855,7 @@ class Pad:
         self.descr = descr
         self.value = ""
         self.lastlen = 0
-
+    
     def __repr__(self):
         return self.descr + " = " + self.value
 
@@ -4170,6 +4318,53 @@ def genpath(n):
     path2.append((firstctx, lastctx, laststeps, laststates, lastvars))
     return path2
 
+def vardim(d):
+    totalwidth = 0
+    maxheight = 0
+    if isinstance(d, dict):
+        for k in sorted(d.keys()):
+            (w, h) = vardim(d[k])
+            totalwidth += w
+            if h + 1 > maxheight:
+                maxheight = h + 1
+    else:
+        return (1, 0)
+    return (totalwidth, maxheight)
+
+def varhdr(d, name, nrows, f):
+    q = queue.Queue()
+    level = 0
+    q.put((d, level))
+    while not q.empty():
+        (nd, nl) = q.get()
+        if nl > level:
+            print("</tr><tr>", file=f)
+            level = nl
+        if isinstance(nd, dict):
+            for k in sorted(nd.keys()):
+                (w,h) = vardim(nd[k])
+                if h == 0:
+                    print("<td align='center' style='font-style: italic' colspan=%d rowspan=%d>%s</td>"%(w,nrows-nl,k), file=f)
+                else:
+                    print("<td align='center' style='font-style: italic' colspan=%d>%s</td>"%(w,k), file=f)
+                q.put((nd[k], nl+1))
+
+def vardump_rec(d, vars, f):
+    if isinstance(d, dict):
+        for k in sorted(d.keys()):
+            if vars != None and k in vars.d:
+                vardump_rec(d[k], vars.d[k], f)
+            else:
+                vardump_rec(d[k], None, f)
+    elif vars == None:
+        print("<td></td>", file=f)
+    else:
+        print("<td align='center'>%s</td>"%strValue(vars), file=f)
+
+def vardump(d, vars, f):
+    for k in sorted(d.keys()):
+        vardump_rec(d[k], vars.d[k], f)
+
 def htmlpath(n, color, f):
     # Generate a label for the path table
     issues = n.issues
@@ -4181,19 +4376,20 @@ def htmlpath(n, color, f):
             label += ", "
         label += issue
     label = "Issue: " + label
-    keys = sorted(n.state.vars.d.keys(), key=keyValue)
+    # keys = sorted(n.state.vars.d.keys(), key=keyValue)
     path = genpath(n)
+    d = pathvars(path)
+    (width, height) = vardim(d)
     print("<table id='issuestbl' border='1' width='100%%'><tr><th colspan='2' align='left' style='color: %s'>%s</th><th></th>"%(color, html.escape(label)), file=f)
-    if len(keys) == 1:
+    if width == 1:
         print("<th>Shared Variable</th>", file=f)
     else:
-        print("<th colspan='%d'>Shared Variables</th>"%len(keys), file=f)
+        print("<th colspan='%d'>Shared Variables</th>"%width, file=f)
     print("<col style='width:15%'>", file=f)
-    print("<tr><th>Process</th><th>Steps</th><th></th>", file=f)
-    for v in keys:
-        print("<td align='center' style='font-style: italic'>%s</td>"%v, file=f)
-    print("</tr><tr><td><td></tr>", file=f)
-    row = 1
+    print("<tr><th rowspan=%d>Process</th><th rowspan=%d>Steps</th><th rowspan=%d></th>"%(height, height, height), file=f)
+    varhdr(d, "", height, f)
+    print("</tr><tr><td></td></tr>", file=f)
+    row = height + 1
     pids = []
     for (fctx, ctx, steps, states, vars) in path:
         row += 1
@@ -4209,11 +4405,10 @@ def htmlpath(n, color, f):
             pid = len(pids) - 1
         print("<tr><td>P%d: <a href='javascript:rowshow(%d,%d)'>%s</a></td>"%(pid, row, sid, nametag2str(ctx.nametag)), file=f)
         print("<td>%s</td><td></td>"%htmlstrsteps(steps), file=f)
-
-        for k in keys:
-            print("<td align='center'>%s</td>"%strValue(vars.d[k]), file=f)
+        vardump(d, vars, f)
         print("</tr>", file=f)
     print("</table>", file=f)
+    return height
 
 def htmlloc(code, scope, ctx, traceid, f):
     pc = ctx.pc
@@ -4386,7 +4581,7 @@ def htmlnode(n, code, scope, f, verbose):
 
     if verbose:
         print("<td>", file=f)
-        htmlpath(n, "black", f)
+        height = htmlpath(n, "black", f)
         print("</td>", file=f)
 
     # if n.state.failure != None:
@@ -4489,7 +4684,7 @@ table td, table th {
 
         if node != None:
             print("<tr><td colspan='2'>", file=f)
-            htmlpath(node, "red", f)
+            height = htmlpath(node, "red", f)
             print("</td></tr>", file=f)
             print("<tr><td></td></tr>", file=f)
 
@@ -4524,7 +4719,7 @@ table td, table th {
             row = 0
             sid = 1
         else:
-            row = node.len + 1
+            row = node.len + height + 1
             sid = node.uid
         print(
             """
@@ -4589,7 +4784,6 @@ table td, table th {
         print("</html>", file=f)
     print("Open file://" + os.getcwd() + "/harmony.html for more information")
 
-
 def usage():
     print("Usage: harmony [options] harmony-file ...")
     print("  options: ")
@@ -4601,7 +4795,6 @@ def usage():
     print("    -m module=version: select a module version")
     print("    -s: silent (do not print periodic status updates)")
     exit(1)
-
 
 def main():
     global silent
@@ -4672,28 +4865,13 @@ def main():
         assert t == "constant"
         (spc, file, line, column) = v
 
-    if printCode is None:
+    if printCode == None:
         (nodes, bad_node) = run(code, scope.labels, mpc, spc, blockflag)
-        if bad_node is None:
+        if bad_node == None:
             sys.exit(0)
         if not silent:
             htmldump(nodes, code, scope, bad_node, fulldump, False)
-            get_html_content(nodes, bad_node, code, scope, fulldump, files, {
-                'PushOp': PushOp,
-                'JumpOp': JumpOp,
-                'JumpCondOp': JumpCondOp,
-                'PcValue': PcValue,
-                'FrameOp': FrameOp,
-                'DictValue': DictValue,
-                'SetValue': SetValue
-            }, verbose=False, novalue=novalue, cwd=os.getcwd())
         sys.exit(1)
-
-
-def execute(filepath: str):
-    sys.argv = ["python", filepath]
-    main()
-
 
 if __name__ == "__main__":
     main()
