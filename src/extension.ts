@@ -11,6 +11,7 @@ import * as commandExists from "command-exists";
 
 const processManager = ProcessManagerImpl.init();
 const harmonyLangConfig = vscode.workspace.getConfiguration('harmonylang-beta');
+const hlConsole = vscode.window.createOutputChannel("HarmonyLang Beta");
 const pythonPath = harmonyLangConfig.get('pythonPath');
 const ccPath = harmonyLangConfig.get('ccPath');
 
@@ -93,9 +94,9 @@ const showMessage = (main: string, subHeader?: string, subtext?: string) => {
 
 export function runHarmony(context: vscode.ExtensionContext, fullFileName: string) {
     checkIfPython3Exists(() => {
-        console.log("Check for Python3");
+        hlConsole.appendLine("Check for Python3");
         checkIfCompilerForCExists(() => {
-            console.log("Check for CC");
+            hlConsole.appendLine("Check for CC");
             let osAlias = (process.platform === "win32") ? "doskey" : "alias";
             let charmonyCompileCommand = "";
             if (pythonPath != "python3") { charmonyCompileCommand += `${osAlias} python3=${pythonPath} & `; }
@@ -108,7 +109,7 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                 if (processManager.processesAreKilled) return;
                 CharmonyPanelController_v2.createOrShow(context.extensionUri);
                 LOG("finished processing", { error, stdout });
-                console.log(stdout);
+                hlConsole.appendLine(stdout);
                 if (error) { CharmonyPanelController_v2.currentPanel?.updateMessage(stdout); }
                 try {
                     const results: IntermediateJson = JSON.parse(fs.readFileSync(CHARMONY_JSON_OUTPUT, {
@@ -119,9 +120,9 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                     } else {
                         CharmonyPanelController_v2.currentPanel?.updateMessage(`No Errors Found.`);
                     }
-                    // GENERATED_FILES.forEach(f => rimraf.sync(f));
+                    GENERATED_FILES.forEach(f => rimraf.sync(f));
                 } catch (error) {
-                    console.log(error);
+                    hlConsole.appendLine(error);
                     CharmonyPanelController_v2.currentPanel?.updateMessage(`Could not create analysis file.`);
                 }
             });

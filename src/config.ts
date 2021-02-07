@@ -1,6 +1,5 @@
 import * as path from "path";
 
-
 export const EXTENSION_DIR = path.join(__dirname, "..");
 export const DEBUG_DIR = path.join(EXTENSION_DIR, "debug");
 export const RESOURCE_DIR = path.join(EXTENSION_DIR, 'resource');

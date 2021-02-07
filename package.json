@@ -118,9 +118,9 @@
     },
     "dependencies": {
         "chai": "^4.2.0",
-        "dotenv": "^8.2.0",
         "command-exists": "^1.2.9",
         "create-html-element": "^3.0.0",
+        "dotenv": "^8.2.0",
         "lodash": "^4.17.20",
         "mocha": "^8.2.1",
         "node-html-parser": "^2.1.0",
