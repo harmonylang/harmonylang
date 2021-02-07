@@ -43,6 +43,10 @@ See your Harmony Output results, right in VS Code!
 
 ## Release Notes
 
+### 0.1.3
+ - Updated HarmonyLang to use Harmony 0.9 LTS compiler
+ - Bug fixes.
+
 ### 0.1.0
  - Massive UI overhaul with compiler output rewrite.
    - Interactive Process Visualizer
