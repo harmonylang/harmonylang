@@ -33,7 +33,6 @@ export const activate = (context: vscode.ExtensionContext) => {
     });
 
     const runHarmonyServerCommand = vscode.commands.registerCommand('harmonylang-beta-server.run', () => {
-        console.log("Runnning the server version");
         const filename = vscode.window.activeTextEditor?.document?.fileName;
         const ext = path.extname(filename || '');
         const harmonyExt = [".hny", ".sab"];
@@ -111,7 +110,6 @@ const showMessage = (main: string, subHeader?: string, subtext?: string) => {
 };
 
 function onReceivingIntermediateJSON(results: IntermediateJson) {
-    console.log("Receive JSON", results);
     if (results != null && results.issue != null && results.issue != "No issues") {
         CharmonyPanelController_v2.currentPanel?.updateResults(results);
     } else {
