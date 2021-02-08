@@ -120,8 +120,7 @@
         "@typescript-eslint/eslint-plugin": "^3.0.2",
         "@typescript-eslint/parser": "^3.0.2",
         "axios": "^0.21.0",
-        "eslint": "^7.1.0",
-        "typescript": "^3.9.7"
+        "eslint": "^7.1.0"
     },
     "dependencies": {
         "adm-zip": "^0.5.2",
@@ -135,6 +134,7 @@
         "mocha": "^8.2.1",
         "node-html-parser": "^2.1.0",
         "rimraf": "^3.0.2",
-        "tmp": "^0.2.1"
+        "tmp": "^0.2.1",
+        "typescript": "^4.1.3"
     }
 }
