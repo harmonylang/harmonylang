@@ -31,6 +31,7 @@
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 """
+from analysis.analysis import get_html_content
 
 internal_modules = {
 #############################
@@ -4871,7 +4872,17 @@ def main():
             sys.exit(0)
         if not silent:
             htmldump(nodes, code, scope, bad_node, fulldump, False)
+            get_html_content(nodes, bad_node, code, scope, fulldump, files, {
+                'SetValue': SetValue,
+                'DictValue': DictValue,
+                'PushOp': PushOp,
+                'JumpOp': JumpOp,
+                'JumpCondOp': JumpCondOp,
+                'PcValue': PcValue,
+                'FrameOp': FrameOp
+            }, False, novalue, os.getcwd())
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
