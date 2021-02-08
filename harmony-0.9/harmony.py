@@ -3923,7 +3923,7 @@ def onestep(node, ctx, choice, interrupt, nodes, visited, todo):
         # If the current instruction is a "choose" instruction,
         # make the specified choice
         if isinstance(sc.code[cc.pc], ChooseOp):
-            assert choice_copy != None;
+            assert choice_copy != None
             cc.stack[-1] = choice_copy
             cc.pc += 1
             choice_copy = None

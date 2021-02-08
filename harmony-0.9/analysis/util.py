@@ -82,7 +82,7 @@ def str_of_value(v):
         else:
             assert len(v) == 1, v
             return ".0x%02X" % ord(v[0])
-    assert False, v
+    return str(v)
 
 
 def nametag_to_str(nt):

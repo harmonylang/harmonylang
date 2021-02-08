@@ -111,6 +111,7 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
         } else {
             const runCommand = `${pythonPath} "${compilerPath}" "${fullFileName}"`;
             processManager.startCommand(runCommand, processConfig, (error, stdout, stderr) => {
+                console.log(stdout, stderr, error);
                 if (processManager.processesAreKilled) return;
                 if (stderr || error) {
                     HarmonyOutputPanel.currentPanel?.updateResults();
