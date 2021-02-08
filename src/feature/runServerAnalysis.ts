@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as createHtmlElement from 'create-html-element';
 import axios from 'axios';
 import * as FormData from 'form-data';
 import * as AdmZip from 'adm-zip';
@@ -21,10 +20,10 @@ export function runServerAnalysis(
     const harmonyFiles = glob.sync("**/*.hny", { cwd: projectDirectory});
     const zip = new AdmZip();
     console.log(harmonyFiles);
-    for (const file of harmonyFiles) {
-        console.log(file);
-        zip.addLocalFile(path.join(projectDirectory, file));
-    }
+    zip.addLocalFolder(projectDirectory, undefined, (filename) => {
+        console.log(filename);
+        return path.extname(filename) == ".hny";
+    });
     const tempFile = tmp.fileSync().name;
     console.log(tempFile);
     zip.writeZip(tempFile, async (err) => {
