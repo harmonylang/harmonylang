@@ -165,16 +165,16 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
         }, () => {
             showVscodeMessage(true,
                 "Missing dependency",
-                "Target for cc C-compiler cannot be found",
-                "The model checker requires C. Please check you have a C-compiler before continuing."
+                "Target for cc C-compiler cannot be found. Attempting to run server compiler",
+                "The model checker requires a C-compiler. Please check you have a C-compiler before continuing."
             );
             runHarmonyServer(context, fullFileName);
         });
     }, () => {
         showVscodeMessage(true,
             "Missing dependency",
-            "Target for python3 cannot be found",
-            "The model checker requires Python3. Please install Python3 and try again.");
+            "Target for python3 cannot be found. Attempting to run server compiler",
+            "The model checker requires Python3. Please install Python3 and to run compiler locally.");
         runHarmonyServer(context, fullFileName);
     });
 }
