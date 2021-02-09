@@ -10,7 +10,7 @@ export const CHARMONY_COMPILER_DIR = path.join(EXTENSION_DIR, "harmony-master");
 export const CHARMONY_SCRIPT_PATH = path.join(CHARMONY_COMPILER_DIR, "harmony");
 export const CHARMONY_JSON_OUTPUT = path.join(CHARMONY_COMPILER_DIR, "charm.json");
 
-export const HARMONY_SERVER_API = "https://mysterious-mountain-07883.herokuapp.com/";
+export const HARMONY_SERVER_API = "https://harmonylang.herokuapp.com/";
 
 export const GENERATED_FILES = [
     path.join(CHARMONY_COMPILER_DIR, "charm.dSYM"),
