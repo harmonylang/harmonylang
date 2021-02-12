@@ -51,6 +51,11 @@ You can find more information about the HarmonyLang extension project in [this d
 
 ## Release Notes
 
+### 0.2.3
+ - Add a `(Server) Run Harmony` command, which will try to run your Harmony files on a remote server that hosts the Harmony compiler. This may help those whose systems are not compatible with the local installation of Harmony
+ - Update the built-in Harmony compiler
+ - Bug fixes
+
 ### 0.2.0
  - New `(C)Harmony` compiler, which uses `C/Python` to optimize model-checking.
     - This will require `Python3` and a `C` compiler to be installed.
