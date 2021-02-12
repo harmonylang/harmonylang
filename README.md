@@ -4,6 +4,8 @@ HarmonyLang provides general VS compatibility with RvR's [Harmony](http://harmon
 
 > **Warning**: HarmonyLang Beta is currently only known to be compatible with MacOS, due to it's reliance on the `cc` command. We're working to include Windows compatibility, but the model checker is currently non-functional on Windows PCs.
 
+> **Warning**: This release contains the Harmony 0.9 compiler, which has since been replaced by the 1.0 compiler. Code written for Harmony 1.0 is not compatible with Harmony 0.9. To use the Harmony 1.0 compiler, download [HarmonyLang Beta](https://marketplace.visualstudio.com/items?itemName=kevinsun-dev-cornell.harmonylang-beta).
+
 ## Features
 
 Provides advanced syntax highlighting for all flow control, method definition, and literals based on the [default VSCode extension for Python](https://github.com/microsoft/vscode).

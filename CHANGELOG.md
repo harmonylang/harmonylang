@@ -9,7 +9,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - This will require `Python3` and a `C` compiler to be installed.
  - Fix bugs in the Interactive Process Visualizer.
 
-## [0.1.0] - Unreleased
+## [0.1.0] - 2021-02-04
  - Massive UI overhaul with compiler output rewrite.
    - Interactive Process Visualizer
    - Crash Timeline Playback
