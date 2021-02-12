@@ -140,10 +140,9 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
             processManager.startCommand(charmonyCompileCommand, {
                 cwd: CHARMONY_COMPILER_DIR
             }, (error, stdout, stderr) => {
-                CharmonyPanelController_v2.currentPanel?.dispose();
                 if (processManager.processesAreKilled) return;
-                CharmonyPanelController_v2.createOrShow(context.extensionUri);
                 CharmonyPanelController_v2.currentPanel?.startLoading();
+                hlConsole.clear();
                 if (stderr) {
                     hlConsole.appendLine(stderr);
                     CharmonyPanelController_v2.currentPanel?.updateMessage(`See Output Panel for details.`);
