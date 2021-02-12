@@ -5773,18 +5773,40 @@ static char *value_string_dict(uint64_t v) {
     uint64_t *vals = dict_retrieve(p, &size);
     size /= 2 * sizeof(uint64_t);
 
-    alloc_printf(&r, "{ ");
-    for (int i = 0; i < size; i++) {
-        if (i != 0) {
-            append_printf(&r, ", ");
+    bool islist = true;
+    for (uint64_t i = 0; i < size; i++) {
+        if (vals[2*i] != ((i << VALUE_BITS) | VALUE_INT)) {
+            islist = false;
+            break;
         }
-        char *key = value_string(vals[2*i]);
-        char *val = value_string(vals[2*i+1]);
-        append_printf(&r, "%s: %s", key, val);
-        free(key);
-        free(val);
     }
-    append_printf(&r, " }");
+
+    if (islist) {
+        alloc_printf(&r, "(");
+        for (int i = 0; i < size; i++) {
+            if (i != 0) {
+                append_printf(&r, ", ");
+            }
+            char *val = value_string(vals[2*i+1]);
+            append_printf(&r, "%s", val);
+            free(val);
+        }
+        append_printf(&r, ")");
+    }
+    else {
+        alloc_printf(&r, "{ ");
+        for (int i = 0; i < size; i++) {
+            if (i != 0) {
+                append_printf(&r, ", ");
+            }
+            char *key = value_string(vals[2*i]);
+            char *val = value_string(vals[2*i+1]);
+            append_printf(&r, "%s: %s", key, val);
+            free(key);
+            free(val);
+        }
+        append_printf(&r, " }");
+    }
     return r;
 }
 
@@ -12570,7 +12592,7 @@ def main():
             os.close(fd)
         with open(tmpfile, "w") as fd:
             dumpCode("json", code, scope, f=fd)
-        charm = "%s/.charm"%pathlib.Path.home()
+        charm = "%s/.charm.exe"%pathlib.Path.home()
         path = pathlib.Path(charm)
         rebuild = testflag or not path.exists()
         if not rebuild:
@@ -12580,11 +12602,20 @@ def main():
                 rebuild = True
         if rebuild:
             with open("charm.c", "w") as fd:
+                if not testflag:
+                    print("#define NDEBUG", file=fd)
+                print("#define HARMONY_COMBINE", file=fd)
                 print(charm_src, file=fd)
             if testflag:
-                r = os.system("cc -g -DHARMONY_COMBINE charm.c -o %s"%charm);
+                # if os.name == "nt":
+                #     r = os.system("cl charm.c /link /out:%s"%charm);
+                # else:
+                    r = os.system("gcc -g charm.c -m64 -o %s"%charm);
             else:
-                r = os.system("cc -O3 -DNDEBUG -DHARMONY_COMBINE charm.c -o %s"%charm);
+                # if os.name == "nt":
+                #     r = os.system("cl charm.c /link /out:%s"%charm);
+                # else:
+                    r = os.system("gcc -O3 charm.c -m64 -o %s"%charm);
             if r != 0:
                 print("can't create charm model checker")
                 sys.exit(r);
