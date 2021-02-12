@@ -116,8 +116,12 @@ function runHarmonyServer(context: vscode.ExtensionContext, fullFileName: string
         return showVscodeMessage(true, "Cannot find current project workspace");
     }
     const rootDirectory = workspace[0].uri.fsPath;
+    CharmonyPanelController_v2.currentPanel?.startLoading();
     runServerAnalysis(rootDirectory, fullFileName, onReceivingIntermediateJSON, 
-        msg => CharmonyPanelController_v2.currentPanel?.updateMessage(msg)
+        msg => {
+            console.log(msg);
+            CharmonyPanelController_v2.currentPanel?.updateMessage(msg);
+        }
     );
 }
 
