@@ -1,6 +1,8 @@
-# HarmonyLang
+# HarmonyLang Beta
 
-HarmonyLang provides general VS compatibility with RvR's [Harmony](http://www.cs.cornell.edu/home/rvr/harmony/), a Python-like programming language for testing and experimenting with concurrent programs designed for Cornell University's CS 4410/4411 course.
+HarmonyLang provides general VS compatibility with RvR's [Harmony](http://harmony.cs.cornell.edu), a Python-like programming language for testing and experimenting with concurrent programs designed for Cornell University's CS 4410/4411 course.
+
+> **Warning**: HarmonyLang Beta is currently only known to be compatible with MacOS, due to it's reliance on the `cc` command. We're working to include Windows compatibility, but the model checker is currently non-functional on Windows PCs.
 
 > **Warning**: This release contains the Harmony 0.9 compiler, which has since been replaced by the 1.0 compiler. Code written for Harmony 1.0 is not compatible with Harmony 0.9. To use the Harmony 1.0 compiler, download [HarmonyLang Beta](https://marketplace.visualstudio.com/items?itemName=kevinsun-dev-cornell.harmonylang-beta).
 
@@ -16,11 +18,13 @@ Supported syntax:
 - Binary operators (`and`, `**`, and `>=`)
 - Comments (`#line` and `(* block *)`)
 
-![Syntax Highlighting](images/syntax-example.jpg)
+> **Warning**: This release contains the Harmony 1.0 compiler. Code written for Harmony 1.0 is not compatible with Harmony 0.9. To use the Harmony 0.9 compiler, download [HarmonyLang](https://marketplace.visualstudio.com/items?itemName=kevinsun-dev-cornell.harmonylang).
+
+![Syntax Highlighting](images/syntax-example.png)
 
 Run your Harmony files in VS Code. Press `Alt+Shift+N` to compile and run the current `.hny` file. Alternatively, press `Ctrl+Shift+P` and search `Run Harmony` to find the same command. Kill all running Harmony processes with `Alt+Shift+Q`.
 
-![Command](images/command-example.jpg)
+![Command](images/command-example.png)
 
 See your Harmony Output results, right in VS Code!
 
@@ -33,15 +37,24 @@ See your Harmony Output results, right in VS Code!
 - Auto-formatter
   - Format on save
   - Format via `Alt+Shift+F`
-- Intellicode Support
+- Intellisense Support
 
 ## Developers
 
-- Kevin Sun     `@kevinsun-dev`
+- Kevin Sun`@kevinsun-dev`
 
-- Anthony Yang     `@ayang4114`
+- Anthony Yang`@anthonyyangdev`
+
+## Additional Documentation
+
+You can find more information about the HarmonyLang extension project in [this document](https://docs.google.com/document/d/16pO-tNLfNebIAuqb_vy_z0dJyIFX_Nb-xYDXRfMqOfE/edit?usp=sharing). Furthermore, you can find the Harmony Python compiler, as well as additional documentation regarding the Harmony language, at this [link](http://harmony.cs.cornell.edu).
 
 ## Release Notes
+
+### 0.2.0
+ - New `(C)Harmony` compiler, which uses `C/Python` to optimize model-checking.
+    - This will require `Python3` and a `C` compiler to be installed.
+ - Fix bugs in the Interactive Process Visualizer.
 
 ### 0.1.3
  - Updated HarmonyLang to use Harmony 0.9 LTS compiler
