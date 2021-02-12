@@ -2,9 +2,7 @@
 
 HarmonyLang provides general VS compatibility with RvR's [Harmony](http://harmony.cs.cornell.edu), a Python-like programming language for testing and experimenting with concurrent programs designed for Cornell University's CS 4410/4411 course.
 
-> **Warning**: HarmonyLang Beta is currently only known to be compatible with MacOS, due to it's reliance on the `cc` command. We're working to include Windows compatibility, but the model checker is currently non-functional on Windows PCs.
-
-> **Warning**: This release contains the Harmony 0.9 compiler, which has since been replaced by the 1.0 compiler. Code written for Harmony 1.0 is not compatible with Harmony 0.9. To use the Harmony 1.0 compiler, download [HarmonyLang Beta](https://marketplace.visualstudio.com/items?itemName=kevinsun-dev-cornell.harmonylang-beta).
+> **Warning**: HarmonyLang Beta is currently only known to be best compatible with MacOS, due to it's reliance on the `cc` command. We're working to include Windows compatibility, but the model checker is currently non-functional on Windows PCs. At present, you may also try to use the `(Server) Run Harmony` command to run Harmony files remotely.
 
 ## Features
 
@@ -18,7 +16,7 @@ Supported syntax:
 - Binary operators (`and`, `**`, and `>=`)
 - Comments (`#line` and `(* block *)`)
 
-> **Warning**: This release contains the Harmony 1.0 compiler. Code written for Harmony 1.0 is not compatible with Harmony 0.9. To use the Harmony 0.9 compiler, download [HarmonyLang](https://marketplace.visualstudio.com/items?itemName=kevinsun-dev-cornell.harmonylang).
+> **Warning**: This release contains the Harmony 1.0 compiler. Code written for Harmony 1.0 is not compatible with Harmony 0.9.
 
 ![Syntax Highlighting](images/syntax-example.png)
 
