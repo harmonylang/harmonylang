@@ -104,13 +104,19 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
             charmonyCompileCommand += `${CHARMONY_SCRIPT_PATH} ${fullFileName}`;
             processManager.startCommand(charmonyCompileCommand, {
                 cwd: CHARMONY_COMPILER_DIR
-            }, (error, stdout) => {
+            }, (error, stdout, stderr) => {
                 CharmonyPanelController_v2.currentPanel?.dispose();
                 if (processManager.processesAreKilled) return;
                 CharmonyPanelController_v2.createOrShow(context.extensionUri);
-                LOG("finished processing", { error, stdout });
-                hlConsole.appendLine(stdout);
+                if (stderr) {
+                    hlConsole.appendLine(stderr);
+                    hlConsole.show();
+                    CharmonyPanelController_v2.currentPanel?.updateMessage(stderr);
+                    return;
+                }
                 if (error) {
+                    hlConsole.appendLine(stdout);
+                    hlConsole.show();
                     CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
                     return;
                 }
@@ -126,6 +132,7 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                     GENERATED_FILES.forEach(f => rimraf.sync(f));
                 } catch (error) {
                     hlConsole.appendLine(error);
+                    hlConsole.show();    
                     CharmonyPanelController_v2.currentPanel?.updateMessage(`Could not create analysis file.`);
                 }
             });
