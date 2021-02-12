@@ -3,7 +3,6 @@ import * as path from 'path';
 import { ProcessManagerImpl } from './processManager';
 import { CHARMONY_COMPILER_DIR, CHARMONY_JSON_OUTPUT, CHARMONY_SCRIPT_PATH, GENERATED_FILES } from "./config";
 import * as rimraf from "rimraf";
-import { LOG } from './debug/io';
 import * as fs from "fs";
 import { IntermediateJson } from "./charmony/IntermediateJson";
 import CharmonyPanelController_v2 from "./outputPanel/PanelController_v2";
@@ -37,14 +36,6 @@ export const activate = (context: vscode.ExtensionContext) => {
 
     context.subscriptions.push(runHarmonyCommand);
     context.subscriptions.push(endHarmonyProcessesCommand);
-
-    if (vscode.window.registerWebviewPanelSerializer) {
-        vscode.window.registerWebviewPanelSerializer(CharmonyPanelController_v2.viewType, {
-            async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
-                CharmonyPanelController_v2.revive(webviewPanel, context.extensionUri);
-            }
-        });
-    }
 };
 
 export function endHarmonyProcesses() {
