@@ -99,15 +99,14 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                 CharmonyPanelController_v2.currentPanel?.dispose();
                 if (processManager.processesAreKilled) return;
                 CharmonyPanelController_v2.createOrShow(context.extensionUri);
+                hlConsole.show();
                 if (stderr) {
                     hlConsole.appendLine(stderr);
-                    hlConsole.show();
                     CharmonyPanelController_v2.currentPanel?.updateMessage(stderr);
                     return;
                 }
+                hlConsole.appendLine(stdout);
                 if (error) {
-                    hlConsole.appendLine(stdout);
-                    hlConsole.show();
                     CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
                     return;
                 }
