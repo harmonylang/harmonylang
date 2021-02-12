@@ -95,7 +95,7 @@
 				},
 				{
 					"name": "keyword.control.flow.harmony",
-					"match": "(?x)\n  \\b(?<!\\.)( such\\s+that | atomic | del | assert | for | elif | else | if | pass | while )\\b\n"
+					"match": "(?x)\n  \\b(?<!\\.)( such\\s+that | where | atomic | del | assert | let | for | elif | else | if | pass | while )\\b\n"
 				}
 			]
 		},
@@ -963,12 +963,12 @@
 		"builtin-functions": {
 			"patterns": [{
 				"name": "support.function.builtin.harmony",
-				"match": "(?x)\n  (?<!\\.) \\b( all | any | go | hash | inf | keys | len | let | max | min | nametag | setintlevel | stop | spawn | trap | choose)\\b"
+				"match": "(?x)\n  (?<!\\.) \\b( all | any | go | hash | inf | keys | len | max | min | nametag | setintlevel | stop | atLabel | spawn | trap | choose)\\b"
 			}]
 		},
 		"builtin-types": {
 			"name": "support.type.harmony",
-			"match": "(?x)\n  (?<!\\.) \\b(\n    bool | bytearray | bytes | complex | dict\n    | float | frozenset | int | list | object | property\n    | set | slice | staticmethod | str | tuple | type )\\b\n"
+			"match": "(?x)\n  (?<!\\.) \\b(\n    bool | bytearray | bytes | complex | dict\n    | float | frozenset | int | object | property\n    | slice | staticmethod | str | tuple | type )\\b\n"
 		},
 		"magic-function-names": {
 			"comment": "these methods have magic interpretation by Harmony and are generally called\nindirectly through syntactic constructs\n",
@@ -998,7 +998,7 @@
 			]
 		},
 		"illegal-names": {
-			"match": "(?x)\n  \\b(?:\n    (\n      and | assert | async | await | break | continue | def\n      | del | elif | else | except | finally | for | from | global\n      | if | in | is | nonlocal | not | or | pass | raise | return | try | while | with\n      | yield\n    )  )\\b\n",
+			"match": "(?x)\n  \\b(?:\n    (\n      and | assert | async | await | let | break | continue | def\n      | del | elif | else | except | finally | for | from | global\n      | if | in | is | nonlocal | not | or | pass | raise | return | try | while | with\n      | yield\n    )  )\\b\n",
 			"captures": {
 				"1": {
 					"name": "keyword.control.flow.harmony"

@@ -1,0 +1,4958 @@
+{
+  "issue": "Safety violation",
+  "macrosteps": [
+    {
+      "id": "1",
+      "tid": "0",
+      "name": "__init__()",
+      "microsteps": [
+        {
+          "shared": { },
+          "npc": "1",
+          "fp": "4",
+          "trace": [
+            {
+              "pc": "1",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "this": { "type": "dict", "value": [] },
+          "local": { "result": { "type": "dict", "value": [] } },
+          "atomic": "1",
+          "push": [ { "type": "int", "value": "1" }, { "type": "dict", "value": [] }, { "type": "dict", "value": [] }, { "type": "int", "value": "0" } ],
+          "pc": "0"
+        },
+        {
+          "npc": "86",
+          "push": [ ],
+          "pc": "1"
+        },
+        {
+          "npc": "87",
+          "push": [ { "type": "set", "value": [{ "type": "int", "value": "0" }, { "type": "int", "value": "1" }, { "type": "int", "value": "2" }, { "type": "int", "value": "3" }, { "type": "int", "value": "4" }, { "type": "int", "value": "5" }, { "type": "int", "value": "6" }, { "type": "int", "value": "7" }, { "type": "int", "value": "8" }, { "type": "int", "value": "9" }, { "type": "int", "value": "10" }, { "type": "int", "value": "11" }, { "type": "int", "value": "12" }, { "type": "int", "value": "13" }, { "type": "int", "value": "14" }, { "type": "int", "value": "15" }, { "type": "int", "value": "16" }, { "type": "int", "value": "17" }, { "type": "int", "value": "18" }, { "type": "int", "value": "19" }, { "type": "int", "value": "20" }, { "type": "int", "value": "21" } ] } ],
+          "pc": "86"
+        }
+      ],
+      "invfails": [
+      ],
+      "contexts": [
+        {
+          "tid": "0",
+          "name": "__init__()",
+          "entry": "0",
+          "pc": "87",
+          "fp": "4",
+          "trace": [
+            {
+              "pc": "87",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "atomic": "1",
+          "mode": "choosing",
+          "this": { "type": "dict", "value": [] }
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "tid": "0",
+      "name": "__init__()",
+      "microsteps": [
+        {
+          "choose": { "type": "int", "value": "4" },
+          "npc": "88",
+          "fp": "4",
+          "trace": [
+            {
+              "pc": "88",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "this": { "type": "dict", "value": [] },
+          "local": { "result": { "type": "dict", "value": [] } },
+          "atomic": "1",
+          "push": [ { "type": "int", "value": "1" }, { "type": "dict", "value": [] }, { "type": "dict", "value": [] }, { "type": "int", "value": "0" }, { "type": "int", "value": "4" } ],
+          "pc": "87"
+        },
+        {
+          "shared": { "x": { "type": "int", "value": "4" } },
+          "npc": "89",
+          "pop": "1",
+          "push": [ ],
+          "pc": "88"
+        },
+        {
+          "npc": "90",
+          "readonly": "1",
+          "push": [ ],
+          "pc": "89"
+        },
+        {
+          "npc": "91",
+          "atomic": "2",
+          "push": [ ],
+          "pc": "90"
+        },
+        {
+          "npc": "92",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "91"
+        },
+        {
+          "npc": "93",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "92"
+        },
+        {
+          "npc": "94",
+          "push": [ { "type": "int", "value": "4" } ],
+          "pc": "93"
+        },
+        {
+          "npc": "95",
+          "pop": "3",
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "4" } } ] } ],
+          "pc": "94"
+        },
+        {
+          "npc": "96",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "95"
+        },
+        {
+          "npc": "97",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "96"
+        },
+        {
+          "npc": "98",
+          "pop": "3",
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "4" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "int", "value": "0" } } ] } ],
+          "pc": "97"
+        },
+        {
+          "npc": "99",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "98"
+        },
+        {
+          "npc": "100",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "99"
+        },
+        {
+          "npc": "101",
+          "pop": "3",
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "4" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "int", "value": "0" } }, { "key": { "type": "int", "value": "2" }, "value": { "type": "int", "value": "0" } } ] } ],
+          "pc": "100"
+        },
+        {
+          "npc": "102",
+          "push": [ { "type": "pc", "value": "36" } ],
+          "pc": "101"
+        },
+        {
+          "npc": "36",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "103" }, { "type": "int", "value": "2" }, { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "4" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "int", "value": "0" } }, { "key": { "type": "int", "value": "2" }, "value": { "type": "int", "value": "0" } } ] } ],
+          "pc": "102"
+        },
+        {
+          "npc": "37",
+          "fp": "9",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "37",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] }, "x": { "type": "int", "value": "4" } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] }, "x": { "type": "int", "value": "4" } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "4" } ],
+          "pc": "36"
+        },
+        {
+          "npc": "38",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "37"
+        },
+        {
+          "npc": "39",
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "0" }, "result": { "type": "int", "value": "0" }, "x": { "type": "int", "value": "4" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "38"
+        },
+        {
+          "npc": "40",
+          "push": [ { "type": "int", "value": "4" } ],
+          "pc": "39"
+        },
+        {
+          "npc": "41",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "40"
+        },
+        {
+          "npc": "42",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "41"
+        },
+        {
+          "npc": "43",
+          "pop": "1",
+          "push": [ ],
+          "pc": "42"
+        },
+        {
+          "npc": "44",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "43"
+        },
+        {
+          "npc": "45",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "44"
+        },
+        {
+          "npc": "46",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "45"
+        },
+        {
+          "npc": "47",
+          "pop": "1",
+          "push": [ ],
+          "pc": "46"
+        },
+        {
+          "npc": "48",
+          "push": [ { "type": "address", "value": [{ "type": "atom", "value": "k" } ] } ],
+          "pc": "47"
+        },
+        {
+          "npc": "49",
+          "push": [ { "type": "address", "value": [{ "type": "atom", "value": "n" } ] } ],
+          "pc": "48"
+        },
+        {
+          "npc": "50",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "49"
+        },
+        {
+          "npc": "51",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "50"
+        },
+        {
+          "npc": "52",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "51"
+        },
+        {
+          "npc": "53",
+          "pop": "3",
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "0" } } ] } ],
+          "pc": "52"
+        },
+        {
+          "npc": "54",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "53"
+        },
+        {
+          "npc": "55",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "54"
+        },
+        {
+          "npc": "56",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "55"
+        },
+        {
+          "npc": "57",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "56"
+        },
+        {
+          "npc": "58",
+          "pop": "3",
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "0" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "int", "value": "1" } } ] } ],
+          "pc": "57"
+        },
+        {
+          "npc": "59",
+          "pop": "1",
+          "push": [ { "type": "int", "value": "0" }, { "type": "int", "value": "1" } ],
+          "pc": "58"
+        },
+        {
+          "npc": "60",
+          "pop": "3",
+          "push": [ { "type": "int", "value": "0" }, { "type": "int", "value": "1" }, { "type": "address", "value": [{ "type": "atom", "value": "n" } ] } ],
+          "pc": "59"
+        },
+        {
+          "npc": "61",
+          "pop": "2",
+          "push": [ { "type": "address", "value": [{ "type": "atom", "value": "n" } ] }, { "type": "int", "value": "1" } ],
+          "pc": "60"
+        },
+        {
+          "npc": "62",
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "0" }, "x": { "type": "int", "value": "4" } },
+          "pop": "2",
+          "push": [ ],
+          "pc": "61"
+        },
+        {
+          "npc": "63",
+          "pop": "2",
+          "push": [ ],
+          "pc": "62"
+        },
+        {
+          "npc": "68",
+          "push": [ ],
+          "pc": "63"
+        },
+        {
+          "npc": "69",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "68"
+        },
+        {
+          "npc": "70",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "69"
+        },
+        {
+          "npc": "71",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "70"
+        },
+        {
+          "npc": "72",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "71"
+        },
+        {
+          "npc": "73",
+          "pop": "3",
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "1" } } ] } ],
+          "pc": "72"
+        },
+        {
+          "npc": "74",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "73"
+        },
+        {
+          "npc": "75",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "74"
+        },
+        {
+          "npc": "76",
+          "pop": "3",
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "int", "value": "0" } } ] } ],
+          "pc": "75"
+        },
+        {
+          "npc": "77",
+          "push": [ { "type": "pc", "value": "19" } ],
+          "pc": "76"
+        },
+        {
+          "npc": "19",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "78" }, { "type": "int", "value": "2" }, { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "int", "value": "0" } } ] } ],
+          "pc": "77"
+        },
+        {
+          "npc": "20",
+          "fp": "15",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "0" }, "x": { "type": "int", "value": "4" } }
+            },
+            {
+              "pc": "20",
+              "xpc": "19",
+              "method": "C(1, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "k" }, "value": { "type": "int", "value": "0" } }, { "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "int", "value": "0" } }, { "key": { "type": "atom", "value": "x" }, "value": { "type": "int", "value": "4" } } ] }, { "type": "int", "value": "9" } ],
+          "pc": "19"
+        },
+        {
+          "npc": "21",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "20"
+        },
+        {
+          "npc": "22",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "21"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "23" }, { "type": "int", "value": "2" }, { "type": "int", "value": "1" } ],
+          "pc": "22"
+        },
+        {
+          "npc": "3",
+          "fp": "20",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "0" }, "x": { "type": "int", "value": "4" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(1, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "k" }, "value": { "type": "int", "value": "0" } }, { "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "15" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "9",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "10",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "9"
+        },
+        {
+          "npc": "11",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "10"
+        },
+        {
+          "npc": "12",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "11"
+        },
+        {
+          "npc": "13",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "12"
+        },
+        {
+          "npc": "14",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "13"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "15" }, { "type": "int", "value": "2" }, { "type": "int", "value": "0" } ],
+          "pc": "14"
+        },
+        {
+          "npc": "3",
+          "fp": "26",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "0" }, "x": { "type": "int", "value": "4" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(1, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(0)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "20" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "7",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "8",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "7"
+        },
+        {
+          "npc": "16",
+          "push": [ ],
+          "pc": "8"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "15",
+          "fp": "20",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "0" }, "x": { "type": "int", "value": "4" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(1, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "16",
+          "pop": "1",
+          "push": [ ],
+          "pc": "15"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "23",
+          "fp": "15",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "0" }, "x": { "type": "int", "value": "4" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(1, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "24",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "23"
+        },
+        {
+          "npc": "25",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "24"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "26" }, { "type": "int", "value": "2" }, { "type": "int", "value": "0" } ],
+          "pc": "25"
+        },
+        {
+          "npc": "3",
+          "fp": "21",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "0" }, "x": { "type": "int", "value": "4" } }
+            },
+            {
+              "pc": "26",
+              "xpc": "19",
+              "method": "C(1, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(0)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "k" }, "value": { "type": "int", "value": "0" } }, { "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "15" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "7",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "8",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "7"
+        },
+        {
+          "npc": "16",
+          "push": [ ],
+          "pc": "8"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "26",
+          "fp": "15",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "0" }, "x": { "type": "int", "value": "4" } }
+            },
+            {
+              "pc": "26",
+              "xpc": "19",
+              "method": "C(1, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "27",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "26"
+        },
+        {
+          "npc": "28",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "27"
+        },
+        {
+          "npc": "29",
+          "pop": "1",
+          "push": [ ],
+          "pc": "28"
+        },
+        {
+          "npc": "30",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "29"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "31" }, { "type": "int", "value": "2" }, { "type": "int", "value": "1" } ],
+          "pc": "30"
+        },
+        {
+          "npc": "3",
+          "fp": "22",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "0" }, "x": { "type": "int", "value": "4" } }
+            },
+            {
+              "pc": "31",
+              "xpc": "19",
+              "method": "C(1, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "k" }, "value": { "type": "int", "value": "0" } }, { "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "15" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "9",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "10",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "9"
+        },
+        {
+          "npc": "11",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "10"
+        },
+        {
+          "npc": "12",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "11"
+        },
+        {
+          "npc": "13",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "12"
+        },
+        {
+          "npc": "14",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "13"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "15" }, { "type": "int", "value": "2" }, { "type": "int", "value": "0" } ],
+          "pc": "14"
+        },
+        {
+          "npc": "3",
+          "fp": "28",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "0" }, "x": { "type": "int", "value": "4" } }
+            },
+            {
+              "pc": "31",
+              "xpc": "19",
+              "method": "C(1, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(0)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "22" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "7",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "8",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "7"
+        },
+        {
+          "npc": "16",
+          "push": [ ],
+          "pc": "8"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "15",
+          "fp": "22",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "0" }, "x": { "type": "int", "value": "4" } }
+            },
+            {
+              "pc": "31",
+              "xpc": "19",
+              "method": "C(1, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "16",
+          "pop": "1",
+          "push": [ ],
+          "pc": "15"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "31",
+          "fp": "15",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "0" }, "x": { "type": "int", "value": "4" } }
+            },
+            {
+              "pc": "31",
+              "xpc": "19",
+              "method": "C(1, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "32",
+          "pop": "1",
+          "push": [ ],
+          "pc": "31"
+        },
+        {
+          "npc": "33",
+          "pop": "1",
+          "push": [ ],
+          "pc": "32"
+        },
+        {
+          "npc": "34",
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "33"
+        },
+        {
+          "npc": "78",
+          "fp": "9",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "0" }, "x": { "type": "int", "value": "4" } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "0" }, "x": { "type": "int", "value": "4" } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "34"
+        },
+        {
+          "npc": "79",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "78"
+        },
+        {
+          "npc": "80",
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" }, "x": { "type": "int", "value": "4" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "79"
+        },
+        {
+          "npc": "81",
+          "push": [ { "type": "int", "value": "4" } ],
+          "pc": "80"
+        },
+        {
+          "npc": "82",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "81"
+        },
+        {
+          "npc": "83",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "3" } ],
+          "pc": "82"
+        },
+        {
+          "npc": "84",
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" }, "x": { "type": "int", "value": "3" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "83"
+        },
+        {
+          "npc": "39",
+          "push": [ ],
+          "pc": "84"
+        },
+        {
+          "npc": "40",
+          "push": [ { "type": "int", "value": "3" } ],
+          "pc": "39"
+        },
+        {
+          "npc": "41",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "40"
+        },
+        {
+          "npc": "42",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "41"
+        },
+        {
+          "npc": "43",
+          "pop": "1",
+          "push": [ ],
+          "pc": "42"
+        },
+        {
+          "npc": "44",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "43"
+        },
+        {
+          "npc": "45",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "44"
+        },
+        {
+          "npc": "46",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "45"
+        },
+        {
+          "npc": "64",
+          "pop": "1",
+          "push": [ ],
+          "pc": "46"
+        },
+        {
+          "npc": "65",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "64"
+        },
+        {
+          "npc": "66",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "65"
+        },
+        {
+          "npc": "67",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "66"
+        },
+        {
+          "npc": "68",
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" }, "x": { "type": "int", "value": "3" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "67"
+        },
+        {
+          "npc": "69",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "68"
+        },
+        {
+          "npc": "70",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "69"
+        },
+        {
+          "npc": "71",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "70"
+        },
+        {
+          "npc": "72",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "71"
+        },
+        {
+          "npc": "73",
+          "pop": "3",
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "1" } } ] } ],
+          "pc": "72"
+        },
+        {
+          "npc": "74",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "73"
+        },
+        {
+          "npc": "75",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "74"
+        },
+        {
+          "npc": "76",
+          "pop": "3",
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "int", "value": "1" } } ] } ],
+          "pc": "75"
+        },
+        {
+          "npc": "77",
+          "push": [ { "type": "pc", "value": "19" } ],
+          "pc": "76"
+        },
+        {
+          "npc": "19",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "78" }, { "type": "int", "value": "2" }, { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "int", "value": "1" } } ] } ],
+          "pc": "77"
+        },
+        {
+          "npc": "20",
+          "fp": "15",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" }, "x": { "type": "int", "value": "3" } }
+            },
+            {
+              "pc": "20",
+              "xpc": "19",
+              "method": "C(1, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "k" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "x" }, "value": { "type": "int", "value": "3" } } ] }, { "type": "int", "value": "9" } ],
+          "pc": "19"
+        },
+        {
+          "npc": "21",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "20"
+        },
+        {
+          "npc": "22",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "21"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "23" }, { "type": "int", "value": "2" }, { "type": "int", "value": "1" } ],
+          "pc": "22"
+        },
+        {
+          "npc": "3",
+          "fp": "20",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" }, "x": { "type": "int", "value": "3" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(1, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "k" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "15" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "9",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "10",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "9"
+        },
+        {
+          "npc": "11",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "10"
+        },
+        {
+          "npc": "12",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "11"
+        },
+        {
+          "npc": "13",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "12"
+        },
+        {
+          "npc": "14",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "13"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "15" }, { "type": "int", "value": "2" }, { "type": "int", "value": "0" } ],
+          "pc": "14"
+        },
+        {
+          "npc": "3",
+          "fp": "26",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" }, "x": { "type": "int", "value": "3" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(1, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(0)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "20" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "7",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "8",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "7"
+        },
+        {
+          "npc": "16",
+          "push": [ ],
+          "pc": "8"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "15",
+          "fp": "20",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" }, "x": { "type": "int", "value": "3" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(1, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "16",
+          "pop": "1",
+          "push": [ ],
+          "pc": "15"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "23",
+          "fp": "15",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" }, "x": { "type": "int", "value": "3" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(1, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "24",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "23"
+        },
+        {
+          "npc": "25",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "24"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "26" }, { "type": "int", "value": "2" }, { "type": "int", "value": "1" } ],
+          "pc": "25"
+        },
+        {
+          "npc": "3",
+          "fp": "21",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" }, "x": { "type": "int", "value": "3" } }
+            },
+            {
+              "pc": "26",
+              "xpc": "19",
+              "method": "C(1, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "k" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "15" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "9",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "10",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "9"
+        },
+        {
+          "npc": "11",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "10"
+        },
+        {
+          "npc": "12",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "11"
+        },
+        {
+          "npc": "13",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "12"
+        },
+        {
+          "npc": "14",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "13"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "15" }, { "type": "int", "value": "2" }, { "type": "int", "value": "0" } ],
+          "pc": "14"
+        },
+        {
+          "npc": "3",
+          "fp": "27",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" }, "x": { "type": "int", "value": "3" } }
+            },
+            {
+              "pc": "26",
+              "xpc": "19",
+              "method": "C(1, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(0)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "21" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "7",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "8",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "7"
+        },
+        {
+          "npc": "16",
+          "push": [ ],
+          "pc": "8"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "15",
+          "fp": "21",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" }, "x": { "type": "int", "value": "3" } }
+            },
+            {
+              "pc": "26",
+              "xpc": "19",
+              "method": "C(1, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "16",
+          "pop": "1",
+          "push": [ ],
+          "pc": "15"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "26",
+          "fp": "15",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" }, "x": { "type": "int", "value": "3" } }
+            },
+            {
+              "pc": "26",
+              "xpc": "19",
+              "method": "C(1, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "27",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "26"
+        },
+        {
+          "npc": "28",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "27"
+        },
+        {
+          "npc": "29",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "28"
+        },
+        {
+          "npc": "30",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "29"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "31" }, { "type": "int", "value": "2" }, { "type": "int", "value": "0" } ],
+          "pc": "30"
+        },
+        {
+          "npc": "3",
+          "fp": "22",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" }, "x": { "type": "int", "value": "3" } }
+            },
+            {
+              "pc": "31",
+              "xpc": "19",
+              "method": "C(1, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(0)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "k" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "15" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "7",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "8",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "7"
+        },
+        {
+          "npc": "16",
+          "push": [ ],
+          "pc": "8"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "31",
+          "fp": "15",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" }, "x": { "type": "int", "value": "3" } }
+            },
+            {
+              "pc": "31",
+              "xpc": "19",
+              "method": "C(1, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "32",
+          "pop": "1",
+          "push": [ ],
+          "pc": "31"
+        },
+        {
+          "npc": "33",
+          "pop": "1",
+          "push": [ ],
+          "pc": "32"
+        },
+        {
+          "npc": "34",
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "33"
+        },
+        {
+          "npc": "78",
+          "fp": "9",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" }, "x": { "type": "int", "value": "3" } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" }, "x": { "type": "int", "value": "3" } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "34"
+        },
+        {
+          "npc": "79",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "78"
+        },
+        {
+          "npc": "80",
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "3" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "79"
+        },
+        {
+          "npc": "81",
+          "push": [ { "type": "int", "value": "3" } ],
+          "pc": "80"
+        },
+        {
+          "npc": "82",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "81"
+        },
+        {
+          "npc": "83",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "82"
+        },
+        {
+          "npc": "84",
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "83"
+        },
+        {
+          "npc": "39",
+          "push": [ ],
+          "pc": "84"
+        },
+        {
+          "npc": "40",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "39"
+        },
+        {
+          "npc": "41",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "40"
+        },
+        {
+          "npc": "42",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "41"
+        },
+        {
+          "npc": "43",
+          "pop": "1",
+          "push": [ ],
+          "pc": "42"
+        },
+        {
+          "npc": "44",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "43"
+        },
+        {
+          "npc": "45",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "44"
+        },
+        {
+          "npc": "46",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "45"
+        },
+        {
+          "npc": "47",
+          "pop": "1",
+          "push": [ ],
+          "pc": "46"
+        },
+        {
+          "npc": "48",
+          "push": [ { "type": "address", "value": [{ "type": "atom", "value": "k" } ] } ],
+          "pc": "47"
+        },
+        {
+          "npc": "49",
+          "push": [ { "type": "address", "value": [{ "type": "atom", "value": "n" } ] } ],
+          "pc": "48"
+        },
+        {
+          "npc": "50",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "49"
+        },
+        {
+          "npc": "51",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "50"
+        },
+        {
+          "npc": "52",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "51"
+        },
+        {
+          "npc": "53",
+          "pop": "3",
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "0" } } ] } ],
+          "pc": "52"
+        },
+        {
+          "npc": "54",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "53"
+        },
+        {
+          "npc": "55",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "54"
+        },
+        {
+          "npc": "56",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "55"
+        },
+        {
+          "npc": "57",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "56"
+        },
+        {
+          "npc": "58",
+          "pop": "3",
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "0" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "int", "value": "2" } } ] } ],
+          "pc": "57"
+        },
+        {
+          "npc": "59",
+          "pop": "1",
+          "push": [ { "type": "int", "value": "0" }, { "type": "int", "value": "2" } ],
+          "pc": "58"
+        },
+        {
+          "npc": "60",
+          "pop": "3",
+          "push": [ { "type": "int", "value": "0" }, { "type": "int", "value": "2" }, { "type": "address", "value": [{ "type": "atom", "value": "n" } ] } ],
+          "pc": "59"
+        },
+        {
+          "npc": "61",
+          "pop": "2",
+          "push": [ { "type": "address", "value": [{ "type": "atom", "value": "n" } ] }, { "type": "int", "value": "2" } ],
+          "pc": "60"
+        },
+        {
+          "npc": "62",
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } },
+          "pop": "2",
+          "push": [ ],
+          "pc": "61"
+        },
+        {
+          "npc": "63",
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } },
+          "pop": "2",
+          "push": [ ],
+          "pc": "62"
+        },
+        {
+          "npc": "68",
+          "push": [ ],
+          "pc": "63"
+        },
+        {
+          "npc": "69",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "68"
+        },
+        {
+          "npc": "70",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "69"
+        },
+        {
+          "npc": "71",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "70"
+        },
+        {
+          "npc": "72",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "71"
+        },
+        {
+          "npc": "73",
+          "pop": "3",
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "2" } } ] } ],
+          "pc": "72"
+        },
+        {
+          "npc": "74",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "73"
+        },
+        {
+          "npc": "75",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "74"
+        },
+        {
+          "npc": "76",
+          "pop": "3",
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "2" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "int", "value": "0" } } ] } ],
+          "pc": "75"
+        },
+        {
+          "npc": "77",
+          "push": [ { "type": "pc", "value": "19" } ],
+          "pc": "76"
+        },
+        {
+          "npc": "19",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "78" }, { "type": "int", "value": "2" }, { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "2" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "int", "value": "0" } } ] } ],
+          "pc": "77"
+        },
+        {
+          "npc": "20",
+          "fp": "15",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } }
+            },
+            {
+              "pc": "20",
+              "xpc": "19",
+              "method": "C(2, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "k" }, "value": { "type": "int", "value": "0" } }, { "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "2" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "int", "value": "2" } }, { "key": { "type": "atom", "value": "x" }, "value": { "type": "int", "value": "2" } } ] }, { "type": "int", "value": "9" } ],
+          "pc": "19"
+        },
+        {
+          "npc": "21",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "20"
+        },
+        {
+          "npc": "22",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "21"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "23" }, { "type": "int", "value": "2" }, { "type": "int", "value": "2" } ],
+          "pc": "22"
+        },
+        {
+          "npc": "3",
+          "fp": "20",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(2, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(2)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "k" }, "value": { "type": "int", "value": "0" } }, { "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "2" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "15" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "9",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "10",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "9"
+        },
+        {
+          "npc": "11",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "10"
+        },
+        {
+          "npc": "12",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "11"
+        },
+        {
+          "npc": "13",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "12"
+        },
+        {
+          "npc": "14",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "13"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "15" }, { "type": "int", "value": "2" }, { "type": "int", "value": "1" } ],
+          "pc": "14"
+        },
+        {
+          "npc": "3",
+          "fp": "26",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(2, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(2)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "2" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "20" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "9",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "10",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "9"
+        },
+        {
+          "npc": "11",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "10"
+        },
+        {
+          "npc": "12",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "11"
+        },
+        {
+          "npc": "13",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "12"
+        },
+        {
+          "npc": "14",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "13"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "15" }, { "type": "int", "value": "2" }, { "type": "int", "value": "0" } ],
+          "pc": "14"
+        },
+        {
+          "npc": "3",
+          "fp": "32",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(2, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(2)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(0)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "26" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "7",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "8",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "7"
+        },
+        {
+          "npc": "16",
+          "push": [ ],
+          "pc": "8"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "15",
+          "fp": "26",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(2, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(2)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "16",
+          "pop": "1",
+          "push": [ ],
+          "pc": "15"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "15",
+          "fp": "20",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(2, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(2)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "16",
+          "pop": "1",
+          "push": [ ],
+          "pc": "15"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "23",
+          "fp": "15",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(2, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "24",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "23"
+        },
+        {
+          "npc": "25",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "24"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "26" }, { "type": "int", "value": "2" }, { "type": "int", "value": "0" } ],
+          "pc": "25"
+        },
+        {
+          "npc": "3",
+          "fp": "21",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } }
+            },
+            {
+              "pc": "26",
+              "xpc": "19",
+              "method": "C(2, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(0)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "k" }, "value": { "type": "int", "value": "0" } }, { "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "2" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "15" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "7",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "8",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "7"
+        },
+        {
+          "npc": "16",
+          "push": [ ],
+          "pc": "8"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "26",
+          "fp": "15",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } }
+            },
+            {
+              "pc": "26",
+              "xpc": "19",
+              "method": "C(2, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "27",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "26"
+        },
+        {
+          "npc": "28",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "27"
+        },
+        {
+          "npc": "29",
+          "pop": "1",
+          "push": [ ],
+          "pc": "28"
+        },
+        {
+          "npc": "30",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "29"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "31" }, { "type": "int", "value": "2" }, { "type": "int", "value": "2" } ],
+          "pc": "30"
+        },
+        {
+          "npc": "3",
+          "fp": "22",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } }
+            },
+            {
+              "pc": "31",
+              "xpc": "19",
+              "method": "C(2, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(2)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "k" }, "value": { "type": "int", "value": "0" } }, { "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "2" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "15" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "9",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "10",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "9"
+        },
+        {
+          "npc": "11",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "10"
+        },
+        {
+          "npc": "12",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "11"
+        },
+        {
+          "npc": "13",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "12"
+        },
+        {
+          "npc": "14",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "13"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "15" }, { "type": "int", "value": "2" }, { "type": "int", "value": "1" } ],
+          "pc": "14"
+        },
+        {
+          "npc": "3",
+          "fp": "28",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } }
+            },
+            {
+              "pc": "31",
+              "xpc": "19",
+              "method": "C(2, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(2)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "2" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "22" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "9",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "10",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "9"
+        },
+        {
+          "npc": "11",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "10"
+        },
+        {
+          "npc": "12",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "11"
+        },
+        {
+          "npc": "13",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "12"
+        },
+        {
+          "npc": "14",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "13"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "15" }, { "type": "int", "value": "2" }, { "type": "int", "value": "0" } ],
+          "pc": "14"
+        },
+        {
+          "npc": "3",
+          "fp": "34",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } }
+            },
+            {
+              "pc": "31",
+              "xpc": "19",
+              "method": "C(2, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(2)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(0)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "28" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "7",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "8",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "7"
+        },
+        {
+          "npc": "16",
+          "push": [ ],
+          "pc": "8"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "15",
+          "fp": "28",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } }
+            },
+            {
+              "pc": "31",
+              "xpc": "19",
+              "method": "C(2, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(2)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "16",
+          "pop": "1",
+          "push": [ ],
+          "pc": "15"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "15",
+          "fp": "22",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } }
+            },
+            {
+              "pc": "31",
+              "xpc": "19",
+              "method": "C(2, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(2)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "16",
+          "pop": "1",
+          "push": [ ],
+          "pc": "15"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "31",
+          "fp": "15",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } }
+            },
+            {
+              "pc": "31",
+              "xpc": "19",
+              "method": "C(2, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "32",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "31"
+        },
+        {
+          "npc": "33",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "32"
+        },
+        {
+          "npc": "34",
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "33"
+        },
+        {
+          "npc": "78",
+          "fp": "9",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" }, "x": { "type": "int", "value": "2" } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "34"
+        },
+        {
+          "npc": "79",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "3" } ],
+          "pc": "78"
+        },
+        {
+          "npc": "80",
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "2" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "79"
+        },
+        {
+          "npc": "81",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "80"
+        },
+        {
+          "npc": "82",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "81"
+        },
+        {
+          "npc": "83",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "82"
+        },
+        {
+          "npc": "84",
+          "local": { "k": { "type": "int", "value": "0" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "83"
+        },
+        {
+          "npc": "39",
+          "push": [ ],
+          "pc": "84"
+        },
+        {
+          "npc": "40",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "39"
+        },
+        {
+          "npc": "41",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "40"
+        },
+        {
+          "npc": "42",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "41"
+        },
+        {
+          "npc": "43",
+          "pop": "1",
+          "push": [ ],
+          "pc": "42"
+        },
+        {
+          "npc": "44",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "43"
+        },
+        {
+          "npc": "45",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "44"
+        },
+        {
+          "npc": "46",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "45"
+        },
+        {
+          "npc": "64",
+          "pop": "1",
+          "push": [ ],
+          "pc": "46"
+        },
+        {
+          "npc": "65",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "64"
+        },
+        {
+          "npc": "66",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "65"
+        },
+        {
+          "npc": "67",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "66"
+        },
+        {
+          "npc": "68",
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "67"
+        },
+        {
+          "npc": "69",
+          "push": [ { "type": "int", "value": "3" } ],
+          "pc": "68"
+        },
+        {
+          "npc": "70",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "69"
+        },
+        {
+          "npc": "71",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "70"
+        },
+        {
+          "npc": "72",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "71"
+        },
+        {
+          "npc": "73",
+          "pop": "3",
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "2" } } ] } ],
+          "pc": "72"
+        },
+        {
+          "npc": "74",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "73"
+        },
+        {
+          "npc": "75",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "74"
+        },
+        {
+          "npc": "76",
+          "pop": "3",
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "2" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "int", "value": "1" } } ] } ],
+          "pc": "75"
+        },
+        {
+          "npc": "77",
+          "push": [ { "type": "pc", "value": "19" } ],
+          "pc": "76"
+        },
+        {
+          "npc": "19",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "78" }, { "type": "int", "value": "2" }, { "type": "dict", "value": [{ "key": { "type": "int", "value": "0" }, "value": { "type": "int", "value": "2" } }, { "key": { "type": "int", "value": "1" }, "value": { "type": "int", "value": "1" } } ] } ],
+          "pc": "77"
+        },
+        {
+          "npc": "20",
+          "fp": "15",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } }
+            },
+            {
+              "pc": "20",
+              "xpc": "19",
+              "method": "C(2, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "k" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "2" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "int", "value": "3" } }, { "key": { "type": "atom", "value": "x" }, "value": { "type": "int", "value": "1" } } ] }, { "type": "int", "value": "9" } ],
+          "pc": "19"
+        },
+        {
+          "npc": "21",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "20"
+        },
+        {
+          "npc": "22",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "21"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "23" }, { "type": "int", "value": "2" }, { "type": "int", "value": "2" } ],
+          "pc": "22"
+        },
+        {
+          "npc": "3",
+          "fp": "20",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(2, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(2)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "k" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "2" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "15" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "9",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "10",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "9"
+        },
+        {
+          "npc": "11",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "10"
+        },
+        {
+          "npc": "12",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "11"
+        },
+        {
+          "npc": "13",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "12"
+        },
+        {
+          "npc": "14",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "13"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "15" }, { "type": "int", "value": "2" }, { "type": "int", "value": "1" } ],
+          "pc": "14"
+        },
+        {
+          "npc": "3",
+          "fp": "26",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(2, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(2)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "2" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "20" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "9",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "10",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "9"
+        },
+        {
+          "npc": "11",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "10"
+        },
+        {
+          "npc": "12",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "11"
+        },
+        {
+          "npc": "13",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "12"
+        },
+        {
+          "npc": "14",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "13"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "15" }, { "type": "int", "value": "2" }, { "type": "int", "value": "0" } ],
+          "pc": "14"
+        },
+        {
+          "npc": "3",
+          "fp": "32",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(2, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(2)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(0)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "26" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "7",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "8",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "7"
+        },
+        {
+          "npc": "16",
+          "push": [ ],
+          "pc": "8"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "15",
+          "fp": "26",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(2, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(2)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "16",
+          "pop": "1",
+          "push": [ ],
+          "pc": "15"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "15",
+          "fp": "20",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(2, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(2)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "16",
+          "pop": "1",
+          "push": [ ],
+          "pc": "15"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "23",
+          "fp": "15",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } }
+            },
+            {
+              "pc": "23",
+              "xpc": "19",
+              "method": "C(2, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "24",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "23"
+        },
+        {
+          "npc": "25",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "24"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "26" }, { "type": "int", "value": "2" }, { "type": "int", "value": "1" } ],
+          "pc": "25"
+        },
+        {
+          "npc": "3",
+          "fp": "21",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } }
+            },
+            {
+              "pc": "26",
+              "xpc": "19",
+              "method": "C(2, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "k" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "2" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "15" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "9",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "10",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "9"
+        },
+        {
+          "npc": "11",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "10"
+        },
+        {
+          "npc": "12",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "11"
+        },
+        {
+          "npc": "13",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "12"
+        },
+        {
+          "npc": "14",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "13"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "15" }, { "type": "int", "value": "2" }, { "type": "int", "value": "0" } ],
+          "pc": "14"
+        },
+        {
+          "npc": "3",
+          "fp": "27",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } }
+            },
+            {
+              "pc": "26",
+              "xpc": "19",
+              "method": "C(2, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(0)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "21" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "7",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "8",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "7"
+        },
+        {
+          "npc": "16",
+          "push": [ ],
+          "pc": "8"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "15",
+          "fp": "21",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } }
+            },
+            {
+              "pc": "26",
+              "xpc": "19",
+              "method": "C(2, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "16",
+          "pop": "1",
+          "push": [ ],
+          "pc": "15"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "26",
+          "fp": "15",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } }
+            },
+            {
+              "pc": "26",
+              "xpc": "19",
+              "method": "C(2, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "27",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "26"
+        },
+        {
+          "npc": "28",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "27"
+        },
+        {
+          "npc": "29",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "28"
+        },
+        {
+          "npc": "30",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "29"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "31" }, { "type": "int", "value": "2" }, { "type": "int", "value": "1" } ],
+          "pc": "30"
+        },
+        {
+          "npc": "3",
+          "fp": "22",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } }
+            },
+            {
+              "pc": "31",
+              "xpc": "19",
+              "method": "C(2, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "k" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "2" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "15" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "9",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "10",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "9"
+        },
+        {
+          "npc": "11",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "10"
+        },
+        {
+          "npc": "12",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "11"
+        },
+        {
+          "npc": "13",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "12"
+        },
+        {
+          "npc": "14",
+          "push": [ { "type": "pc", "value": "2" } ],
+          "pc": "13"
+        },
+        {
+          "npc": "2",
+          "pop": "2",
+          "push": [ { "type": "pc", "value": "15" }, { "type": "int", "value": "2" }, { "type": "int", "value": "0" } ],
+          "pc": "14"
+        },
+        {
+          "npc": "3",
+          "fp": "28",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } }
+            },
+            {
+              "pc": "31",
+              "xpc": "19",
+              "method": "C(2, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "3",
+              "xpc": "2",
+              "method": "factorial(0)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "dict", "value": [] } },
+          "push": [ { "type": "dict", "value": [{ "key": { "type": "atom", "value": "n" }, "value": { "type": "int", "value": "1" } }, { "key": { "type": "atom", "value": "result" }, "value": { "type": "dict", "value": [] } } ] }, { "type": "int", "value": "22" } ],
+          "pc": "2"
+        },
+        {
+          "npc": "4",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "3"
+        },
+        {
+          "npc": "5",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "4"
+        },
+        {
+          "npc": "6",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "5"
+        },
+        {
+          "npc": "7",
+          "pop": "1",
+          "push": [ ],
+          "pc": "6"
+        },
+        {
+          "npc": "8",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "7"
+        },
+        {
+          "npc": "16",
+          "push": [ ],
+          "pc": "8"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "0" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "15",
+          "fp": "22",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } }
+            },
+            {
+              "pc": "31",
+              "xpc": "19",
+              "method": "C(2, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "15",
+              "xpc": "2",
+              "method": "factorial(1)",
+              "calltype": "normal",
+              "vars": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "16",
+          "pop": "1",
+          "push": [ ],
+          "pc": "15"
+        },
+        {
+          "npc": "17",
+          "local": { "n": { "type": "int", "value": "1" }, "result": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+        {
+          "npc": "31",
+          "fp": "15",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } }
+            },
+            {
+              "pc": "31",
+              "xpc": "19",
+              "method": "C(2, 1)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "17"
+        },
+        {
+          "npc": "32",
+          "pop": "1",
+          "push": [ ],
+          "pc": "31"
+        },
+        {
+          "npc": "33",
+          "pop": "1",
+          "push": [ ],
+          "pc": "32"
+        },
+        {
+          "npc": "34",
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "2" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "33"
+        },
+        {
+          "npc": "78",
+          "fp": "9",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            },
+            {
+              "pc": "78",
+              "xpc": "36",
+              "method": "pascal(4, 0, 0)",
+              "calltype": "normal",
+              "vars": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } }
+            }
+          ],
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "3" }, "x": { "type": "int", "value": "1" } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "34"
+        },
+        {
+          "npc": "79",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "5" } ],
+          "pc": "78"
+        },
+        {
+          "npc": "80",
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "5" }, "x": { "type": "int", "value": "1" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "79"
+        },
+        {
+          "npc": "81",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "80"
+        },
+        {
+          "npc": "82",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "81"
+        },
+        {
+          "npc": "83",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "82"
+        },
+        {
+          "npc": "84",
+          "local": { "k": { "type": "int", "value": "1" }, "n": { "type": "int", "value": "2" }, "result": { "type": "int", "value": "5" }, "x": { "type": "int", "value": "0" } },
+          "pop": "1",
+          "push": [ ],
+          "pc": "83"
+        },
+        {
+          "npc": "39",
+          "push": [ ],
+          "pc": "84"
+        },
+        {
+          "npc": "40",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "39"
+        },
+        {
+          "npc": "41",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "40"
+        },
+        {
+          "npc": "42",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "41"
+        },
+        {
+          "npc": "85",
+          "pop": "1",
+          "push": [ ],
+          "pc": "42"
+        },
+        {
+          "npc": "103",
+          "fp": "4",
+          "trace": [
+            {
+              "pc": "103",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "local": { "result": { "type": "dict", "value": [] } },
+          "pop": "5",
+          "push": [ { "type": "int", "value": "5" } ],
+          "pc": "85"
+        },
+        {
+          "npc": "104",
+          "push": [ { "type": "int", "value": "4" } ],
+          "pc": "103"
+        },
+        {
+          "npc": "105",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "104"
+        },
+        {
+          "npc": "105",
+          "failure": "Harmony assertion failed",
+          "mode": "failed",
+          "pop": "1",
+          "push": [ ],
+          "pc": "105"
+        }
+      ],
+      "invfails": [
+      ],
+      "contexts": [
+        {
+          "tid": "0",
+          "name": "__init__()",
+          "entry": "0",
+          "pc": "105",
+          "fp": "4",
+          "trace": [
+            {
+              "pc": "105",
+              "xpc": "0",
+              "method": "__init__()",
+              "calltype": "process",
+              "vars": { "result": { "type": "dict", "value": [] } }
+            }
+          ],
+          "failure": "Harmony assertion failed",
+          "atomic": "2",
+          "readonly": "1",
+          "mode": "failed",
+          "this": { "type": "dict", "value": [] }
+        }
+      ]
+    }
+  ],
+  "code": [
+    "Frame __init__ ()",
+    "Jump 86",
+    "Frame factorial n",
+    "LoadVar n",
+    "Push 0",
+    "2-ary ==",
+    "JumpCond False 9",
+    "Push 1",
+    "Jump 16",
+    "LoadVar n",
+    "LoadVar n",
+    "Push 1",
+    "2-ary -",
+    "Push PC(2)",
+    "Apply",
+    "2-ary *",
+    "StoreVar result",
+    "Return",
+    "Jump 86",
+    "Frame C (n, k)",
+    "LoadVar n",
+    "Push PC(2)",
+    "Apply",
+    "LoadVar k",
+    "Push PC(2)",
+    "Apply",
+    "LoadVar n",
+    "LoadVar k",
+    "2-ary -",
+    "Push PC(2)",
+    "Apply",
+    "2-ary *",
+    "2-ary /",
+    "StoreVar result",
+    "Return",
+    "Jump 86",
+    "Frame pascal (x, n, k)",
+    "Push 0",
+    "StoreVar result",
+    "LoadVar x",
+    "Push 0",
+    "2-ary >",
+    "JumpCond False 85",
+    "LoadVar k",
+    "LoadVar n",
+    "2-ary ==",
+    "JumpCond False 64",
+    "Push ?k",
+    "Push ?n",
+    "Push ()",
+    "Push 0",
+    "Push 0",
+    "3-ary DictAdd",
+    "Push 1",
+    "LoadVar n",
+    "Push 1",
+    "2-ary +",
+    "3-ary DictAdd",
+    "Split 2",
+    "Move 3",
+    "Move 2",
+    "StoreVar",
+    "StoreVar",
+    "Jump 68",
+    "LoadVar k",
+    "Push 1",
+    "2-ary +",
+    "StoreVar k",
+    "LoadVar result",
+    "Push ()",
+    "Push 0",
+    "LoadVar n",
+    "3-ary DictAdd",
+    "Push 1",
+    "LoadVar k",
+    "3-ary DictAdd",
+    "Push PC(19)",
+    "Apply",
+    "2-ary +",
+    "StoreVar result",
+    "LoadVar x",
+    "Push 1",
+    "2-ary -",
+    "StoreVar x",
+    "Jump 39",
+    "Return",
+    "Push { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 }",
+    "Choose",
+    "Store x",
+    "ReadonlyInc",
+    "AtomicInc",
+    "Push ()",
+    "Push 0",
+    "Load x",
+    "3-ary DictAdd",
+    "Push 1",
+    "Push 0",
+    "3-ary DictAdd",
+    "Push 2",
+    "Push 0",
+    "3-ary DictAdd",
+    "Push PC(36)",
+    "Apply",
+    "Load x",
+    "2-ary ==",
+    "Assert",
+    "AtomicDec",
+    "ReadonlyDec",
+    "Return"
+  ],
+  "explain": [
+    "start of method __init__",
+    "set program counter to 86",
+    "start of method factorial",
+    "push the value of n",
+    "push constant 0",
+    "pop 2 values and push the result of applying ==",
+    "pop a value and jump to 9 if the value is False",
+    "push constant 1",
+    "set program counter to 16",
+    "push the value of n",
+    "push the value of n",
+    "push constant 1",
+    "pop 2 values and push the result of applying -",
+    "push constant PC(2)",
+    "pop a pc or dictionary f and an index i and push f(i)",
+    "pop 2 values and push the result of applying *",
+    "pop a value and store in result",
+    "restore caller method state and push result",
+    "set program counter to 86",
+    "start of method C",
+    "push the value of n",
+    "push constant PC(2)",
+    "pop a pc or dictionary f and an index i and push f(i)",
+    "push the value of k",
+    "push constant PC(2)",
+    "pop a pc or dictionary f and an index i and push f(i)",
+    "push the value of n",
+    "push the value of k",
+    "pop 2 values and push the result of applying -",
+    "push constant PC(2)",
+    "pop a pc or dictionary f and an index i and push f(i)",
+    "pop 2 values and push the result of applying *",
+    "pop 2 values and push the result of applying /",
+    "pop a value and store in result",
+    "restore caller method state and push result",
+    "set program counter to 86",
+    "start of method pascal",
+    "push constant 0",
+    "pop a value and store in result",
+    "push the value of x",
+    "push constant 0",
+    "pop 2 values and push the result of applying >",
+    "pop a value and jump to 85 if the value is False",
+    "push the value of k",
+    "push the value of n",
+    "pop 2 values and push the result of applying ==",
+    "pop a value and jump to 64 if the value is False",
+    "push constant ?k",
+    "push constant ?n",
+    "push constant ()",
+    "push constant 0",
+    "push constant 0",
+    "pop 3 values and push the result of applying DictAdd",
+    "push constant 1",
+    "push the value of n",
+    "push constant 1",
+    "pop 2 values and push the result of applying +",
+    "pop 3 values and push the result of applying DictAdd",
+    "splits a tuple value into its elements",
+    "move stack element to top",
+    "move stack element to top",
+    "pop a value and the address of a method variable and store the value at that address",
+    "pop a value and the address of a method variable and store the value at that address",
+    "set program counter to 68",
+    "push the value of k",
+    "push constant 1",
+    "pop 2 values and push the result of applying +",
+    "pop a value and store in k",
+    "push the value of result",
+    "push constant ()",
+    "push constant 0",
+    "push the value of n",
+    "pop 3 values and push the result of applying DictAdd",
+    "push constant 1",
+    "push the value of k",
+    "pop 3 values and push the result of applying DictAdd",
+    "push constant PC(19)",
+    "pop a pc or dictionary f and an index i and push f(i)",
+    "pop 2 values and push the result of applying +",
+    "pop a value and store in result",
+    "push the value of x",
+    "push constant 1",
+    "pop 2 values and push the result of applying -",
+    "pop a value and store in x",
+    "set program counter to 39",
+    "restore caller method state and push result",
+    "push constant { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 }",
+    "pop a set value and push one of its elements",
+    "pop a value and store it in shared variable x",
+    "increment readonly counter of context; thread cannot mutate shared variables if > 0",
+    "increment atomic counter of context; thread runs uninterrupted if larger than 0",
+    "push constant ()",
+    "push constant 0",
+    "push value of shared variable x",
+    "pop 3 values and push the result of applying DictAdd",
+    "push constant 1",
+    "push constant 0",
+    "pop 3 values and push the result of applying DictAdd",
+    "push constant 2",
+    "push constant 0",
+    "pop 3 values and push the result of applying DictAdd",
+    "push constant PC(36)",
+    "pop a pc or dictionary f and an index i and push f(i)",
+    "push value of shared variable x",
+    "pop 2 values and push the result of applying ==",
+    "pop a condition and raise exception if condition is false",
+    "decrement atomic counter of context",
+    "decrement readonly counter of context",
+    "restore caller method state and push result"
+  ],
+  "locations": {
+    "43": { "file": "/Users/ayang/test/Diners.hny", "line": "9", "code": "        if k == n:" },
+    "3": { "file": "/Users/ayang/test/Diners.hny", "line": "3", "code": "    result = 1 if n == 0 else (n * factorial(n - 1))" },
+    "20": { "file": "/Users/ayang/test/Diners.hny", "line": "5", "code": "    result = factorial(n) / (factorial(k) * factorial(n - k))" },
+    "47": { "file": "/Users/ayang/test/Diners.hny", "line": "10", "code": "            k, n = 0, n + 1" },
+    "39": { "file": "/Users/ayang/test/Diners.hny", "line": "8", "code": "    while x > 0:" },
+    "1": { "file": "/Users/ayang/test/Diners.hny", "line": "2", "code": "def factorial(n):" },
+    "89": { "file": "/Users/ayang/test/Diners.hny", "line": "16", "code": "assert pascal(x, 0, 0) == x" },
+    "18": { "file": "/Users/ayang/test/Diners.hny", "line": "4", "code": "def C(n, k):" },
+    "35": { "file": "/Users/ayang/test/Diners.hny", "line": "6", "code": "def pascal(x, n, k):" },
+    "68": { "file": "/Users/ayang/test/Diners.hny", "line": "13", "code": "        result += C(n, k)" },
+    "80": { "file": "/Users/ayang/test/Diners.hny", "line": "14", "code": "        x -= 1" },
+    "37": { "file": "/Users/ayang/test/Diners.hny", "line": "7", "code": "    result = 0" },
+    "86": { "file": "/Users/ayang/test/Diners.hny", "line": "15", "code": "x = choose({0..N})" },
+    "64": { "file": "/Users/ayang/test/Diners.hny", "line": "12", "code": "            k += 1" }
+  }
+}
