@@ -10,13 +10,13 @@ import * as commandExists from "command-exists";
 import { runServerAnalysis } from './feature/runServerAnalysis';
 
 const processManager = ProcessManagerImpl.init();
-const harmonyLangConfig = vscode.workspace.getConfiguration('harmonylang-beta');
-const hlConsole = vscode.window.createOutputChannel("HarmonyLang Beta");
+const harmonyLangConfig = vscode.workspace.getConfiguration('harmonylang');
+const hlConsole = vscode.window.createOutputChannel("HarmonyLang");
 const pythonPath = harmonyLangConfig.get('pythonPath');
 const ccPath = harmonyLangConfig.get('ccPath');
 
 export const activate = (context: vscode.ExtensionContext) => {
-    const runHarmonyCommand = vscode.commands.registerCommand('harmonylang-beta.run', () => {
+    const runHarmonyCommand = vscode.commands.registerCommand('harmonylang.run', () => {
         const filename = vscode.window.activeTextEditor?.document?.fileName;
         const ext = path.extname(filename || '');
         const harmonyExt = [".hny", ".sab"];
@@ -31,7 +31,7 @@ export const activate = (context: vscode.ExtensionContext) => {
         runHarmony(context, filename);
     });
 
-    const runHarmonyServerCommand = vscode.commands.registerCommand('harmonylang-beta-server.run', () => {
+    const runHarmonyServerCommand = vscode.commands.registerCommand('harmonylang-server.run', () => {
         const filename = vscode.window.activeTextEditor?.document?.fileName;
         const ext = path.extname(filename || '');
         const harmonyExt = [".hny", ".sab"];
@@ -46,7 +46,7 @@ export const activate = (context: vscode.ExtensionContext) => {
         runHarmonyServer(context, filename);
     });
 
-    const endHarmonyProcessesCommand = vscode.commands.registerCommand('harmonylang-beta.end', () => {
+    const endHarmonyProcessesCommand = vscode.commands.registerCommand('harmonylang.end', () => {
         endHarmonyProcesses();
     });
 
