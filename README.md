@@ -56,6 +56,10 @@ You can find more information about the HarmonyLang extension project in [this d
     - This will require `Python3` and a `C` compiler to be installed.
  - Fix bugs in the Interactive Process Visualizer.
 
+### 0.1.3
+ - Updated HarmonyLang to use Harmony 0.9 LTS compiler
+ - Bug fixes.
+
 ### 0.1.0
  - Massive UI overhaul with compiler output rewrite.
    - Interactive Process Visualizer
