@@ -1,9 +1,9 @@
 {
-    "name": "harmonylang-beta",
-    "displayName": "HarmonyLang Beta",
+    "name": "harmonylang",
+    "displayName": "HarmonyLang",
     "description": "VS Code language support for Harmony, a Python-like concurrent programming language.",
     "icon": "images/harmonylang.png",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "publisher": "kevinsun-dev-cornell",
     "repository": "https://github.com/kevinsun-dev/harmonylang",
     "engines": {
@@ -31,7 +31,7 @@
         "configuration": {
             "title": "HarmonyLang",
             "properties": {
-                "harmonylang-beta.pythonPath": {
+                "harmonylang.pythonPath": {
                     "type": [
                         "string",
                         "null"
@@ -40,7 +40,7 @@
                     "default": null,
                     "description": "Python 3 installation path"
                 },
-                "harmonylang-beta.ccPath": {
+                "harmonylang.ccPath": {
                     "type": [
                         "string",
                         "null"
@@ -73,25 +73,25 @@
         ],
         "commands": [
             {
-                "command": "harmonylang-beta-server.run",
+                "command": "harmonylang-server.run",
                 "title": "(Server) Run Harmony"
             },
             {
-                "command": "harmonylang-beta.run",
+                "command": "harmonylang.run",
                 "title": "Run Harmony"
             },
             {
-                "command": "harmonylang-beta.end",
+                "command": "harmonylang.end",
                 "title": "End All Harmony Processes"
             }
         ],
         "keybindings": [
             {
-                "command": "harmonylang-beta.run",
+                "command": "harmonylang.run",
                 "key": "alt+shift+n"
             },
             {
-                "command": "harmonylang-beta.end",
+                "command": "harmonylang.end",
                 "key": "alt+shift+q"
             }
         ]

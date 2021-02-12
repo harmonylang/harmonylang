@@ -61,6 +61,11 @@ export default class CharmonyPanelController_v2 {
         this.update(data);
     }
 
+    public startLoading() {
+        const webview = this.panel.webview;
+        webview.postMessage({ command: 'start', jsonData: null });
+    }
+
     public updateMessage(message: string) {
         const webview = this.panel.webview;
         webview.postMessage({ command: 'message', jsonData: message });
