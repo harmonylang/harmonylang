@@ -7,6 +7,7 @@ import * as fs from "fs";
 import { IntermediateJson } from "./charmony/IntermediateJson";
 import CharmonyPanelController_v2 from "./outputPanel/PanelController_v2";
 import * as commandExists from "command-exists";
+import { runServerAnalysis } from './feature/runServerAnalysis';
 
 const processManager = ProcessManagerImpl.init();
 const harmonyLangConfig = vscode.workspace.getConfiguration('harmonylang-beta');
@@ -30,11 +31,27 @@ export const activate = (context: vscode.ExtensionContext) => {
         runHarmony(context, filename);
     });
 
+    const runHarmonyServerCommand = vscode.commands.registerCommand('harmonylang-beta-server.run', () => {
+        const filename = vscode.window.activeTextEditor?.document?.fileName;
+        const ext = path.extname(filename || '');
+        const harmonyExt = [".hny", ".sab"];
+        if (!harmonyExt.includes(ext)) {
+            vscode.window.showInformationMessage('Target file must be an Harmony (.hny) file.');
+            return;
+        }
+        if (filename == null) {
+            vscode.window.showInformationMessage('Could not locate target file.');
+            return;
+        }
+        runHarmonyServer(context, filename);
+    });
+
     const endHarmonyProcessesCommand = vscode.commands.registerCommand('harmonylang-beta.end', () => {
         endHarmonyProcesses();
     });
 
     context.subscriptions.push(runHarmonyCommand);
+    context.subscriptions.push(runHarmonyServerCommand);
     context.subscriptions.push(endHarmonyProcessesCommand);
 };
 
@@ -83,7 +100,30 @@ const showMessage = (main: string, subHeader?: string, subtext?: string) => {
     return showVscodeMessage(false, main, subHeader, subtext);
 };
 
+function onReceivingIntermediateJSON(results: IntermediateJson) {
+    if (results != null && results.issue != null && results.issue != "No issues") {
+        CharmonyPanelController_v2.currentPanel?.updateResults(results);
+    } else {
+        CharmonyPanelController_v2.currentPanel?.updateMessage(`No Errors Found.`);
+    }
+}
+
+function runHarmonyServer(context: vscode.ExtensionContext, fullFileName: string) {
+    CharmonyPanelController_v2.currentPanel?.dispose();
+    CharmonyPanelController_v2.createOrShow(context.extensionUri);
+    const workspace = vscode.workspace.workspaceFolders;
+    if (workspace == null || workspace[0] == null) {
+        return showVscodeMessage(true, "Cannot find current project workspace");
+    }
+    const rootDirectory = workspace[0].uri.fsPath;
+    runServerAnalysis(rootDirectory, fullFileName, onReceivingIntermediateJSON, 
+        msg => CharmonyPanelController_v2.currentPanel?.updateMessage(msg)
+    );
+}
+
 export function runHarmony(context: vscode.ExtensionContext, fullFileName: string) {
+    CharmonyPanelController_v2.currentPanel?.dispose();
+    CharmonyPanelController_v2.createOrShow(context.extensionUri);
     checkIfPython3Exists(() => {
         hlConsole.appendLine("Check for Python3");
         checkIfCompilerForCExists(() => {
@@ -107,18 +147,13 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                 }
                 hlConsole.appendLine(stdout);
                 if (error) {
-                    CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
-                    return;
+                    return CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
                 }
                 try {
                     const results: IntermediateJson = JSON.parse(fs.readFileSync(CHARMONY_JSON_OUTPUT, {
                         encoding: 'utf-8'
                     }));
-                    if (results != null && results.issue != null && results.issue != "No issues") {
-                        CharmonyPanelController_v2.currentPanel?.updateResults(results);
-                    } else {
-                        CharmonyPanelController_v2.currentPanel?.updateMessage(`No Errors Found.`);
-                    }
+                    onReceivingIntermediateJSON(results);
                     GENERATED_FILES.forEach(f => rimraf.sync(f));
                 } catch (error) {
                     hlConsole.appendLine(error);
@@ -129,13 +164,16 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
         }, () => {
             showVscodeMessage(true,
                 "Missing dependency",
-                "Target for cc C-compiler cannot be found",
-                "The model checker requires C. Please check you have a C-compiler before continuing.");
+                "Target for cc C-compiler cannot be found. Attempting to run server compiler",
+                "The model checker requires a C-compiler. Please check you have a C-compiler before continuing."
+            );
+            runHarmonyServer(context, fullFileName);
         });
     }, () => {
         showVscodeMessage(true,
             "Missing dependency",
-            "Target for python3 cannot be found",
-            "The model checker requires Python3. Please install Python3 and try again.");
+            "Target for python3 cannot be found. Attempting to run server compiler",
+            "The model checker requires Python3. Please install Python3 and to run compiler locally.");
+        runHarmonyServer(context, fullFileName);
     });
 }
