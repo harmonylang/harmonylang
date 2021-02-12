@@ -3,7 +3,6 @@ import * as path from 'path';
 import { ProcessManagerImpl } from './processManager';
 import { CHARMONY_COMPILER_DIR, CHARMONY_JSON_OUTPUT, CHARMONY_SCRIPT_PATH, GENERATED_FILES } from "./config";
 import * as rimraf from "rimraf";
-import { LOG } from './debug/io';
 import * as fs from "fs";
 import { IntermediateJson } from "./charmony/IntermediateJson";
 import CharmonyPanelController_v2 from "./outputPanel/PanelController_v2";
@@ -54,14 +53,6 @@ export const activate = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(runHarmonyCommand);
     context.subscriptions.push(runHarmonyServerCommand);
     context.subscriptions.push(endHarmonyProcessesCommand);
-
-    if (vscode.window.registerWebviewPanelSerializer) {
-        vscode.window.registerWebviewPanelSerializer(CharmonyPanelController_v2.viewType, {
-            async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
-                CharmonyPanelController_v2.revive(webviewPanel, context.extensionUri);
-            }
-        });
-    }
 };
 
 export function endHarmonyProcesses() {
@@ -144,9 +135,16 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
             charmonyCompileCommand += `${CHARMONY_SCRIPT_PATH} ${fullFileName}`;
             processManager.startCommand(charmonyCompileCommand, {
                 cwd: CHARMONY_COMPILER_DIR
-            }, (error, stdout) => {
+            }, (error, stdout, stderr) => {
+                CharmonyPanelController_v2.currentPanel?.dispose();
                 if (processManager.processesAreKilled) return;
-                LOG("finished processing", { error, stdout });
+                CharmonyPanelController_v2.createOrShow(context.extensionUri);
+                hlConsole.show();
+                if (stderr) {
+                    hlConsole.appendLine(stderr);
+                    CharmonyPanelController_v2.currentPanel?.updateMessage(stderr);
+                    return;
+                }
                 hlConsole.appendLine(stdout);
                 if (error) {
                     return CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
@@ -159,6 +157,7 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                     GENERATED_FILES.forEach(f => rimraf.sync(f));
                 } catch (error) {
                     hlConsole.appendLine(error);
+                    hlConsole.show();    
                     CharmonyPanelController_v2.currentPanel?.updateMessage(`Could not create analysis file.`);
                 }
             });
