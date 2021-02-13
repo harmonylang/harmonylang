@@ -1,9 +1,16 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { ProcessManagerImpl } from './processManager';
-import { CHARMONY_COMPILER_DIR, CHARMONY_JSON_OUTPUT, CHARMONY_SCRIPT_PATH, GENERATED_FILES } from "./config";
+import {
+    CHARMONY_COMPILER_DIR,
+    CHARMONY_JSON_OUTPUT,
+    CHARMONY_SCRIPT_PATH,
+    GENERATED_FILES,
+    EXTENSION_DIR
+} from "./config";
 import * as rimraf from "rimraf";
 import * as fs from "fs";
+import * as chmodDr from 'chmodr';
 import { IntermediateJson } from "./charmony/IntermediateJson";
 import CharmonyPanelController_v2 from "./outputPanel/PanelController_v2";
 import * as commandExists from "command-exists";
@@ -16,6 +23,7 @@ const pythonPath = harmonyLangConfig.get('pythonPath');
 const ccPath = harmonyLangConfig.get('ccPath');
 
 export const activate = (context: vscode.ExtensionContext) => {
+    chmodDr.sync(EXTENSION_DIR, 755);
     const runHarmonyCommand = vscode.commands.registerCommand('harmonylang.run', () => {
         const filename = vscode.window.activeTextEditor?.document?.fileName;
         const ext = path.extname(filename || '');
@@ -117,7 +125,7 @@ function runHarmonyServer(context: vscode.ExtensionContext, fullFileName: string
     }
     const rootDirectory = workspace[0].uri.fsPath;
     CharmonyPanelController_v2.currentPanel?.startLoading();
-    runServerAnalysis(rootDirectory, fullFileName, onReceivingIntermediateJSON, 
+    runServerAnalysis(rootDirectory, fullFileName, onReceivingIntermediateJSON,
         msg => {
             console.log(msg);
             CharmonyPanelController_v2.currentPanel?.updateMessage(msg);
@@ -161,7 +169,7 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                     GENERATED_FILES.forEach(f => rimraf.sync(f));
                 } catch (error) {
                     hlConsole.appendLine(error);
-                    hlConsole.show();    
+                    hlConsole.show();
                     CharmonyPanelController_v2.currentPanel?.updateMessage(`Could not create analysis file.`);
                 }
             });
