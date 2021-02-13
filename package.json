@@ -97,7 +97,7 @@
         ]
     },
     "scripts": {
-        "vscode:prepublish": "npm run compile",
+        "vscode:prepublish": "npm install && npm run compile",
         "build": "vsce package",
         "compile": "tsc -p ./",
         "lint": "eslint . --ext .ts,.tsx",
