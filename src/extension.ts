@@ -117,7 +117,7 @@ function runHarmonyServer(context: vscode.ExtensionContext, fullFileName: string
     }
     const rootDirectory = workspace[0].uri.fsPath;
     CharmonyPanelController_v2.currentPanel?.startLoading();
-    runServerAnalysis(rootDirectory, fullFileName, onReceivingIntermediateJSON, 
+    runServerAnalysis(rootDirectory, fullFileName, onReceivingIntermediateJSON,
         msg => {
             console.log(msg);
             CharmonyPanelController_v2.currentPanel?.updateMessage(msg);
@@ -134,8 +134,8 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
             hlConsole.appendLine("Check for CC");
             const osAlias = (process.platform === "win32") ? "doskey" : "alias";
             let charmonyCompileCommand = "";
-            if (pythonPath != "python3") { charmonyCompileCommand += `${osAlias} python3=${pythonPath} & `; }
-            if (ccPath != "cc") { charmonyCompileCommand += `${osAlias} cc=${ccPath} & `; }
+            if (pythonPath != "python3") { charmonyCompileCommand += `${osAlias} python3=${pythonPath} && `; }
+            if (ccPath != "cc") { charmonyCompileCommand += `${osAlias} cc=${ccPath} && `; }
             charmonyCompileCommand += `${CHARMONY_SCRIPT_PATH} ${fullFileName}`;
             processManager.startCommand(charmonyCompileCommand, {
                 cwd: CHARMONY_COMPILER_DIR
@@ -161,7 +161,7 @@ export function runHarmony(context: vscode.ExtensionContext, fullFileName: strin
                     GENERATED_FILES.forEach(f => rimraf.sync(f));
                 } catch (error) {
                     hlConsole.appendLine(error);
-                    hlConsole.show();    
+                    hlConsole.show();
                     CharmonyPanelController_v2.currentPanel?.updateMessage(`Could not create analysis file.`);
                 }
             });
