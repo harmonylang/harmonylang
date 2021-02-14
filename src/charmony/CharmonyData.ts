@@ -10,11 +10,6 @@ export default function parseCharmony(json: IntermediateJson): CharmonyTopLevel 
     const executedCode: CharmonyExecutedCode[] = getExecutedCode(json);
     const {idToThreadName, slices, issue, macroSteps, microSteps} = genExecutionPath(json);
 
-    console.log({
-        numberOfSlices: slices.length,
-        numberOfMicroSteps: microSteps.length
-    });
-
     return {
         slices,
         idToThreadName,

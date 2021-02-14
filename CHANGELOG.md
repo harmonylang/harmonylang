@@ -4,7 +4,16 @@ All notable changes to the "harmonylang" extension will be documented in this fi
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [0.1.0] - Unreleased
+### [0.2.0] - 2021-02-03
+ - New `(C)Harmony` compiler, which uses `C/Python` to optimize model-checking.
+    - This will require `Python3` and a `C` compiler to be installed.
+ - Fix bugs in the Interactive Process Visualizer.
+
+## [0.1.3] - 2021-02-07
+ - Updated HarmonyLang to use Harmony 0.9 LTS compiler
+ - Bug fixes.
+
+## [0.1.0] - 2021-02-04
  - Massive UI overhaul with compiler output rewrite.
    - Interactive Process Visualizer
    - Crash Timeline Playback

@@ -61,6 +61,11 @@ export default class CharmonyPanelController_v2 {
         this.update(data);
     }
 
+    public startLoading() {
+        const webview = this.panel.webview;
+        webview.postMessage({ command: 'start', jsonData: null });
+    }
+
     public updateMessage(message: string) {
         const webview = this.panel.webview;
         webview.postMessage({ command: 'message', jsonData: message });
@@ -94,13 +99,11 @@ export default class CharmonyPanelController_v2 {
             }
         }
         if (data != null) {
-            console.log(CHARMONY_HTML_FILE, data);
             this.loadData(data, webview);
         }
     }
 
     private loadData(data: IntermediateJson, webview: Webview) {
-        console.log("Step 1");
         const harmonyJsonData = parseCharmony(data);
 
         if (fs.existsSync(DEBUG_DIR)) {
@@ -108,12 +111,10 @@ export default class CharmonyPanelController_v2 {
                 JSON.stringify(harmonyJsonData, undefined, 4));
         }
 
-        console.log("Step 2");
         if (vscode.workspace.workspaceFolders) {
             console.log("Creating a standalone HTML file");
             createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, harmonyJsonData);
         }
-        console.log(harmonyJsonData);
         webview.postMessage({ command: 'load', jsonData: harmonyJsonData });
         webview.onDidReceiveMessage( message => {
             switch (message.command) {

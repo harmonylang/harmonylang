@@ -341,18 +341,40 @@ static char *value_string_dict(uint64_t v) {
     uint64_t *vals = dict_retrieve(p, &size);
     size /= 2 * sizeof(uint64_t);
 
-    alloc_printf(&r, "{ ");
-    for (int i = 0; i < size; i++) {
-        if (i != 0) {
-            append_printf(&r, ", ");
+    bool islist = true;
+    for (uint64_t i = 0; i < size; i++) {
+        if (vals[2*i] != ((i << VALUE_BITS) | VALUE_INT)) {
+            islist = false;
+            break;
         }
-        char *key = value_string(vals[2*i]);
-        char *val = value_string(vals[2*i+1]);
-        append_printf(&r, "%s: %s", key, val);
-        free(key);
-        free(val);
     }
-    append_printf(&r, " }");
+
+    if (islist) {
+        alloc_printf(&r, "(");
+        for (int i = 0; i < size; i++) {
+            if (i != 0) {
+                append_printf(&r, ", ");
+            }
+            char *val = value_string(vals[2*i+1]);
+            append_printf(&r, "%s", val);
+            free(val);
+        }
+        append_printf(&r, ")");
+    }
+    else {
+        alloc_printf(&r, "{ ");
+        for (int i = 0; i < size; i++) {
+            if (i != 0) {
+                append_printf(&r, ", ");
+            }
+            char *key = value_string(vals[2*i]);
+            char *val = value_string(vals[2*i+1]);
+            append_printf(&r, "%s: %s", key, val);
+            free(key);
+            free(val);
+        }
+        append_printf(&r, " }");
+    }
     return r;
 }
 
@@ -440,25 +462,19 @@ static char *value_json_set(uint64_t v) {
     return r;
 }
 
-static char *value_string_address(uint64_t v) {
+char *indices_string(const uint64_t *vec, int size) {
     char *r;
-    if (v == 0) {
+    if (size == 0) {
         alloc_printf(&r, "None");
         return r;
     }
-
-    void *p = (void *) v;
-    int size;
-    uint64_t *indices = dict_retrieve(p, &size);
-    size /= sizeof(uint64_t);
-    assert(size > 0);
-    char *s = value_string(indices[0]);
+    char *s = value_string(vec[0]);
     assert(s[0] == '.');
     alloc_printf(&r, "?%s", s + 1);
     free(s);
 
     for (int i = 1; i < size; i++) {
-        s = value_string(indices[i]);
+        s = value_string(vec[i]);
         if (*s == '.') {
             append_printf(&r, "%s", s);
         }
@@ -468,6 +484,21 @@ static char *value_string_address(uint64_t v) {
     }
 
     return r;
+}
+
+static char *value_string_address(uint64_t v) {
+    if (v == 0) {
+        char *r;
+        alloc_printf(&r, "None");
+        return r;
+    }
+
+    void *p = (void *) v;
+    int size;
+    uint64_t *indices = dict_retrieve(p, &size);
+    size /= sizeof(uint64_t);
+    assert(size > 0);
+    return indices_string(indices, size);
 }
 
 static char *value_json_address(uint64_t v) {
