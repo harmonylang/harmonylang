@@ -23,7 +23,6 @@ const pythonPath = harmonyLangConfig.get('pythonPath');
 const ccPath = harmonyLangConfig.get('ccPath');
 
 export const activate = (context: vscode.ExtensionContext) => {
-    chmodDr.sync(EXTENSION_DIR, 755);
     const runHarmonyCommand = vscode.commands.registerCommand('harmonylang.run', () => {
         const filename = vscode.window.activeTextEditor?.document?.fileName;
         const ext = path.extname(filename || '');
