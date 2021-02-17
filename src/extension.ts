@@ -10,7 +10,6 @@ import {
 } from "./config";
 import * as rimraf from "rimraf";
 import * as fs from "fs";
-import * as chmodDr from 'chmodr';
 import { IntermediateJson } from "./charmony/IntermediateJson";
 import CharmonyPanelController_v2 from "./outputPanel/PanelController_v2";
 import * as commandExists from "command-exists";
