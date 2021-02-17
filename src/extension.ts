@@ -127,7 +127,8 @@ function runHarmonyServer(context: vscode.ExtensionContext, fullFileName: string
     CharmonyPanelController_v2.currentPanel?.startLoading();
     runServerAnalysis(rootDirectory, fullFileName, onReceivingIntermediateJSON,
         msg => {
-            console.log(msg);
+            hlConsole.appendLine(msg);
+            hlConsole.show();
             CharmonyPanelController_v2.currentPanel?.updateMessage(msg);
         }
     );

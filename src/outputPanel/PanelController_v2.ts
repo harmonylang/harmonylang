@@ -111,10 +111,10 @@ export default class CharmonyPanelController_v2 {
                 JSON.stringify(harmonyJsonData, undefined, 4));
         }
 
-        if (vscode.workspace.workspaceFolders) {
-            console.log("Creating a standalone HTML file");
-            createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, harmonyJsonData);
-        }
+        // if (vscode.workspace.workspaceFolders) {
+            // console.log("Creating a standalone HTML file");
+            // createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, harmonyJsonData);
+        // }
         webview.postMessage({ command: 'load', jsonData: harmonyJsonData });
         webview.onDidReceiveMessage( message => {
             switch (message.command) {
