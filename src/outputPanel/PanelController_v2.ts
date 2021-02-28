@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import {Webview} from 'vscode';
 import * as fs from 'fs';
-import {createStandaloneHtml} from "../feature/standaloneHtml";
 import {CHARMONY_HTML_FILE, DEBUG_DIR, RESOURCE_DIR} from "../config";
 import {IntermediateJson} from "../charmony/IntermediateJson";
 import parseCharmony from "../charmony/CharmonyData";
@@ -111,10 +110,10 @@ export default class CharmonyPanelController_v2 {
                 JSON.stringify(harmonyJsonData, undefined, 4));
         }
 
-        if (vscode.workspace.workspaceFolders) {
-            console.log("Creating a standalone HTML file");
-            createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, harmonyJsonData);
-        }
+        // if (vscode.workspace.workspaceFolders) {
+            // console.log("Creating a standalone HTML file");
+            // createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, harmonyJsonData);
+        // }
         webview.postMessage({ command: 'load', jsonData: harmonyJsonData });
         webview.onDidReceiveMessage( message => {
             switch (message.command) {
