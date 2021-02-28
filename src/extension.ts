@@ -10,7 +10,6 @@ import {
 } from "./config";
 import * as rimraf from "rimraf";
 import * as fs from "fs";
-import * as chmodDr from 'chmodr';
 import { IntermediateJson } from "./charmony/IntermediateJson";
 import CharmonyPanelController_v2 from "./outputPanel/PanelController_v2";
 import * as commandExists from "command-exists";
@@ -23,7 +22,6 @@ const pythonPath = harmonyLangConfig.get('pythonPath');
 const ccPath = harmonyLangConfig.get('ccPath');
 
 export const activate = (context: vscode.ExtensionContext) => {
-    chmodDr.sync(EXTENSION_DIR, 755);
     const runHarmonyCommand = vscode.commands.registerCommand('harmonylang.run', () => {
         const filename = vscode.window.activeTextEditor?.document?.fileName;
         const ext = path.extname(filename || '');
@@ -127,7 +125,8 @@ function runHarmonyServer(context: vscode.ExtensionContext, fullFileName: string
     CharmonyPanelController_v2.currentPanel?.startLoading();
     runServerAnalysis(rootDirectory, fullFileName, onReceivingIntermediateJSON,
         msg => {
-            console.log(msg);
+            hlConsole.appendLine(msg);
+            hlConsole.show();
             CharmonyPanelController_v2.currentPanel?.updateMessage(msg);
         }
     );
