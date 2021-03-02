@@ -25,6 +25,7 @@ export function runServerAnalysis(
         bodyFormData.append("file", fs.createReadStream(tempFile));
         bodyFormData.append("main", JSON.stringify(pathToMainFile.split(path.sep)));
         bodyFormData.append("version", VERSION_VALUE);
+        bodyFormData.append("source", "vscode");
         try {
             const response = await axios.post(HARMONY_SERVER_API + "check",
                 bodyFormData,
