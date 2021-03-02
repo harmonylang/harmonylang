@@ -3,7 +3,7 @@
     "displayName": "HarmonyLang",
     "description": "VS Code language support for Harmony, a Python-like concurrent programming language.",
     "icon": "images/harmonylang.png",
-    "version": "0.2.5",
+    "version": "0.2.6",
     "publisher": "kevinsun-dev-cornell",
     "repository": "https://github.com/kevinsun-dev/harmonylang",
     "engines": {
@@ -89,6 +89,10 @@
             {
                 "command": "harmonylang.run",
                 "key": "alt+shift+n"
+            },
+            {
+                "command": "harmonylang-server.run",
+                "key": "alt+shift+s"
             },
             {
                 "command": "harmonylang.end",
