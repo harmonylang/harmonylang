@@ -3,7 +3,7 @@
 .gitignore
 .accesstoken
 vsc-extension-quickstart.md
-.vsix
+*.vsix
 out/test/**
 src/**
 **/tsconfig.json
