@@ -123,13 +123,18 @@ function runHarmonyServer(context: vscode.ExtensionContext, fullFileName: string
     }
     const rootDirectory = workspace[0].uri.fsPath;
     CharmonyPanelController_v2.currentPanel?.startLoading();
-    runServerAnalysis(rootDirectory, fullFileName, onReceivingIntermediateJSON,
-        msg => {
-            hlConsole.appendLine(msg);
+    runServerAnalysis(rootDirectory, fullFileName, (json, staticHtmlUrl, duration) => {
+        if (staticHtmlUrl && duration) {
+            hlConsole.appendLine(`Harmony HTML can be found here: ${staticHtmlUrl}`);
             hlConsole.show();
-            CharmonyPanelController_v2.currentPanel?.updateMessage(msg);
+            showMessage("Download HTML file.", `Link lasts for ${duration / 60 / 1000} minute(s)`, staticHtmlUrl);
         }
-    );
+        onReceivingIntermediateJSON(json);
+    }, msg => {
+        hlConsole.appendLine(msg);
+        hlConsole.show();
+        CharmonyPanelController_v2.currentPanel?.updateMessage(msg);
+    });
 }
 
 export function runHarmony(context: vscode.ExtensionContext, fullFileName: string) {

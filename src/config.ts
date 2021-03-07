@@ -14,8 +14,8 @@ export const CHARMONY_JSON_OUTPUT = path.join(CHARMONY_COMPILER_DIR, "charm.json
 export const PACKAGE_JSON = path.join(EXTENSION_DIR, "package.json");
 export const VERSION_VALUE = JSON.parse(fs.readFileSync(PACKAGE_JSON, "utf-8"))['version'];
 
-type api_endpoint = "https://harmonylang.herokuapp.com/" | `http://localhost:${number}/`;
-export const HARMONY_SERVER_API: api_endpoint = "https://harmonylang.herokuapp.com/";
+type api_endpoint = "https://harmonylang.herokuapp.com" | `http://localhost:${number}`;
+export const HARMONY_SERVER_API: api_endpoint = "https://harmonylang.herokuapp.com";
 
 export const GENERATED_FILES = [
     path.join(CHARMONY_COMPILER_DIR, "charm.dSYM"),
