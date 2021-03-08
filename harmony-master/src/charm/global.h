@@ -32,8 +32,7 @@ struct op_info *ops_get(char *opname, int size);
 struct code {
     struct op_info *oi;
     const void *env;
-    bool choose;
-    bool breakable;
+    bool choose, load, store, del, breakable;
 };
 
 struct context {     // context value
@@ -47,21 +46,18 @@ struct context {     // context value
     uint64_t failure;     // atom value describing failure, or 0 if no failure
     int pc;               // program counter
     int fp;               // frame pointer
-    enum phase {
-        CTX_START,        // before first "switch" operation
-        CTX_MIDDLE,       // normal operation
-        CTX_END           // terminated
-    } phase;
     int atomic;           // atomic counter
     int readonly;         // readonly counter
     bool interruptlevel;  // interrupt level
     bool stopped;         // context is stopped
+    bool terminated;      // context has terminated
     int sp;               // stack size
     uint64_t stack[0];
 };
 
 struct state {
     uint64_t vars;        // shared variables
+    uint64_t seqs;        // sequential variables
     uint64_t choosing;    // context that is choosing if non-zero
     uint64_t ctxbag;      // bag of running contexts
     uint64_t stopbag;     // bag of stopped contexts
@@ -104,8 +100,8 @@ char *value_json(uint64_t v);
 #define VALUE_FALSE     VALUE_BOOL
 #define VALUE_TRUE      ((1 << VALUE_BITS) | VALUE_BOOL)
 
-#define VALUE_MAX   ((~(uint64_t)0) >> (VALUE_BITS + 1))
-#define VALUE_MIN   (((uint64_t) 1) << (64 - VALUE_BITS - 1))
+#define VALUE_MAX   ((int64_t) ((~(uint64_t)0) >> (VALUE_BITS + 1)))
+#define VALUE_MIN   ((int64_t) ((~(uint64_t)0) << (64 - (VALUE_BITS + 1))))
 
 uint64_t dict_store(uint64_t dict, uint64_t key, uint64_t value);
 uint64_t dict_load(uint64_t dict, uint64_t key);
@@ -113,6 +109,14 @@ bool dict_tryload(uint64_t dict, uint64_t key, uint64_t *result);
 uint64_t dict_remove(uint64_t dict, uint64_t key);
 uint64_t bag_add(uint64_t bag, uint64_t v);
 void ctx_push(struct context **pctx, uint64_t v);
+
+struct access_info {
+    uint64_t *indices;      // address of load/store
+    int n;                  // length of address
+    bool load;              // store or del if false
+    int pc;                 // for debugging
+    int multiplicity;       // #identical contexts
+};
 
 struct env_Cut {
     uint64_t set, var;
@@ -186,3 +190,9 @@ struct env_StoreVar {
 
 uint64_t ctx_failure(struct context *ctx, char *fmt, ...);
 void panic(char *s);
+void ext_Del(const void *env, struct state *state, struct context **pctx,
+                                                        struct access_info *ai);
+void ext_Load(const void *env, struct state *state, struct context **pctx,
+                                                        struct access_info *ai);
+void ext_Store(const void *env, struct state *state, struct context **pctx,
+                                                        struct access_info *ai);
