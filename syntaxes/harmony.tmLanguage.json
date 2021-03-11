@@ -72,7 +72,7 @@
 			"comment": "Import statements used to correctly mark `import`",
 			"patterns": [{
 				"begin": "\\b(?<!\\.)(import)\\b",
-				"end": "\\;$",
+				"end": "\\;|$",
 				"beginCaptures": {
 					"1": {
 						"name": "keyword.control.import.harmony"
