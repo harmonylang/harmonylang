@@ -1,24 +1,17 @@
-import synch
-
 pool = []
-poolsize = 0
-flist = None;           # free list
-lock = synch.Lock()
+next = 0
 
 def malloc(v):
-    synch.acquire(?lock)
-    if flist == None:
-        pool[poolsize] = None
-        result = ?pool[poolsize]
-        poolsize += 1
-    else:
-        result = flist
-        flist = !result
-    !result = v
-    synch.release(?lock)
+    atomic:
+        pool[next] = v
+        result = ?pool[next]
+        next += 1
 
 def free(r):
-    synch.acquire(?lock)
-    !r = flist
-    flist = r
-    synch.release(?lock)
+    atomic:
+        let poolcopy = pool:
+            del !r
+            assert poolcopy != pool, .bad_free
+
+def leak_check():
+    assert pool == [], .alloc_leak

@@ -51,7 +51,7 @@ bool is_sequential(uint64_t seqvars, uint64_t *indices, int n){
         assert((seqs[i] & VALUE_MASK) == VALUE_ADDRESS);
         int sn;
         uint64_t *inds = value_get(seqs[i], &sn);
-        if (n >= sn && memcmp(indices, inds, sn) == 0) {
+        if (n >= sn && sn >= 0 && memcmp(indices, inds, sn) == 0) {
             return true;
         }
     }
@@ -232,8 +232,8 @@ uint64_t dict_load(uint64_t dict, uint64_t key){
     }
     else {
         vals = value_get(dict & ~VALUE_MASK, &size);
-        assert(size % 2 == 0);
         size /= sizeof(uint64_t);
+        assert(size % 2 == 0);
     }
 
     int i;
@@ -405,8 +405,8 @@ bool ind_trystore(uint64_t dict, uint64_t *indices, int n, uint64_t value, uint6
         }
         else {
             vals = value_get(dict & ~VALUE_MASK, &size);
-            assert(size % 2 == 0);
             size /= sizeof(uint64_t);
+            assert(size % 2 == 0);
         }
 
         int i;
@@ -441,12 +441,14 @@ bool ind_trystore(uint64_t dict, uint64_t *indices, int n, uint64_t value, uint6
     return false;
 }
 
-uint64_t ind_remove(uint64_t dict, uint64_t *indices, int n){
+bool ind_remove(uint64_t dict, uint64_t *indices, int n,
+                                        uint64_t *result) {
     assert((dict & VALUE_MASK) == VALUE_DICT);
     assert(n > 0);
 
     if (n == 1) {
-        return dict_remove(dict, indices[0]);
+        *result = dict_remove(dict, indices[0]);
+        return true;
     }
     else {
         uint64_t *vals;
@@ -457,8 +459,8 @@ uint64_t ind_remove(uint64_t dict, uint64_t *indices, int n){
         }
         else {
             vals = value_get(dict & ~VALUE_MASK, &size);
-            assert(size % 2 == 0);
             size /= sizeof(uint64_t);
+            assert(size % 2 == 0);
         }
 
         int i;
@@ -466,9 +468,13 @@ uint64_t ind_remove(uint64_t dict, uint64_t *indices, int n){
             if (vals[i] == indices[0]) {
                 uint64_t d = vals[i+1];
                 assert((d & VALUE_MASK) == VALUE_DICT);
-                uint64_t nd = ind_remove(d, indices + 1, n - 1);
+                uint64_t nd;
+                if (!ind_remove(d, indices + 1, n - 1, &nd)) {
+                    return false;
+                }
                 if (d == nd) {
-                    return dict;
+                    *result = dict;
+                    return true;
                 }
                 int n = size * sizeof(uint64_t);
                 uint64_t *copy = malloc(n);
@@ -476,7 +482,8 @@ uint64_t ind_remove(uint64_t dict, uint64_t *indices, int n){
                 copy[i + 1] = nd;
                 uint64_t v = value_put_dict(copy, n);
                 free(copy);
-                return v;
+                *result = v;
+                return true;
             }
             /* 
                 if (value_cmp(vals[i], key) > 0) {
@@ -484,9 +491,7 @@ uint64_t ind_remove(uint64_t dict, uint64_t *indices, int n){
                 }
             */
         }
-
-        panic("ind_remove");        // TODO.  Should this return orig dict?
-        return 0;
+        return false;
     }
 }
 
@@ -637,8 +642,14 @@ void ext_Del(const void *env, struct state *state, struct context **pctx,
                                                         struct access_info *ai){
     assert((state->vars & VALUE_MASK) == VALUE_DICT);
     uint64_t av = ctx_pop(pctx);
-    assert((av & VALUE_MASK) == VALUE_ADDRESS);
-    assert(av != VALUE_ADDRESS);
+    if ((av & VALUE_MASK) != VALUE_ADDRESS) {
+        ctx_failure(*pctx, "Del: not an address");
+        return;
+    }
+    if (av == VALUE_ADDRESS) {
+        ctx_failure(*pctx, "Del: address is None");
+        return;
+    }
 
     int size;
     uint64_t *indices = value_get(av, &size);
@@ -648,9 +659,14 @@ void ext_Del(const void *env, struct state *state, struct context **pctx,
         ai->n = size;
         ai->load = false;
     }
-    state->vars = ind_remove(state->vars, indices, size);
-
-    (*pctx)->pc++;
+    uint64_t nd;
+    if (!ind_remove(state->vars, indices, size, &nd)) {
+        ctx_failure(*pctx, "Del: no such variable");
+    }
+    else {
+        state->vars = nd;
+        (*pctx)->pc++;
+    }
 }
 
 void op_Del(const void *env, struct state *state, struct context **pctx){
@@ -808,8 +824,14 @@ void ext_Load(const void *env, struct state *state, struct context **pctx,
     uint64_t v;
     if (el == 0) {
         uint64_t av = ctx_pop(pctx);
-        assert((av & VALUE_MASK) == VALUE_ADDRESS);
-        assert(av != VALUE_ADDRESS);
+        if ((av & VALUE_MASK) != VALUE_ADDRESS) {
+            ctx_failure(*pctx, "Load: not an address");
+            return;
+        }
+        if (av == VALUE_ADDRESS) {
+            ctx_failure(*pctx, "Load: can't load from None");
+            return;
+        }
 
         int size;
         uint64_t *indices = value_get(av, &size);
@@ -1139,17 +1161,24 @@ void op_Split(const void *env, struct state *state, struct context **pctx){
         return;
     }
     if (v == VALUE_DICT || v == VALUE_SET) {
-        assert(es->count == 0);
-        (*pctx)->pc++;
+        if (es->count != 0) {
+            ctx_failure(*pctx, "Split: empty set or tuple");
+        }
+        else {
+            (*pctx)->pc++;
+        }
         return;
     }
 
     int size;
     uint64_t *vals = value_get(v, &size);
 
-    // TODO.  Should items be pushed in this order???
     if (type == VALUE_DICT) {
         size /= 2 * sizeof(uint64_t);
+        if (size != es->count) {
+            ctx_failure(*pctx, "Split: list of wrong size");
+            return;
+        }
         for (int i = 0; i < size; i++) {
             ctx_push(pctx, vals[2*i + 1]);
         }
@@ -1158,6 +1187,10 @@ void op_Split(const void *env, struct state *state, struct context **pctx){
     }
     if (type == VALUE_SET) {
         size /= sizeof(uint64_t);
+        if (size != es->count) {
+            ctx_failure(*pctx, "Split: set of wrong size");
+            return;
+        }
         for (int i = 0; i < size; i++) {
             ctx_push(pctx, vals[i]);
         }
@@ -1183,8 +1216,10 @@ void op_Stop(const void *env, struct state *state, struct context **pctx){
             ctx_failure(*pctx, "Stop: not an address");
             return;
         }
-        assert((av & VALUE_MASK) == VALUE_ADDRESS);
-        assert(av != VALUE_ADDRESS);
+        if (av == VALUE_ADDRESS) {
+            ctx_failure(*pctx, "Stop: address is None");
+            return;
+        }
 
         int size;
         uint64_t *indices = value_get(av, &size);
@@ -1230,8 +1265,10 @@ void ext_Store(const void *env, struct state *state, struct context **pctx,
             ctx_failure(*pctx, "Store: not an address");
             return;
         }
-        assert((av & VALUE_MASK) == VALUE_ADDRESS);
-        assert(av != VALUE_ADDRESS);
+        if (av == VALUE_ADDRESS) {
+            ctx_failure(*pctx, "Store: address is None");
+            return;
+        }
 
         int size;
         uint64_t *indices = value_get(av, &size);
@@ -1312,9 +1349,8 @@ void op_Trap(const void *env, struct state *state, struct context **pctx){
         ctx_failure(*pctx, "trap: not a method");
         return;
     }
-    int pc = (*pctx)->trap_pc >> VALUE_BITS;
-    assert(pc < code_len);
-    assert(strcmp(code[pc].oi->name, "Frame") == 0);
+    assert(((*pctx)->trap_pc >> VALUE_BITS) < code_len);
+    assert(strcmp(code[(*pctx)->trap_pc >> VALUE_BITS].oi->name, "Frame") == 0);
     (*pctx)->trap_arg = ctx_pop(pctx);
     (*pctx)->pc++;
 }
@@ -1769,6 +1805,8 @@ uint64_t f_intersection(struct state *state, struct context *ctx, uint64_t *args
         // get all the sets
 		assert(n > 0);
         struct val_info *vi = malloc(n * sizeof(*vi));
+		vi[0].vals = value_get(args[0], &vi[0].size); 
+		vi[0].index = 0;
         int min_size = vi[0].size;              // minimum set size
         uint64_t max_val = vi[0].vals[0];       // maximum value over the minima of all sets
         for (int i = 1; i < n; i++) {
@@ -1814,7 +1852,7 @@ uint64_t f_intersection(struct state *state, struct context *ctx, uint64_t *args
                     }
                     vi[j].index++;
                 }
-                if (vi[j].index == vi[j].size) {
+                if (vi[j].index == size) {
                     done = true;
                     break;
                 }
@@ -1825,7 +1863,7 @@ uint64_t f_intersection(struct state *state, struct context *ctx, uint64_t *args
             if (old_max == max_val) {
                 *v++ = max_val;
                 for (int j = 0; j < n; j++) {
-                    assert(vi[j].index < vi[j].size);
+                    assert(vi[j].index < vi[j].size / sizeof(uint64_t));
                     vi[j].index++;
                     int k, size = vi[j].size / sizeof(uint64_t);
                     if ((k = vi[j].index) == size) {
@@ -1877,7 +1915,7 @@ uint64_t f_intersection(struct state *state, struct context *ctx, uint64_t *args
     }
 
     // Concatenate the dictionaries
-    uint64_t *vals = malloc(total), *v;
+    uint64_t *vals = malloc(total);
     total = 0;
     for (int i = 0; i < n; i++) {
         memcpy((char *) vals + total, vi[i].vals, vi[i].size);
@@ -1969,13 +2007,13 @@ uint64_t f_len(struct state *state, struct context *ctx, uint64_t *args, int n){
 	}
     if ((e & VALUE_MASK) == VALUE_SET) {
         int size;
-        uint64_t *v = value_get(e, &size);
+        (void) value_get(e, &size);
         size /= sizeof(uint64_t);
         return (size << VALUE_BITS) | VALUE_INT;
     }
     if ((e & VALUE_MASK) == VALUE_DICT) {
         int size;
-        uint64_t *v = value_get(e, &size);
+        (void) value_get(e, &size);
         size /= 2 * sizeof(uint64_t);
         return (size << VALUE_BITS) | VALUE_INT;
     }
@@ -2225,7 +2263,7 @@ uint64_t f_plus(struct state *state, struct context *ctx, uint64_t *args, int n)
     }
 
     // Concatenate the sets
-    uint64_t *vals = malloc(total), *v;
+    uint64_t *vals = malloc(total);
     total = 0;
     for (int i = n; --i >= 0;) {
         memcpy((char *) vals + total, vi[i].vals, vi[i].size);
@@ -2466,7 +2504,6 @@ uint64_t f_shiftright(struct state *state, struct context *ctx, uint64_t *args, 
 uint64_t f_times(struct state *state, struct context *ctx, uint64_t *args, int n){
     int64_t result = 1;
     int list = -1;
-    bool haszero = false;
     for (int i = 0; i < n; i++) {
         int64_t e = args[i];
         if ((e & VALUE_MASK) == VALUE_DICT) {
@@ -2560,7 +2597,7 @@ uint64_t f_union(struct state *state, struct context *ctx, uint64_t *args, int n
         }
 
         // Concatenate the sets
-        uint64_t *vals = malloc(total), *v;
+        uint64_t *vals = malloc(total);
         total = 0;
         for (int i = 0; i < n; i++) {
             memcpy((char *) vals + total, vi[i].vals, vi[i].size);
@@ -2600,7 +2637,7 @@ uint64_t f_union(struct state *state, struct context *ctx, uint64_t *args, int n
     }
 
     // Concatenate the dictionaries
-    uint64_t *vals = malloc(total), *v;
+    uint64_t *vals = malloc(total);
     total = 0;
     for (int i = 0; i < n; i++) {
         memcpy((char *) vals + total, vi[i].vals, vi[i].size);
@@ -2665,7 +2702,7 @@ uint64_t f_xor(struct state *state, struct context *ctx, uint64_t *args, int n){
     }
 
     // Concatenate the sets
-    uint64_t *vals = malloc(total), *v;
+    uint64_t *vals = malloc(total);
     total = 0;
     for (int i = 0; i < n; i++) {
         memcpy((char *) vals + total, vi[i].vals, vi[i].size);
