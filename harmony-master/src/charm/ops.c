@@ -292,7 +292,9 @@ uint64_t dict_remove(uint64_t dict, uint64_t key){
 }
 
 bool dict_tryload(uint64_t dict, uint64_t key, uint64_t *result){
-    assert((dict & VALUE_MASK) == VALUE_DICT);
+    if ((dict & VALUE_MASK) != VALUE_DICT) {
+        return false;
+    }
 
     uint64_t *vals;
     int size;
@@ -413,7 +415,9 @@ bool ind_trystore(uint64_t dict, uint64_t *indices, int n, uint64_t value, uint6
         for (i = 0; i < size; i += 2) {
             if (vals[i] == indices[0]) {
                 uint64_t d = vals[i+1];
-                assert((d & VALUE_MASK) == VALUE_DICT);
+                if ((d & VALUE_MASK) != VALUE_DICT) {
+                    return false;
+                }
                 uint64_t nd;
                 if (!ind_trystore(d, indices + 1, n - 1, value, &nd)) {
                     return false;
@@ -467,7 +471,9 @@ bool ind_remove(uint64_t dict, uint64_t *indices, int n,
         for (i = 0; i < size; i += 2) {
             if (vals[i] == indices[0]) {
                 uint64_t d = vals[i+1];
-                assert((d & VALUE_MASK) == VALUE_DICT);
+                if ((d & VALUE_MASK) != VALUE_DICT) {
+                    return false;
+                }
                 uint64_t nd;
                 if (!ind_remove(d, indices + 1, n - 1, &nd)) {
                     return false;

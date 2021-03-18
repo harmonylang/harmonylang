@@ -178,6 +178,11 @@ def load_string(all, filename, scope, code):
     # Compile again with the real values of the methods and label constants
     ast.compile(scope, code)
 
+    for (lexeme, file, line, column) in ast.getLabels():
+        (t, v) = scope.names[lexeme]
+        (pc, file, line, columv) = v
+        assert pc != tmp, ("not all labels have been filled", lexeme, v)
+
 def load(f, filename, scope, code):
     if filename in files:
         return
@@ -3711,8 +3716,10 @@ class StatementRule(Rule):
             return (MethodAST(name, bv, stat), t)
         if lexeme == "spawn":
             (tokens, t) = self.slice(t[1:], column)
-            (method, tokens) = BasicExpressionRule().parse(tokens)
-            (arg, tokens) = BasicExpressionRule().parse(tokens)
+            (func, tokens) = NaryRule({","}).parse(tokens)
+            if not isinstance(func, ApplyAST):
+                print("spawn: expected method application", token)
+                sys.exit(1)
             if tokens == []:
                 this = None
             else:
@@ -3722,23 +3729,27 @@ class StatementRule(Rule):
                 if tokens != []:
                     print("spawn: unexpected token:", tokens[0])
                     sys.exit(1)
-            return (SpawnAST(method, arg, this), t)
+            return (SpawnAST(func.method, func.arg, this), t)
         if lexeme == "trap":
             (tokens, t) = self.slice(t[1:], column)
-            (method, tokens) = BasicExpressionRule().parse(tokens)
-            (arg, tokens) = BasicExpressionRule().parse(tokens)
+            (func, tokens) = NaryRule(set()).parse(tokens)
+            if not isinstance(func, ApplyAST):
+                print("trap: expected method application", token)
+                sys.exit(1)
             if tokens != []:
                 print("trap: unexpected token:", tokens[0])
                 sys.exit(1)
-            return (TrapAST(method, arg), t)
+            return (TrapAST(func.method, func.arg), t)
         if lexeme == "go":
             (tokens, t) = self.slice(t[1:], column)
-            (ctx, tokens) = BasicExpressionRule().parse(tokens)
-            (result, tokens) = BasicExpressionRule().parse(tokens)
+            (func, tokens) = NaryRule(set()).parse(tokens)
+            if not isinstance(func, ApplyAST):
+                print("go: expected method application", token)
+                sys.exit(1)
             if tokens != []:
                 print("go: unexpected token:", tokens[0])
                 sys.exit(1)
-            return (GoAST(ctx, result), t)
+            return (GoAST(func.method, func.arg), t)
         if lexeme == "pass":
             return (PassAST(), t[1:])
         if lexeme == "sequential":

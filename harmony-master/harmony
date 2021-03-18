@@ -86,7 +86,7 @@ $PYTHON - $@ <<'++++++'
 """
 
 version = [
-1,1, 1428
+1,1, 1446
 
 ]
 
@@ -921,6 +921,8 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
                 (*oi->op)(code[pc].env, sc, &cc);
             }
         }
+		assert(cc->pc >= 0);
+		assert(cc->pc < code_len);
 
         if (!cc->terminated && cc->failure == 0 && (infloop_detect || loopcnt > 1000)) {
             if (infloop == NULL) {
@@ -957,6 +959,8 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
             fprintf(stderr, ">>> %s\n", oi->name);
         }
         assert(cc->pc != pc);
+		assert(cc->pc >= 0);
+		assert(cc->pc < code_len);
 
         /* Peek at the next instruction.
          */
@@ -3194,7 +3198,9 @@ uint64_t dict_remove(uint64_t dict, uint64_t key){
 }
 
 bool dict_tryload(uint64_t dict, uint64_t key, uint64_t *result){
-    assert((dict & VALUE_MASK) == VALUE_DICT);
+    if ((dict & VALUE_MASK) != VALUE_DICT) {
+        return false;
+    }
 
     uint64_t *vals;
     int size;
@@ -3315,7 +3321,9 @@ bool ind_trystore(uint64_t dict, uint64_t *indices, int n, uint64_t value, uint6
         for (i = 0; i < size; i += 2) {
             if (vals[i] == indices[0]) {
                 uint64_t d = vals[i+1];
-                assert((d & VALUE_MASK) == VALUE_DICT);
+                if ((d & VALUE_MASK) != VALUE_DICT) {
+                    return false;
+                }
                 uint64_t nd;
                 if (!ind_trystore(d, indices + 1, n - 1, value, &nd)) {
                     return false;
@@ -3369,7 +3377,9 @@ bool ind_remove(uint64_t dict, uint64_t *indices, int n,
         for (i = 0; i < size; i += 2) {
             if (vals[i] == indices[0]) {
                 uint64_t d = vals[i+1];
-                assert((d & VALUE_MASK) == VALUE_DICT);
+                if ((d & VALUE_MASK) != VALUE_DICT) {
+                    return false;
+                }
                 uint64_t nd;
                 if (!ind_remove(d, indices + 1, n - 1, &nd)) {
                     return false;
@@ -5917,6 +5927,7 @@ uint64_t value_put_address(void *p, int size){
 }
 
 uint64_t value_put_context(struct context *ctx){
+	assert(ctx->pc >= 0);
     int size = sizeof(*ctx) + (ctx->sp * sizeof(uint64_t));
     void *q = dict_find(context_map, ctx, size);
     return (uint64_t) q | VALUE_CONTEXT;
@@ -7883,6 +7894,11 @@ def load_string(all, filename, scope, code):
 
     # Compile again with the real values of the methods and label constants
     ast.compile(scope, code)
+
+    for (lexeme, file, line, column) in ast.getLabels():
+        (t, v) = scope.names[lexeme]
+        (pc, file, line, columv) = v
+        assert pc != tmp, ("not all labels have been filled", lexeme, v)
 
 def load(f, filename, scope, code):
     if filename in files:
@@ -11417,8 +11433,10 @@ class StatementRule(Rule):
             return (MethodAST(name, bv, stat), t)
         if lexeme == "spawn":
             (tokens, t) = self.slice(t[1:], column)
-            (method, tokens) = BasicExpressionRule().parse(tokens)
-            (arg, tokens) = BasicExpressionRule().parse(tokens)
+            (func, tokens) = NaryRule({","}).parse(tokens)
+            if not isinstance(func, ApplyAST):
+                print("spawn: expected method application", token)
+                sys.exit(1)
             if tokens == []:
                 this = None
             else:
@@ -11428,23 +11446,27 @@ class StatementRule(Rule):
                 if tokens != []:
                     print("spawn: unexpected token:", tokens[0])
                     sys.exit(1)
-            return (SpawnAST(method, arg, this), t)
+            return (SpawnAST(func.method, func.arg, this), t)
         if lexeme == "trap":
             (tokens, t) = self.slice(t[1:], column)
-            (method, tokens) = BasicExpressionRule().parse(tokens)
-            (arg, tokens) = BasicExpressionRule().parse(tokens)
+            (func, tokens) = NaryRule(set()).parse(tokens)
+            if not isinstance(func, ApplyAST):
+                print("trap: expected method application", token)
+                sys.exit(1)
             if tokens != []:
                 print("trap: unexpected token:", tokens[0])
                 sys.exit(1)
-            return (TrapAST(method, arg), t)
+            return (TrapAST(func.method, func.arg), t)
         if lexeme == "go":
             (tokens, t) = self.slice(t[1:], column)
-            (ctx, tokens) = BasicExpressionRule().parse(tokens)
-            (result, tokens) = BasicExpressionRule().parse(tokens)
+            (func, tokens) = NaryRule(set()).parse(tokens)
+            if not isinstance(func, ApplyAST):
+                print("go: expected method application", token)
+                sys.exit(1)
             if tokens != []:
                 print("go: unexpected token:", tokens[0])
                 sys.exit(1)
-            return (GoAST(ctx, result), t)
+            return (GoAST(func.method, func.arg), t)
         if lexeme == "pass":
             return (PassAST(), t[1:])
         if lexeme == "sequential":
