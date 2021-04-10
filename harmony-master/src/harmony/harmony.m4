@@ -147,6 +147,9 @@ def doImport(scope, code, module):
 def load_string(all, filename, scope, code):
     files[filename] = all.split("\n")
     tokens = lexer(all, filename)
+    if tokens == []:
+        print("Empty file:", filename)
+        sys.exit(1)
 
     try:
         (ast, rem) = StatListRule(-1).parse(tokens)
@@ -309,9 +312,13 @@ def lexer(s, file):
     column = 1
     cont = 1
     s = s.replace('\\r', '')        # MS-DOS...
+    indentChars = set()
+    indent = True
     while s != "":
         # see if it's a blank
         if s[0] in { " ", "\t" }:
+            if indent:
+                indentChars.add(s[0])
             s = s[1:]
             column += 1
             continue
@@ -331,7 +338,10 @@ def lexer(s, file):
             line += cont
             cont = 1
             column = 1
+            indent = True
             continue
+
+        indent = False
 
         # skip over line comments
         if s.startswith("#"):
@@ -469,6 +479,11 @@ def lexer(s, file):
         result += [ (s[0], file, line, column) ]
         s = s[1:]
         column += 1
+
+    if len(indentChars) > 1:
+        print("WARNING: do not mix tabs in spaces for indentation")
+        print("It is likely to lead to incorrect parsing and code generation")
+
     return result
 
 def strValue(v):
@@ -2049,22 +2064,10 @@ class AST:
                 code.append(NaryOp(("DictAdd", file, line, column), 3))
             elif ctype == "list":
                 code.append(NaryOp(("DictAdd", file, line, column), 3))
-                # TODO.  Turn these four instructions into 1 instruction
                 code.append(IncVarOp(N))
-                if False:
-                    code.append(LoadVarOp(N))
-                    code.append(PushOp((1, file, line, column)))
-                    code.append(NaryOp(("+", file, line, column), 2))
-                    code.append(StoreVarOp(N))
             elif ctype == "bag":
                 code.append(NaryOp(("BagAdd", file, line, column), 2))
-                # TODO.  Ditto
                 code.append(IncVarOp(N))
-                if False:
-                    code.append(LoadVarOp(N))
-                    code.append(PushOp((1, file, line, column)))
-                    code.append(NaryOp(("+", file, line, column), 2))
-                    code.append(StoreVarOp(N))
             return
 
         (type, rest) = iter[0]
@@ -2204,7 +2207,7 @@ class NameAST(AST):
 
     def isShared(self, scope):
         (t, v) = scope.find(self.name)
-        assert t in { "local", "global", "module" }
+        assert t in { "constant", "local", "global", "module" }
         return t != "local"
 
     def ph1(self, scope, code):
@@ -2212,8 +2215,10 @@ class NameAST(AST):
         if t == "local":
             (lexeme, file, line, column) = v
             code.append(PushOp((AddressValue([lexeme]), file, line, column)))
+        elif t == "constant":
+            print("constant cannot be an lvalue:", self.name)
+            sys.exit(1)
         else:
-            assert t in { "global", "module" }
             (lexeme, file, line, column) = self.name
             code.append(PushOp((AddressValue(scope.prefix + [lexeme]), file, line, column)))
 
@@ -2494,10 +2499,37 @@ class ApplyAST(AST):
     def __repr__(self):
         return "ApplyAST(" + str(self.method) + ", " + str(self.arg) + ")"
 
-    def compile(self, scope, code):
-        # See if it's of the form "module.constant":
+    def varCompile(self, scope, code):
         if isinstance(self.method, NameAST):
             (t, v) = scope.lookup(self.method.name)
+            if t == "global":
+                self.method.ph1(scope, code)
+                self.arg.compile(scope, code)
+                code.append(AddressOp())
+                return True
+            else:
+                return False
+
+        if isinstance(self.method, PointerAST):
+            self.method.expr.compile(scope, code)
+            self.arg.compile(scope, code)
+            code.append(AddressOp())
+            return True
+
+        if isinstance(self.method, ApplyAST):
+            if self.method.varCompile(scope, code):
+                self.arg.compile(scope, code)
+                code.append(AddressOp())
+                return True;
+            else:
+                return False
+
+        return False
+
+    def compile(self, scope, code):
+        if isinstance(self.method, NameAST):
+            (t, v) = scope.lookup(self.method.name)
+            # See if it's of the form "module.constant":
             if t == "module" and isinstance(self.arg, ConstantAST) and isinstance(self.arg.const[0], str):
                 (t2, v2) = v.lookup(self.arg.const)
                 if t2 == "constant":
@@ -2512,10 +2544,7 @@ class ApplyAST(AST):
                 return
 
         # Decrease chances of data race
-        if isinstance(self.method, PointerAST):
-            self.method.expr.compile(scope, code)
-            self.arg.compile(scope, code)
-            code.append(AddressOp())
+        if self.varCompile(scope, code):
             code.append(LoadOp(None, self.token, None))
             return
 
@@ -2529,6 +2558,14 @@ class ApplyAST(AST):
         return self.method.isShared(scope)
 
     def ph1(self, scope, code):
+        # See if it's of the form "module.constant":
+        if isinstance(self.method, NameAST):
+            (t, v) = scope.lookup(self.method.name)
+            if t == "module" and isinstance(self.arg, ConstantAST) and isinstance(self.arg.const[0], str):
+                (t2, v2) = v.lookup(self.arg.const)
+                if t2 == "constant":
+                    print("Cannot assign to constant", self.method.name, self.arg.const)
+                    sys.exit(1)
         self.method.ph1(scope, code)
         self.arg.compile(scope, code)
         code.append(AddressOp())
@@ -2630,7 +2667,7 @@ class NaryRule(Rule):
                 args.append(ast3)
                 if t != []:
                     (lexeme, file, line, column) = t[0]
-            elif (op[0] == lexeme) and (lexeme in { "+", "|", "&", "^", "and", "or" }):
+            elif (op[0] == lexeme) and (lexeme in { "+", "*", "|", "&", "^", "and", "or" }):
                 while lexeme == op[0]:
                     (ast3, t) = ExpressionRule().parse(t[1:])
                     if ast3 == False:
@@ -2932,7 +2969,15 @@ class AssignmentAST(AST):
         shared = lv.isShared(scope)
         if isinstance(lv, NameAST):
             # handled separately for assembly code readability
-            ld = LoadOp(lv.name, lv.name, scope.prefix) if shared else LoadVarOp(lv.name)
+            (t, v) = scope.find(lv.name)
+            if t == "module":
+                print("Cannot operate on module", lv.name)
+                sys.exit(1)
+            if t == "constant":
+                print("Cannot operate on constant", lv.name)
+                sys.exit(1)
+            assert t in { "local", "global" }
+            ld = LoadOp(lv.name, lv.name, scope.prefix) if t == "global" else LoadVarOp(lv.name)
         else:
             lv.ph1(scope, code)
             code.append(DupOp())                  # duplicate the address
@@ -2973,8 +3018,15 @@ class AssignmentAST(AST):
         for lvs in reversed(self.lhslist):
             skip -= 1
             if isinstance(lvs, NameAST):
-                shared = lvs.isShared(scope)
-                st = StoreOp(lvs.name, lvs.name, scope.prefix) if shared else StoreVarOp(lvs.name)
+                (t, v) = scope.find(lvs.name)
+                if t == "module":
+                    print("Cannot assign to module", lvs.name)
+                    sys.exit(1)
+                if t == "constant":
+                    print("Cannot assign to constant", lvs.name)
+                    sys.exit(1)
+                assert t in { "local", "global" }, (t, lvs.name)
+                st = StoreOp(lvs.name, lvs.name, scope.prefix) if t == "global" else StoreVarOp(lvs.name)
                 code.append(st)
             else:
                 lvs.ph2(scope, code, skip)
@@ -3025,7 +3077,28 @@ class AddressAST(AST):
     def isConstant(self, scope):
         return self.lv.isConstant(scope)
 
+    def check(self, lv, scope):
+        if isinstance(lv, NameAST):
+            (t, v) = scope.lookup(lv.name)
+            if t == "local":
+                print("can't take address of local variable", lv)
+                sys.exit(1)
+            if t == "constant":
+                print("can't take address of constant", lv)
+                sys.exit(1)
+            if t == "module":
+                print("can't take address of imported", lv)
+                sys.exit(1)
+        elif isinstance(lv, ApplyAST):
+            self.check(lv.method, scope)
+        elif isinstance(lv, PointerAST):
+            pass
+        else:
+            print("can't take address of", lv)
+            sys.exit(1)
+
     def gencode(self, scope, code):
+        self.check(self.lv, scope)
         self.lv.ph1(scope, code)
 
 class PassAST(AST):
@@ -3241,15 +3314,25 @@ class MethodAST(AST):
         scope.names[lexeme] = ("constant", (PcValue(pc + 1), file, line, column))
 
         ns = Scope(scope)
+        tmp = PcValue(-1)
+        for (lexeme, file, line, column) in self.stat.getLabels():
+            ns.names[lexeme] = ("constant", (tmp, file, line, column))
         self.assign(ns, self.args)
         ns.names["result"] = ("local", ("result", file, line, column))
+        before = len(code)
+        self.stat.compile(ns, code)
+        del code[before:]
         self.stat.compile(ns, code)
         code.append(ReturnOp())
-
         code[pc] = JumpOp(len(code))
 
+        # promote global variables
+        for name, (t, v) in ns.names.items():
+            if t == "global" and name not in scope.names:
+                scope.names[name] = (t, v)
+
     def getLabels(self):
-        return { self.name } | self.stat.getLabels()
+        return { self.name }
 
     def getImports(self):
         return self.stat.getImports()
@@ -3376,6 +3459,10 @@ class FromAST(AST):
                     scope.names[item] = (t, v)
         else:
             for (lexeme, file, line, column) in self.items:
+                if lexeme not in names:
+                    print("%s line %d: can't import %s from module %s"%(
+                        file, line, lexeme, self.module[0]))
+                    sys.exit(1)
                 (t, v) = names[lexeme]
                 assert t == "constant", (lexeme, t, v)
                 scope.names[lexeme] = (t, v)
@@ -3399,8 +3486,8 @@ class LabelStatAST(AST):
             self.ast.compile(scope, code)
         else:
             root = scope
-            while root.parent != None:
-                root = root.parent
+            # while root.parent != None:
+            #     root = root.parent
             for (lexeme, file, line, column) in self.labels:
                 root.names[lexeme] = \
                     ("constant", (PcValue(len(code)), file, line, column))
@@ -4306,7 +4393,7 @@ class Scope:
                 return tv
             ancestor = ancestor.parent
         # print("Warning: unknown name:", name, " (assuming global variable)")
-        self.names[lexeme] = ("global", lexeme)
+        self.names[lexeme] = ("global", name)
         return ("global", lexeme)
 
     def find(self, name):
@@ -4314,7 +4401,7 @@ class Scope:
         tv = self.names.get(lexeme)
         if tv != None:
             return tv
-        self.names[lexeme] = ("global", lexeme)
+        self.names[lexeme] = ("global", name)
         # print("Warning: unknown name:", name, " (find)")
         return ("global", lexeme)
 
@@ -4523,6 +4610,9 @@ def onestep(node, ctx, choice, interrupt, nodes, visited, todo):
 
 def parseConstant(c, v):
     tokens = lexer(v, "<constant argument>")
+    if tokens == []:
+        print("Empty constant")
+        sys.exit(1)
     try:
         (ast, rem) = ExpressionRule().parse(tokens)
     except IndexError:
@@ -4569,7 +4659,7 @@ def doCompile(filenames, consts, mods):
                 with open(fname) as fd:
                     load(fd, fname, scope, code)
             except IOError:
-                print("Can't open", fname, file=sys.stderr)
+                print("harmony: can't open", fname, file=sys.stderr)
                 sys.exit(1)
     code.append(ReturnOp())     # to terminate "__init__" process
     optimize(code)
@@ -5361,13 +5451,13 @@ def dumpCode(printCode, code, scope, f=sys.stdout):
                 print(file=f)
             else:
                 print(",", file=f)
-            print("    \"%d\": { \"file\": \"%s\", \"line\": \"%d\" }"%(pc, file, line), file=f, end="")
+            print("    \"%d\": { \"file\": \"%s\", \"line\": \"%d\", \"code\": %s }"%(pc, file, line, json.dumps(files[file][line-1])), file=f, end="")
         print(file=f)
         print("  }", file=f);
         print("}", file=f);
 
 config = {
-    "infile": "charm.c",
+    "infile": "$$home$$/.charm.c",
     "outfile": "$$home$$/.charm.exe",
     "compile": "gcc -O3 -std=c99 $$infile$$ -m64 -o $$outfile$$"
 }
@@ -5396,10 +5486,11 @@ def main():
     charmflag = True
     fulldump = False
     testflag = False
+    suppressOutput = False
+    charmoptions = []
     try:
-        opts, args = getopt.getopt(sys.argv[1:],
-                        "Aabc:dfhjm:stv",
-                        ["const=", "help", "module=", "version"])
+        opts, args = getopt.getopt(sys.argv[1:], "Aabc:dfhjm:stv",
+                ["const=", "cf=", "help", "module=", "suppress", "version"])
     except getopt.GetoptError as err:
         print(str(err))
         usage()
@@ -5407,6 +5498,8 @@ def main():
         if o == "-a":
             printCode = "verbose"
             charmflag = False
+        elif o == "--cf":
+            charmoptions += [a]
         elif o == "-A":
             printCode = "terse"
             charmflag = False
@@ -5429,6 +5522,8 @@ def main():
             testflag = True
         elif o in { "-h", "--help" }:
             usage()
+        elif o == "--suppress":
+            suppressOutput = True
         elif o in { "-v", "--version" }:
             print("Version", ".".join([str(v) for v in version]))
             sys.exit(0)
@@ -5445,6 +5540,7 @@ def main():
             with open(conffile) as f:
                 config = json.load(f)
         else:
+            config["infile"] = "%s/.charm.c"%pathlib.Path.home()
             config["outfile"] = "%s/.charm.exe"%pathlib.Path.home()
             config["compile"] = "gcc -O3 -std=c99 %s -m64 -o %s"%(config["infile"], config["outfile"])
         if testflag:
@@ -5480,7 +5576,7 @@ def main():
             if r != 0:
                 print("can't create charm model checker")
                 sys.exit(r);
-        r = os.system("%s %s"%(config["outfile"], tmpfile));
+        r = os.system("%s %s %s"%(config["outfile"], " ".join(charmoptions), tmpfile));
         if not testflag:
             os.remove(tmpfile)
         if r != 0:
@@ -5490,7 +5586,8 @@ def main():
         if not b.run():
             gh = GenHTML()
             gh.run()
-            print("open file://" + os.getcwd() + "/harmony.html for more information")
+            if not suppressOutput:
+                print("open file://" + os.getcwd() + "/harmony.html for more information")
         sys.exit(0);
 
     if printCode == None:

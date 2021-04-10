@@ -37,6 +37,7 @@ struct var_tree {
     } u;
 };
 
+static uint64_t this;
 static struct dict *ops_map, *f_map;
 extern struct code *code;
 
@@ -83,11 +84,17 @@ uint64_t var_match_rec(struct context *ctx, struct var_tree *vt,
         return dict_store(vars, vt->u.name, arg);
     case VT_TUPLE:
         if ((arg & VALUE_MASK) != VALUE_DICT) {
-            return ctx_failure(ctx, "match: expected a tuple");
+            if (vt->u.tuple.n == 0) {
+                return ctx_failure(ctx, "match: expected ()");
+            }
+            else {
+                return ctx_failure(ctx, "match: expected a tuple");
+            }
         }
         if (arg == VALUE_DICT) {
             if (vt->u.tuple.n != 0) {
-                return ctx_failure(ctx, "match: expected a non-empty tuple");
+                return ctx_failure(ctx, "match: expected a %d-tuple",
+                                                vt->u.tuple.n);
             }
             return vars;
         }
@@ -505,7 +512,9 @@ void op_Address(const void *env, struct state *state, struct context **pctx){
     uint64_t index = ctx_pop(pctx);
     uint64_t av = ctx_pop(pctx);
     if ((av & VALUE_MASK) != VALUE_ADDRESS) {
-        ctx_failure(*pctx, "not an address");
+        char *p = value_string(av);
+        ctx_failure(*pctx, "%s: not an address", p);
+        free(p);
         return;
     }
     if (av == VALUE_ADDRESS) {
@@ -554,7 +563,11 @@ void op_Apply(const void *env, struct state *state, struct context **pctx){
         (*pctx)->pc = method >> VALUE_BITS;
         return;
     default:
-        ctx_failure(*pctx, "Can only apply to methods or dictionaries");
+        {
+            char *x = value_string(method);
+            ctx_failure(*pctx, "Can only apply to methods or dictionaries, not to: %s", x);
+            free(x);
+        }
     }
 }
 
@@ -647,9 +660,17 @@ void op_Cut(const void *env, struct state *state, struct context **pctx){
 void ext_Del(const void *env, struct state *state, struct context **pctx,
                                                         struct access_info *ai){
     assert((state->vars & VALUE_MASK) == VALUE_DICT);
+
+    if ((*pctx)->readonly > 0) {
+        ctx_failure(*pctx, "Can't update state in assert or invariant");
+        return;
+    }
+
     uint64_t av = ctx_pop(pctx);
     if ((av & VALUE_MASK) != VALUE_ADDRESS) {
-        ctx_failure(*pctx, "Del: not an address");
+        char *p = value_string(av);
+        ctx_failure(*pctx, "Del %s: not an address", p);
+        free(p);
         return;
     }
     if (av == VALUE_ADDRESS) {
@@ -711,15 +732,17 @@ void op_Frame(const void *env, struct state *state, struct context **pctx){
     ctx_push(pctx, arg);
 
     uint64_t oldvars = (*pctx)->vars;
+    uint64_t thisval = dict_load(oldvars, this);
 
     // try to match against parameters
-    (*pctx)->vars = dict_store(VALUE_DICT, result, VALUE_DICT);
+    (*pctx)->vars = dict_store(dict_store(VALUE_DICT, this, thisval),
+				result, VALUE_DICT);
     var_match(*pctx, ef->args, arg);
     if ((*pctx)->failure != 0) {
         return;
     }
  
-    ctx_push(pctx, oldvars);
+    ctx_push(pctx, dict_remove(oldvars, this));
     ctx_push(pctx, ((*pctx)->fp << VALUE_BITS) | VALUE_INT);
 
     struct context *ctx = *pctx;
@@ -831,7 +854,9 @@ void ext_Load(const void *env, struct state *state, struct context **pctx,
     if (el == 0) {
         uint64_t av = ctx_pop(pctx);
         if ((av & VALUE_MASK) != VALUE_ADDRESS) {
-            ctx_failure(*pctx, "Load: not an address");
+            char *p = value_string(av);
+            ctx_failure(*pctx, "Load %s: not an address", p);
+            free(p);
             return;
         }
         if (av == VALUE_ADDRESS) {
@@ -864,7 +889,7 @@ void ext_Load(const void *env, struct state *state, struct context **pctx,
         }
         if (!ind_tryload(state->vars, el->indices, el->n, &v)) {
             char *x = indices_string(el->indices, el->n);
-            ctx_failure(*pctx, "Load: unknown variable %s", x);
+            ctx_failure(*pctx, "Load: unknown variable %s", x+1);
             free(x);
             return;
         }
@@ -986,8 +1011,10 @@ void op_Return(const void *env, struct state *state, struct context **pctx){
         }
         assert((fp & VALUE_MASK) == VALUE_INT);
         (*pctx)->fp = fp >> VALUE_BITS;
-        (*pctx)->vars = ctx_pop(pctx);
-        assert(((*pctx)->vars & VALUE_MASK) == VALUE_DICT);
+        uint64_t thisval = dict_load((*pctx)->vars, this);
+        uint64_t oldvars = ctx_pop(pctx);
+        assert((oldvars & VALUE_MASK) == VALUE_DICT);
+        (*pctx)->vars = dict_store(oldvars, this, thisval);
         (void) ctx_pop(pctx);   // argument saved for stack trace
         if ((*pctx)->sp == 0) {     // __init__
             (*pctx)->terminated = true;
@@ -1030,7 +1057,9 @@ void op_Return(const void *env, struct state *state, struct context **pctx){
 void op_Sequential(const void *env, struct state *state, struct context **pctx){
     uint64_t addr = ctx_pop(pctx);
     if ((addr & VALUE_MASK) != VALUE_ADDRESS) {
-        ctx_failure(*pctx, "Sequential: not an address");
+        char *p = value_string(addr);
+        ctx_failure(*pctx, "Sequential %s: not an address", p);
+        free(p);
         return;
     }
 
@@ -1127,20 +1156,18 @@ void op_Spawn(const void *env, struct state *state, struct context **pctx){
     assert(pc < code_len);
     assert(strcmp(code[pc].oi->name, "Frame") == 0);
     uint64_t arg = ctx_pop(pctx);
-    uint64_t this = ctx_pop(pctx);
-    if (false) {
-        printf("SPAWN %"PRIx64" %"PRIx64" %"PRIx64"\n", pc, arg, this);
-    }
+    uint64_t thisval = ctx_pop(pctx);
 
     struct context *ctx = new_alloc(struct context);
 
     const struct env_Frame *ef = code[pc].env;
     ctx->name = ef->name;
     ctx->arg = arg;
-    ctx->this = this;
+    ctx->this = thisval;
     ctx->entry = (pc << VALUE_BITS) | VALUE_PC;
     ctx->pc = pc;
     ctx->vars = VALUE_DICT;
+    ctx->vars = dict_store(VALUE_DICT, this, thisval);
     ctx->interruptlevel = VALUE_FALSE;
     ctx_push(&ctx, (CALLTYPE_PROCESS << VALUE_BITS) | VALUE_INT);
     ctx_push(&ctx, arg);
@@ -1219,7 +1246,9 @@ void op_Stop(const void *env, struct state *state, struct context **pctx){
     if (es == 0) {
         uint64_t av = ctx_pop(pctx);
         if ((av & VALUE_MASK) != VALUE_ADDRESS) {
-            ctx_failure(*pctx, "Stop: not an address");
+            char *p = value_string(av);
+            ctx_failure(*pctx, "Stop %s: not an address", p);
+            free(p);
             return;
         }
         if (av == VALUE_ADDRESS) {
@@ -1236,7 +1265,9 @@ void op_Stop(const void *env, struct state *state, struct context **pctx){
         uint64_t v = value_put_context(*pctx);
 
         if (!ind_trystore(state->vars, indices, size, v, &state->vars)) {
-            ctx_failure(*pctx, "Store: bad address");
+            char *x = indices_string(indices, size);
+            ctx_failure(*pctx, "Stop: bad address: %s", x);
+            free(x);
             return;
         }
     }
@@ -1259,7 +1290,7 @@ void ext_Store(const void *env, struct state *state, struct context **pctx,
     assert((state->vars & VALUE_MASK) == VALUE_DICT);
 
     if ((*pctx)->readonly > 0) {
-        ctx_failure(*pctx, "Store: in read-only mode");
+        ctx_failure(*pctx, "Can't update state in assert or invariant (including acquiring locks)");
         return;
     }
 
@@ -1268,7 +1299,9 @@ void ext_Store(const void *env, struct state *state, struct context **pctx,
     if (es == 0) {
         uint64_t av = ctx_pop(pctx);
         if ((av & VALUE_MASK) != VALUE_ADDRESS) {
-            ctx_failure(*pctx, "Store: not an address");
+            char *p = value_string(av);
+            ctx_failure(*pctx, "Store %s: not an address", p);
+            free(p);
             return;
         }
         if (av == VALUE_ADDRESS) {
@@ -1297,7 +1330,9 @@ void ext_Store(const void *env, struct state *state, struct context **pctx,
         }
 
         if (!ind_trystore(state->vars, indices, size, v, &state->vars)) {
-            ctx_failure(*pctx, "Store: bad address");
+            char *x = indices_string(indices, size);
+            ctx_failure(*pctx, "Store: bad address: %s", x);
+            free(x);
             return;
         }
     }
@@ -1334,7 +1369,9 @@ void op_StoreVar(const void *env, struct state *state, struct context **pctx){
         size /= sizeof(uint64_t);
 
         if (!ind_trystore((*pctx)->vars, indices, size, v, &(*pctx)->vars)) {
-            ctx_failure(*pctx, "StoreVar: bad address");
+            char *x = indices_string(indices, size);
+            ctx_failure(*pctx, "StoreVar: bad address: %s", x);
+            free(x);
             return;
         }
         (*pctx)->pc++;
@@ -2249,7 +2286,7 @@ uint64_t f_plus(struct state *state, struct context *ctx, uint64_t *args, int n)
     int total = 0;
     for (int i = 0; i < n; i++) {
         if ((args[i] & VALUE_MASK) != VALUE_DICT) {
-            ctx_failure(ctx, "+: applied to mix of dictionaries and other values");
+            ctx_failure(ctx, "+: applied to mix of value types");
             free(vi);
             return 0;
         }
@@ -2690,7 +2727,7 @@ uint64_t f_xor(struct state *state, struct context *ctx, uint64_t *args, int n){
     int total = 0;
     for (int i = 0; i < n; i++) {
         if ((args[i] & VALUE_MASK) != VALUE_SET) {
-            return ctx_failure(ctx, "'^' applied to mix of sets and other types");
+            return ctx_failure(ctx, "'^' applied to mix of value types");
         }
         if (args[i] == VALUE_SET) {
             vi[i].vals = NULL;
@@ -2832,4 +2869,5 @@ void ops_init(){
         void **p = dict_insert(f_map, fi->name, strlen(fi->name));
         *p = fi;
     }
+    this = value_put_atom("this", 4);
 }
