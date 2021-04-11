@@ -168,18 +168,18 @@ const showMessage = (main: string, subHeader?: string, subtext?: string) => {
 };
 
 function onReceivingIntermediateJSON(results: IntermediateJson) {
-    if (
-        results != null &&
-    results.issue != null &&
-    results.issue != 'No issues'
-    ) {
-    CharmonyPanelController_v2.currentPanel?.updateResults(results);
+    if (results != null && results.issue != null && results.issue != 'No issues') {
+        CharmonyPanelController_v2.currentPanel?.updateResults(results);
     } else {
-    CharmonyPanelController_v2.currentPanel?.updateMessage('No Errors Found.');
+        CharmonyPanelController_v2.currentPanel?.updateMessage('No Errors Found.');
     }
 }
 
-function runHarmonyServer(context: vscode.ExtensionContext, fullFileName: string, flags = '') {
+function runHarmonyServer(
+    context: vscode.ExtensionContext,
+    fullFileName: string,
+    flags = ''
+) {
     CharmonyPanelController_v2.currentPanel?.dispose();
     CharmonyPanelController_v2.createOrShow(context.extensionUri);
     const workspace = vscode.workspace.workspaceFolders;
@@ -203,87 +203,62 @@ function runHarmonyServer(context: vscode.ExtensionContext, fullFileName: string
 }
 
 export function runHarmony(
-    context: vscode.ExtensionContext,
-    fullFileName: string,
+    context: vscode.ExtensionContext, 
+    fullFileName: string, 
     flags = ''
 ) {
-  CharmonyPanelController_v2.currentPanel?.dispose();
-  CharmonyPanelController_v2.createOrShow(context.extensionUri);
-  checkIfPython3Exists(
-      () => {
-          hlConsole.appendLine('Check for Python3');
-          checkIfCompilerForCExists(
-              () => {
-                  hlConsole.appendLine('Check for CC');
-                  const osAlias = process.platform === 'win32' ? 'doskey' : 'alias';
-                  let charmonyCompileCommand = '';
-                  if (pythonPath != 'python3') {
-                      charmonyCompileCommand += `${osAlias} python3=${pythonPath} && `;
-                  }
-                  if (ccPath != 'cc') {
-                      charmonyCompileCommand += `${osAlias} cc=${ccPath} && `;
-                  }
-                  charmonyCompileCommand += `${CHARMONY_SCRIPT_PATH} ${flags} ${fullFileName}`;
-                  processManager.startCommand(
-                      charmonyCompileCommand,
-                      {
-                          cwd: CHARMONY_COMPILER_DIR,
-                      },
-                      (error, stdout, stderr) => {
-                          if (processManager.processesAreKilled) return;
-              CharmonyPanelController_v2.currentPanel?.startLoading();
-              hlConsole.clear();
-              if (stderr) {
-                  hlConsole.appendLine(stderr);
-                CharmonyPanelController_v2.currentPanel?.updateMessage(
-                  'See Output Panel for details.'
-                );
-                hlConsole.show();
-                return;
-              }
-              hlConsole.appendLine(stdout);
-              if (error) {
-                  return CharmonyPanelController_v2.currentPanel?.updateMessage(
-                  stdout
-                );
-              }
-              try {
-                  const results: IntermediateJson = JSON.parse(
-                      fs.readFileSync(CHARMONY_JSON_OUTPUT, {
-                          encoding: 'utf-8',
-                      })
-                  );
-                  onReceivingIntermediateJSON(results);
-                  GENERATED_FILES.forEach((f) => rimraf.sync(f));
-              } catch (error) {
-                  hlConsole.appendLine(error);
-                  hlConsole.show();
-                CharmonyPanelController_v2.currentPanel?.updateMessage(
-                  'Could not create analysis file.'
-                );
-              }
-                      }
-                  );
-              },
-              () => {
-                  showVscodeMessage(
-                      true,
-                      'Missing dependency',
-                      'Target for cc C-compiler cannot be found. Attempting to run server compiler',
-                      'The model checker requires a C-compiler. Please check you have a C-compiler before continuing.'
-                  );
-                  runHarmonyServer(context, fullFileName);
-              }
-          );
-      },
-      () => {
-          showVscodeMessage(
-              true,
-              'Missing dependency',
-              'Target for python3 cannot be found. Attempting to run server compiler',
-              'The model checker requires Python3. Please install Python3 and to run compiler locally.'
-          );
-          runHarmonyServer(context, fullFileName);
-      }
-  );
+    CharmonyPanelController_v2.currentPanel?.dispose();
+    CharmonyPanelController_v2.createOrShow(context.extensionUri);
+    checkIfPython3Exists(() => {
+        hlConsole.appendLine('Check for Python3');
+        checkIfCompilerForCExists(() => {
+            hlConsole.appendLine('Check for CC');
+            const osAlias = (process.platform === 'win32') ? 'doskey' : 'alias';
+            let charmonyCompileCommand = '';
+            if (pythonPath != 'python3') { charmonyCompileCommand += `${osAlias} python3=${pythonPath} && `; }
+            if (ccPath != 'cc') { charmonyCompileCommand += `${osAlias} cc=${ccPath} && `; }
+            charmonyCompileCommand += `${CHARMONY_SCRIPT_PATH} ${flags} ${fullFileName}`;
+            processManager.startCommand(charmonyCompileCommand, {
+                cwd: CHARMONY_COMPILER_DIR
+            }, (error, stdout, stderr) => {
+                if (processManager.processesAreKilled) return;
+                CharmonyPanelController_v2.currentPanel?.startLoading();
+                hlConsole.clear();
+                if (stderr) {
+                    hlConsole.appendLine(stderr);
+                    CharmonyPanelController_v2.currentPanel?.updateMessage('See Output Panel for details.');
+                    hlConsole.show();
+                    return;
+                }
+                hlConsole.appendLine(stdout);
+                if (error) {
+                    return CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
+                }
+                try {
+                    const results: IntermediateJson = JSON.parse(fs.readFileSync(CHARMONY_JSON_OUTPUT, {
+                        encoding: 'utf-8'
+                    }));
+                    onReceivingIntermediateJSON(results);
+                    GENERATED_FILES.forEach(f => rimraf.sync(f));
+                } catch (error) {
+                    hlConsole.appendLine(error);
+                    hlConsole.show();
+                    CharmonyPanelController_v2.currentPanel?.updateMessage('Could not create analysis file.');
+                }
+            });
+        }, () => {
+            showVscodeMessage(true,
+                'Missing dependency',
+                'Target for cc C-compiler cannot be found. Attempting to run server compiler',
+                'The model checker requires a C-compiler. Please check you have a C-compiler before continuing.'
+            );
+            runHarmonyServer(context, fullFileName, flags);
+        });
+    }, () => {
+        showVscodeMessage(true,
+            'Missing dependency',
+            'Target for python3 cannot be found. Attempting to run server compiler',
+            'The model checker requires Python3. Please install Python3 and to run compiler locally.');
+        runHarmonyServer(context, fullFileName, flags);
+    });
 }
