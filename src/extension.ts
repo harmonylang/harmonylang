@@ -57,8 +57,8 @@ export const activate = (context: vscode.ExtensionContext) => {
             }
             runHarmonyServer(context, filename);
         } catch (e) {
-            console.error('Run Harmony failed:', e);
-            vscode.window.showInformationMessage('Run Harmony failed. See the console log in the DevTools.');
+            console.error('(Server) Run Harmony failed:', e);
+            vscode.window.showInformationMessage('(Server) Run Harmony failed. See the console log in the DevTools.');
         }
     });
 
