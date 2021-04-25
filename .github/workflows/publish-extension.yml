@@ -1,5 +1,10 @@
-name: Publish Extension to VSCode
-on: [push]
+name: Publish Extension to VSCode Marketplace
+on:
+  push:
+    branches:
+      - master
+
+
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
@@ -18,3 +23,8 @@ jobs:
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
+      - name: Publish extension
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          vsce publish minor
