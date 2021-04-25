@@ -3,10 +3,10 @@ import {PathLike} from 'fs';
 import * as path from 'path';
 import {parse} from 'node-html-parser';
 import * as createHtmlElement from 'create-html-element';
-import HTMLElement from "node-html-parser/dist/nodes/html";
-import NodeType from "node-html-parser/dist/nodes/type";
-import Node from "node-html-parser/dist/nodes/node";
-import {CHARMONY_HTML_FILE} from "../config";
+import HTMLElement from 'node-html-parser/dist/nodes/html';
+import NodeType from 'node-html-parser/dist/nodes/type';
+import Node from 'node-html-parser/dist/nodes/node';
+import {CHARMONY_HTML_FILE} from '../config';
 
 /**
  * Creates an HTML file that displays the information shown in VS Code as a standalone file.
@@ -38,11 +38,11 @@ function removeOverlayTag(head: HTMLElement) {
     let overlayElement: Node | null = null;
     let parentElement: HTMLElement | null = null;
     for (const c of head.childNodes) {
-        if (isElementWithProps(c, {tag: "html"})) {
+        if (isElementWithProps(c, {tag: 'html'})) {
             for (const c2 of c.childNodes) {
-                if (isElementWithProps(c2, {tag: "body"})) {
+                if (isElementWithProps(c2, {tag: 'body'})) {
                     for (const c3 of c2.childNodes) {
-                        if (isElementWithProps(c3, {id: "overlay"})) {
+                        if (isElementWithProps(c3, {id: 'overlay'})) {
                             overlayElement = c3;
                             parentElement = c2 as HTMLElement;
                             break;
@@ -67,7 +67,7 @@ function removeOverlayTag(head: HTMLElement) {
  */
 function addScript(head: HTMLElement, jsonData: Record<string, unknown>) {
     for (const c of head.childNodes) {
-        if (isElementWithProps(c, {tag: "html"})) {
+        if (isElementWithProps(c, {tag: 'html'})) {
             const loadScript = createHtmlElement({
                 name: 'script',
                 html: `

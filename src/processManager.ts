@@ -1,4 +1,4 @@
-import * as child_process from "child_process";
+import * as child_process from 'child_process';
 
 export interface ProcessManager {
     startCommand(
@@ -70,10 +70,10 @@ export class ProcessManagerImpl implements ProcessManager {
         const id = `command_${this.commandCount}`;
         this.runningCommands[id] = child_process.exec(cmd, options,
             (err, stdout, stderr) => {
-            delete this.runningCommands[id];
-            this.commandCount--;
-            callback(err, stdout, stderr);
-        });
+                delete this.runningCommands[id];
+                this.commandCount--;
+                callback(err, stdout, stderr);
+            });
         this.commandCount++;
         return id;
     }
@@ -114,12 +114,12 @@ export class ProcessManagerImpl implements ProcessManager {
      * @param id
      */
     end(id: string): void {
-        const processType = id.substring(0, id.indexOf("_"));
+        const processType = id.substring(0, id.indexOf('_'));
         switch (processType) {
-            case "interval":
-                return this.endInterval(id);
-            case "command":
-                return this.endCommand(id);
+        case 'interval':
+            return this.endInterval(id);
+        case 'command':
+            return this.endCommand(id);
         }
     }
 
