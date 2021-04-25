@@ -15,7 +15,7 @@ export type IntermediateHarmonyCode = {
 
 
 export type IntermediateValueRepresentation = {
-    type: "bool" | "int" | "atom" | "dict" | "set" | "pc" | "address";
+    type: "bool" | "int" | "atom" | "dict" | "set" | "pc" | "address" | "context";
     value: string | IntermediateValueRepresentation[] | IntermediateKeyValueRep[];
 }
 

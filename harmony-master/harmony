@@ -85,6 +85,11 @@ $PYTHON - $@ <<'++++++'
     POSSIBILITY OF SUCH DAMAGE.
 """
 
+version = [
+1,1, 1517
+
+]
+
 internal_modules = {
 #############################
 #     START OF MODULES      #
@@ -97,6 +102,12 @@ def tas(lk):
     atomic:
         result = !lk
         !lk = True
+
+def cas(p, old, new):
+    atomic:
+        result = !p == old
+        if result:
+            !p = new
 
 def BinSema(acquired):
     result = acquired
@@ -118,7 +129,7 @@ def release(binsema):
 def held(binsema):
     result = !binsema
 
-def Condition(lk):
+def Condition():
     result = bag.empty()
 
 def wait(c, lk):
@@ -171,14 +182,22 @@ def put(q, item):
 """,
     "synchS": """import list
 
+def tas(lk):
+    atomic:
+        result = !lk
+        !lk = True
+
+def cas(p, old, new):
+    atomic:
+        result = !p == old
+        if result:
+            !p = new
+
 def BinSema(acquired):
     result = { .acquired: acquired, .suspended: [] }
 
 def Lock():
     result = BinSema(False)
-
-def acquired(binsema):
-    result = binsema->acquired
 
 def acquire(binsema):
     atomic:
@@ -200,7 +219,7 @@ def release(binsema):
 def held(binsema):
     result = binsema->acquired
 
-def Condition(lk):
+def Condition():
     result = []
 
 def wait(c, lk):
@@ -309,8 +328,8 @@ def qsort(a):
         result = []
     else:
         let (pivot, rest) = head(a), tail(a)
-        let lower = [ v for v in rest such that v < pivot ]
-        let higher = [ v for v in rest such that v >= pivot ]:
+        let lower = [ v for v in rest where v < pivot ]
+        let higher = [ v for v in rest where v >= pivot ]:
             result = qsort(lower) + [pivot,] + qsort(higher)
 
 # like Python sorted()
@@ -366,29 +385,24 @@ def remove(pb, elt):
 def issuperset(s, t):
     result = (s & t) == t
 """,
-    "alloc": """import synch
-
-pool = []
-flist = None;           # free list
-lock = synch.Lock()
+    "alloc": """pool = []
+next = 0
 
 def malloc(v):
-    synch.acquire(?lock)
-    if flist == None:
-        let i = len(pool):
-            pool[i] = None
-            result = ?pool[i]
-    else:
-        result = flist
-        flist = !result
-    synch.release(?lock)
-    !result = v
+    atomic:
+        pool[next] = v
+        result = ?pool[next]
+        next += 1
 
+# Commented out code tests for bad frees, but can lead to data races
 def free(r):
-    synch.acquire(?lock)
-    !r = flist
-    flist = r
-    synch.release(?lock)
+    atomic:
+       # let poolcopy = pool:
+            del !r
+       #    assert poolcopy != pool, .bad_free
+
+def leak_check():
+    assert pool == [], .alloc_leak
 """,
 
 
@@ -468,12 +482,29 @@ struct json_value *json_lookup_value(struct dict *map, char *key);
 
 #endif /* JSON_H */
 
+#ifndef _MINHEAP_H
+#define _MINHEAP_H
+
+#include <stdbool.h>
+
+struct minheap *minheap_create();
+void *minheap_getmin(struct minheap *);
+void minheap_insert(struct minheap *, void *);
+void minheap_decrease(struct minheap *, void *);
+int  minheap_size(struct minheap *);
+bool minheap_empty(struct minheap *mh);
+void minheap_destroy(struct minheap *);
+bool minheap_check(struct minheap *hm, void *key);
+
+#endif
+
 #include <stdint.h>
 #include <stdbool.h>
 
 #ifndef HARMONY_COMBINE
 #include "hashdict.h"
 #include "json.h"
+#include "minheap.h"
 #endif
 
 #define new_alloc(t)	(t *) calloc(1, sizeof(t))
@@ -481,14 +512,6 @@ struct json_value *json_lookup_value(struct dict *map, char *key);
 #define CALLTYPE_PROCESS       1
 #define CALLTYPE_NORMAL        2
 #define CALLTYPE_INTERRUPT     3
-
-struct queue *queue_init(void);
-void queue_enqueue(struct queue *queue, void *item);
-void queue_prepend(struct queue *queue, void *item);
-bool queue_dequeue(struct queue *queue, void **item);
-bool queue_empty(struct queue *queue);
-void queue_release(struct queue *queue);
-void queue_cleanup(void);
 
 void *mcopy(void *p, unsigned int size);
 char *scopy(char *s);
@@ -502,8 +525,7 @@ struct op_info *ops_get(char *opname, int size);
 struct code {
     struct op_info *oi;
     const void *env;
-    bool choose;
-    bool breakable;
+    bool choose, load, store, del, breakable;
 };
 
 struct context {     // context value
@@ -517,21 +539,18 @@ struct context {     // context value
     uint64_t failure;     // atom value describing failure, or 0 if no failure
     int pc;               // program counter
     int fp;               // frame pointer
-    enum phase {
-        CTX_START,        // before first "switch" operation
-        CTX_MIDDLE,       // normal operation
-        CTX_END           // terminated
-    } phase;
     int atomic;           // atomic counter
     int readonly;         // readonly counter
     bool interruptlevel;  // interrupt level
     bool stopped;         // context is stopped
+    bool terminated;      // context has terminated
     int sp;               // stack size
     uint64_t stack[0];
 };
 
 struct state {
     uint64_t vars;        // shared variables
+    uint64_t seqs;        // sequential variables
     uint64_t choosing;    // context that is choosing if non-zero
     uint64_t ctxbag;      // bag of running contexts
     uint64_t stopbag;     // bag of stopped contexts
@@ -574,8 +593,8 @@ char *value_json(uint64_t v);
 #define VALUE_FALSE     VALUE_BOOL
 #define VALUE_TRUE      ((1 << VALUE_BITS) | VALUE_BOOL)
 
-#define VALUE_MAX   ((~(uint64_t)0) >> (VALUE_BITS + 1))
-#define VALUE_MIN   (((uint64_t) 1) << (64 - VALUE_BITS - 1))
+#define VALUE_MAX   ((int64_t) ((~(uint64_t)0) >> (VALUE_BITS + 1)))
+#define VALUE_MIN   ((int64_t) ((~(uint64_t)0) << (64 - (VALUE_BITS + 1))))
 
 uint64_t dict_store(uint64_t dict, uint64_t key, uint64_t value);
 uint64_t dict_load(uint64_t dict, uint64_t key);
@@ -583,6 +602,16 @@ bool dict_tryload(uint64_t dict, uint64_t key, uint64_t *result);
 uint64_t dict_remove(uint64_t dict, uint64_t key);
 uint64_t bag_add(uint64_t bag, uint64_t v);
 void ctx_push(struct context **pctx, uint64_t v);
+
+struct access_info {
+    struct access_info *next; // linked list maintenance
+    uint64_t *indices;        // address of load/store
+    int n;                    // length of address
+    bool load;                // store or del if false
+    int pc;                   // for debugging
+    int multiplicity;         // #identical contexts
+    int atomic;               // atomic counter
+};
 
 struct env_Cut {
     uint64_t set, var;
@@ -656,6 +685,12 @@ struct env_StoreVar {
 
 uint64_t ctx_failure(struct context *ctx, char *fmt, ...);
 void panic(char *s);
+void ext_Del(const void *env, struct state *state, struct context **pctx,
+                                                        struct access_info *ai);
+void ext_Load(const void *env, struct state *state, struct context **pctx,
+                                                        struct access_info *ai);
+void ext_Store(const void *env, struct state *state, struct context **pctx,
+                                                        struct access_info *ai);
 
 #include <sys/time.h>
 #include <stdio.h>
@@ -676,15 +711,19 @@ struct combined {           // combination of current state and current context
 };
 
 struct component {
-    bool good;          // terminating or out-going edge
+    bool good;              // terminating or out-going edge
+    int size;               // #states
+    int representative;     // lowest numbered state in the component
 };
 
 struct edge {
-    struct edge *next;      // linked list maintenance
-    uint64_t ctx, choice;   // ctx that made the microstep, choice if any
-    bool interrupt;         // set if state change is an interrupt
-    struct node *node;      // resulting node (state)
-    int weight;
+    struct edge *next;       // linked list maintenance
+    uint64_t ctx, choice;    // ctx that made the microstep, choice if any
+    bool interrupt;          // set if state change is an interrupt
+    struct node *node;       // resulting node (state)
+    uint64_t after;          // resulting context
+    int weight;              // 1 if context switch; 0 otherwise
+    struct access_info *ai;  // to detect data races
 };
 
 struct node {
@@ -697,6 +736,7 @@ struct node {
     // How to get here from parent node
     struct node *parent;    // shortest path to initial state
     int len;                // length of path to initial state
+    int steps;              // #microsteps from root
     uint64_t before;        // context before state change
     uint64_t after;         // context after state change (current context)
     uint64_t choice;        // choice made if any
@@ -705,29 +745,35 @@ struct node {
     // SCC
     bool visited;           // for Kosaraju algorithm
     unsigned int component; // strongly connected component id
+
+    bool processed;         // for debugging currently
 };
 
 struct failure {
-    enum { FAIL_SAFETY, FAIL_INVARIANT, FAIL_TERMINATION } type;
+    enum { FAIL_SAFETY, FAIL_INVARIANT, FAIL_TERMINATION, FAIL_BUSYWAIT, FAIL_RACE } type;
     struct node *node;      // failed state
-    uint64_t ctx;           // context that failed (before it failed)
     uint64_t choice;        // choice if any
+    uint64_t address;       // in case of data race
 };
 
 struct code *code;
 int code_len;
+bool has_synch_module = false;
 
-static struct node **graph;        // vector of all nodes
-static int graph_size;             // to create node identifiers
-static int graph_alloc;            // size allocated
-static struct queue *failures;     // queue of "struct failure"  (TODO: make part of struct node "issues")
-static uint64_t *processes;        // list of contexts of processes
-static int nprocesses;             // the number of processes in the list
-static double lasttime;            // since last report printed
-static int timecnt;                // to reduce time overhead
-static int enqueued;               // #states enqueued
-static int dequeued;               // #states dequeued
-static bool dumpfirst;             // for json dumping
+static struct node **graph;         // vector of all nodes
+static int graph_size;              // to create node identifiers
+static int graph_alloc;             // size allocated
+static struct minheap *failures;    // queue of "struct failure"  (TODO: make part of struct node "issues")
+static struct minheap *warnings;    // queue of "struct failure"  (TODO: make part of struct node "issues")
+static uint64_t *processes;         // list of contexts of processes
+static int nprocesses;              // the number of processes in the list
+static double lasttime;             // since last report printed
+static int timecnt;                 // to reduce time overhead
+static int enqueued;                // #states enqueued
+static int dequeued;                // #states dequeued
+static bool dumpfirst;              // for json dumping
+static struct access_info *ai_free; // free list of access_info structures
+static struct node *tochk;
 
 static void graph_add(struct node *node){
     node->id = graph_size;
@@ -752,9 +798,11 @@ static void code_get(struct json_value *jv){
     c->oi = oi;
     c->env = (*oi->init)(jv->u.map);
     c->choose = strcmp(oi->name, "Choose") == 0;
-    c->breakable = strcmp(oi->name, "Load") == 0 ||
-        strcmp(oi->name, "Store") == 0 ||
-        strcmp(oi->name, "AtomicInc") == 0;
+    c->load = strcmp(oi->name, "Load") == 0;
+    c->store = strcmp(oi->name, "Store") == 0;
+    c->del = strcmp(oi->name, "Del") == 0;
+    c->breakable = c->load || c->store || c->del ||
+                        strcmp(oi->name, "AtomicInc") == 0;
 }
 
 bool invariant_check(struct state *state, struct context **pctx, int end){
@@ -770,10 +818,11 @@ bool invariant_check(struct state *state, struct context **pctx, int end){
             return false;
         }
         assert((*pctx)->pc != oldpc);
-        assert((*pctx)->phase != CTX_END);
+        assert(!(*pctx)->terminated);
     }
     assert((*pctx)->sp == 1);
     (*pctx)->sp = 0;
+    assert((*pctx)->fp == 0);
     uint64_t b = (*pctx)->stack[0];
     assert((b & VALUE_MASK) == VALUE_BOOL);
     return b >> VALUE_BITS;
@@ -795,23 +844,38 @@ void check_invariants(struct node *node, struct context **pctx){
         int cnt = invariant_cnt(code[(*pctx)->pc].env);
         bool b = invariant_check(state, pctx, (*pctx)->pc + cnt);
         if ((*pctx)->failure != 0) {
-            printf("IC FAIL %s\n", value_string((*pctx)->failure));
+            printf("Invariant failed: %s\n", value_string((*pctx)->failure));
             b = false;
         }
         if (!b) {
             struct failure *f = new_alloc(struct failure);
             f->type = FAIL_INVARIANT;
-            f->ctx = node->before;
             f->choice = node->choice;
             f->node = node;
-            queue_enqueue(failures, f);
+            minheap_insert(failures, f);
         }
     }
 }
 
+// For tracking data races
+struct access_info *ai_alloc(int multiplicity, int atomic, int pc){
+    struct access_info *ai;
+
+    if ((ai = ai_free) == 0) {
+        ai = calloc(1, sizeof(*ai));
+    }
+    else {
+        ai_free = ai->next;
+    }
+    ai->multiplicity = multiplicity;
+    ai->atomic = atomic;
+    ai->pc = pc;
+    return ai;
+}
+
 void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
-        struct dict *visited, struct queue *todo, struct context **pinv_ctx,
-        bool infloop_detect){
+        struct dict *visited, struct minheap *todo, struct context **pinv_ctx,
+        bool infloop_detect, int multiplicity, double timeout){
     // Make a copy of the state
     struct state *sc = new_alloc(struct state);
     memcpy(sc, node->state, sizeof(*sc));
@@ -819,7 +883,7 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
 
     // Make a copy of the context
     struct context *cc = value_copy(ctx, NULL);
-    assert(cc->phase != CTX_END);
+    assert(!cc->terminated);
     assert(cc->failure == 0);
 
     if (false) {
@@ -833,15 +897,17 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
         interrupt_invoke(&cc);
     }
     else if (sc->choosing == 0 && cc->trap_pc != 0 && !cc->interruptlevel) {
-        onestep(node, ctx, choice, true, visited, todo, pinv_ctx, infloop_detect);
+        onestep(node, ctx, choice, true, visited, todo, pinv_ctx, infloop_detect, multiplicity, timeout);
     }
 
     // Copy the choice
     uint64_t choice_copy = choice;
 
-    bool choosing = false, infinite_loop = false;;
+    bool choosing = false, infinite_loop = false;
     struct dict *infloop = NULL;        // infinite loop detector
-    for (int loopcnt = 0;; loopcnt++) {
+    struct access_info *ai_list = NULL;
+    int loopcnt = 0;
+    for (;; loopcnt++) {
         int pc = cc->pc;
 
         if (timecnt-- == 0) {
@@ -856,6 +922,10 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
                     free(p);
                 }
                 lasttime = now;
+                if (now > timeout) {
+                    fprintf(stderr, "charm: timeout exceeded\n");
+                    exit(1);
+                }
             }
             timecnt = 1;
         }
@@ -866,14 +936,25 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
             cc->pc++;
         }
         else {
-            if (code[pc].breakable) {
-                assert(cc->phase != CTX_END);
-                cc->phase = CTX_MIDDLE;
+            if (code[pc].load || code[pc].store || code[pc].del) {
+                struct access_info *ai = ai_alloc(multiplicity, cc->atomic, pc);
+                if (code[pc].load)
+                    ext_Load(code[pc].env, sc, &cc, ai);
+                else if (code[pc].store)
+                    ext_Store(code[pc].env, sc, &cc, ai);
+                else
+                    ext_Del(code[pc].env, sc, &cc, ai);
+                ai->next = ai_list;
+                ai_list = ai;
             }
-            (*oi->op)(code[pc].env, sc, &cc);
+            else {
+                (*oi->op)(code[pc].env, sc, &cc);
+            }
         }
+		assert(cc->pc >= 0);
+		assert(cc->pc < code_len);
 
-        if (cc->phase != CTX_END && cc->failure == 0 && (infloop_detect || loopcnt > 1000)) {
+        if (!cc->terminated && cc->failure == 0 && (infloop_detect || loopcnt > 1000)) {
             if (infloop == NULL) {
                 infloop = dict_new(0);
             }
@@ -894,20 +975,22 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
             }
             else {
                 // start over, as twostep does not have loopcnt optimization
-                onestep(node, ctx, choice_copy, interrupt, visited, todo, pinv_ctx, true);
+                onestep(node, ctx, choice_copy, interrupt, visited, todo, pinv_ctx, true, multiplicity, timeout);
                 free(cc);
                 free(sc);
                 return;
             }
         }
 
-        if (cc->phase == CTX_END || cc->failure != 0 || cc->stopped) {
+        if (cc->terminated || cc->failure != 0 || cc->stopped) {
             break;
         }
         if (cc->pc == pc) {
             fprintf(stderr, ">>> %s\n", oi->name);
         }
         assert(cc->pc != pc);
+		assert(cc->pc >= 0);
+		assert(cc->pc < code_len);
 
         /* Peek at the next instruction.
          */
@@ -939,8 +1022,8 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
             }
         }
 
-        if (cc->phase != CTX_START && cc->atomic == 0 && sc->ctxbag != VALUE_DICT &&
-                code[cc->pc].breakable) {
+        if (cc->atomic == 0 && sc->ctxbag != VALUE_DICT &&
+                                    code[cc->pc].breakable) {
             break;
         }
     }
@@ -965,7 +1048,7 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
 
     // If choosing, save in state
     if (choosing) {
-        assert(cc->phase != CTX_END);
+        assert(!cc->terminated);
         sc->choosing = after;
     }
 
@@ -973,7 +1056,7 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
     if (cc->stopped) {
         sc->stopbag = bag_add(sc->stopbag, after);
     }
-    else if (cc->phase != CTX_END) {
+    else if (!cc->terminated) {
         sc->ctxbag = bag_add(sc->ctxbag, after);
     }
 
@@ -992,32 +1075,35 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
         next->interrupt = interrupt;
         next->after = after;
         next->len = node->len + weight;
-        graph_add(next);
+        next->steps = node->steps + loopcnt;
+        graph_add(next);                // sets next->id
+        if (next->id == 1383) {
+            tochk = next;
+        }
 
         if (sc->choosing == 0 && sc->invariants != VALUE_SET) {
             check_invariants(next, pinv_ctx);
         }
 
-        if (sc->ctxbag != VALUE_DICT && cc->failure == 0 &&
-                queue_empty(failures)) {
-            if (weight == 0) {
-                queue_prepend(todo, next);
-            }
-            else {
-                queue_enqueue(todo, next);
-            }
+        if (sc->ctxbag != VALUE_DICT && cc->failure == 0
+                            && minheap_empty(failures)) {
+            minheap_insert(todo, next);
             enqueued++;
         }
     }
     else {
         free(sc);
 
-        if (next->len > node->len + weight) {
+        if (next->len > node->len + weight ||
+                (next->len == node->len + weight && next->steps > node->steps + loopcnt)) {
+            assert(!next->processed);
             next->parent = node;
             next->before = ctx;
             next->after = after;
             next->choice = choice_copy;
             next->len = node->len + weight;
+            next->steps = node->steps + loopcnt;
+            minheap_decrease(todo, next);
         }
     }
 
@@ -1029,6 +1115,8 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
     fwd->node = next;
     fwd->weight = weight;
     fwd->next = node->fwd;
+    fwd->after = after;
+    fwd->ai = ai_list;
     node->fwd = fwd;
 
     // Add a backward edge from next to node.
@@ -1039,15 +1127,16 @@ void onestep(struct node *node, uint64_t ctx, uint64_t choice, bool interrupt,
     bwd->node = node;
     bwd->weight = weight;
     bwd->next = next->bwd;
+    bwd->after = after;
+    bwd->ai = ai_list;
     next->bwd = bwd;
 
     if (cc->failure != 0) {
         struct failure *f = new_alloc(struct failure);
         f->type = infinite_loop ? FAIL_TERMINATION : FAIL_SAFETY;
-        f->ctx = ctx;
         f->choice = choice_copy;
         f->node = next;
-        queue_enqueue(failures, f);
+        minheap_insert(failures, f);
     }
 
     free(cc);
@@ -1185,6 +1274,7 @@ void print_context(FILE *file, uint64_t ctx, int tid, struct node *node){
 
     fprintf(file, "        {\n");
     fprintf(file, "          \"tid\": \"%d\",\n", tid);
+    fprintf(file, "          \"yhash\": \"%"PRIx64"\",\n", ctx);
 
     struct context *c = value_get(ctx, NULL);
 
@@ -1248,7 +1338,7 @@ void print_context(FILE *file, uint64_t ctx, int tid, struct node *node){
         fprintf(file, "          \"readonly\": \"%d\",\n", c->readonly);
     }
 
-    if (c->phase == CTX_END) {
+    if (c->terminated) {
         fprintf(file, "          \"mode\": \"terminated\",\n");
     }
     else if (c->failure != 0) {
@@ -1293,8 +1383,8 @@ void print_state(FILE *file, struct node *node){
     struct state *state = node->state;
     extern int invariant_cnt(const void *env);
     struct context *inv_ctx = new_alloc(struct context);
-    uint64_t inv_nv = value_put_atom("name", 4);
-    uint64_t inv_tv = value_put_atom("tag", 3);
+    // uint64_t inv_nv = value_put_atom("name", 4);
+    // uint64_t inv_tv = value_put_atom("tag", 3);
     inv_ctx->name = value_put_atom("__invariant__", 13);
     inv_ctx->arg = VALUE_DICT;
     inv_ctx->this = VALUE_DICT;
@@ -1405,7 +1495,7 @@ void diff_state(FILE *file, struct state *oldstate, struct state *newstate,
         fprintf(file, "          \"mode\": \"failed\",\n");
         free(val);
     }
-    else if (newctx->phase == CTX_END) {
+    else if (newctx->terminated) {
         fprintf(file, "          \"mode\": \"terminated\",\n");
     }
 
@@ -1455,7 +1545,7 @@ void diff_dump(FILE *file, struct state *oldstate, struct state *newstate,
 
 // similar to onestep.  TODO.  Use flag to onestep?
 uint64_t twostep(FILE *file, struct node *node, uint64_t ctx, uint64_t choice,
-        bool interrupt, struct state *oldstate, struct context **oldctx){
+        bool interrupt, struct state *oldstate, struct context **oldctx, uint64_t nextvars){
     // Make a copy of the state
     struct state *sc = new_alloc(struct state);
     memcpy(sc, node->state, sizeof(*sc));
@@ -1464,7 +1554,7 @@ uint64_t twostep(FILE *file, struct node *node, uint64_t ctx, uint64_t choice,
     // Make a copy of the context
     struct context *cc = value_copy(ctx, NULL);
     // diff_dump(file, oldstate, sc, oldctx, cc, node->interrupt);
-    if (cc->phase == CTX_END || cc->failure != 0) {
+    if (cc->terminated || cc->failure != 0) {
         free(cc);
         return ctx;
     }
@@ -1476,7 +1566,6 @@ uint64_t twostep(FILE *file, struct node *node, uint64_t ctx, uint64_t choice,
         diff_dump(file, oldstate, sc, oldctx, cc, true, false, 0);
     }
 
-    bool choosing = false;
     struct dict *infloop = NULL;        // infinite loop detector
     for (int loopcnt = 0;; loopcnt++) {
         int pc = cc->pc;
@@ -1487,14 +1576,10 @@ uint64_t twostep(FILE *file, struct node *node, uint64_t ctx, uint64_t choice,
             cc->pc++;
         }
         else {
-            if (code[pc].breakable) {
-                assert(cc->phase != CTX_END);
-                cc->phase = CTX_MIDDLE;
-            }
             (*oi->op)(code[pc].env, sc, &cc);
         }
 
-        if (cc->phase != CTX_END && cc->failure == 0) {
+        if (!cc->terminated && cc->failure == 0) {
             if (infloop == NULL) {
                 infloop = dict_new(0);
             }
@@ -1515,7 +1600,7 @@ uint64_t twostep(FILE *file, struct node *node, uint64_t ctx, uint64_t choice,
         }
 
         diff_dump(file, oldstate, sc, oldctx, cc, false, code[pc].choose, choice);
-        if (cc->phase == CTX_END || cc->failure != 0 || cc->stopped) {
+        if (cc->terminated || cc->failure != 0 || cc->stopped) {
             break;
         }
         if (cc->pc == pc) {
@@ -1551,17 +1636,17 @@ uint64_t twostep(FILE *file, struct node *node, uint64_t ctx, uint64_t choice,
                 choice = vals[0];
             }
             else {
-                choosing = true;
                 break;
             }
         }
 
-        if (cc->phase != CTX_START && cc->atomic == 0 && sc->ctxbag != VALUE_DICT &&
+        if (cc->atomic == 0 && sc->ctxbag != VALUE_DICT &&
                 code[cc->pc].breakable) {
             break;
         }
     }
 
+    // assert(sc->vars == nextvars);
     ctx = value_put_context(cc);
 
     free(sc);
@@ -1570,7 +1655,7 @@ uint64_t twostep(FILE *file, struct node *node, uint64_t ctx, uint64_t choice,
     return ctx;
 }
 
-void path_dump(FILE *file, struct node *last, uint64_t ctx, uint64_t choice,
+void path_dump(FILE *file, struct node *last, uint64_t choice,
             struct state *oldstate, struct context **oldctx, bool interrupt){
     struct node *node = last;
 
@@ -1579,29 +1664,30 @@ void path_dump(FILE *file, struct node *last, uint64_t ctx, uint64_t choice,
         fprintf(file, "\n");
     }
     else {
-        path_dump(file, last, last->before, last->choice, oldstate, oldctx, last->interrupt);
+        path_dump(file, last, last->choice, oldstate, oldctx, last->interrupt);
         fprintf(file, ",\n");
     }
 
     fprintf(file, "    {\n");
     fprintf(file, "      \"id\": \"%d\",\n", node->id);
 
-    /* Find this context in the list of processes.
+    /* Find the starting context in the list of processes.
      */
+    uint64_t ctx = node->before;
     int pid;
     for (pid = 0; pid < nprocesses; pid++) {
         if (processes[pid] == ctx) {
             break;
         }
     }
-    assert(pid < nprocesses);
 
     struct context *context = value_get(ctx, NULL);
-    assert(context->phase != CTX_END);
+    assert(!context->terminated);
     char *name = value_string(context->name);
     char *arg = value_string(context->arg);
     // char *c = value_string(choice);
     fprintf(file, "      \"tid\": \"%d\",\n", pid);
+    fprintf(file, "      \"xhash\": \"%"PRIx64"\",\n", ctx);
     if (*arg == '(') {
         fprintf(file, "      \"name\": \"%s%s\",\n", name + 1, arg);
     }
@@ -1618,7 +1704,8 @@ void path_dump(FILE *file, struct node *last, uint64_t ctx, uint64_t choice,
     (*oldctx)->pc = context->pc;
 
     // Recreate the steps
-    processes[pid] = twostep(file, last, ctx, choice, interrupt, oldstate, oldctx);
+    assert(pid < nprocesses);
+    processes[pid] = twostep(file, last, ctx, choice, interrupt, oldstate, oldctx, node->state->vars);
     fprintf(file, "\n      ],\n");
 
     /* Match each context to a process.
@@ -1721,10 +1808,10 @@ static int find_scc(void){
     return count;
 }
 
-static char *json_string_encode(char *s){
-    char *result = malloc(4 * strlen(s)), *p = result;
+static char *json_string_encode(char *s, int len){
+    char *result = malloc(4 * len), *p = result;
 
-    while (*s != 0) {
+    while (len > 0) {
         switch (*s) {
         case '\r':
             *p++ = '\\'; *p++ = 'r';
@@ -1748,6 +1835,7 @@ static char *json_string_encode(char *s){
             *p++ = *s;
         }
         s++;
+        len--;
     }
     *p++ = 0;
     return result;
@@ -1777,52 +1865,140 @@ static void enum_loc(void *env, const void *key, unsigned int key_size,
 
     struct json_value *line = dict_lookup(jv->u.map, "line", 4);
     assert(line->type == JV_ATOM);
-    fprintf(out, "\"line\": \"%.*s\"", line->u.atom.len, line->u.atom.base);
+    fprintf(out, "\"line\": \"%.*s\", ", line->u.atom.len, line->u.atom.base);
 
-    // parse the line number
-    char *cline = malloc(line->u.atom.len + 1);
-    strncpy(cline, line->u.atom.base, line->u.atom.len);
-    cline[line->u.atom.len] = 0;
-    int lineno = atoi(cline);
-    free(cline);
-
-    // copy the file name
-    char *cfile = malloc(file->u.atom.len + 1);
-    strncpy(cfile, file->u.atom.base, file->u.atom.len);
-    cfile[file->u.atom.len] = 0;
-
-    // TODO.  Should cache the contents of the file
-    FILE *fp = fopen(cfile, "r");
-    assert(fp != NULL);
-    char buf[1024];
-    while (fgets(buf, 1024, fp) != NULL) {
-        if (--lineno == 0) {
-            buf[1023] = 0;
-            int len = strlen(buf);
-            if (len > 0 && buf[len - 1] == '\n') {
-                buf[len - 1] = 0;
-            }
-            char *enc = json_string_encode(buf);
-            fprintf(out, ", \"code\": \"%s\"", enc);
-            free(enc);
-            break;
-        }
-    }
-    fclose(fp);
+    struct json_value *code = dict_lookup(jv->u.map, "code", 4);
+    assert(code->type == JV_ATOM);
+    fprintf(out, "\"code\": \"%s\"", json_string_encode(code->u.atom.base, code->u.atom.len));
     fprintf(out, " }");
 }
 
-int main(int argc, char **argv){
-    // printf("Charm v1\n");
+enum busywait { BW_ESCAPE, BW_RETURN, BW_VISITED };
+enum busywait is_stuck(struct node *start, struct node *node, uint64_t ctx, bool change) {
+	if (node->component != start->component) {
+		return BW_ESCAPE;
+	}
+	if (node->visited) {
+		return BW_VISITED;
+	}
+    change = change || (node->state->vars != start->state->vars);
+	node->visited = true;
+	enum busywait result = BW_ESCAPE;
+    for (struct edge *edge = node->fwd; edge != NULL; edge = edge->next) {
+        if (edge->ctx == ctx) {
+			if (edge->node == node) {
+				node->visited = false;
+				return BW_ESCAPE;
+			}
+			if (edge->node == start) {
+				if (!change) {
+					node->visited = false;
+					return BW_ESCAPE;
+				}
+				result = BW_RETURN;
+			}
+			else {
+				enum busywait bw = is_stuck(start, edge->node, edge->after, change);
+				switch (bw) {
+				case BW_ESCAPE:
+					node->visited = false;
+					return BW_ESCAPE;
+				case BW_RETURN:
+					result = BW_RETURN;
+					break;
+				case BW_VISITED:
+					break;
+				default:
+					assert(false);
+				}
+			}
+        }
+    }
+	node->visited = false;
+    return result;
+}
 
-    failures = queue_init();
+void detect_busywait(struct node *node){
+	// Get the contexts
+	int size;
+	uint64_t *ctxs = value_get(node->state->ctxbag, &size);
+	size /= sizeof(uint64_t);
+
+	for (int i = 0; i < size; i += 2) {
+		if (is_stuck(node, node, ctxs[i], false) == BW_RETURN) {
+			struct failure *f = new_alloc(struct failure);
+			f->type = FAIL_BUSYWAIT;
+			f->choice = node->choice;
+			f->node = node;
+			minheap_insert(failures, f);
+			break;
+		}
+	}
+}
+
+static int node_cmp(void *n1, void *n2){
+    struct node *node1 = n1, *node2 = n2;
+
+    if (node1->len != node2->len) {
+        return node1->len - node2->len;
+    }
+    if (node1->steps != node2->steps) {
+        return node1->steps - node2->steps;
+    }
+    return node1->id - node2->id;
+}
+
+static int fail_cmp(void *f1, void *f2){
+    struct failure *fail1 = f1, *fail2 = f2;
+
+    return node_cmp(fail1->node, fail2->node);
+}
+
+void usage(char *prog){
+    fprintf(stderr, "Usage: %s [-c] [-t maxtime] file.json\n", prog);
+    exit(1);
+}
+
+int main(int argc, char **argv){
+    bool cflag = false;
+    int i, maxtime = 300000000 /* about 10 years */;
+    for (i = 1; i < argc; i++) {
+        if (*argv[i] != '-') {
+            break;
+        }
+        switch (argv[i][1]) {
+        case 'c':
+            cflag = true;
+            break;
+        case 't':
+            maxtime = atoi(&argv[i][2]);
+            if (maxtime <= 0) {
+                fprintf(stderr, "%s: negative timeout\n", argv[0]);
+                exit(1);
+            }
+            break;
+        default:
+            usage(argv[0]);
+        }
+    }
+    if (argc - i > 1) {
+        usage(argv[0]);
+    }
+    char *fname = i == argc ? "harmony.json" : argv[i];
+
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    double now = tv.tv_sec + (double) tv.tv_usec / 1000000;
+    double timeout = now + maxtime;
+
+    failures = minheap_create(fail_cmp);
+    warnings = minheap_create(fail_cmp);
 
     // initialize modules
-    ops_init();
     value_init();
+    ops_init();
 
     // open the file
-    char *fname = argc == 1 ? "harmony.json" : argv[1];
     FILE *fp = fopen(fname, "r");
     if (fp == NULL) {
         fprintf(stderr, "%s: can't open %s\n", argv[0], fname);
@@ -1853,18 +2029,20 @@ int main(int argc, char **argv){
     }
 
     // Create an initial state
+	uint64_t this = value_put_atom("this", 4);
     struct context *init_ctx = new_alloc(struct context);;
-    uint64_t nv = value_put_atom("name", 4);
-    uint64_t tv = value_put_atom("tag", 3);
+    // uint64_t nv = value_put_atom("name", 4);
+    // uint64_t tv = value_put_atom("tag", 3);
     init_ctx->name = value_put_atom("__init__", 8);
     init_ctx->arg = VALUE_DICT;
     init_ctx->this = VALUE_DICT;
-    init_ctx->vars = VALUE_DICT;
+    init_ctx->vars = dict_store(VALUE_DICT, this, VALUE_DICT);
     init_ctx->atomic = 1;
     ctx_push(&init_ctx, (CALLTYPE_PROCESS << VALUE_BITS) | VALUE_INT);
     ctx_push(&init_ctx, VALUE_DICT);
     struct state *state = new_alloc(struct state);
     state->vars = VALUE_DICT;
+    state->seqs = VALUE_SET;
     uint64_t ictx = value_put_context(init_ctx);
     state->ctxbag = dict_store(VALUE_DICT, ictx, (1 << VALUE_BITS) | VALUE_INT);
     state->stopbag = VALUE_DICT;
@@ -1884,14 +2062,14 @@ int main(int argc, char **argv){
     *p = node;
 
     // Put the initial state on the queue
-    struct queue *todo = queue_init();
-    queue_enqueue(todo, node);
+    struct minheap *todo = minheap_create(node_cmp);
+    minheap_insert(todo, node);
     enqueued++;
 
     // Create a context for evaluating invariants
     struct context *inv_ctx = new_alloc(struct context);
-    uint64_t inv_nv = value_put_atom("name", 4);
-    uint64_t inv_tv = value_put_atom("tag", 3);
+    // uint64_t inv_nv = value_put_atom("name", 4);
+    // uint64_t inv_tv = value_put_atom("tag", 3);
     inv_ctx->name = value_put_atom("__invariant__", 13);
     inv_ctx->arg = VALUE_DICT;
     inv_ctx->this = VALUE_DICT;
@@ -1901,11 +2079,13 @@ int main(int argc, char **argv){
 
     void *next;
     int state_counter = 1;
-    while (queue_dequeue(todo, &next)) {
+    while (!minheap_empty(todo) && minheap_empty(failures)) {
+        next = minheap_getmin(todo);
         state_counter++;
         dequeued++;
 
         node = next;
+        node->processed = true;
         state = node->state;
 
         if (state->choosing != 0) {
@@ -1924,13 +2104,8 @@ int main(int argc, char **argv){
             size /= sizeof(uint64_t);
             assert(size > 0);
             for (int i = 0; i < size; i++) {
-                if (false) {
-                    printf("NEXT CHOICE %d %d %"PRIx64"\n", i, size, vals[i]);
-                }
-                onestep(node, state->choosing, vals[i], false, visited, todo, &inv_ctx, false);
-                if (false) {
-                    printf("NEXT CHOICE DONE\n");
-                }
+                onestep(node, state->choosing, vals[i], false, visited, todo,
+                                &inv_ctx, false, 1, timeout);
             }
         }
         else {
@@ -1939,14 +2114,61 @@ int main(int argc, char **argv){
             size /= sizeof(uint64_t);
             assert(size > 0);
             for (int i = 0; i < size; i += 2) {
-                if (false) {
-                    printf("NEXT CONTEXT %d %"PRIx64"\n", i, ctxs[i]);
-                }
                 assert((ctxs[i] & VALUE_MASK) == VALUE_CONTEXT);
                 assert((ctxs[i+1] & VALUE_MASK) == VALUE_INT);
-                onestep(node, ctxs[i], 0, false, visited, todo, &inv_ctx, false);
-                if (false) {
-                    printf("NEXT CONTEXT DONE\n");
+                onestep(node, ctxs[i], 0, false, visited, todo, &inv_ctx,
+                                false, ctxs[i+1] >> VALUE_BITS, timeout);
+            }
+
+            // Check for data race
+            // TODO.  We're checking both if x and y conflict and y and x conflict for any two x and y
+            if (minheap_empty(warnings) && !cflag) {
+                for (struct edge *edge = node->fwd; edge != NULL; edge = edge->next) {
+                    for (struct access_info *ai = edge->ai; ai != NULL; ai = ai->next) {
+                        if (ai->indices != NULL) {
+                            assert(ai->n > 0);
+                            if (ai->multiplicity > 1 && !ai->load && ai->atomic == 0) {
+                                struct failure *f = new_alloc(struct failure);
+                                f->type = FAIL_RACE;
+                                f->choice = node->choice;
+                                f->node = node;
+                                f->address = value_put_address(ai->indices, ai->n * sizeof(uint64_t));
+                                minheap_insert(warnings, f);
+                            }
+                            else {
+                                for (struct edge *edge2 = edge->next; edge2 != NULL; edge2 = edge2->next) {
+                                    for (struct access_info *ai2 = edge2->ai; ai2 != NULL; ai2 = ai2->next) {
+                                        if (ai2->indices != NULL && !(ai->load && ai2->load) &&
+                                                                (ai->atomic == 0 || ai2->atomic == 0)) {
+                                            int min = ai->n < ai2->n ? ai->n : ai2->n;
+                                            assert(min > 0);
+                                            if (memcmp(ai->indices, ai2->indices,
+                                                                min * sizeof(uint64_t)) == 0) {
+                                                struct failure *f = new_alloc(struct failure);
+                                                f->type = FAIL_RACE;
+                                                f->choice = node->choice;
+                                                f->node = node;
+                                                f->address = value_put_address(ai->indices, min * sizeof(uint64_t));
+                                                minheap_insert(warnings, f);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                // Put access_info structs back on the free list
+                for (struct edge *edge = node->fwd; edge != NULL; edge = edge->next) {
+                    struct access_info *ai = edge->ai;
+                    if (ai != NULL) {
+                        while (ai->next != NULL) {
+                            ai = ai->next;
+                        }
+                        ai->next = ai_free;
+                        ai_free = edge->ai;
+                        edge->ai = NULL;
+                    }
                 }
             }
         }
@@ -1954,7 +2176,7 @@ int main(int argc, char **argv){
 
     printf("#states %d\n", graph_size);
 
-    if (queue_empty(failures)) {
+    if (minheap_empty(failures)) {
         // find the strongly connected components
         int ncomponents = find_scc();
 
@@ -1964,6 +2186,10 @@ int main(int argc, char **argv){
             struct node *node = graph[i];
 			assert(node->component < ncomponents);
             struct component *comp = &components[node->component];
+            if (comp->size == 0) {
+                comp->representative = i;
+            }
+            comp->size++;
             if (comp->good) {
                 continue;
             }
@@ -1987,34 +2213,73 @@ int main(int argc, char **argv){
                 nbad++;
                 struct failure *f = new_alloc(struct failure);
                 f->type = FAIL_TERMINATION;
-                f->ctx = node->before;
                 f->choice = node->choice;
                 f->node = node;
-                queue_enqueue(failures, f);
+                minheap_insert(failures, f);
+            }
+        }
+
+        if (nbad == 0 && !cflag) {
+            for (int i = 0; i < graph_size; i++) {
+				graph[i]->visited = false;
+			}
+            for (int i = 0; i < graph_size; i++) {
+                struct node *node = graph[i];
+                if (components[node->component].size > 1) {
+                    detect_busywait(node);
+                }
             }
         }
 
         printf("%d components, %d bad states\n", ncomponents, nbad);
     }
 
+    if (false) {
+        FILE *df = fopen("charm.dump", "w");
+        assert(df != NULL);
+        for (int i = 0; i < graph_size; i++) {
+            struct node *node = graph[i];
+            assert(node->id == i);
+            fprintf(df, "\nNode %d:\n", node->id);
+            fprintf(df, "    component: %d\n", node->component);
+            if (node->parent != NULL) {
+                fprintf(df, "    parent: %d\n", node->parent->id);
+            }
+            fprintf(df, "    vars: %s\n", value_string(node->state->vars));
+            fprintf(df, "    fwd:\n");
+            int eno = 0;
+            for (struct edge *edge = node->fwd; edge != NULL; edge = edge->next, eno++) {
+                fprintf(df, "        %d:\n", eno);
+                struct context *ctx = value_get(edge->ctx, NULL);
+                fprintf(df, "            context: %s %s %d\n", value_string(ctx->name), value_string(ctx->arg), ctx->pc);
+                fprintf(df, "            choice: %s\n", value_string(edge->choice));
+                fprintf(df, "            node: %d (%d)\n", edge->node->id, edge->node->component);
+            }
+        }
+        fclose(df);
+    }
+
     FILE *out = fopen("charm.json", "w");
-    assert(out != NULL);
+    if (out == NULL) {
+        fprintf(stderr, "charm: can't create charm.json\n");
+        exit(1);
+    }
     fprintf(out, "{\n");
 
-    if (queue_empty(failures)) {
+    if (minheap_empty(failures) && minheap_empty(warnings)) {
         printf("No issues\n");
         fprintf(out, "  \"issue\": \"No issues\"\n");
         fprintf(out, "}\n");
         exit(0);
     }
 
+    // Find shortest "bad" path
     struct failure *bad = NULL;
-    while (queue_dequeue(failures, &next)) {
-        struct failure *f = next;
-
-        if (bad == NULL || f->node->len < bad->node->len) {
-            bad = f;
-        }
+    if (minheap_empty(failures)) {
+        bad = minheap_getmin(warnings);
+    }
+    else {
+        bad = minheap_getmin(failures);
     }
 
     switch (bad->type) {
@@ -2030,6 +2295,19 @@ int main(int argc, char **argv){
         printf("Non-terminating state\n");
         fprintf(out, "  \"issue\": \"Non-terminating state\",\n");
         break;
+    case FAIL_BUSYWAIT:
+        printf("Active busy waiting\n");
+        fprintf(out, "  \"issue\": \"Active busy waiting\",\n");
+		break;
+    case FAIL_RACE:
+        assert(bad->address != VALUE_ADDRESS);
+        char *addr = value_string(bad->address);
+        char *json = json_string_encode(addr, strlen(addr));
+        printf("Data race (%s)\n", json);
+        fprintf(out, "  \"issue\": \"Data race (%s)\",\n", json);
+        free(json);
+        free(addr);
+        break;
     default:
         panic("main: bad fail type");
     }
@@ -2039,7 +2317,7 @@ int main(int argc, char **argv){
 	memset(&oldstate, 0, sizeof(oldstate));
     struct context *oldctx = calloc(1, sizeof(*oldctx));
     dumpfirst = true;
-    path_dump(out, bad->node, bad->ctx, bad->choice, &oldstate, &oldctx, false);
+    path_dump(out, bad->node, bad->choice, &oldstate, &oldctx, false);
     fprintf(out, "\n");
     free(oldctx);
     fprintf(out, "  ],\n");
@@ -2083,6 +2361,7 @@ int main(int argc, char **argv){
     fprintf(out, "\n  }\n");
 
     fprintf(out, "}\n");
+	fclose(out);
 
     return 0;
 }
@@ -2160,6 +2439,8 @@ bool file_read(char *filename, /* OUT */ json_buf_t *buf){
 	return true;
 }
 #endif // notdef
+
+#include <assert.h>
 
 #ifndef HARMONY_COMBINE
 #include "hashdict.h"
@@ -2249,6 +2530,7 @@ void dict_resize(struct dict *dict, int newsize) {
 }
 
 void *dict_find(struct dict *dict, const void *key, unsigned int keyn) {
+	assert(keyn > 0);
 	int n = hash_func((const char*)key, keyn) % dict->length;
 	if (dict->table[n] == 0) {
 		double f = (double)dict->count / (double)dict->length;
@@ -2694,7 +2976,7 @@ struct json_value *json_lookup_value(struct dict *map, char *key){
 #include "global.h"
 #endif
 
-#define MAX_ARITY   10
+#define MAX_ARITY   16
 
 struct val_info {
     int size, index;
@@ -2717,8 +2999,27 @@ struct var_tree {
     } u;
 };
 
+static uint64_t this;
 static struct dict *ops_map, *f_map;
 extern struct code *code;
+
+bool is_sequential(uint64_t seqvars, uint64_t *indices, int n){
+    assert((seqvars & VALUE_MASK) == VALUE_SET);
+    int size;
+    uint64_t *seqs = value_get(seqvars, &size);
+    size /= sizeof(uint64_t);
+
+    n *= sizeof(uint64_t);
+    for (int i = 0; i < size; i++) {
+        assert((seqs[i] & VALUE_MASK) == VALUE_ADDRESS);
+        int sn;
+        uint64_t *inds = value_get(seqs[i], &sn);
+        if (n >= sn && sn >= 0 && memcmp(indices, inds, sn) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
 
 uint64_t ctx_failure(struct context *ctx, char *fmt, ...){
     char *r;
@@ -2745,11 +3046,17 @@ uint64_t var_match_rec(struct context *ctx, struct var_tree *vt,
         return dict_store(vars, vt->u.name, arg);
     case VT_TUPLE:
         if ((arg & VALUE_MASK) != VALUE_DICT) {
-            return ctx_failure(ctx, "match: expected a tuple");
+            if (vt->u.tuple.n == 0) {
+                return ctx_failure(ctx, "match: expected ()");
+            }
+            else {
+                return ctx_failure(ctx, "match: expected a tuple");
+            }
         }
         if (arg == VALUE_DICT) {
             if (vt->u.tuple.n != 0) {
-                return ctx_failure(ctx, "match: expected a non-empty tuple");
+                return ctx_failure(ctx, "match: expected a %d-tuple",
+                                                vt->u.tuple.n);
             }
             return vars;
         }
@@ -2894,8 +3201,8 @@ uint64_t dict_load(uint64_t dict, uint64_t key){
     }
     else {
         vals = value_get(dict & ~VALUE_MASK, &size);
-        assert(size % 2 == 0);
         size /= sizeof(uint64_t);
+        assert(size % 2 == 0);
     }
 
     int i;
@@ -2954,7 +3261,9 @@ uint64_t dict_remove(uint64_t dict, uint64_t key){
 }
 
 bool dict_tryload(uint64_t dict, uint64_t key, uint64_t *result){
-    assert((dict & VALUE_MASK) == VALUE_DICT);
+    if ((dict & VALUE_MASK) != VALUE_DICT) {
+        return false;
+    }
 
     uint64_t *vals;
     int size;
@@ -3067,15 +3376,17 @@ bool ind_trystore(uint64_t dict, uint64_t *indices, int n, uint64_t value, uint6
         }
         else {
             vals = value_get(dict & ~VALUE_MASK, &size);
-            assert(size % 2 == 0);
             size /= sizeof(uint64_t);
+            assert(size % 2 == 0);
         }
 
         int i;
         for (i = 0; i < size; i += 2) {
             if (vals[i] == indices[0]) {
                 uint64_t d = vals[i+1];
-                assert((d & VALUE_MASK) == VALUE_DICT);
+                if ((d & VALUE_MASK) != VALUE_DICT) {
+                    return false;
+                }
                 uint64_t nd;
                 if (!ind_trystore(d, indices + 1, n - 1, value, &nd)) {
                     return false;
@@ -3103,12 +3414,14 @@ bool ind_trystore(uint64_t dict, uint64_t *indices, int n, uint64_t value, uint6
     return false;
 }
 
-uint64_t ind_remove(uint64_t dict, uint64_t *indices, int n){
+bool ind_remove(uint64_t dict, uint64_t *indices, int n,
+                                        uint64_t *result) {
     assert((dict & VALUE_MASK) == VALUE_DICT);
     assert(n > 0);
 
     if (n == 1) {
-        return dict_remove(dict, indices[0]);
+        *result = dict_remove(dict, indices[0]);
+        return true;
     }
     else {
         uint64_t *vals;
@@ -3119,18 +3432,24 @@ uint64_t ind_remove(uint64_t dict, uint64_t *indices, int n){
         }
         else {
             vals = value_get(dict & ~VALUE_MASK, &size);
-            assert(size % 2 == 0);
             size /= sizeof(uint64_t);
+            assert(size % 2 == 0);
         }
 
         int i;
         for (i = 0; i < size; i += 2) {
             if (vals[i] == indices[0]) {
                 uint64_t d = vals[i+1];
-                assert((d & VALUE_MASK) == VALUE_DICT);
-                uint64_t nd = ind_remove(d, indices + 1, n - 1);
+                if ((d & VALUE_MASK) != VALUE_DICT) {
+                    return false;
+                }
+                uint64_t nd;
+                if (!ind_remove(d, indices + 1, n - 1, &nd)) {
+                    return false;
+                }
                 if (d == nd) {
-                    return dict;
+                    *result = dict;
+                    return true;
                 }
                 int n = size * sizeof(uint64_t);
                 uint64_t *copy = malloc(n);
@@ -3138,7 +3457,8 @@ uint64_t ind_remove(uint64_t dict, uint64_t *indices, int n){
                 copy[i + 1] = nd;
                 uint64_t v = value_put_dict(copy, n);
                 free(copy);
-                return v;
+                *result = v;
+                return true;
             }
             /* 
                 if (value_cmp(vals[i], key) > 0) {
@@ -3146,9 +3466,7 @@ uint64_t ind_remove(uint64_t dict, uint64_t *indices, int n){
                 }
             */
         }
-
-        panic("ind_remove");        // TODO.  Should this return orig dict?
-        return 0;
+        return false;
     }
 }
 
@@ -3156,7 +3474,9 @@ void op_Address(const void *env, struct state *state, struct context **pctx){
     uint64_t index = ctx_pop(pctx);
     uint64_t av = ctx_pop(pctx);
     if ((av & VALUE_MASK) != VALUE_ADDRESS) {
-        ctx_failure(*pctx, "not an address");
+        char *p = value_string(av);
+        ctx_failure(*pctx, "%s: not an address", p);
+        free(p);
         return;
     }
     if (av == VALUE_ADDRESS) {
@@ -3205,7 +3525,11 @@ void op_Apply(const void *env, struct state *state, struct context **pctx){
         (*pctx)->pc = method >> VALUE_BITS;
         return;
     default:
-        ctx_failure(*pctx, "Can only apply to methods or dictionaries");
+        {
+            char *x = value_string(method);
+            ctx_failure(*pctx, "Can only apply to methods or dictionaries, not to: %s", x);
+            free(x);
+        }
     }
 }
 
@@ -3295,18 +3619,47 @@ void op_Cut(const void *env, struct state *state, struct context **pctx){
     panic("op_Cut: not a set or dict");
 }
 
-void op_Del(const void *env, struct state *state, struct context **pctx){
+void ext_Del(const void *env, struct state *state, struct context **pctx,
+                                                        struct access_info *ai){
     assert((state->vars & VALUE_MASK) == VALUE_DICT);
+
+    if ((*pctx)->readonly > 0) {
+        ctx_failure(*pctx, "Can't update state in assert or invariant");
+        return;
+    }
+
     uint64_t av = ctx_pop(pctx);
-    assert((av & VALUE_MASK) == VALUE_ADDRESS);
-    assert(av != VALUE_ADDRESS);
+    if ((av & VALUE_MASK) != VALUE_ADDRESS) {
+        char *p = value_string(av);
+        ctx_failure(*pctx, "Del %s: not an address", p);
+        free(p);
+        return;
+    }
+    if (av == VALUE_ADDRESS) {
+        ctx_failure(*pctx, "Del: address is None");
+        return;
+    }
 
     int size;
     uint64_t *indices = value_get(av, &size);
     size /= sizeof(uint64_t);
-    state->vars = ind_remove(state->vars, indices, size);
+    if (ai != NULL) {
+        ai->indices = indices;
+        ai->n = size;
+        ai->load = false;
+    }
+    uint64_t nd;
+    if (!ind_remove(state->vars, indices, size, &nd)) {
+        ctx_failure(*pctx, "Del: no such variable");
+    }
+    else {
+        state->vars = nd;
+        (*pctx)->pc++;
+    }
+}
 
-    (*pctx)->pc++;
+void op_Del(const void *env, struct state *state, struct context **pctx){
+    ext_Del(env, state, pctx, NULL);
 }
 
 void op_DelVar(const void *env, struct state *state, struct context **pctx){
@@ -3341,15 +3694,17 @@ void op_Frame(const void *env, struct state *state, struct context **pctx){
     ctx_push(pctx, arg);
 
     uint64_t oldvars = (*pctx)->vars;
+    uint64_t thisval = dict_load(oldvars, this);
 
     // try to match against parameters
-    (*pctx)->vars = dict_store(VALUE_DICT, result, VALUE_DICT);
+    (*pctx)->vars = dict_store(dict_store(VALUE_DICT, this, thisval),
+				result, VALUE_DICT);
     var_match(*pctx, ef->args, arg);
     if ((*pctx)->failure != 0) {
         return;
     }
  
-    ctx_push(pctx, oldvars);
+    ctx_push(pctx, dict_remove(oldvars, this));
     ctx_push(pctx, ((*pctx)->fp << VALUE_BITS) | VALUE_INT);
 
     struct context *ctx = *pctx;
@@ -3451,7 +3806,8 @@ void op_JumpCond(const void *env, struct state *state, struct context **pctx){
     }
 }
 
-void op_Load(const void *env, struct state *state, struct context **pctx){
+void ext_Load(const void *env, struct state *state, struct context **pctx,
+                                                        struct access_info *ai){
     const struct env_Load *el = env;
 
     assert((state->vars & VALUE_MASK) == VALUE_DICT);
@@ -3459,12 +3815,25 @@ void op_Load(const void *env, struct state *state, struct context **pctx){
     uint64_t v;
     if (el == 0) {
         uint64_t av = ctx_pop(pctx);
-        assert((av & VALUE_MASK) == VALUE_ADDRESS);
-        assert(av != VALUE_ADDRESS);
+        if ((av & VALUE_MASK) != VALUE_ADDRESS) {
+            char *p = value_string(av);
+            ctx_failure(*pctx, "Load %s: not an address", p);
+            free(p);
+            return;
+        }
+        if (av == VALUE_ADDRESS) {
+            ctx_failure(*pctx, "Load: can't load from None");
+            return;
+        }
 
         int size;
         uint64_t *indices = value_get(av, &size);
         size /= sizeof(uint64_t);
+        if (ai != NULL) {
+            ai->indices = indices;
+            ai->n = size;
+            ai->load = true;
+        }
 
         if (!ind_tryload(state->vars, indices, size, &v)) {
             char *x = indices_string(indices, size);
@@ -3475,15 +3844,24 @@ void op_Load(const void *env, struct state *state, struct context **pctx){
         ctx_push(pctx, v);
     }
     else {
+        if (ai != NULL) {
+            ai->indices = el->indices;
+            ai->n = el->n;
+            ai->load = true;
+        }
         if (!ind_tryload(state->vars, el->indices, el->n, &v)) {
             char *x = indices_string(el->indices, el->n);
-            ctx_failure(*pctx, "Load: unknown variable %s", x);
+            ctx_failure(*pctx, "Load: unknown variable %s", x+1);
             free(x);
             return;
         }
         ctx_push(pctx, v);
     }
     (*pctx)->pc++;
+}
+
+void op_Load(const void *env, struct state *state, struct context **pctx){
+    ext_Load(env, state, pctx, NULL);
 }
 
 void op_LoadVar(const void *env, struct state *state, struct context **pctx){
@@ -3508,7 +3886,9 @@ void op_LoadVar(const void *env, struct state *state, struct context **pctx){
     }
     else {
         if (!dict_tryload((*pctx)->vars, el->name, &v)) {
-            ctx_failure(*pctx, "Loadvar: unknown variable");
+            char *p = value_string(el->name);
+            ctx_failure(*pctx, "Loadvar: unknown variable %s", p + 1);
+            free(p);
             return;
         }
         ctx_push(pctx, v);
@@ -3579,7 +3959,7 @@ void op_ReadonlyInc(const void *env, struct state *state, struct context **pctx)
 void op_Return(const void *env, struct state *state, struct context **pctx){
     if ((*pctx)->sp == 0) {     // __init__    TODO: no longer the case
         assert(false);
-        (*pctx)->phase = CTX_END;
+        (*pctx)->terminated = true;
         if (false) {
             printf("RETURN INIT\n");
         }
@@ -3595,11 +3975,13 @@ void op_Return(const void *env, struct state *state, struct context **pctx){
         }
         assert((fp & VALUE_MASK) == VALUE_INT);
         (*pctx)->fp = fp >> VALUE_BITS;
-        (*pctx)->vars = ctx_pop(pctx);
-        assert(((*pctx)->vars & VALUE_MASK) == VALUE_DICT);
+        uint64_t thisval = dict_load((*pctx)->vars, this);
+        uint64_t oldvars = ctx_pop(pctx);
+        assert((oldvars & VALUE_MASK) == VALUE_DICT);
+        (*pctx)->vars = dict_store(oldvars, this, thisval);
         (void) ctx_pop(pctx);   // argument saved for stack trace
         if ((*pctx)->sp == 0) {     // __init__
-            (*pctx)->phase = CTX_END;
+            (*pctx)->terminated = true;
             if (false) {
                 printf("RETURN INIT\n");
             }
@@ -3609,7 +3991,7 @@ void op_Return(const void *env, struct state *state, struct context **pctx){
         assert((calltype & VALUE_MASK) == VALUE_INT);
         switch (calltype >> VALUE_BITS) {
         case CALLTYPE_PROCESS:
-            (*pctx)->phase = CTX_END;
+            (*pctx)->terminated = true;
             break;
         case CALLTYPE_NORMAL:
             {
@@ -3634,6 +4016,40 @@ void op_Return(const void *env, struct state *state, struct context **pctx){
             panic("op_Return: bad call type");
         }
     }
+}
+
+void op_Sequential(const void *env, struct state *state, struct context **pctx){
+    uint64_t addr = ctx_pop(pctx);
+    if ((addr & VALUE_MASK) != VALUE_ADDRESS) {
+        char *p = value_string(addr);
+        ctx_failure(*pctx, "Sequential %s: not an address", p);
+        free(p);
+        return;
+    }
+
+    /* Insert in state's set of sequential variables.
+     */
+    int size;
+    uint64_t *seqs = value_copy(state->seqs, &size);
+    size /= sizeof(uint64_t);
+    int i;
+    for (i = 0; i < size; i++) {
+        int k = value_cmp(seqs[i], addr);
+        if (k == 0) {
+            free(seqs);
+            (*pctx)->pc++;
+            return;
+        }
+        if (k > 0) {
+            break;
+        }
+    }
+    seqs = realloc(seqs, (size + 1) * sizeof(uint64_t));
+    memmove(&seqs[i + 1], &seqs[i], (size - i) * sizeof(uint64_t));
+    seqs[i] = addr;
+    state->seqs = value_put_set(seqs, (size + 1) * sizeof(uint64_t));
+    free(seqs);
+    (*pctx)->pc++;
 }
 
 // sort two key/value pairs
@@ -3704,20 +4120,18 @@ void op_Spawn(const void *env, struct state *state, struct context **pctx){
     assert(pc < code_len);
     assert(strcmp(code[pc].oi->name, "Frame") == 0);
     uint64_t arg = ctx_pop(pctx);
-    uint64_t this = ctx_pop(pctx);
-    if (false) {
-        printf("SPAWN %"PRIx64" %"PRIx64" %"PRIx64"\n", pc, arg, this);
-    }
+    uint64_t thisval = ctx_pop(pctx);
 
     struct context *ctx = new_alloc(struct context);
 
     const struct env_Frame *ef = code[pc].env;
     ctx->name = ef->name;
     ctx->arg = arg;
-    ctx->this = this;
+    ctx->this = thisval;
     ctx->entry = (pc << VALUE_BITS) | VALUE_PC;
     ctx->pc = pc;
     ctx->vars = VALUE_DICT;
+    ctx->vars = dict_store(VALUE_DICT, this, thisval);
     ctx->interruptlevel = VALUE_FALSE;
     ctx_push(&ctx, (CALLTYPE_PROCESS << VALUE_BITS) | VALUE_INT);
     ctx_push(&ctx, arg);
@@ -3744,17 +4158,24 @@ void op_Split(const void *env, struct state *state, struct context **pctx){
         return;
     }
     if (v == VALUE_DICT || v == VALUE_SET) {
-        assert(es->count == 0);
-        (*pctx)->pc++;
+        if (es->count != 0) {
+            ctx_failure(*pctx, "Split: empty set or tuple");
+        }
+        else {
+            (*pctx)->pc++;
+        }
         return;
     }
 
     int size;
     uint64_t *vals = value_get(v, &size);
 
-    // TODO.  Should items be pushed in this order???
     if (type == VALUE_DICT) {
         size /= 2 * sizeof(uint64_t);
+        if (size != es->count) {
+            ctx_failure(*pctx, "Split: list of wrong size");
+            return;
+        }
         for (int i = 0; i < size; i++) {
             ctx_push(pctx, vals[2*i + 1]);
         }
@@ -3763,6 +4184,10 @@ void op_Split(const void *env, struct state *state, struct context **pctx){
     }
     if (type == VALUE_SET) {
         size /= sizeof(uint64_t);
+        if (size != es->count) {
+            ctx_failure(*pctx, "Split: set of wrong size");
+            return;
+        }
         for (int i = 0; i < size; i++) {
             ctx_push(pctx, vals[i]);
         }
@@ -3785,11 +4210,15 @@ void op_Stop(const void *env, struct state *state, struct context **pctx){
     if (es == 0) {
         uint64_t av = ctx_pop(pctx);
         if ((av & VALUE_MASK) != VALUE_ADDRESS) {
-            ctx_failure(*pctx, "Stop: not an address");
+            char *p = value_string(av);
+            ctx_failure(*pctx, "Stop %s: not an address", p);
+            free(p);
             return;
         }
-        assert((av & VALUE_MASK) == VALUE_ADDRESS);
-        assert(av != VALUE_ADDRESS);
+        if (av == VALUE_ADDRESS) {
+            ctx_failure(*pctx, "Stop: address is None");
+            return;
+        }
 
         int size;
         uint64_t *indices = value_get(av, &size);
@@ -3800,7 +4229,9 @@ void op_Stop(const void *env, struct state *state, struct context **pctx){
         uint64_t v = value_put_context(*pctx);
 
         if (!ind_trystore(state->vars, indices, size, v, &state->vars)) {
-            ctx_failure(*pctx, "Store: bad address");
+            char *x = indices_string(indices, size);
+            ctx_failure(*pctx, "Stop: bad address: %s", x);
+            free(x);
             return;
         }
     }
@@ -3816,13 +4247,14 @@ void op_Stop(const void *env, struct state *state, struct context **pctx){
     }
 }
 
-void op_Store(const void *env, struct state *state, struct context **pctx){
+void ext_Store(const void *env, struct state *state, struct context **pctx,
+                                                        struct access_info *ai){
     const struct env_Store *es = env;
 
     assert((state->vars & VALUE_MASK) == VALUE_DICT);
 
     if ((*pctx)->readonly > 0) {
-        ctx_failure(*pctx, "Store: in read-only mode");
+        ctx_failure(*pctx, "Can't update state in assert or invariant (including acquiring locks)");
         return;
     }
 
@@ -3831,15 +4263,24 @@ void op_Store(const void *env, struct state *state, struct context **pctx){
     if (es == 0) {
         uint64_t av = ctx_pop(pctx);
         if ((av & VALUE_MASK) != VALUE_ADDRESS) {
-            ctx_failure(*pctx, "Store: not an address");
+            char *p = value_string(av);
+            ctx_failure(*pctx, "Store %s: not an address", p);
+            free(p);
             return;
         }
-        assert((av & VALUE_MASK) == VALUE_ADDRESS);
-        assert(av != VALUE_ADDRESS);
+        if (av == VALUE_ADDRESS) {
+            ctx_failure(*pctx, "Store: address is None");
+            return;
+        }
 
         int size;
         uint64_t *indices = value_get(av, &size);
         size /= sizeof(uint64_t);
+        if (ai != NULL) {
+            ai->indices = indices;
+            ai->n = size;
+            ai->load = is_sequential(state->seqs, ai->indices, ai->n);
+        }
 
         if (false) {
             printf("STORE IND %d %d %d %"PRIx64" %s %s\n", (*pctx)->pc, (*pctx)->sp, size, v,
@@ -3853,17 +4294,28 @@ void op_Store(const void *env, struct state *state, struct context **pctx){
         }
 
         if (!ind_trystore(state->vars, indices, size, v, &state->vars)) {
-            ctx_failure(*pctx, "Store: bad address");
+            char *x = indices_string(indices, size);
+            ctx_failure(*pctx, "Store: bad address: %s", x);
+            free(x);
             return;
         }
     }
     else {
+        if (ai != NULL) {
+            ai->indices = es->indices;
+            ai->n = es->n;
+            ai->load = is_sequential(state->seqs, ai->indices, ai->n);
+        }
         if (!ind_trystore(state->vars, es->indices, es->n, v, &state->vars)) {
             ctx_failure(*pctx, "Store: bad variable");
             return;
         }
     }
     (*pctx)->pc++;
+}
+
+void op_Store(const void *env, struct state *state, struct context **pctx){
+    ext_Store(env, state, pctx, NULL);
 }
 
 void op_StoreVar(const void *env, struct state *state, struct context **pctx){
@@ -3881,7 +4333,9 @@ void op_StoreVar(const void *env, struct state *state, struct context **pctx){
         size /= sizeof(uint64_t);
 
         if (!ind_trystore((*pctx)->vars, indices, size, v, &(*pctx)->vars)) {
-            ctx_failure(*pctx, "StoreVar: bad address");
+            char *x = indices_string(indices, size);
+            ctx_failure(*pctx, "StoreVar: bad address: %s", x);
+            free(x);
             return;
         }
         (*pctx)->pc++;
@@ -3902,9 +4356,8 @@ void op_Trap(const void *env, struct state *state, struct context **pctx){
         ctx_failure(*pctx, "trap: not a method");
         return;
     }
-    int pc = (*pctx)->trap_pc >> VALUE_BITS;
-    assert(pc < code_len);
-    assert(strcmp(code[pc].oi->name, "Frame") == 0);
+    assert(((*pctx)->trap_pc >> VALUE_BITS) < code_len);
+    assert(strcmp(code[(*pctx)->trap_pc >> VALUE_BITS].oi->name, "Frame") == 0);
     (*pctx)->trap_arg = ctx_pop(pctx);
     (*pctx)->pc++;
 }
@@ -3924,6 +4377,7 @@ void *init_Pop(struct dict *map){ return NULL; }
 void *init_ReadonlyDec(struct dict *map){ return NULL; }
 void *init_ReadonlyInc(struct dict *map){ return NULL; }
 void *init_Return(struct dict *map){ return NULL; }
+void *init_Sequential(struct dict *map){ return NULL; }
 void *init_SetIntLevel(struct dict *map){ return NULL; }
 void *init_Spawn(struct dict *map){ return NULL; }
 void *init_Trap(struct dict *map){ return NULL; }
@@ -4358,6 +4812,8 @@ uint64_t f_intersection(struct state *state, struct context *ctx, uint64_t *args
         // get all the sets
 		assert(n > 0);
         struct val_info *vi = malloc(n * sizeof(*vi));
+		vi[0].vals = value_get(args[0], &vi[0].size); 
+		vi[0].index = 0;
         int min_size = vi[0].size;              // minimum set size
         uint64_t max_val = vi[0].vals[0];       // maximum value over the minima of all sets
         for (int i = 1; i < n; i++) {
@@ -4403,7 +4859,7 @@ uint64_t f_intersection(struct state *state, struct context *ctx, uint64_t *args
                     }
                     vi[j].index++;
                 }
-                if (vi[j].index == vi[j].size) {
+                if (vi[j].index == size) {
                     done = true;
                     break;
                 }
@@ -4414,7 +4870,7 @@ uint64_t f_intersection(struct state *state, struct context *ctx, uint64_t *args
             if (old_max == max_val) {
                 *v++ = max_val;
                 for (int j = 0; j < n; j++) {
-                    assert(vi[j].index < vi[j].size);
+                    assert(vi[j].index < vi[j].size / sizeof(uint64_t));
                     vi[j].index++;
                     int k, size = vi[j].size / sizeof(uint64_t);
                     if ((k = vi[j].index) == size) {
@@ -4466,7 +4922,7 @@ uint64_t f_intersection(struct state *state, struct context *ctx, uint64_t *args
     }
 
     // Concatenate the dictionaries
-    uint64_t *vals = malloc(total), *v;
+    uint64_t *vals = malloc(total);
     total = 0;
     for (int i = 0; i < n; i++) {
         memcpy((char *) vals + total, vi[i].vals, vi[i].size);
@@ -4558,13 +5014,13 @@ uint64_t f_len(struct state *state, struct context *ctx, uint64_t *args, int n){
 	}
     if ((e & VALUE_MASK) == VALUE_SET) {
         int size;
-        uint64_t *v = value_get(e, &size);
+        (void) value_get(e, &size);
         size /= sizeof(uint64_t);
         return (size << VALUE_BITS) | VALUE_INT;
     }
     if ((e & VALUE_MASK) == VALUE_DICT) {
         int size;
-        uint64_t *v = value_get(e, &size);
+        (void) value_get(e, &size);
         size /= 2 * sizeof(uint64_t);
         return (size << VALUE_BITS) | VALUE_INT;
     }
@@ -4663,6 +5119,15 @@ uint64_t f_minus(struct state *state, struct context *ctx, uint64_t *args, int n
             return ctx_failure(ctx, "unary minus can only be applied to ints");
         }
         e >>= VALUE_BITS;
+        if (e == VALUE_MAX) {
+            return ((uint64_t) VALUE_MIN << VALUE_BITS) | VALUE_INT;
+        }
+        if (e == VALUE_MIN) {
+            return (VALUE_MAX << VALUE_BITS) | VALUE_INT;
+        }
+        if (-e <= VALUE_MIN || -e >= VALUE_MAX) {
+            return ctx_failure(ctx, "unary minus overflow (model too large)");
+        }
         return ((-e) << VALUE_BITS) | VALUE_INT;
     }
     else {
@@ -4673,7 +5138,11 @@ uint64_t f_minus(struct state *state, struct context *ctx, uint64_t *args, int n
             }
             e1 >>= VALUE_BITS;
             e2 >>= VALUE_BITS;
-            return ((e2 - e1) << VALUE_BITS) | VALUE_INT;
+            int64_t result = e2 - e1;
+            if (result <= VALUE_MIN || result >= VALUE_MAX) {
+                return ctx_failure(ctx, "minus overflow (model too large)");
+            }
+            return (result << VALUE_BITS) | VALUE_INT;
         }
 
         uint64_t e1 = args[0], e2 = args[1];
@@ -4756,17 +5225,24 @@ uint64_t f_not(struct state *state, struct context *ctx, uint64_t *args, int n){
 }
 
 uint64_t f_plus(struct state *state, struct context *ctx, uint64_t *args, int n){
-    if ((args[0] & VALUE_MASK) == VALUE_INT) {
-        int64_t e1 = args[0];
+    int64_t e1 = args[0];
+    if ((e1 & VALUE_MASK) == VALUE_INT) {
+        e1 >>= VALUE_BITS;
         for (int i = 1; i < n; i++) {
             int64_t e2 = args[i];
             if ((e2 & VALUE_MASK) != VALUE_INT) {
                 return ctx_failure(ctx,
                     "+: applied to mix of integers and other values");
             }
-            e1 += e2 & ~VALUE_MASK;
+            e2 >>= VALUE_BITS;
+            int64_t sum = e1 + e2;
+            if (sum <= VALUE_MIN || sum >= VALUE_MAX) {
+                return ctx_failure(ctx,
+                    "+: integer overflow (model too large)");
+            }
+            e1 = sum;
         }
-        return e1;
+        return (e1 << VALUE_BITS) | VALUE_INT;
     }
 
     // get all the lists
@@ -4774,7 +5250,7 @@ uint64_t f_plus(struct state *state, struct context *ctx, uint64_t *args, int n)
     int total = 0;
     for (int i = 0; i < n; i++) {
         if ((args[i] & VALUE_MASK) != VALUE_DICT) {
-            ctx_failure(ctx, "+: applied to mix of dictionaries and other values");
+            ctx_failure(ctx, "+: applied to mix of value types");
             free(vi);
             return 0;
         }
@@ -4794,7 +5270,7 @@ uint64_t f_plus(struct state *state, struct context *ctx, uint64_t *args, int n)
     }
 
     // Concatenate the sets
-    uint64_t *vals = malloc(total), *v;
+    uint64_t *vals = malloc(total);
     total = 0;
     for (int i = n; --i >= 0;) {
         memcpy((char *) vals + total, vi[i].vals, vi[i].size);
@@ -4825,8 +5301,14 @@ uint64_t f_power(struct state *state, struct context *ctx, uint64_t *args, int n
     }
     int64_t base = e2 >> VALUE_BITS;
     int64_t exp = e1 >> VALUE_BITS;
+    if (exp == 0) {
+        return (1 << VALUE_BITS) | VALUE_INT;
+    }
+    if (exp < 0) {
+        return ctx_failure(ctx, "**: negative exponent");
+    }
 
-    int64_t result = 1;
+    int64_t result = 1, orig = base;
     for (;;) {
         if (exp & 1) {
             result *= base;
@@ -4836,6 +5318,10 @@ uint64_t f_power(struct state *state, struct context *ctx, uint64_t *args, int n
             break;
         }
         base *= base;
+    }
+    if (result < orig) {
+        // TODO.  Improve overflow detection
+        return ctx_failure(ctx, "**: overflow (model too large)");
     }
 
     return (result << VALUE_BITS) | VALUE_INT;
@@ -4990,8 +5476,18 @@ uint64_t f_shiftleft(struct state *state, struct context *ctx, uint64_t *args, i
         return ctx_failure(ctx, "left argument to << not an integer");
     }
     e1 >>= VALUE_BITS;
+    if (e1 < 0) {
+        return ctx_failure(ctx, "<<: negative shift count");
+    }
     e2 >>= VALUE_BITS;
-    return ((e2 << e1) << VALUE_BITS) | VALUE_INT;
+    int64_t result = e2 << e1;
+    if (((result << VALUE_BITS) >> VALUE_BITS) != result) {
+        return ctx_failure(ctx, "<<: overflow (model too large)");
+    }
+    if (result <= VALUE_MIN || result >= VALUE_MAX) {
+        return ctx_failure(ctx, "<<: overflow (model too large)");
+    }
+    return (result << VALUE_BITS) | VALUE_INT;
 }
 
 uint64_t f_shiftright(struct state *state, struct context *ctx, uint64_t *args, int n){
@@ -5003,6 +5499,9 @@ uint64_t f_shiftright(struct state *state, struct context *ctx, uint64_t *args, 
     }
     if ((e2 & VALUE_MASK) != VALUE_INT) {
         return ctx_failure(ctx, "left argument to >> not an integer");
+    }
+    if (e1 < 0) {
+        return ctx_failure(ctx, ">>: negative shift count");
     }
     e1 >>= VALUE_BITS;
     e2 >>= VALUE_BITS;
@@ -5025,11 +5524,27 @@ uint64_t f_times(struct state *state, struct context *ctx, uint64_t *args, int n
                 return ctx_failure(ctx,
                     "* can only be applied to integers and at most one list");
             }
-            result *= e >> VALUE_BITS;
+            e >>= VALUE_BITS;
+            if (e == 0) {
+                result = 0;
+            }
+            else {
+                int64_t product = result * e;
+                if (product / result != e) {
+                    return ctx_failure(ctx, "*: overflow (model too large)");
+                }
+                result = product;
+            }
         }
     }
     if (list < 0) {
+        if (result != (result << VALUE_BITS) >> VALUE_BITS) {
+            return ctx_failure(ctx, "*: overflow (model too large)");
+        }
         return (result << VALUE_BITS) | VALUE_INT;
+    }
+    if (result == 0) {
+        return VALUE_DICT;
     }
     int size;
     uint64_t *vals = value_get(args[list], &size);
@@ -5089,7 +5604,7 @@ uint64_t f_union(struct state *state, struct context *ctx, uint64_t *args, int n
         }
 
         // Concatenate the sets
-        uint64_t *vals = malloc(total), *v;
+        uint64_t *vals = malloc(total);
         total = 0;
         for (int i = 0; i < n; i++) {
             memcpy((char *) vals + total, vi[i].vals, vi[i].size);
@@ -5129,7 +5644,7 @@ uint64_t f_union(struct state *state, struct context *ctx, uint64_t *args, int n
     }
 
     // Concatenate the dictionaries
-    uint64_t *vals = malloc(total), *v;
+    uint64_t *vals = malloc(total);
     total = 0;
     for (int i = 0; i < n; i++) {
         memcpy((char *) vals + total, vi[i].vals, vi[i].size);
@@ -5176,7 +5691,7 @@ uint64_t f_xor(struct state *state, struct context *ctx, uint64_t *args, int n){
     int total = 0;
     for (int i = 0; i < n; i++) {
         if ((args[i] & VALUE_MASK) != VALUE_SET) {
-            return ctx_failure(ctx, "'^' applied to mix of sets and other types");
+            return ctx_failure(ctx, "'^' applied to mix of value types");
         }
         if (args[i] == VALUE_SET) {
             vi[i].vals = NULL;
@@ -5194,7 +5709,7 @@ uint64_t f_xor(struct state *state, struct context *ctx, uint64_t *args, int n){
     }
 
     // Concatenate the sets
-    uint64_t *vals = malloc(total), *v;
+    uint64_t *vals = malloc(total);
     total = 0;
     for (int i = 0; i < n; i++) {
         memcpy((char *) vals + total, vi[i].vals, vi[i].size);
@@ -5251,6 +5766,7 @@ struct op_info op_table[] = {
 	{ "ReadonlyDec", init_ReadonlyDec, op_ReadonlyDec },
 	{ "ReadonlyInc", init_ReadonlyInc, op_ReadonlyInc },
 	{ "Return", init_Return, op_Return },
+	{ "Sequential", init_Sequential, op_Sequential },
 	{ "SetIntLevel", init_SetIntLevel, op_SetIntLevel },
 	{ "Spawn", init_Spawn, op_Spawn },
 	{ "Split", init_Split, op_Split },
@@ -5317,117 +5833,120 @@ void ops_init(){
         void **p = dict_insert(f_map, fi->name, strlen(fi->name));
         *p = fi;
     }
+    this = value_put_atom("this", 4);
 }
-
-#include <stdlib.h>
-#include <assert.h>
 
 #ifndef HARMONY_COMBINE
-#include "global.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "minheap.h"
 #endif
 
-#define MAX_CACHE	5000
+#define parent(k)   (int) (((k) - 1) / 2)
+#define leftc(k)    (2 * (k) + 1)
+#define rightc(k)    (2 * (k) + 2)
 
-static struct q_elt *queue_cache;
-static unsigned int queue_csize;
-
-struct q_elt {
-	struct q_elt *next;
-	void *item;
+struct minheap {
+    int (*cmp)(void *v1, void *v2);
+    void **array;
+    int alloc_size, size;
 };
 
-struct queue {
-	struct q_elt *first, **last;
-};
-
-void queue_enqueue(struct queue *queue, void *item){
-	struct q_elt *qe;
-
-	if ((qe = queue_cache) == 0) {
-		assert(queue_csize == 0);
-		qe = new_alloc(struct q_elt);
-	}
-	else {
-		assert(queue_csize > 0);
-		queue_csize--;
-		queue_cache = qe->next;
-		qe->next = 0;
-	}
-
-	qe->item = item;
-	*queue->last = qe;
-	queue->last = &qe->next;
-}
-
-void queue_prepend(struct queue *queue, void *item){
-	struct q_elt *qe;
-
-	if ((qe = queue_cache) == 0) {
-		assert(queue_csize == 0);
-		qe = new_alloc(struct q_elt);
-	}
-	else {
-		assert(queue_csize > 0);
-		queue_csize--;
-		queue_cache = qe->next;
-	}
-
-	qe->item = item;
-    if ((qe->next = queue->first) == 0) {
-        queue->last = &qe->next;
+bool minheap_check(struct minheap *mh, void *key) {
+    for (int i = 0; i < mh->size; i++) {
+        if (mh->array[i] == key) {
+            return true;
+        }
     }
-    queue->first = qe;
+    return false;
 }
 
-bool queue_dequeue(struct queue *queue, void **item){
-	struct q_elt *qe;
-
-	if ((qe = queue->first) == 0) {
-		return false;
-	}
-	if ((queue->first = qe->next) == 0) {
-		queue->last = &queue->first;
-	}
-	*item = qe->item;
-
-	if (queue_csize >= MAX_CACHE) {
-		assert(queue_csize == MAX_CACHE);
-		free(qe);
-	}
-	else {
-		qe->next = queue_cache;
-		queue_cache = qe;
-		queue_csize++;
-	}
-	return true;
+struct minheap *minheap_create(int (*cmp)(void *, void *)) {
+    struct minheap *mh = malloc(sizeof(struct minheap));
+    if (mh == NULL) {
+        fprintf(stderr, "minheap_create: out of memory\n");
+        exit(1);
+    }
+    mh->cmp = cmp;
+    mh->size = 0;
+    mh->alloc_size = 1024;
+    mh->array = malloc(sizeof(void *) * mh->alloc_size);
+    if (mh->array == NULL) {
+        fprintf(stderr, "minheap_create: out of memory\n");
+        exit(1);
+    }
+    return mh;
 }
 
-bool queue_empty(struct queue *queue){
-    return queue->first == 0;
+static void minheap_swap(struct minheap *mh, int i, int j) {
+    void *tmp = mh->array[i];
+    mh->array[i] = mh->array[j];
+    mh->array[j] = tmp;
 }
 
-struct queue *queue_init(void){
-	struct queue *q = new_alloc(struct queue);
-
-	q->last = &q->first;
-	return q;
+static void minheap_fixup(struct minheap *mh, int k) {
+    while (k > 0 && (*mh->cmp)(mh->array[k], mh->array[parent(k)]) < 0) {
+        minheap_swap(mh, parent(k), k);
+        k = parent(k);
+    }
 }
 
-void queue_release(struct queue *queue){
-	assert(queue->last == &queue->first);
-	free(queue);
+static void minheap_fixdown(struct minheap *mh, int k) {
+    int j;
+
+    while ((j = leftc(k)) < mh->size) {
+        assert(j > 0);
+        if (j < mh->size - 1 && (*mh->cmp)(mh->array[j+1], mh->array[j]) < 0) {
+            j++;
+        }
+        if ((*mh->cmp)(mh->array[k], mh->array[j]) <= 0) {
+            break;
+        }
+        minheap_swap(mh, k, j);
+        k = j;
+    }
 }
 
-void queue_cleanup(void){
-	struct q_elt *qe;
+void minheap_insert(struct minheap *mh, void *key) {
+    if (mh->size == mh->alloc_size) {
+        mh->alloc_size *= 2;
+        mh->array = realloc(mh->array, sizeof(void *) * mh->alloc_size);
+    }
+    mh->array[mh->size++] = key;
+    minheap_fixup(mh, mh->size - 1);
+}
 
-	while ((qe = queue_cache) != 0) {
-		assert(queue_csize > 0);
-		queue_csize--;
-		queue_cache = qe->next;
-		free(qe);
-	}
-	assert(queue_csize == 0);
+void minheap_decrease(struct minheap *mh, void *key) {
+    for (int i = 0; i < mh->size; i++) {
+        if (mh->array[i] == key) {
+            minheap_fixup(mh, i);
+            break;
+        }
+    }
+}
+
+bool minheap_empty(struct minheap *mh) {
+    return mh->size == 0;
+}
+
+void *minheap_getmin(struct minheap *mh) {
+    if (minheap_empty(mh)) {
+        fprintf(stderr, "minheap_getmin: heap is empty\n");
+        exit(1);
+    }
+    void *result = mh->array[0];
+    mh->array[0] = mh->array[--mh->size];
+    minheap_fixdown(mh, 0);
+    return result;
+}
+
+int minheap_size(struct minheap *mh) {
+    return mh->size;
+}
+
+void minheap_destroy(struct minheap *mh) {
+    free(mh->array);
+    free(mh);
 }
 
 #define _GNU_SOURCE
@@ -5437,6 +5956,7 @@ void queue_cleanup(void){
 #include <stdlib.h>
 #include <inttypes.h>
 #include <string.h>
+#include <ctype.h>
 #include <assert.h>
 
 #ifndef HARMONY_COMBINE
@@ -5459,8 +5979,13 @@ void *value_get(uint64_t v, int *psize){
 }
 
 void *value_copy(uint64_t v, int *psize){
+    v &= ~VALUE_MASK;
+    if (v == 0) {
+        *psize = 0;
+        return NULL;
+    }
     int size;
-    void *p = dict_retrieve((void *) (v & ~VALUE_MASK), &size);
+    void *p = dict_retrieve((void *) v, &size);
     void *r = malloc(size);
     memcpy(r, p, size);
     if (psize != NULL) {
@@ -5500,6 +6025,7 @@ uint64_t value_put_address(void *p, int size){
 }
 
 uint64_t value_put_context(struct context *ctx){
+	assert(ctx->pc >= 0);
     int size = sizeof(*ctx) + (ctx->sp * sizeof(uint64_t));
     void *q = dict_find(context_map, ctx, size);
     return (uint64_t) q | VALUE_CONTEXT;
@@ -5527,8 +6053,7 @@ int value_cmp_atom(uint64_t v1, uint64_t v2){
 }
 
 int value_cmp_pc(uint64_t v1, uint64_t v2){
-    panic("value_cmp_pc: not yet implemented");
-    return 0;
+    return v1 < v2 ? -1 : 1;
 }
 
 int value_cmp_dict(uint64_t v1, uint64_t v2){
@@ -5701,32 +6226,33 @@ static char *value_json_bool(uint64_t v) {
 }
 
 static char *value_string_int(uint64_t v) {
+    int64_t w = ((int64_t) v) >> VALUE_BITS;
     char *r;
 
-    if ((v >> VALUE_BITS) == VALUE_MAX) {
+    if (w == VALUE_MAX) {
         alloc_printf(&r, "inf");
     }
-    else if ((v >> VALUE_BITS) == VALUE_MIN) {
+    else if (w == VALUE_MIN) {
         alloc_printf(&r, "-inf");
     }
     else {
-        alloc_printf(&r, "%"PRId64"", ((int64_t) v) >> VALUE_BITS);
+        alloc_printf(&r, "%"PRId64"", w);
     }
     return r;
 }
 
 static char *value_json_int(uint64_t v) {
+    int64_t w = ((int64_t) v) >> VALUE_BITS;
     char *r;
 
-    if ((v >> VALUE_BITS) == VALUE_MAX) {
+    if (w == VALUE_MAX) {
         alloc_printf(&r, "{ \"type\": \"int\", \"value\": \"inf\" }");
     }
-    else if ((v >> VALUE_BITS) == VALUE_MIN) {
+    else if (w == VALUE_MIN) {
         alloc_printf(&r, "{ \"type\": \"int\", \"value\": \"-inf\" }");
     }
     else {
-        alloc_printf(&r, "{ \"type\": \"int\", \"value\": \"%"PRId64"\" }",
-                            ((int64_t) v) >> VALUE_BITS);
+        alloc_printf(&r, "{ \"type\": \"int\", \"value\": \"%"PRId64"\" }", w);
     }
     return r;
 }
@@ -5743,7 +6269,13 @@ static char *value_json_atom(uint64_t v) {
     void *p = (void *) v;
     int size;
     char *s = dict_retrieve(p, &size), *r;
-    alloc_printf(&r, "{ \"type\": \"atom\", \"value\": \"%.*s\" }", size, s);
+    assert(size > 0);
+    if (size > 1 || (isprint(s[0]) && s[0] != '"' && s[0] != '\\')) {
+        alloc_printf(&r, "{ \"type\": \"atom\", \"value\": \"%.*s\" }", size, s);
+    }
+    else {
+        alloc_printf(&r, "{ \"type\": \"char\", \"value\": \"%02x\" }", s[0]);
+    }
     return r;
 }
 
@@ -6092,7 +6624,28 @@ uint64_t value_pc(struct dict *map){
 uint64_t value_atom(struct dict *map){
     struct json_value *value = dict_lookup(map, "value", 5);
     assert(value->type == JV_ATOM);
+	assert(value->u.atom.len > 0);
     void *p = dict_find(atom_map, value->u.atom.base, value->u.atom.len);
+    return (uint64_t) p | VALUE_ATOM;
+}
+
+uint64_t value_char(struct dict *map){
+    struct json_value *value = dict_lookup(map, "value", 5);
+    assert(value->type == JV_ATOM);
+    char *copy = malloc(value->u.atom.len + 1);
+    memcpy(copy, value->u.atom.base, value->u.atom.len);
+    copy[value->u.atom.len] = 0;
+    unsigned long x;
+    sscanf(copy, "%lx", &x);
+    free(copy);
+    if (x == 0) {
+        printf("value_char: can't handle null characters yet\n");
+    }
+    else if (x != (x & 0x7F)) {
+        printf("value_char: can only handle ASCII characters right now\n");
+    }
+    char v = x & 0x7F;
+    void *p = dict_find(atom_map, &v, 1);
     return (uint64_t) p | VALUE_ATOM;
 }
 
@@ -6170,6 +6723,9 @@ uint64_t value_from_json(struct dict *map){
     }
     else if (atom_cmp(type->u.atom, "atom")) {
         return value_atom(map);
+    }
+    else if (atom_cmp(type->u.atom, "char")) {
+        return value_char(map);
     }
     else if (atom_cmp(type->u.atom, "dict")) {
         return value_dict(map);
@@ -7397,7 +7953,7 @@ def doImport(scope, code, module):
                     "<internal>/" + modname + ".hny", scope2, code)
             else:
                 print("Can't find module", modname, "imported from", namestack)
-                exit(1)
+                sys.exit(1)
         
         imported[lexeme] = scope2
 
@@ -7406,15 +7962,20 @@ def doImport(scope, code, module):
 def load_string(all, filename, scope, code):
     files[filename] = all.split("\n")
     tokens = lexer(all, filename)
-    # assert False, (tokens1, tokens)
+    if tokens == []:
+        print("Empty file:", filename)
+        sys.exit(1)
 
     try:
         (ast, rem) = StatListRule(-1).parse(tokens)
     except IndexError:
         # best guess...
         print("Parsing", filename, "hit EOF")
-        print(traceback.format_exc())
-        exit(1)
+        sys.exit(1)
+
+    if rem != []:
+        print("Parsing: unexpected tokens remaining at end of program:", rem[0])
+        sys.exit(1)
 
     for mod in ast.getImports():
         doImport(scope, code, mod)
@@ -7434,6 +7995,11 @@ def load_string(all, filename, scope, code):
 
     # Compile again with the real values of the methods and label constants
     ast.compile(scope, code)
+
+    for (lexeme, file, line, column) in ast.getLabels():
+        (t, v) = scope.names[lexeme]
+        (pc, file, line, columv) = v
+        assert pc != tmp, ("not all labels have been filled", lexeme, v)
 
 def load(f, filename, scope, code):
     if filename in files:
@@ -7513,6 +8079,7 @@ def isreserved(s):
         "or",
         "pass",
         "print",
+        "sequential",
         "setintlevel",
         "spawn",
         "stop",
@@ -7558,32 +8125,38 @@ def lexer(s, file):
     result = []
     line = 1
     column = 1
+    cont = 1
+    s = s.replace('\\r', '')        # MS-DOS...
+    indentChars = set()
+    indent = True
     while s != "":
-        if s[0] == "\r":     # msdos...
-            s = s[1:]
-            continue
-
         # see if it's a blank
         if s[0] in { " ", "\t" }:
+            if indent:
+                indentChars.add(s[0])
             s = s[1:]
             column += 1
             continue
 
-        # ignore backslash at end of line
+        # backslash at end of line: glue on the next line
         if s[0] == "\\":
             if len(s) == 1:
                 break
-            if s[1] == "\n" or s[1] == "\r":
+            if s[1] == "\n":
                 s = s[2:]
-                line += 1
-                column = 1
+                column += 2
+                cont += 1
                 continue
 
         if s[0] == "\n":
             s = s[1:]
-            line += 1
+            line += cont
+            cont = 1
             column = 1
+            indent = True
             continue
+
+        indent = False
 
         # skip over line comments
         if s.startswith("#"):
@@ -7608,7 +8181,8 @@ def lexer(s, file):
                     column += 2
                 elif s[0] == "\n":
                     s = s[1:]
-                    line += 1
+                    line += cont
+                    cont = 1
                     column = 1
                 else:
                     s = s[1:]
@@ -7638,6 +8212,7 @@ def lexer(s, file):
 
         # string
         if s[0] == '"' or s[0] == "'":
+            start_col = column
             if s.startswith('"""'):
                 term = '"""'
             elif s.startswith("'''"):
@@ -7699,16 +8274,18 @@ def lexer(s, file):
                     else:
                         str += s[0]
                         if s[0] == '\n':
-                            line += 1
+                            line += cont
+                            cont = 1
                         column += 1
                         s = s[1:]
                 else:
                     str += s[0]
                     if s[0] == '\n':
-                        line += 1
+                        line += cont
+                        cont = 1
                     column += 1
                     s = s[1:]
-            result += [ (str, file, line, column) ]
+            result += [ (str, file, line, start_col) ]
             column += len(term)
             s = s[len(term):]
             continue
@@ -7717,6 +8294,11 @@ def lexer(s, file):
         result += [ (s[0], file, line, column) ]
         s = s[1:]
         column += 1
+
+    if len(indentChars) > 1:
+        print("WARNING: do not mix tabs in spaces for indentation")
+        print("It is likely to lead to incorrect parsing and code generation")
+
     return result
 
 def strValue(v):
@@ -7742,7 +8324,7 @@ def jsonValue(v):
             return '{ "type": "atom", "value": "%s" }'%str(v)
         else:
             assert len(v) == 1, v
-            return '{ "type": "char", "value": "02X" "'%ord(v[0])
+            return '{ "type": "char", "value": "%02X" }'%ord(v[0])
     assert False, v
 
 def strVars(v):
@@ -8385,6 +8967,23 @@ class StopOp(Op):
 
             # Save the context
             state.stop(lv, context)
+
+class SequentialOp(Op):
+    def __init__(self):
+        pass
+
+    def __repr__(self):
+        return "Sequential"
+
+    def jdump(self):
+        return '{ "op": "Sequential" }'
+
+    def explain(self):
+        return "sequential consistency for variable on top of stack"
+
+    def eval(self, state, context):
+        # TODO
+        context.pop()
 
 class ContinueOp(Op):
     def __repr__(self):
@@ -9244,7 +9843,7 @@ class AST:
             code[ctx.pc].eval(state, ctx)
         if ctx.failure != None:
             print("constant evaluation failed: ", self, ctx.failure)
-            exit(1)
+            sys.exit(1)
         return ctx.pop()
 
     def compile(self, scope, code):
@@ -9263,7 +9862,7 @@ class AST:
     # This is supposed to push the address of an lvalue
     def ph1(self, scope, code):
         print("Cannot use in left-hand side expression:", self)
-        exit(1)
+        sys.exit(1)
 
     def rec_comprehension(self, scope, code, iter, pc, N, vars, ctype):
         if iter == []:
@@ -9280,22 +9879,10 @@ class AST:
                 code.append(NaryOp(("DictAdd", file, line, column), 3))
             elif ctype == "list":
                 code.append(NaryOp(("DictAdd", file, line, column), 3))
-                # TODO.  Turn these four instructions into 1 instruction
                 code.append(IncVarOp(N))
-                if False:
-                    code.append(LoadVarOp(N))
-                    code.append(PushOp((1, file, line, column)))
-                    code.append(NaryOp(("+", file, line, column), 2))
-                    code.append(StoreVarOp(N))
             elif ctype == "bag":
                 code.append(NaryOp(("BagAdd", file, line, column), 2))
-                # TODO.  Ditto
                 code.append(IncVarOp(N))
-                if False:
-                    code.append(LoadVarOp(N))
-                    code.append(PushOp((1, file, line, column)))
-                    code.append(NaryOp(("+", file, line, column), 2))
-                    code.append(StoreVarOp(N))
             return
 
         (type, rest) = iter[0]
@@ -9386,7 +9973,7 @@ class AST:
                         "<internal>/" + modname + ".hny", scope2, code)
                 else:
                     print("Can't find module", modname, "imported from", namestack)
-                    exit(1)
+                    sys.exit(1)
             
             imported[lexeme] = scope2
 
@@ -9397,6 +9984,10 @@ class AST:
 
     def getImports(self):
         return []
+
+class ConstantAST(AST):
+    def __init__(self, const):
+        self.const = const
 
 class ConstantAST(AST):
     def __init__(self, const):
@@ -9431,7 +10022,7 @@ class NameAST(AST):
 
     def isShared(self, scope):
         (t, v) = scope.find(self.name)
-        assert t in { "local", "global", "module" }
+        assert t in { "constant", "local", "global", "module" }
         return t != "local"
 
     def ph1(self, scope, code):
@@ -9439,8 +10030,10 @@ class NameAST(AST):
         if t == "local":
             (lexeme, file, line, column) = v
             code.append(PushOp((AddressValue([lexeme]), file, line, column)))
+        elif t == "constant":
+            print("constant cannot be an lvalue:", self.name)
+            sys.exit(1)
         else:
-            assert t in { "global", "module" }
             (lexeme, file, line, column) = self.name
             code.append(PushOp((AddressValue(scope.prefix + [lexeme]), file, line, column)))
 
@@ -9721,15 +10314,57 @@ class ApplyAST(AST):
     def __repr__(self):
         return "ApplyAST(" + str(self.method) + ", " + str(self.arg) + ")"
 
-    def compile(self, scope, code):
-        # See if it's of the form "module.constant":
+    def varCompile(self, scope, code):
         if isinstance(self.method, NameAST):
             (t, v) = scope.lookup(self.method.name)
+            if t == "global":
+                self.method.ph1(scope, code)
+                self.arg.compile(scope, code)
+                code.append(AddressOp())
+                return True
+            else:
+                return False
+
+        if isinstance(self.method, PointerAST):
+            self.method.expr.compile(scope, code)
+            self.arg.compile(scope, code)
+            code.append(AddressOp())
+            return True
+
+        if isinstance(self.method, ApplyAST):
+            if self.method.varCompile(scope, code):
+                self.arg.compile(scope, code)
+                code.append(AddressOp())
+                return True;
+            else:
+                return False
+
+        return False
+
+    def compile(self, scope, code):
+        if isinstance(self.method, NameAST):
+            (t, v) = scope.lookup(self.method.name)
+            # See if it's of the form "module.constant":
             if t == "module" and isinstance(self.arg, ConstantAST) and isinstance(self.arg.const[0], str):
                 (t2, v2) = v.lookup(self.arg.const)
                 if t2 == "constant":
                     code.append(PushOp(v2))
                     return
+            # Decrease chances of data race
+            if t == "global":
+                self.method.ph1(scope, code)
+                self.arg.compile(scope, code)
+                code.append(AddressOp())
+                code.append(LoadOp(None, self.token, None))
+                return
+
+        # Decrease chances of data race
+        if self.varCompile(scope, code):
+            code.append(LoadOp(None, self.token, None))
+            return
+
+        # TODO: is there an issue below with evaluation order
+        #       not being the same as program order?
         self.arg.compile(scope, code)
         self.method.compile(scope, code)
         code.append(ApplyOp(self.token))
@@ -9738,6 +10373,14 @@ class ApplyAST(AST):
         return self.method.isShared(scope)
 
     def ph1(self, scope, code):
+        # See if it's of the form "module.constant":
+        if isinstance(self.method, NameAST):
+            (t, v) = scope.lookup(self.method.name)
+            if t == "module" and isinstance(self.arg, ConstantAST) and isinstance(self.arg.const[0], str):
+                (t2, v2) = v.lookup(self.arg.const)
+                if t2 == "constant":
+                    print("Cannot assign to constant", self.method.name, self.arg.const)
+                    sys.exit(1)
         self.method.ph1(scope, code)
         self.arg.compile(scope, code)
         code.append(AddressOp())
@@ -9754,7 +10397,7 @@ class Rule:
     def expect(self, rule, b, got, want):
         if not b:
             print("Parse error in %s."%rule, "Got", got, ":", want)
-            exit(1)
+            sys.exit(1)
 
     def forParse(self, t, closers):
         (bv, t) = BoundVarRule().parse(t)
@@ -9811,7 +10454,7 @@ class NaryRule(Rule):
                 (ast3, t) = ExpressionRule().parse(t[1:])
                 if ast3 == False:
                     print("expected an expression after n-ary comparison operation in", op)
-                    exit(1)
+                    sys.exit(1)
                 args.append(ast3)
                 if t == []:
                     break
@@ -9826,7 +10469,7 @@ class NaryRule(Rule):
             (ast2, t) = ExpressionRule().parse(t[1:])
         if ast2 == False:
             print("expected an expression after operation", op)
-            exit(1)
+            sys.exit(1)
         args.append(ast2)
         if t != []:
             (lexeme, file, line, column) = t[0]
@@ -9835,16 +10478,16 @@ class NaryRule(Rule):
                 (ast3, t) = ExpressionRule().parse(t[1:])
                 if ast3 == False:
                     print("expected an expression after else in", op)
-                    exit(1)
+                    sys.exit(1)
                 args.append(ast3)
                 if t != []:
                     (lexeme, file, line, column) = t[0]
-            elif (op[0] == lexeme) and (lexeme in { "+", "|", "&", "^", "and", "or" }):
+            elif (op[0] == lexeme) and (lexeme in { "+", "*", "|", "&", "^", "and", "or" }):
                 while lexeme == op[0]:
                     (ast3, t) = ExpressionRule().parse(t[1:])
                     if ast3 == False:
                         print("expected an expression after n-ary operation in", op)
-                        exit(1)
+                        sys.exit(1)
                     args.append(ast3)
                     if t == []:
                         break
@@ -10019,25 +10662,6 @@ class TupleRule(Rule):
                 "expected %s"%self.closers)
         return (TupleAST(d, token), t)
 
-class ArrowExpressionRule(Rule):
-    def parse(self, t):
-        (ast, t) = BasicExpressionRule().parse(t)
-        if ast == False:
-            return (False, t)
-        if t == []:
-            return (ast, t)
-        (lexeme, file, line, column) = token = t[0]
-        while lexeme == "->":
-            (lexeme, file, line, column) = t[1]
-            self.expect("-> expression", isname(lexeme), t[1],
-                    "expected a name after ->")
-            ast = ApplyAST(PointerAST(ast, token), ConstantAST(t[1]), token)
-            t = t[2:]
-            if t == []:
-                break
-            (lexeme, file, line, column) = token = t[0]
-        return (ast, t)
-
 class BasicExpressionRule(Rule):
     def parse(self, t):
         (lexeme, file, line, column) = token = t[0]
@@ -10120,20 +10744,29 @@ class ExpressionRule(Rule):
                 return (PointerAST(ast, func), t)
             else:
                 return (NaryAST(func, [ast]), t)
-        (ast, t) = ArrowExpressionRule().parse(t)
-        args = []
+
+        # Example:
+        # a b c -> d e -> f
+        # (a b c -> d e) -> f
+        # ((a b c -> d) e) -> f
+        # (((a b c) -> d) e) -> f
+        # ((((a b) c) -> d) e) -> f
+        (ast, t) = BasicExpressionRule().parse(t)
         while t != []:
-            (arg, t) = ArrowExpressionRule().parse(t)
-            if arg == False:
-                break
-            args.append(arg)
-        if ast == None:
-            assert len(args) > 0, args
-            ast = PointerAST(args[0], func)
-            args = args[1:]
-        while args != []:
-            ast = ApplyAST(ast, args[0], func)
-            args = args[1:]
+            (lexeme, file, line, column) = t[0]
+            if lexeme == "->":
+                (lexeme, file, line, column) = t[1]
+                self.expect("-> expression", isname(lexeme), t[1],
+                        "expected a name after ->")
+                ast = ApplyAST(PointerAST(ast, t[1]), ConstantAST(t[1]), t[1])
+                t = t[2:]
+                if t == []:
+                    break
+            else:
+                (arg, t) = BasicExpressionRule().parse(t)
+                if arg == False:
+                    break
+                ast = ApplyAST(ast, arg, func)
         return (ast, t)
 
 class AssignmentAST(AST):
@@ -10151,7 +10784,15 @@ class AssignmentAST(AST):
         shared = lv.isShared(scope)
         if isinstance(lv, NameAST):
             # handled separately for assembly code readability
-            ld = LoadOp(lv.name, lv.name, scope.prefix) if shared else LoadVarOp(lv.name)
+            (t, v) = scope.find(lv.name)
+            if t == "module":
+                print("Cannot operate on module", lv.name)
+                sys.exit(1)
+            if t == "constant":
+                print("Cannot operate on constant", lv.name)
+                sys.exit(1)
+            assert t in { "local", "global" }
+            ld = LoadOp(lv.name, lv.name, scope.prefix) if t == "global" else LoadVarOp(lv.name)
         else:
             lv.ph1(scope, code)
             code.append(DupOp())                  # duplicate the address
@@ -10192,8 +10833,15 @@ class AssignmentAST(AST):
         for lvs in reversed(self.lhslist):
             skip -= 1
             if isinstance(lvs, NameAST):
-                shared = lvs.isShared(scope)
-                st = StoreOp(lvs.name, lvs.name, scope.prefix) if shared else StoreVarOp(lvs.name)
+                (t, v) = scope.find(lvs.name)
+                if t == "module":
+                    print("Cannot assign to module", lvs.name)
+                    sys.exit(1)
+                if t == "constant":
+                    print("Cannot assign to constant", lvs.name)
+                    sys.exit(1)
+                assert t in { "local", "global" }, (t, lvs.name)
+                st = StoreOp(lvs.name, lvs.name, scope.prefix) if t == "global" else StoreVarOp(lvs.name)
                 code.append(st)
             else:
                 lvs.ph2(scope, code, skip)
@@ -10244,7 +10892,28 @@ class AddressAST(AST):
     def isConstant(self, scope):
         return self.lv.isConstant(scope)
 
+    def check(self, lv, scope):
+        if isinstance(lv, NameAST):
+            (t, v) = scope.lookup(lv.name)
+            if t == "local":
+                print("can't take address of local variable", lv)
+                sys.exit(1)
+            if t == "constant":
+                print("can't take address of constant", lv)
+                sys.exit(1)
+            if t == "module":
+                print("can't take address of imported", lv)
+                sys.exit(1)
+        elif isinstance(lv, ApplyAST):
+            self.check(lv.method, scope)
+        elif isinstance(lv, PointerAST):
+            pass
+        else:
+            print("can't take address of", lv)
+            sys.exit(1)
+
     def gencode(self, scope, code):
+        self.check(self.lv, scope)
         self.lv.ph1(scope, code)
 
 class PassAST(AST):
@@ -10460,15 +11129,25 @@ class MethodAST(AST):
         scope.names[lexeme] = ("constant", (PcValue(pc + 1), file, line, column))
 
         ns = Scope(scope)
+        tmp = PcValue(-1)
+        for (lexeme, file, line, column) in self.stat.getLabels():
+            ns.names[lexeme] = ("constant", (tmp, file, line, column))
         self.assign(ns, self.args)
         ns.names["result"] = ("local", ("result", file, line, column))
+        before = len(code)
+        self.stat.compile(ns, code)
+        del code[before:]
         self.stat.compile(ns, code)
         code.append(ReturnOp())
-
         code[pc] = JumpOp(len(code))
 
+        # promote global variables
+        for name, (t, v) in ns.names.items():
+            if t == "global" and name not in scope.names:
+                scope.names[name] = (t, v)
+
     def getLabels(self):
-        return { self.name } | self.stat.getLabels()
+        return { self.name }
 
     def getImports(self):
         return self.stat.getImports()
@@ -10595,6 +11274,10 @@ class FromAST(AST):
                     scope.names[item] = (t, v)
         else:
             for (lexeme, file, line, column) in self.items:
+                if lexeme not in names:
+                    print("%s line %d: can't import %s from module %s"%(
+                        file, line, lexeme, self.module[0]))
+                    sys.exit(1)
                 (t, v) = names[lexeme]
                 assert t == "constant", (lexeme, t, v)
                 scope.names[lexeme] = (t, v)
@@ -10618,8 +11301,8 @@ class LabelStatAST(AST):
             self.ast.compile(scope, code)
         else:
             root = scope
-            while root.parent != None:
-                root = root.parent
+            # while root.parent != None:
+            #     root = root.parent
             for (lexeme, file, line, column) in self.labels:
                 root.names[lexeme] = \
                     ("constant", (PcValue(len(code)), file, line, column))
@@ -10632,6 +11315,18 @@ class LabelStatAST(AST):
 
     def getImports(self):
         return self.ast.getImports();
+
+class SequentialAST(AST):
+    def __init__(self, vars):
+        self.vars = vars
+    
+    def __repr__(self):
+        return "Sequential(" + str(self.vars) + ")"
+
+    def compile(self, scope, code):
+        for lv in self.vars:
+            lv.ph1(scope, code)
+            code.append(SequentialOp())
 
 class ConstAST(AST):
     def __init__(self, const, expr):
@@ -10659,7 +11354,7 @@ class ConstAST(AST):
     def compile(self, scope, code):
         if not self.expr.isConstant(scope):
             print(self.const, ": Parse error: expression not a constant", str(self.expr))
-            exit(1)
+            sys.exit(1)
         if isinstance(self.expr, LambdaAST):
             pc = self.expr.compile_body(scope, code)
             self.set(scope, self.const, PcValue(pc))
@@ -10709,7 +11404,7 @@ class StatListRule(Rule):
 
     def parse(self, t):
         if t == []:
-            assert False
+            print("Unexpected EOF")
             return (BlockAST([]), [])
 
         # find all the tokens that are indented more than self.indent
@@ -10721,12 +11416,18 @@ class StatListRule(Rule):
             if t == []:
                 break
             (lexeme, file, line, column) = t[0]
-        assert slice != [], (t[:3], self.indent)
+        if slice == []:
+            print("Parse error: no statements in indented block:", t[0])
+            sys.exit(1)
 
         b = []
         while slice != []:
-            (ast, slice) = LabelStatRule().parse(slice)
-            b.append(ast)
+            try:
+                (ast, slice) = LabelStatRule().parse(slice)
+                b.append(ast)
+            except IndexError:
+                print("Parsing: incomplete statement starting at ", slice[0])
+                sys.exit(1)
 
         return (BlockAST(b), t)
 
@@ -10789,7 +11490,7 @@ class StatementRule(Rule):
                 return (tokens, t[1:])
             if lexeme in [')', ']', '}']:
                 print("unmatched bracket:", t[0])
-                exit(1)
+                sys.exit(1)
             if lexeme in ['(', '[', '{']:
                 (more, t) = self.rec_slice(t)
                 tokens += more
@@ -10798,7 +11499,7 @@ class StatementRule(Rule):
             else:
                 t = t[1:]
         print("closing bracket missing:", first, tokens, t)
-        exit(1)
+        sys.exit(1)
 
     def slice(self, t, indent):
         if t == []:
@@ -10838,7 +11539,9 @@ class StatementRule(Rule):
             (lexeme, file, line, column) = tokens[0]
             self.expect("constant definition", lexeme == "=", tokens[0], "expected '='")
             (ast, tokens) = TupleRule(set()).parse(tokens[1:])
-            assert tokens == [], tokens
+            if tokens != []:
+                print("constant definition: unexpected token:", tokens[0])
+                sys.exit(1)
             return (ConstAST(const, ast), t)
         if lexeme == "if":
             alts = []
@@ -10867,12 +11570,16 @@ class StatementRule(Rule):
         if lexeme == "await":
             (tokens, t) = self.slice(t[1:], column)
             (cond, tokens) = NaryRule(set()).parse(tokens)
-            assert tokens == []
+            if tokens != []:
+                print("await: unexpected token:", tokens[0])
+                sys.exit(1)
             return (AwaitAST(cond), t)
         if lexeme == "invariant":
             (tokens, t) = self.slice(t[1:], column)
             (cond, tokens) = NaryRule(set()).parse(tokens)
-            assert tokens == []
+            if tokens != []:
+                print("invariant: unexpected token:", tokens[0])
+                sys.exit(1)
             return (InvariantAST(cond, token), t)
         if lexeme == "for":
             (lst, t) = self.iterParse(t[1:], {":"})
@@ -10896,7 +11603,11 @@ class StatementRule(Rule):
             (stat, t) = BlockRule(column).parse(t[1:])
             return (AtomicAST(stat), t)
         if lexeme == "del":
-            (ast, t) = ExpressionRule().parse(t[1:])
+            (tokens, t) = self.slice(t[1:], column)
+            (ast, tokens) = ExpressionRule().parse(tokens)
+            if tokens != []:
+                print("del: unexpected token:", tokens[0])
+                sys.exit(1)
             return (DelAST(ast), t)
         if lexeme == "def":
             name = t[1]
@@ -10907,30 +11618,58 @@ class StatementRule(Rule):
             return (MethodAST(name, bv, stat), t)
         if lexeme == "spawn":
             (tokens, t) = self.slice(t[1:], column)
-            (method, tokens) = ArrowExpressionRule().parse(tokens)
-            (arg, tokens) = ArrowExpressionRule().parse(tokens)
+            (func, tokens) = NaryRule({","}).parse(tokens)
+            if not isinstance(func, ApplyAST):
+                print("spawn: expected method application", token)
+                sys.exit(1)
             if tokens == []:
                 this = None
             else:
                 (lexeme, file, line, column) = tokens[0]
                 assert lexeme == ","
                 (this, tokens) = NaryRule(set()).parse(tokens[1:])
-                assert tokens == []
-            return (SpawnAST(method, arg, this), t)
+                if tokens != []:
+                    print("spawn: unexpected token:", tokens[0])
+                    sys.exit(1)
+            return (SpawnAST(func.method, func.arg, this), t)
         if lexeme == "trap":
             (tokens, t) = self.slice(t[1:], column)
-            (method, tokens) = ArrowExpressionRule().parse(tokens)
-            (arg, tokens) = ArrowExpressionRule().parse(tokens)
-            assert tokens == []
-            return (TrapAST(method, arg), t)
+            (func, tokens) = NaryRule(set()).parse(tokens)
+            if not isinstance(func, ApplyAST):
+                print("trap: expected method application", token)
+                sys.exit(1)
+            if tokens != []:
+                print("trap: unexpected token:", tokens[0])
+                sys.exit(1)
+            return (TrapAST(func.method, func.arg), t)
         if lexeme == "go":
             (tokens, t) = self.slice(t[1:], column)
-            (ctx, tokens) = ArrowExpressionRule().parse(tokens)
-            (result, tokens) = ArrowExpressionRule().parse(tokens)
-            assert tokens == []
-            return (GoAST(ctx, result), t)
+            (func, tokens) = NaryRule(set()).parse(tokens)
+            if not isinstance(func, ApplyAST):
+                print("go: expected method application", token)
+                sys.exit(1)
+            if tokens != []:
+                print("go: unexpected token:", tokens[0])
+                sys.exit(1)
+            return (GoAST(func.method, func.arg), t)
         if lexeme == "pass":
             return (PassAST(), t[1:])
+        if lexeme == "sequential":
+            (tokens, t) = self.slice(t[1:], column)
+            (ast, tokens) = ExpressionRule().parse(tokens)
+            vars = [ast]
+            if tokens != []:
+                (lexeme, file, line, column) = tokens[0]
+                while lexeme == ',':
+                    (ast, tokens) = ExpressionRule().parse(tokens[1:])
+                    vars.append(ast)
+                    if tokens == []:
+                        break
+                    (lexeme, file, line, column) = tokens[0]
+                if tokens != []:
+                    print("sequential: unexpected token:", tokens[0])
+                    sys.exit(1)
+            return (SequentialAST(vars), t)
         if lexeme == "import":
             (tokens, t) = self.slice(t[1:], column)
             mods = [tokens[0]]
@@ -10943,7 +11682,9 @@ class StatementRule(Rule):
                     if tokens == []:
                         break
                     (lexeme, file, line, column) = tokens[0]
-                assert tokens == []
+                if tokens != []:
+                    print("import: unexpected token:", tokens[0])
+                    sys.exit(1)
             return (ImportAST(mods), t)
         if lexeme == "from":
             (tokens, t) = self.slice(t[1:], column)
@@ -10965,7 +11706,9 @@ class StatementRule(Rule):
                     if tokens == []:
                         break;
                     (lexeme, file, line, column) = tokens[0]
-            assert tokens == [], tokens
+            if tokens != []:
+                print("from: unexpected token:", tokens[0])
+                sys.exit(1)
             return (FromAST(module, items), t)
         if lexeme == "assert":
             (tokens, t) = self.slice(t[1:], column)
@@ -10976,7 +11719,9 @@ class StatementRule(Rule):
                 (lexeme, file, line, column) = tokens[0]
                 assert lexeme == ","
                 (expr, tokens) = NaryRule(set()).parse(tokens[1:])
-                assert tokens == []
+                if tokens != []:
+                    print("assert: unexpected token:", tokens[0])
+                    sys.exit(1)
             return (AssertAST(token, cond, expr), t)
         
         # If we get here, the next statement is either an expression
@@ -11213,7 +11958,7 @@ class State:
             except KeyError:
                 print()
                 print("no index", indexes[0], "in variable", path)
-                exit(1)
+                sys.exit(1)
             indexes = indexes[1:]
         return v
 
@@ -11463,7 +12208,7 @@ class Scope:
                 return tv
             ancestor = ancestor.parent
         # print("Warning: unknown name:", name, " (assuming global variable)")
-        self.names[lexeme] = ("global", lexeme)
+        self.names[lexeme] = ("global", name)
         return ("global", lexeme)
 
     def find(self, name):
@@ -11471,7 +12216,7 @@ class Scope:
         tv = self.names.get(lexeme)
         if tv != None:
             return tv
-        self.names[lexeme] = ("global", lexeme)
+        self.names[lexeme] = ("global", name)
         # print("Warning: unknown name:", name, " (find)")
         return ("global", lexeme)
 
@@ -11598,7 +12343,7 @@ def onestep(node, ctx, choice, interrupt, nodes, visited, todo):
                 sc.code[cc.pc].eval(sc, cc)
             except Exception as e:
                 traceback.print_exc()
-                exit(1)
+                sys.exit(1)
                 cc.failure = "Python assertion failed"
 
         if cc.failure != None or cc.stopped:
@@ -11680,12 +12425,15 @@ def onestep(node, ctx, choice, interrupt, nodes, visited, todo):
 
 def parseConstant(c, v):
     tokens = lexer(v, "<constant argument>")
+    if tokens == []:
+        print("Empty constant")
+        sys.exit(1)
     try:
         (ast, rem) = ExpressionRule().parse(tokens)
     except IndexError:
         # best guess...
         print("Parsing constant", v, "hit end of string")
-        exit(1)
+        sys.exit(1)
     scope = Scope(None)
     code = []
     ast.compile(scope, code)
@@ -11703,7 +12451,7 @@ def doCompile(filenames, consts, mods):
             parseConstant(c[0:i], c[i+1:])
         except IndexError:
             print("Usage: -c C=V to define a constant")
-            exit(1)
+            sys.exit(1)
 
     global modules
     for m in mods:
@@ -11712,7 +12460,7 @@ def doCompile(filenames, consts, mods):
             modules[m[0:i]] = m[i+1:]
         except IndexError:
             print("Usage: -m module=version to specify a module version")
-            exit(1)
+            sys.exit(1)
 
     scope = Scope(None)
     code = [
@@ -11722,12 +12470,12 @@ def doCompile(filenames, consts, mods):
         usage()
     else:
         for fname in filenames:
-            if os.path.exists(fname):
+            try:
                 with open(fname) as fd:
                     load(fd, fname, scope, code)
-            else:
-                print("Can't open", fname, file=sys.stderr)
-                exit(1)
+            except IOError:
+                print("harmony: can't open", fname, file=sys.stderr)
+                sys.exit(1)
     code.append(ReturnOp())     # to terminate "__init__" process
     optimize(code)
     return (code, scope)
@@ -12518,22 +13266,28 @@ def dumpCode(printCode, code, scope, f=sys.stdout):
                 print(file=f)
             else:
                 print(",", file=f)
-            print("    \"%d\": { \"file\": \"%s\", \"line\": \"%d\" }"%(pc, file, line), file=f, end="")
+            print("    \"%d\": { \"file\": \"%s\", \"line\": \"%d\", \"code\": %s }"%(pc, file, line, json.dumps(files[file][line-1])), file=f, end="")
         print(file=f)
         print("  }", file=f);
         print("}", file=f);
+
+config = {
+    "infile": "$$home$$/.charm.c",
+    "outfile": "$$home$$/.charm.exe",
+    "compile": "gcc -O3 -std=c99 $$infile$$ -m64 -o $$outfile$$"
+}
 
 def usage():
     print("Usage: harmony [options] harmony-file ...")
     print("  options: ")
     print("    -a: list machine code")
-    print("    -b: blocking execution")
     print("    -c name=value: define a constant")
     print("    -d: htmldump full state into html file")
-    print("    -f: run with internal model checker")
+    print("    -f: run with internal model checker (not supported)")
     print("    -h: help")
     print("    -m module=version: select a module version")
     print("    -s: silent (do not print periodic status updates)")
+    print("    -v: print version number")
     exit(1)
 
 def main():
@@ -12547,9 +13301,11 @@ def main():
     charmflag = True
     fulldump = False
     testflag = False
+    suppressOutput = False
+    charmoptions = []
     try:
-        opts, args = getopt.getopt(sys.argv[1:],
-                        "Aabc:dfhjm:st", ["const=", "help", "module="])
+        opts, args = getopt.getopt(sys.argv[1:], "Aabc:dfhjm:stv",
+                ["const=", "cf=", "help", "module=", "suppress", "version"])
     except getopt.GetoptError as err:
         print(str(err))
         usage()
@@ -12557,6 +13313,8 @@ def main():
         if o == "-a":
             printCode = "verbose"
             charmflag = False
+        elif o == "--cf":
+            charmoptions += [a]
         elif o == "-A":
             printCode = "terse"
             charmflag = False
@@ -12579,12 +13337,27 @@ def main():
             testflag = True
         elif o in { "-h", "--help" }:
             usage()
+        elif o == "--suppress":
+            suppressOutput = True
+        elif o in { "-v", "--version" }:
+            print("Version", ".".join([str(v) for v in version]))
+            sys.exit(0)
         else:
             assert False, "unhandled option"
 
     (code, scope) = doCompile(args, consts, mods)
 
     if charmflag:
+        # see if there is a configuration file
+        global config
+        conffile = "%s/.harmony.json"%pathlib.Path.home()
+        if os.path.exists(conffile):
+            with open(conffile) as f:
+                config = json.load(f)
+        else:
+            config["infile"] = "%s/.charm.c"%pathlib.Path.home()
+            config["outfile"] = "%s/.charm.exe"%pathlib.Path.home()
+            config["compile"] = "gcc -O3 -std=c99 %s -m64 -o %s"%(config["infile"], config["outfile"])
         if testflag:
             tmpfile = "harmony.json"
         else:
@@ -12592,8 +13365,7 @@ def main():
             os.close(fd)
         with open(tmpfile, "w") as fd:
             dumpCode("json", code, scope, f=fd)
-        charm = "%s/.charm.exe"%pathlib.Path.home()
-        path = pathlib.Path(charm)
+        path = pathlib.Path(config["outfile"])
         rebuild = testflag or not path.exists()
         if not rebuild:
             st = path.stat()
@@ -12601,25 +13373,25 @@ def main():
             if now - st.st_mtime > 15 * 60:
                 rebuild = True
         if rebuild:
-            with open("charm.c", "w") as fd:
+            with open(config["infile"], "w") as fd:
                 if not testflag:
                     print("#define NDEBUG", file=fd)
                 print("#define HARMONY_COMBINE", file=fd)
                 print(charm_src, file=fd)
             if testflag:
                 # if os.name == "nt":
-                #     r = os.system("cl charm.c /link /out:%s"%charm);
+                #     r = os.system("cl %s /link /out:%s"%(config["infile"], config["outfile"]))
                 # else:
-                    r = os.system("gcc -g charm.c -m64 -o %s"%charm);
+                    r = os.system("gcc -g -std=c99 %s -m64 -o %s"%(config["infile"], config["outfile"]))
             else:
                 # if os.name == "nt":
-                #     r = os.system("cl charm.c /link /out:%s"%charm);
+                #     r = os.system("cl %s /link /out:%s"%(config["infile"], config["outfile"]))
                 # else:
-                    r = os.system("gcc -O3 charm.c -m64 -o %s"%charm);
+                    r = os.system(config["compile"]);
             if r != 0:
                 print("can't create charm model checker")
                 sys.exit(r);
-        r = os.system("%s %s"%(charm, tmpfile));
+        r = os.system("%s %s %s"%(config["outfile"], " ".join(charmoptions), tmpfile));
         if not testflag:
             os.remove(tmpfile)
         if r != 0:
@@ -12629,7 +13401,8 @@ def main():
         if not b.run():
             gh = GenHTML()
             gh.run()
-            print("open file://" + os.getcwd() + "/harmony.html for more information")
+            if not suppressOutput:
+                print("open file://" + os.getcwd() + "/harmony.html for more information")
         sys.exit(0);
 
     if printCode == None:

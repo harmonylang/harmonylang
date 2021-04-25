@@ -6,6 +6,12 @@ def tas(lk):
         result = !lk
         !lk = True
 
+def cas(p, old, new):
+    atomic:
+        result = !p == old
+        if result:
+            !p = new
+
 def BinSema(acquired):
     result = acquired
 
@@ -26,7 +32,7 @@ def release(binsema):
 def held(binsema):
     result = !binsema
 
-def Condition(lk):
+def Condition():
     result = bag.empty()
 
 def wait(c, lk):
@@ -79,14 +85,22 @@ def put(q, item):
 """,
     "synchS": """import list
 
+def tas(lk):
+    atomic:
+        result = !lk
+        !lk = True
+
+def cas(p, old, new):
+    atomic:
+        result = !p == old
+        if result:
+            !p = new
+
 def BinSema(acquired):
     result = { .acquired: acquired, .suspended: [] }
 
 def Lock():
     result = BinSema(False)
-
-def acquired(binsema):
-    result = binsema->acquired
 
 def acquire(binsema):
     atomic:
@@ -108,7 +122,7 @@ def release(binsema):
 def held(binsema):
     result = binsema->acquired
 
-def Condition(lk):
+def Condition():
     result = []
 
 def wait(c, lk):
@@ -217,8 +231,8 @@ def qsort(a):
         result = []
     else:
         let (pivot, rest) = head(a), tail(a)
-        let lower = [ v for v in rest such that v < pivot ]
-        let higher = [ v for v in rest such that v >= pivot ]:
+        let lower = [ v for v in rest where v < pivot ]
+        let higher = [ v for v in rest where v >= pivot ]:
             result = qsort(lower) + [pivot,] + qsort(higher)
 
 # like Python sorted()
@@ -274,27 +288,22 @@ def remove(pb, elt):
 def issuperset(s, t):
     result = (s & t) == t
 """,
-    "alloc": """import synch
-
-pool = []
-flist = None;           # free list
-lock = synch.Lock()
+    "alloc": """pool = []
+next = 0
 
 def malloc(v):
-    synch.acquire(?lock)
-    if flist == None:
-        let i = len(pool):
-            pool[i] = None
-            result = ?pool[i]
-    else:
-        result = flist
-        flist = !result
-    synch.release(?lock)
-    !result = v
+    atomic:
+        pool[next] = v
+        result = ?pool[next]
+        next += 1
 
+# Commented out code tests for bad frees, but can lead to data races
 def free(r):
-    synch.acquire(?lock)
-    !r = flist
-    flist = r
-    synch.release(?lock)
+    atomic:
+       # let poolcopy = pool:
+            del !r
+       #    assert poolcopy != pool, .bad_free
+
+def leak_check():
+    assert pool == [], .alloc_leak
 """,

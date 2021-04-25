@@ -2,6 +2,7 @@ import {IntermediateKeyValueRep, IntermediateValueRepresentation} from "../Inter
 
 export function parseIntermediateValueRep(v: IntermediateValueRepresentation): unknown {
     const {value, type} = v;
+    console.log(value, type);
     switch (type) {
         case "int": return Number.parseInt(value as string);
         case "atom": return value;
@@ -19,8 +20,12 @@ export function parseIntermediateValueRep(v: IntermediateValueRepresentation): u
             }
             return dict;
         }
+        case "context": {
+            return v;
+        }
     }
-    throw TypeError("Cannot parse this value");
+    console.log("Cannot parse this value");
+    return JSON.stringify(v);
 }
 
 export function parseVariableSet(sharedValues: undefined | Record<string, IntermediateValueRepresentation>): Record<string, unknown> {
