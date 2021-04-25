@@ -235,6 +235,8 @@ export function runHarmony(
     fullFileName: string, 
     flags = ''
 ) {
+    CharmonyPanelController_v2.currentPanel?.dispose();
+    CharmonyPanelController_v2.createOrShow(context.extensionUri);
     try {
         flags = parseOptions(flags);
     } catch (e) {
@@ -244,8 +246,6 @@ export function runHarmony(
         CharmonyPanelController_v2.currentPanel?.updateMessage(e.message);
         return;
     }
-    CharmonyPanelController_v2.currentPanel?.dispose();
-    CharmonyPanelController_v2.createOrShow(context.extensionUri);
     checkIfPython3Exists(() => {
         hlConsole.clear();
         hlConsole.appendLine('Check for Python3');
