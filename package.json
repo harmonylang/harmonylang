@@ -3,7 +3,7 @@
     "displayName": "HarmonyLang",
     "description": "VS Code language support for Harmony, a Python-like concurrent programming language.",
     "icon": "images/harmonylang.png",
-    "version": "0.2.8",
+    "version": "0.3.0",
     "publisher": "kevinsun-dev-cornell",
     "repository": "https://github.com/kevinsun-dev/harmonylang",
     "engines": {
@@ -111,7 +111,7 @@
     "scripts": {
         "vscode:prepublish": "npm install && npm run compile",
         "build": "vsce package",
-        "publish": "vsce publish minor",
+        "publish": "vsce publish",
         "compile": "tsc -p ./",
         "lint": "eslint . --ext .ts,.tsx",
         "watch": "tsc -watch -p ./",
@@ -136,6 +136,7 @@
         "@typescript-eslint/eslint-plugin": "^3.0.2",
         "@typescript-eslint/parser": "^3.0.2",
         "eslint": "^7.24.0"
+        "vsce": "^1.87.1"
     },
     "dependencies": {
         "adm-zip": "^0.5.2",
@@ -154,7 +155,6 @@
         "rimraf": "^3.0.2",
         "string-argv": "^0.3.1",
         "tmp": "^0.2.1",
-        "typescript": "^4.1.3",
-        "vsce": "^1.87.1"
+        "typescript": "^4.1.3"
     }
 }
