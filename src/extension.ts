@@ -13,12 +13,18 @@ import { IntermediateJson } from './charmony/IntermediateJson';
 import CharmonyPanelController_v2 from './outputPanel/PanelController_v2';
 import * as commandExists from 'command-exists';
 import { runServerAnalysis } from './feature/runServerAnalysis';
+import { ArgumentParser } from 'argparse';
+import stringArgv from 'string-argv';
 
 const processManager = ProcessManagerImpl.init();
 const harmonyLangConfig = vscode.workspace.getConfiguration('harmonylang');
 const hlConsole = vscode.window.createOutputChannel('HarmonyLang');
 const pythonPath = harmonyLangConfig.get('pythonPath');
 const ccPath = harmonyLangConfig.get('ccPath');
+
+const parser = new ArgumentParser();
+parser.add_argument('--const','-c', {nargs: 1});
+parser.add_argument('--module', '-m', {nargs: 1});
 
 export const activate = (context: vscode.ExtensionContext) => {
     const getFileName = () => {
@@ -163,6 +169,27 @@ function checkIfCompilerForCExists(
     });
 }
 
+/**
+ * Parses a string which declares options to passed into the Harmony compiler.
+ * Returns a cleaned string that can be passed for Harmony.
+ * Some options are not supported.
+ * Only the following are supported: [-C name=value, -m module=version]
+ * @param options
+ * @throws Error if an error occurs when parsing the options string.
+ */
+export default function parseOptions(options?: string): string {
+    if (options == null) return '';
+    const optionsArg = stringArgv(options);
+    const [ns, oddities] = parser.parse_known_args(optionsArg);
+    if (oddities.length > 0) {
+        const key = oddities[0];
+        throw new Error('Invalid option used: ' + key);
+    }
+    return Object.entries(ns).filter(([_, v]) => v != null).map(([k, v]) => {
+        return `--${k} ${JSON.stringify((v as string[])[0])}`;
+    }).join(' ');
+}
+
 const showMessage = (main: string, subHeader?: string, subtext?: string) => {
     return showVscodeMessage(false, main, subHeader, subtext);
 };
@@ -195,7 +222,8 @@ function runHarmonyServer(
             showMessage('Download HTML file.', `Link lasts for ${duration / 60 / 1000} minute(s)`, staticHtmlUrl);
         }
         onReceivingIntermediateJSON(json);
-    }, msg => {
+    }, (msg) => {
+        hlConsole.clear();
         hlConsole.appendLine(msg);
         hlConsole.show();
         CharmonyPanelController_v2.currentPanel?.updateMessage(msg);
@@ -207,9 +235,19 @@ export function runHarmony(
     fullFileName: string, 
     flags = ''
 ) {
+    try {
+        flags = parseOptions(flags);
+    } catch (e) {
+        hlConsole.clear();
+        hlConsole.appendLine(e.message);
+        hlConsole.show();
+        CharmonyPanelController_v2.currentPanel?.updateMessage(e.message);
+        return;
+    }
     CharmonyPanelController_v2.currentPanel?.dispose();
     CharmonyPanelController_v2.createOrShow(context.extensionUri);
     checkIfPython3Exists(() => {
+        hlConsole.clear();
         hlConsole.appendLine('Check for Python3');
         checkIfCompilerForCExists(() => {
             hlConsole.appendLine('Check for CC');
