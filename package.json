@@ -125,7 +125,8 @@
         "@types/tmp": "^0.2.0",
         "@types/vscode": "^1.34.0",
         "@typescript-eslint/eslint-plugin": "^3.0.2",
-        "@typescript-eslint/parser": "^3.0.2"
+        "@typescript-eslint/parser": "^3.0.2",
+        "vsce": "^1.87.1"
     },
     "dependencies": {
         "adm-zip": "^0.5.2",
@@ -142,7 +143,6 @@
         "node-html-parser": "^2.1.0",
         "rimraf": "^3.0.2",
         "tmp": "^0.2.1",
-        "typescript": "^4.1.3",
-        "vsce": "^1.87.1"
+        "typescript": "^4.1.3"
     }
 }
