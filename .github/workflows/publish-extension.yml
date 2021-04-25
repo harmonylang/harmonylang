@@ -27,4 +27,4 @@ jobs:
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
-          vsce publish minor
+          npm run publish
