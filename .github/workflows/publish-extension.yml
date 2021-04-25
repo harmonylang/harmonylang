@@ -24,7 +24,7 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - name: Publish extension
-        if: success() && ${{ secrets.VSCE_PAT }}
+        if: success() && env.VSCE_PAT != null
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
