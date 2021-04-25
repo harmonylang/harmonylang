@@ -243,6 +243,7 @@ export function runHarmony(
         hlConsole.clear();
         hlConsole.appendLine(e.message);
         hlConsole.show();
+        CharmonyPanelController_v2.currentPanel?.startLoading();
         CharmonyPanelController_v2.currentPanel?.updateMessage(e.message);
         return;
     }
