@@ -30,9 +30,8 @@ export function runServerAnalysis(
             const response = await axios.post(HARMONY_SERVER_API + "/check",
                 bodyFormData,
                 {
-                    headers: {
-                    ...bodyFormData.getHeaders(),
-                }
+                    headers: {...bodyFormData.getHeaders()},
+                    validateStatus() { return true; }
             });
             if (200 <= response.status && response.status < 300) {
                 const data = response.data;
