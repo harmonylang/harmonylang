@@ -1,13 +1,21 @@
 import list
 
+def tas(lk):
+    atomic:
+        result = !lk
+        !lk = True
+
+def cas(p, old, new):
+    atomic:
+        result = !p == old
+        if result:
+            !p = new
+
 def BinSema(acquired):
     result = { .acquired: acquired, .suspended: [] }
 
 def Lock():
     result = BinSema(False)
-
-def acquired(binsema):
-    result = binsema->acquired
 
 def acquire(binsema):
     atomic:
@@ -29,7 +37,7 @@ def release(binsema):
 def held(binsema):
     result = binsema->acquired
 
-def Condition(lk):
+def Condition():
     result = []
 
 def wait(c, lk):

@@ -23,33 +23,43 @@ const ccPath = harmonyLangConfig.get('ccPath');
 
 export const activate = (context: vscode.ExtensionContext) => {
     const runHarmonyCommand = vscode.commands.registerCommand('harmonylang.run', () => {
-        const filename = vscode.window.activeTextEditor?.document?.fileName;
-        const ext = path.extname(filename || '');
-        const harmonyExt = [".hny", ".sab"];
-        if (!harmonyExt.includes(ext)) {
-            vscode.window.showInformationMessage('Target file must be an Harmony (.hny) file.');
-            return;
+        try {
+            const filename = vscode.window.activeTextEditor?.document?.fileName;
+            const ext = path.extname(filename || '');
+            const harmonyExt = [".hny", ".sab"];
+            if (!harmonyExt.includes(ext)) {
+                vscode.window.showInformationMessage('Target file must be an Harmony (.hny) file.');
+                return;
+            }
+            if (filename == null) {
+                vscode.window.showInformationMessage('Could not locate target file.');
+                return;
+            }
+            runHarmony(context, filename);
+        } catch (e) {
+            console.error('Run Harmony failed:', e);
+            vscode.window.showInformationMessage('Run Harmony failed. See the console log in the DevTools.');
         }
-        if (filename == null) {
-            vscode.window.showInformationMessage('Could not locate target file.');
-            return;
-        }
-        runHarmony(context, filename);
     });
 
     const runHarmonyServerCommand = vscode.commands.registerCommand('harmonylang-server.run', () => {
-        const filename = vscode.window.activeTextEditor?.document?.fileName;
-        const ext = path.extname(filename || '');
-        const harmonyExt = [".hny", ".sab"];
-        if (!harmonyExt.includes(ext)) {
-            vscode.window.showInformationMessage('Target file must be an Harmony (.hny) file.');
-            return;
+        try {
+            const filename = vscode.window.activeTextEditor?.document?.fileName;
+            const ext = path.extname(filename || '');
+            const harmonyExt = [".hny", ".sab"];
+            if (!harmonyExt.includes(ext)) {
+                vscode.window.showInformationMessage('Target file must be an Harmony (.hny) file.');
+                return;
+            }
+            if (filename == null) {
+                vscode.window.showInformationMessage('Could not locate target file.');
+                return;
+            }
+            runHarmonyServer(context, filename);
+        } catch (e) {
+            console.error('(Server) Run Harmony failed:', e);
+            vscode.window.showInformationMessage('(Server) Run Harmony failed. See the console log in the DevTools.');
         }
-        if (filename == null) {
-            vscode.window.showInformationMessage('Could not locate target file.');
-            return;
-        }
-        runHarmonyServer(context, filename);
     });
 
     const endHarmonyProcessesCommand = vscode.commands.registerCommand('harmonylang.end', () => {
@@ -123,13 +133,18 @@ function runHarmonyServer(context: vscode.ExtensionContext, fullFileName: string
     }
     const rootDirectory = workspace[0].uri.fsPath;
     CharmonyPanelController_v2.currentPanel?.startLoading();
-    runServerAnalysis(rootDirectory, fullFileName, onReceivingIntermediateJSON,
-        msg => {
-            hlConsole.appendLine(msg);
+    runServerAnalysis(rootDirectory, fullFileName, (json, staticHtmlUrl, duration) => {
+        if (staticHtmlUrl && duration) {
+            hlConsole.appendLine(`Harmony HTML can be found here: ${staticHtmlUrl}`);
             hlConsole.show();
-            CharmonyPanelController_v2.currentPanel?.updateMessage(msg);
+            showMessage("Download HTML file.", `Link lasts for ${duration / 60 / 1000} minute(s)`, staticHtmlUrl);
         }
-    );
+        onReceivingIntermediateJSON(json);
+    }, msg => {
+        hlConsole.appendLine(msg);
+        hlConsole.show();
+        CharmonyPanelController_v2.currentPanel?.updateMessage(msg);
+    });
 }
 
 export function runHarmony(context: vscode.ExtensionContext, fullFileName: string) {

@@ -32,6 +32,10 @@
     POSSIBILITY OF SUCH DAMAGE.
 """
 
+version = [
+m4_include(buildversion)
+]
+
 internal_modules = {
 #############################
 #     START OF MODULES      #
@@ -49,13 +53,14 @@ charm_src = r"""
 
 m4_include(../charm/hashdict.h)
 m4_include(../charm/json.h)
+m4_include(../charm/minheap.h)
 m4_include(../charm/global.h)
 m4_include(../charm/charm.c)
 m4_include(../charm/global.c)
 m4_include(../charm/hashdict.c)
 m4_include(../charm/json.c)
 m4_include(../charm/ops.c)
-m4_include(../charm/queue.c)
+m4_include(../charm/minheap.c)
 m4_include(../charm/value.c)
 """
 
@@ -134,7 +139,7 @@ def doImport(scope, code, module):
                     "<internal>/" + modname + ".hny", scope2, code)
             else:
                 print("Can't find module", modname, "imported from", namestack)
-                exit(1)
+                sys.exit(1)
         
         imported[lexeme] = scope2
 
@@ -143,15 +148,20 @@ def doImport(scope, code, module):
 def load_string(all, filename, scope, code):
     files[filename] = all.split("\n")
     tokens = lexer(all, filename)
-    # assert False, (tokens1, tokens)
+    if tokens == []:
+        print("Empty file:", filename)
+        sys.exit(1)
 
     try:
         (ast, rem) = StatListRule(-1).parse(tokens)
     except IndexError:
         # best guess...
         print("Parsing", filename, "hit EOF")
-        print(traceback.format_exc())
-        exit(1)
+        sys.exit(1)
+
+    if rem != []:
+        print("Parsing: unexpected tokens remaining at end of program:", rem[0])
+        sys.exit(1)
 
     for mod in ast.getImports():
         doImport(scope, code, mod)
@@ -171,6 +181,11 @@ def load_string(all, filename, scope, code):
 
     # Compile again with the real values of the methods and label constants
     ast.compile(scope, code)
+
+    for (lexeme, file, line, column) in ast.getLabels():
+        (t, v) = scope.names[lexeme]
+        (pc, file, line, columv) = v
+        assert pc != tmp, ("not all labels have been filled", lexeme, v)
 
 def load(f, filename, scope, code):
     if filename in files:
@@ -250,6 +265,7 @@ def isreserved(s):
         "or",
         "pass",
         "print",
+        "sequential",
         "setintlevel",
         "spawn",
         "stop",
@@ -295,32 +311,38 @@ def lexer(s, file):
     result = []
     line = 1
     column = 1
+    cont = 1
+    s = s.replace('\\r', '')        # MS-DOS...
+    indentChars = set()
+    indent = True
     while s != "":
-        if s[0] == "\r":     # msdos...
-            s = s[1:]
-            continue
-
         # see if it's a blank
         if s[0] in { " ", "\t" }:
+            if indent:
+                indentChars.add(s[0])
             s = s[1:]
             column += 1
             continue
 
-        # ignore backslash at end of line
+        # backslash at end of line: glue on the next line
         if s[0] == "\\":
             if len(s) == 1:
                 break
-            if s[1] == "\n" or s[1] == "\r":
+            if s[1] == "\n":
                 s = s[2:]
-                line += 1
-                column = 1
+                column += 2
+                cont += 1
                 continue
 
         if s[0] == "\n":
             s = s[1:]
-            line += 1
+            line += cont
+            cont = 1
             column = 1
+            indent = True
             continue
+
+        indent = False
 
         # skip over line comments
         if s.startswith("#"):
@@ -345,7 +367,8 @@ def lexer(s, file):
                     column += 2
                 elif s[0] == "\n":
                     s = s[1:]
-                    line += 1
+                    line += cont
+                    cont = 1
                     column = 1
                 else:
                     s = s[1:]
@@ -375,6 +398,7 @@ def lexer(s, file):
 
         # string
         if s[0] == '"' or s[0] == "'":
+            start_col = column
             if s.startswith('"""'):
                 term = '"""'
             elif s.startswith("'''"):
@@ -436,16 +460,18 @@ def lexer(s, file):
                     else:
                         str += s[0]
                         if s[0] == '\n':
-                            line += 1
+                            line += cont
+                            cont = 1
                         column += 1
                         s = s[1:]
                 else:
                     str += s[0]
                     if s[0] == '\n':
-                        line += 1
+                        line += cont
+                        cont = 1
                     column += 1
                     s = s[1:]
-            result += [ (str, file, line, column) ]
+            result += [ (str, file, line, start_col) ]
             column += len(term)
             s = s[len(term):]
             continue
@@ -454,6 +480,11 @@ def lexer(s, file):
         result += [ (s[0], file, line, column) ]
         s = s[1:]
         column += 1
+
+    if len(indentChars) > 1:
+        print("WARNING: do not mix tabs in spaces for indentation")
+        print("It is likely to lead to incorrect parsing and code generation")
+
     return result
 
 def strValue(v):
@@ -479,7 +510,7 @@ def jsonValue(v):
             return '{ "type": "atom", "value": "%s" }'%str(v)
         else:
             assert len(v) == 1, v
-            return '{ "type": "char", "value": "02X" "'%ord(v[0])
+            return '{ "type": "char", "value": "%02X" }'%ord(v[0])
     assert False, v
 
 def strVars(v):
@@ -1122,6 +1153,23 @@ class StopOp(Op):
 
             # Save the context
             state.stop(lv, context)
+
+class SequentialOp(Op):
+    def __init__(self):
+        pass
+
+    def __repr__(self):
+        return "Sequential"
+
+    def jdump(self):
+        return '{ "op": "Sequential" }'
+
+    def explain(self):
+        return "sequential consistency for variable on top of stack"
+
+    def eval(self, state, context):
+        # TODO
+        context.pop()
 
 class ContinueOp(Op):
     def __repr__(self):
@@ -1981,7 +2029,7 @@ class AST:
             code[ctx.pc].eval(state, ctx)
         if ctx.failure != None:
             print("constant evaluation failed: ", self, ctx.failure)
-            exit(1)
+            sys.exit(1)
         return ctx.pop()
 
     def compile(self, scope, code):
@@ -2000,7 +2048,7 @@ class AST:
     # This is supposed to push the address of an lvalue
     def ph1(self, scope, code):
         print("Cannot use in left-hand side expression:", self)
-        exit(1)
+        sys.exit(1)
 
     def rec_comprehension(self, scope, code, iter, pc, N, vars, ctype):
         if iter == []:
@@ -2017,22 +2065,10 @@ class AST:
                 code.append(NaryOp(("DictAdd", file, line, column), 3))
             elif ctype == "list":
                 code.append(NaryOp(("DictAdd", file, line, column), 3))
-                # TODO.  Turn these four instructions into 1 instruction
                 code.append(IncVarOp(N))
-                if False:
-                    code.append(LoadVarOp(N))
-                    code.append(PushOp((1, file, line, column)))
-                    code.append(NaryOp(("+", file, line, column), 2))
-                    code.append(StoreVarOp(N))
             elif ctype == "bag":
                 code.append(NaryOp(("BagAdd", file, line, column), 2))
-                # TODO.  Ditto
                 code.append(IncVarOp(N))
-                if False:
-                    code.append(LoadVarOp(N))
-                    code.append(PushOp((1, file, line, column)))
-                    code.append(NaryOp(("+", file, line, column), 2))
-                    code.append(StoreVarOp(N))
             return
 
         (type, rest) = iter[0]
@@ -2123,7 +2159,7 @@ class AST:
                         "<internal>/" + modname + ".hny", scope2, code)
                 else:
                     print("Can't find module", modname, "imported from", namestack)
-                    exit(1)
+                    sys.exit(1)
             
             imported[lexeme] = scope2
 
@@ -2134,6 +2170,10 @@ class AST:
 
     def getImports(self):
         return []
+
+class ConstantAST(AST):
+    def __init__(self, const):
+        self.const = const
 
 class ConstantAST(AST):
     def __init__(self, const):
@@ -2168,7 +2208,7 @@ class NameAST(AST):
 
     def isShared(self, scope):
         (t, v) = scope.find(self.name)
-        assert t in { "local", "global", "module" }
+        assert t in { "constant", "local", "global", "module" }
         return t != "local"
 
     def ph1(self, scope, code):
@@ -2176,8 +2216,10 @@ class NameAST(AST):
         if t == "local":
             (lexeme, file, line, column) = v
             code.append(PushOp((AddressValue([lexeme]), file, line, column)))
+        elif t == "constant":
+            print("constant cannot be an lvalue:", self.name)
+            sys.exit(1)
         else:
-            assert t in { "global", "module" }
             (lexeme, file, line, column) = self.name
             code.append(PushOp((AddressValue(scope.prefix + [lexeme]), file, line, column)))
 
@@ -2458,15 +2500,57 @@ class ApplyAST(AST):
     def __repr__(self):
         return "ApplyAST(" + str(self.method) + ", " + str(self.arg) + ")"
 
-    def compile(self, scope, code):
-        # See if it's of the form "module.constant":
+    def varCompile(self, scope, code):
         if isinstance(self.method, NameAST):
             (t, v) = scope.lookup(self.method.name)
+            if t == "global":
+                self.method.ph1(scope, code)
+                self.arg.compile(scope, code)
+                code.append(AddressOp())
+                return True
+            else:
+                return False
+
+        if isinstance(self.method, PointerAST):
+            self.method.expr.compile(scope, code)
+            self.arg.compile(scope, code)
+            code.append(AddressOp())
+            return True
+
+        if isinstance(self.method, ApplyAST):
+            if self.method.varCompile(scope, code):
+                self.arg.compile(scope, code)
+                code.append(AddressOp())
+                return True;
+            else:
+                return False
+
+        return False
+
+    def compile(self, scope, code):
+        if isinstance(self.method, NameAST):
+            (t, v) = scope.lookup(self.method.name)
+            # See if it's of the form "module.constant":
             if t == "module" and isinstance(self.arg, ConstantAST) and isinstance(self.arg.const[0], str):
                 (t2, v2) = v.lookup(self.arg.const)
                 if t2 == "constant":
                     code.append(PushOp(v2))
                     return
+            # Decrease chances of data race
+            if t == "global":
+                self.method.ph1(scope, code)
+                self.arg.compile(scope, code)
+                code.append(AddressOp())
+                code.append(LoadOp(None, self.token, None))
+                return
+
+        # Decrease chances of data race
+        if self.varCompile(scope, code):
+            code.append(LoadOp(None, self.token, None))
+            return
+
+        # TODO: is there an issue below with evaluation order
+        #       not being the same as program order?
         self.arg.compile(scope, code)
         self.method.compile(scope, code)
         code.append(ApplyOp(self.token))
@@ -2475,6 +2559,14 @@ class ApplyAST(AST):
         return self.method.isShared(scope)
 
     def ph1(self, scope, code):
+        # See if it's of the form "module.constant":
+        if isinstance(self.method, NameAST):
+            (t, v) = scope.lookup(self.method.name)
+            if t == "module" and isinstance(self.arg, ConstantAST) and isinstance(self.arg.const[0], str):
+                (t2, v2) = v.lookup(self.arg.const)
+                if t2 == "constant":
+                    print("Cannot assign to constant", self.method.name, self.arg.const)
+                    sys.exit(1)
         self.method.ph1(scope, code)
         self.arg.compile(scope, code)
         code.append(AddressOp())
@@ -2491,7 +2583,7 @@ class Rule:
     def expect(self, rule, b, got, want):
         if not b:
             print("Parse error in %s."%rule, "Got", got, ":", want)
-            exit(1)
+            sys.exit(1)
 
     def forParse(self, t, closers):
         (bv, t) = BoundVarRule().parse(t)
@@ -2548,7 +2640,7 @@ class NaryRule(Rule):
                 (ast3, t) = ExpressionRule().parse(t[1:])
                 if ast3 == False:
                     print("expected an expression after n-ary comparison operation in", op)
-                    exit(1)
+                    sys.exit(1)
                 args.append(ast3)
                 if t == []:
                     break
@@ -2563,7 +2655,7 @@ class NaryRule(Rule):
             (ast2, t) = ExpressionRule().parse(t[1:])
         if ast2 == False:
             print("expected an expression after operation", op)
-            exit(1)
+            sys.exit(1)
         args.append(ast2)
         if t != []:
             (lexeme, file, line, column) = t[0]
@@ -2572,16 +2664,16 @@ class NaryRule(Rule):
                 (ast3, t) = ExpressionRule().parse(t[1:])
                 if ast3 == False:
                     print("expected an expression after else in", op)
-                    exit(1)
+                    sys.exit(1)
                 args.append(ast3)
                 if t != []:
                     (lexeme, file, line, column) = t[0]
-            elif (op[0] == lexeme) and (lexeme in { "+", "|", "&", "^", "and", "or" }):
+            elif (op[0] == lexeme) and (lexeme in { "+", "*", "|", "&", "^", "and", "or" }):
                 while lexeme == op[0]:
                     (ast3, t) = ExpressionRule().parse(t[1:])
                     if ast3 == False:
                         print("expected an expression after n-ary operation in", op)
-                        exit(1)
+                        sys.exit(1)
                     args.append(ast3)
                     if t == []:
                         break
@@ -2756,25 +2848,6 @@ class TupleRule(Rule):
                 "expected %s"%self.closers)
         return (TupleAST(d, token), t)
 
-class ArrowExpressionRule(Rule):
-    def parse(self, t):
-        (ast, t) = BasicExpressionRule().parse(t)
-        if ast == False:
-            return (False, t)
-        if t == []:
-            return (ast, t)
-        (lexeme, file, line, column) = token = t[0]
-        while lexeme == "->":
-            (lexeme, file, line, column) = t[1]
-            self.expect("-> expression", isname(lexeme), t[1],
-                    "expected a name after ->")
-            ast = ApplyAST(PointerAST(ast, token), ConstantAST(t[1]), token)
-            t = t[2:]
-            if t == []:
-                break
-            (lexeme, file, line, column) = token = t[0]
-        return (ast, t)
-
 class BasicExpressionRule(Rule):
     def parse(self, t):
         (lexeme, file, line, column) = token = t[0]
@@ -2857,20 +2930,29 @@ class ExpressionRule(Rule):
                 return (PointerAST(ast, func), t)
             else:
                 return (NaryAST(func, [ast]), t)
-        (ast, t) = ArrowExpressionRule().parse(t)
-        args = []
+
+        # Example:
+        # a b c -> d e -> f
+        # (a b c -> d e) -> f
+        # ((a b c -> d) e) -> f
+        # (((a b c) -> d) e) -> f
+        # ((((a b) c) -> d) e) -> f
+        (ast, t) = BasicExpressionRule().parse(t)
         while t != []:
-            (arg, t) = ArrowExpressionRule().parse(t)
-            if arg == False:
-                break
-            args.append(arg)
-        if ast == None:
-            assert len(args) > 0, args
-            ast = PointerAST(args[0], func)
-            args = args[1:]
-        while args != []:
-            ast = ApplyAST(ast, args[0], func)
-            args = args[1:]
+            (lexeme, file, line, column) = t[0]
+            if lexeme == "->":
+                (lexeme, file, line, column) = t[1]
+                self.expect("-> expression", isname(lexeme), t[1],
+                        "expected a name after ->")
+                ast = ApplyAST(PointerAST(ast, t[1]), ConstantAST(t[1]), t[1])
+                t = t[2:]
+                if t == []:
+                    break
+            else:
+                (arg, t) = BasicExpressionRule().parse(t)
+                if arg == False:
+                    break
+                ast = ApplyAST(ast, arg, func)
         return (ast, t)
 
 class AssignmentAST(AST):
@@ -2888,7 +2970,15 @@ class AssignmentAST(AST):
         shared = lv.isShared(scope)
         if isinstance(lv, NameAST):
             # handled separately for assembly code readability
-            ld = LoadOp(lv.name, lv.name, scope.prefix) if shared else LoadVarOp(lv.name)
+            (t, v) = scope.find(lv.name)
+            if t == "module":
+                print("Cannot operate on module", lv.name)
+                sys.exit(1)
+            if t == "constant":
+                print("Cannot operate on constant", lv.name)
+                sys.exit(1)
+            assert t in { "local", "global" }
+            ld = LoadOp(lv.name, lv.name, scope.prefix) if t == "global" else LoadVarOp(lv.name)
         else:
             lv.ph1(scope, code)
             code.append(DupOp())                  # duplicate the address
@@ -2929,8 +3019,15 @@ class AssignmentAST(AST):
         for lvs in reversed(self.lhslist):
             skip -= 1
             if isinstance(lvs, NameAST):
-                shared = lvs.isShared(scope)
-                st = StoreOp(lvs.name, lvs.name, scope.prefix) if shared else StoreVarOp(lvs.name)
+                (t, v) = scope.find(lvs.name)
+                if t == "module":
+                    print("Cannot assign to module", lvs.name)
+                    sys.exit(1)
+                if t == "constant":
+                    print("Cannot assign to constant", lvs.name)
+                    sys.exit(1)
+                assert t in { "local", "global" }, (t, lvs.name)
+                st = StoreOp(lvs.name, lvs.name, scope.prefix) if t == "global" else StoreVarOp(lvs.name)
                 code.append(st)
             else:
                 lvs.ph2(scope, code, skip)
@@ -2981,7 +3078,28 @@ class AddressAST(AST):
     def isConstant(self, scope):
         return self.lv.isConstant(scope)
 
+    def check(self, lv, scope):
+        if isinstance(lv, NameAST):
+            (t, v) = scope.lookup(lv.name)
+            if t == "local":
+                print("can't take address of local variable", lv)
+                sys.exit(1)
+            if t == "constant":
+                print("can't take address of constant", lv)
+                sys.exit(1)
+            if t == "module":
+                print("can't take address of imported", lv)
+                sys.exit(1)
+        elif isinstance(lv, ApplyAST):
+            self.check(lv.method, scope)
+        elif isinstance(lv, PointerAST):
+            pass
+        else:
+            print("can't take address of", lv)
+            sys.exit(1)
+
     def gencode(self, scope, code):
+        self.check(self.lv, scope)
         self.lv.ph1(scope, code)
 
 class PassAST(AST):
@@ -3197,15 +3315,25 @@ class MethodAST(AST):
         scope.names[lexeme] = ("constant", (PcValue(pc + 1), file, line, column))
 
         ns = Scope(scope)
+        tmp = PcValue(-1)
+        for (lexeme, file, line, column) in self.stat.getLabels():
+            ns.names[lexeme] = ("constant", (tmp, file, line, column))
         self.assign(ns, self.args)
         ns.names["result"] = ("local", ("result", file, line, column))
+        before = len(code)
+        self.stat.compile(ns, code)
+        del code[before:]
         self.stat.compile(ns, code)
         code.append(ReturnOp())
-
         code[pc] = JumpOp(len(code))
 
+        # promote global variables
+        for name, (t, v) in ns.names.items():
+            if t == "global" and name not in scope.names:
+                scope.names[name] = (t, v)
+
     def getLabels(self):
-        return { self.name } | self.stat.getLabels()
+        return { self.name }
 
     def getImports(self):
         return self.stat.getImports()
@@ -3332,6 +3460,10 @@ class FromAST(AST):
                     scope.names[item] = (t, v)
         else:
             for (lexeme, file, line, column) in self.items:
+                if lexeme not in names:
+                    print("%s line %d: can't import %s from module %s"%(
+                        file, line, lexeme, self.module[0]))
+                    sys.exit(1)
                 (t, v) = names[lexeme]
                 assert t == "constant", (lexeme, t, v)
                 scope.names[lexeme] = (t, v)
@@ -3355,8 +3487,8 @@ class LabelStatAST(AST):
             self.ast.compile(scope, code)
         else:
             root = scope
-            while root.parent != None:
-                root = root.parent
+            # while root.parent != None:
+            #     root = root.parent
             for (lexeme, file, line, column) in self.labels:
                 root.names[lexeme] = \
                     ("constant", (PcValue(len(code)), file, line, column))
@@ -3369,6 +3501,18 @@ class LabelStatAST(AST):
 
     def getImports(self):
         return self.ast.getImports();
+
+class SequentialAST(AST):
+    def __init__(self, vars):
+        self.vars = vars
+    
+    def __repr__(self):
+        return "Sequential(" + str(self.vars) + ")"
+
+    def compile(self, scope, code):
+        for lv in self.vars:
+            lv.ph1(scope, code)
+            code.append(SequentialOp())
 
 class ConstAST(AST):
     def __init__(self, const, expr):
@@ -3396,7 +3540,7 @@ class ConstAST(AST):
     def compile(self, scope, code):
         if not self.expr.isConstant(scope):
             print(self.const, ": Parse error: expression not a constant", str(self.expr))
-            exit(1)
+            sys.exit(1)
         if isinstance(self.expr, LambdaAST):
             pc = self.expr.compile_body(scope, code)
             self.set(scope, self.const, PcValue(pc))
@@ -3446,7 +3590,7 @@ class StatListRule(Rule):
 
     def parse(self, t):
         if t == []:
-            assert False
+            print("Unexpected EOF")
             return (BlockAST([]), [])
 
         # find all the tokens that are indented more than self.indent
@@ -3458,12 +3602,18 @@ class StatListRule(Rule):
             if t == []:
                 break
             (lexeme, file, line, column) = t[0]
-        assert slice != [], (t[:3], self.indent)
+        if slice == []:
+            print("Parse error: no statements in indented block:", t[0])
+            sys.exit(1)
 
         b = []
         while slice != []:
-            (ast, slice) = LabelStatRule().parse(slice)
-            b.append(ast)
+            try:
+                (ast, slice) = LabelStatRule().parse(slice)
+                b.append(ast)
+            except IndexError:
+                print("Parsing: incomplete statement starting at ", slice[0])
+                sys.exit(1)
 
         return (BlockAST(b), t)
 
@@ -3526,7 +3676,7 @@ class StatementRule(Rule):
                 return (tokens, t[1:])
             if lexeme in [')', ']', '}']:
                 print("unmatched bracket:", t[0])
-                exit(1)
+                sys.exit(1)
             if lexeme in ['(', '[', '{']:
                 (more, t) = self.rec_slice(t)
                 tokens += more
@@ -3535,7 +3685,7 @@ class StatementRule(Rule):
             else:
                 t = t[1:]
         print("closing bracket missing:", first, tokens, t)
-        exit(1)
+        sys.exit(1)
 
     def slice(self, t, indent):
         if t == []:
@@ -3575,7 +3725,9 @@ class StatementRule(Rule):
             (lexeme, file, line, column) = tokens[0]
             self.expect("constant definition", lexeme == "=", tokens[0], "expected '='")
             (ast, tokens) = TupleRule(set()).parse(tokens[1:])
-            assert tokens == [], tokens
+            if tokens != []:
+                print("constant definition: unexpected token:", tokens[0])
+                sys.exit(1)
             return (ConstAST(const, ast), t)
         if lexeme == "if":
             alts = []
@@ -3604,12 +3756,16 @@ class StatementRule(Rule):
         if lexeme == "await":
             (tokens, t) = self.slice(t[1:], column)
             (cond, tokens) = NaryRule(set()).parse(tokens)
-            assert tokens == []
+            if tokens != []:
+                print("await: unexpected token:", tokens[0])
+                sys.exit(1)
             return (AwaitAST(cond), t)
         if lexeme == "invariant":
             (tokens, t) = self.slice(t[1:], column)
             (cond, tokens) = NaryRule(set()).parse(tokens)
-            assert tokens == []
+            if tokens != []:
+                print("invariant: unexpected token:", tokens[0])
+                sys.exit(1)
             return (InvariantAST(cond, token), t)
         if lexeme == "for":
             (lst, t) = self.iterParse(t[1:], {":"})
@@ -3633,7 +3789,11 @@ class StatementRule(Rule):
             (stat, t) = BlockRule(column).parse(t[1:])
             return (AtomicAST(stat), t)
         if lexeme == "del":
-            (ast, t) = ExpressionRule().parse(t[1:])
+            (tokens, t) = self.slice(t[1:], column)
+            (ast, tokens) = ExpressionRule().parse(tokens)
+            if tokens != []:
+                print("del: unexpected token:", tokens[0])
+                sys.exit(1)
             return (DelAST(ast), t)
         if lexeme == "def":
             name = t[1]
@@ -3644,30 +3804,58 @@ class StatementRule(Rule):
             return (MethodAST(name, bv, stat), t)
         if lexeme == "spawn":
             (tokens, t) = self.slice(t[1:], column)
-            (method, tokens) = ArrowExpressionRule().parse(tokens)
-            (arg, tokens) = ArrowExpressionRule().parse(tokens)
+            (func, tokens) = NaryRule({","}).parse(tokens)
+            if not isinstance(func, ApplyAST):
+                print("spawn: expected method application", token)
+                sys.exit(1)
             if tokens == []:
                 this = None
             else:
                 (lexeme, file, line, column) = tokens[0]
                 assert lexeme == ","
                 (this, tokens) = NaryRule(set()).parse(tokens[1:])
-                assert tokens == []
-            return (SpawnAST(method, arg, this), t)
+                if tokens != []:
+                    print("spawn: unexpected token:", tokens[0])
+                    sys.exit(1)
+            return (SpawnAST(func.method, func.arg, this), t)
         if lexeme == "trap":
             (tokens, t) = self.slice(t[1:], column)
-            (method, tokens) = ArrowExpressionRule().parse(tokens)
-            (arg, tokens) = ArrowExpressionRule().parse(tokens)
-            assert tokens == []
-            return (TrapAST(method, arg), t)
+            (func, tokens) = NaryRule(set()).parse(tokens)
+            if not isinstance(func, ApplyAST):
+                print("trap: expected method application", token)
+                sys.exit(1)
+            if tokens != []:
+                print("trap: unexpected token:", tokens[0])
+                sys.exit(1)
+            return (TrapAST(func.method, func.arg), t)
         if lexeme == "go":
             (tokens, t) = self.slice(t[1:], column)
-            (ctx, tokens) = ArrowExpressionRule().parse(tokens)
-            (result, tokens) = ArrowExpressionRule().parse(tokens)
-            assert tokens == []
-            return (GoAST(ctx, result), t)
+            (func, tokens) = NaryRule(set()).parse(tokens)
+            if not isinstance(func, ApplyAST):
+                print("go: expected method application", token)
+                sys.exit(1)
+            if tokens != []:
+                print("go: unexpected token:", tokens[0])
+                sys.exit(1)
+            return (GoAST(func.method, func.arg), t)
         if lexeme == "pass":
             return (PassAST(), t[1:])
+        if lexeme == "sequential":
+            (tokens, t) = self.slice(t[1:], column)
+            (ast, tokens) = ExpressionRule().parse(tokens)
+            vars = [ast]
+            if tokens != []:
+                (lexeme, file, line, column) = tokens[0]
+                while lexeme == ',':
+                    (ast, tokens) = ExpressionRule().parse(tokens[1:])
+                    vars.append(ast)
+                    if tokens == []:
+                        break
+                    (lexeme, file, line, column) = tokens[0]
+                if tokens != []:
+                    print("sequential: unexpected token:", tokens[0])
+                    sys.exit(1)
+            return (SequentialAST(vars), t)
         if lexeme == "import":
             (tokens, t) = self.slice(t[1:], column)
             mods = [tokens[0]]
@@ -3680,7 +3868,9 @@ class StatementRule(Rule):
                     if tokens == []:
                         break
                     (lexeme, file, line, column) = tokens[0]
-                assert tokens == []
+                if tokens != []:
+                    print("import: unexpected token:", tokens[0])
+                    sys.exit(1)
             return (ImportAST(mods), t)
         if lexeme == "from":
             (tokens, t) = self.slice(t[1:], column)
@@ -3702,7 +3892,9 @@ class StatementRule(Rule):
                     if tokens == []:
                         break;
                     (lexeme, file, line, column) = tokens[0]
-            assert tokens == [], tokens
+            if tokens != []:
+                print("from: unexpected token:", tokens[0])
+                sys.exit(1)
             return (FromAST(module, items), t)
         if lexeme == "assert":
             (tokens, t) = self.slice(t[1:], column)
@@ -3713,7 +3905,9 @@ class StatementRule(Rule):
                 (lexeme, file, line, column) = tokens[0]
                 assert lexeme == ","
                 (expr, tokens) = NaryRule(set()).parse(tokens[1:])
-                assert tokens == []
+                if tokens != []:
+                    print("assert: unexpected token:", tokens[0])
+                    sys.exit(1)
             return (AssertAST(token, cond, expr), t)
         
         # If we get here, the next statement is either an expression
@@ -3950,7 +4144,7 @@ class State:
             except KeyError:
                 print()
                 print("no index", indexes[0], "in variable", path)
-                exit(1)
+                sys.exit(1)
             indexes = indexes[1:]
         return v
 
@@ -4200,7 +4394,7 @@ class Scope:
                 return tv
             ancestor = ancestor.parent
         # print("Warning: unknown name:", name, " (assuming global variable)")
-        self.names[lexeme] = ("global", lexeme)
+        self.names[lexeme] = ("global", name)
         return ("global", lexeme)
 
     def find(self, name):
@@ -4208,7 +4402,7 @@ class Scope:
         tv = self.names.get(lexeme)
         if tv != None:
             return tv
-        self.names[lexeme] = ("global", lexeme)
+        self.names[lexeme] = ("global", name)
         # print("Warning: unknown name:", name, " (find)")
         return ("global", lexeme)
 
@@ -4335,7 +4529,7 @@ def onestep(node, ctx, choice, interrupt, nodes, visited, todo):
                 sc.code[cc.pc].eval(sc, cc)
             except Exception as e:
                 traceback.print_exc()
-                exit(1)
+                sys.exit(1)
                 cc.failure = "Python assertion failed"
 
         if cc.failure != None or cc.stopped:
@@ -4417,12 +4611,15 @@ def onestep(node, ctx, choice, interrupt, nodes, visited, todo):
 
 def parseConstant(c, v):
     tokens = lexer(v, "<constant argument>")
+    if tokens == []:
+        print("Empty constant")
+        sys.exit(1)
     try:
         (ast, rem) = ExpressionRule().parse(tokens)
     except IndexError:
         # best guess...
         print("Parsing constant", v, "hit end of string")
-        exit(1)
+        sys.exit(1)
     scope = Scope(None)
     code = []
     ast.compile(scope, code)
@@ -4440,7 +4637,7 @@ def doCompile(filenames, consts, mods):
             parseConstant(c[0:i], c[i+1:])
         except IndexError:
             print("Usage: -c C=V to define a constant")
-            exit(1)
+            sys.exit(1)
 
     global modules
     for m in mods:
@@ -4449,7 +4646,7 @@ def doCompile(filenames, consts, mods):
             modules[m[0:i]] = m[i+1:]
         except IndexError:
             print("Usage: -m module=version to specify a module version")
-            exit(1)
+            sys.exit(1)
 
     scope = Scope(None)
     code = [
@@ -4459,12 +4656,12 @@ def doCompile(filenames, consts, mods):
         usage()
     else:
         for fname in filenames:
-            if os.path.exists(fname):
+            try:
                 with open(fname) as fd:
                     load(fd, fname, scope, code)
-            else:
-                print("Can't open", fname, file=sys.stderr)
-                exit(1)
+            except IOError:
+                print("harmony: can't open", fname, file=sys.stderr)
+                sys.exit(1)
     code.append(ReturnOp())     # to terminate "__init__" process
     optimize(code)
     return (code, scope)
@@ -5255,22 +5452,28 @@ def dumpCode(printCode, code, scope, f=sys.stdout):
                 print(file=f)
             else:
                 print(",", file=f)
-            print("    \"%d\": { \"file\": \"%s\", \"line\": \"%d\" }"%(pc, file, line), file=f, end="")
+            print("    \"%d\": { \"file\": \"%s\", \"line\": \"%d\", \"code\": %s }"%(pc, file, line, json.dumps(files[file][line-1])), file=f, end="")
         print(file=f)
         print("  }", file=f);
         print("}", file=f);
+
+config = {
+    "infile": "$$home$$/.charm.c",
+    "outfile": "$$home$$/.charm.exe",
+    "compile": "gcc -O3 -std=c99 $$infile$$ -m64 -o $$outfile$$"
+}
 
 def usage():
     print("Usage: harmony [options] harmony-file ...")
     print("  options: ")
     print("    -a: list machine code")
-    print("    -b: blocking execution")
     print("    -c name=value: define a constant")
     print("    -d: htmldump full state into html file")
-    print("    -f: run with internal model checker")
+    print("    -f: run with internal model checker (not supported)")
     print("    -h: help")
     print("    -m module=version: select a module version")
     print("    -s: silent (do not print periodic status updates)")
+    print("    -v: print version number")
     exit(1)
 
 def main():
@@ -5284,9 +5487,11 @@ def main():
     charmflag = True
     fulldump = False
     testflag = False
+    suppressOutput = False
+    charmoptions = []
     try:
-        opts, args = getopt.getopt(sys.argv[1:],
-                        "Aabc:dfhjm:st", ["const=", "help", "module="])
+        opts, args = getopt.getopt(sys.argv[1:], "Aabc:dfhjm:stv",
+                ["const=", "cf=", "help", "module=", "suppress", "version"])
     except getopt.GetoptError as err:
         print(str(err))
         usage()
@@ -5294,6 +5499,8 @@ def main():
         if o == "-a":
             printCode = "verbose"
             charmflag = False
+        elif o == "--cf":
+            charmoptions += [a]
         elif o == "-A":
             printCode = "terse"
             charmflag = False
@@ -5316,12 +5523,27 @@ def main():
             testflag = True
         elif o in { "-h", "--help" }:
             usage()
+        elif o == "--suppress":
+            suppressOutput = True
+        elif o in { "-v", "--version" }:
+            print("Version", ".".join([str(v) for v in version]))
+            sys.exit(0)
         else:
             assert False, "unhandled option"
 
     (code, scope) = doCompile(args, consts, mods)
 
     if charmflag:
+        # see if there is a configuration file
+        global config
+        conffile = "%s/.harmony.json"%pathlib.Path.home()
+        if os.path.exists(conffile):
+            with open(conffile) as f:
+                config = json.load(f)
+        else:
+            config["infile"] = "%s/.charm.c"%pathlib.Path.home()
+            config["outfile"] = "%s/.charm.exe"%pathlib.Path.home()
+            config["compile"] = "gcc -O3 -std=c99 %s -m64 -o %s"%(config["infile"], config["outfile"])
         if testflag:
             tmpfile = "harmony.json"
         else:
@@ -5329,8 +5551,7 @@ def main():
             os.close(fd)
         with open(tmpfile, "w") as fd:
             dumpCode("json", code, scope, f=fd)
-        charm = "%s/.charm.exe"%pathlib.Path.home()
-        path = pathlib.Path(charm)
+        path = pathlib.Path(config["outfile"])
         rebuild = testflag or not path.exists()
         if not rebuild:
             st = path.stat()
@@ -5338,25 +5559,25 @@ def main():
             if now - st.st_mtime > 15 * 60:
                 rebuild = True
         if rebuild:
-            with open("charm.c", "w") as fd:
+            with open(config["infile"], "w") as fd:
                 if not testflag:
                     print("#define NDEBUG", file=fd)
                 print("#define HARMONY_COMBINE", file=fd)
                 print(charm_src, file=fd)
             if testflag:
                 # if os.name == "nt":
-                #     r = os.system("cl charm.c /link /out:%s"%charm);
+                #     r = os.system("cl %s /link /out:%s"%(config["infile"], config["outfile"]))
                 # else:
-                    r = os.system("gcc -g charm.c -m64 -o %s"%charm);
+                    r = os.system("gcc -g -std=c99 %s -m64 -o %s"%(config["infile"], config["outfile"]))
             else:
                 # if os.name == "nt":
-                #     r = os.system("cl charm.c /link /out:%s"%charm);
+                #     r = os.system("cl %s /link /out:%s"%(config["infile"], config["outfile"]))
                 # else:
-                    r = os.system("gcc -O3 charm.c -m64 -o %s"%charm);
+                    r = os.system(config["compile"]);
             if r != 0:
                 print("can't create charm model checker")
                 sys.exit(r);
-        r = os.system("%s %s"%(charm, tmpfile));
+        r = os.system("%s %s %s"%(config["outfile"], " ".join(charmoptions), tmpfile));
         if not testflag:
             os.remove(tmpfile)
         if r != 0:
@@ -5366,7 +5587,8 @@ def main():
         if not b.run():
             gh = GenHTML()
             gh.run()
-            print("open file://" + os.getcwd() + "/harmony.html for more information")
+            if not suppressOutput:
+                print("open file://" + os.getcwd() + "/harmony.html for more information")
         sys.exit(0);
 
     if printCode == None:
