@@ -135,7 +135,7 @@
         "@types/vscode": "^1.34.0",
         "@typescript-eslint/eslint-plugin": "^3.0.2",
         "@typescript-eslint/parser": "^3.0.2",
-        "eslint": "^7.24.0"
+        "eslint": "^7.24.0",
         "vsce": "^1.87.1"
     },
     "dependencies": {
