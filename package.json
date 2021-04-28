@@ -3,7 +3,7 @@
     "displayName": "HarmonyLang",
     "description": "VS Code language support for Harmony, a Python-like concurrent programming language.",
     "icon": "images/harmonylang.png",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "publisher": "kevinsun-dev-cornell",
     "repository": "https://github.com/kevinsun-dev/harmonylang",
     "engines": {
@@ -81,6 +81,14 @@
                 "title": "Run Harmony"
             },
             {
+                "command": "harmonylang-server-flag.run",
+                "title": "(Server) Run Harmony With Flags"
+            },
+            {
+                "command": "harmonylang-flag.run",
+                "title": "Run Harmony With Flags"
+            },
+            {
                 "command": "harmonylang.end",
                 "title": "End All Harmony Processes"
             }
@@ -113,6 +121,7 @@
     },
     "devDependencies": {
         "@types/adm-zip": "^0.4.33",
+        "@types/argparse": "^2.0.5",
         "@types/chai": "^4.2.14",
         "@types/chmodr": "^1.0.0",
         "@types/command-exists": "^1.2.0",
@@ -126,10 +135,12 @@
         "@types/vscode": "^1.34.0",
         "@typescript-eslint/eslint-plugin": "^3.0.2",
         "@typescript-eslint/parser": "^3.0.2",
+        "eslint": "^7.24.0"
         "vsce": "^1.87.1"
     },
     "dependencies": {
         "adm-zip": "^0.5.2",
+        "argparse": "^2.0.1",
         "axios": "^0.21.1",
         "chai": "^4.2.0",
         "chmodr": "^1.2.0",
@@ -142,6 +153,7 @@
         "mocha": "^8.2.1",
         "node-html-parser": "^2.1.0",
         "rimraf": "^3.0.2",
+        "string-argv": "^0.3.1",
         "tmp": "^0.2.1",
         "typescript": "^4.1.3"
     }
