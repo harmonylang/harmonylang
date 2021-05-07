@@ -147,18 +147,21 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     const diagnostics: Diagnostic[] = [];
 
     const harmonyScript = settings.libraryPath && path.join(settings.libraryPath, 'harmony.py');
-    if (!harmonyScript) return;
+    if (!harmonyScript) {
+        return connection.sendDiagnostics({ uri: textDocument.uri, diagnostics});
+    }
+
     const harmonyFile = fileUriToPath(textDocument.uri);
     child_process.execFile('python3', [harmonyScript, '--parse', harmonyFile], (error, stdout, stderr) => {
         const dirname = path.dirname(harmonyFile);
         const basename = path.basename(harmonyFile, path.extname(harmonyFile));
         const analysisFile = path.join(dirname, basename + '.hvm');
         if (!fs.existsSync(analysisFile) || !fs.statSync(analysisFile).isFile())
-            connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+            return connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 
         const analysis = JSON.parse(fs.readFileSync(analysisFile, 'utf-8'));
         if (analysis.status !== 'error')
-            connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+            return connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 
         const {line, column, lexeme, message, is_eof_error} = analysis;
 
@@ -172,7 +175,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
                     end: textDocument.positionAt(text.length)
                 },
                 message: message,
-                source: 'ex'
+                source: 'Harmony'
             };
         } else {
             const initialOffset = textDocument.offsetAt({ line: line - 1, character: column - 1});
@@ -183,7 +186,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
                     end: textDocument.positionAt(initialOffset + lexeme.length)
                 },
                 message: message,
-                source: 'ex'
+                source: 'Harmony'
             };
         }
         if (hasDiagnosticRelatedInformationCapability) {
