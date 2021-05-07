@@ -10,11 +10,20 @@ import {
 import * as rimraf from 'rimraf';
 import * as fs from 'fs';
 import { IntermediateJson } from './charmony/IntermediateJson';
+import {
+    LanguageClient,
+    LanguageClientOptions,
+    ServerOptions,
+    TransportKind
+} from 'vscode-languageclient/node';
 import CharmonyPanelController_v2 from './outputPanel/PanelController_v2';
 import * as commandExists from 'command-exists';
+import HarmonyInstallationStatusBar from './feature/harmonyInstallationStatusBar';
 import { runServerAnalysis } from './feature/runServerAnalysis';
 import { ArgumentParser } from 'argparse';
 import stringArgv from 'string-argv';
+import fileUriToPath = require('file-uri-to-path');
+
 
 const processManager = ProcessManagerImpl.init();
 const harmonyLangConfig = vscode.workspace.getConfiguration('harmonylang');
@@ -22,11 +31,15 @@ const hlConsole = vscode.window.createOutputChannel('HarmonyLang');
 const pythonPath = harmonyLangConfig.get('pythonPath');
 const ccPath = harmonyLangConfig.get('ccPath');
 
+let client: LanguageClient;
 const parser = new ArgumentParser();
+const statusBar = HarmonyInstallationStatusBar.Build('harmonylang.settings', 'libraryPath');
 parser.add_argument('--const','-c', {nargs: 1});
 parser.add_argument('--module', '-m', {nargs: 1});
 
 export const activate = (context: vscode.ExtensionContext) => {
+    statusBar.show();
+
     const getFileName = () => {
         const filename = vscode.window.activeTextEditor?.document?.fileName;
         const ext = path.extname(filename || '');
@@ -44,6 +57,28 @@ export const activate = (context: vscode.ExtensionContext) => {
         return filename;
     };
 
+
+    const runSetHarmonyLibrary = vscode.commands.registerCommand(
+        'harmonylang-library.set',
+        () => {
+            vscode.window.showOpenDialog({
+                canSelectFiles: false,
+                canSelectFolders: true,
+                canSelectMany: false
+            }).then(value => {
+                if (!value) {
+                    return vscode.window.showErrorMessage('No PATH value given');
+                }
+                const error = statusBar.setInstallPath(fileUriToPath(value[0].toString()));
+                if (error) {
+                    vscode.window.showErrorMessage(error);
+                } else {
+                    vscode.window.showInformationMessage('PATH has been set');
+                }
+            });
+        }
+    );
+
     const runHarmonyCommand = vscode.commands.registerCommand(
         'harmonylang.run',
         () => {
@@ -52,7 +87,7 @@ export const activate = (context: vscode.ExtensionContext) => {
                 if (filename) runHarmony(context, filename);
             } catch (e) {
                 console.error('Run Harmony failed:', e);
-                vscode.window.showInformationMessage('(Server) Run Harmony failed. See the console log in the DevTools.');  
+                vscode.window.showInformationMessage('(Server) Run Harmony failed. See the console log in the DevTools.');
             }
         }
     );
@@ -65,7 +100,7 @@ export const activate = (context: vscode.ExtensionContext) => {
                 if (filename) runHarmonyServer(context, filename);
             } catch (e) {
                 console.error('(Server) Run Harmony failed:', e);
-                vscode.window.showInformationMessage('(Server) Run Harmony failed. See the console log in the DevTools.');  
+                vscode.window.showInformationMessage('(Server) Run Harmony failed. See the console log in the DevTools.');
             }
         }
     );
@@ -85,7 +120,7 @@ export const activate = (context: vscode.ExtensionContext) => {
                     });
             } catch (e) {
                 console.error('Run Harmony failed:', e);
-                vscode.window.showInformationMessage('Run Harmony failed. See the console log in the DevTools.');  
+                vscode.window.showInformationMessage('Run Harmony failed. See the console log in the DevTools.');
             }
         }
     );
@@ -105,7 +140,7 @@ export const activate = (context: vscode.ExtensionContext) => {
                     });
             } catch (e) {
                 console.error('(Server) Run Harmony failed:', e);
-                vscode.window.showInformationMessage('(Server) Run Harmony failed. See the console log in the DevTools.');  
+                vscode.window.showInformationMessage('(Server) Run Harmony failed. See the console log in the DevTools.');
             }
         }
     );
@@ -117,12 +152,60 @@ export const activate = (context: vscode.ExtensionContext) => {
         }
     );
 
+
+    // The server is implemented in node
+    const serverModule = context.asAbsolutePath(path.join('out', 'server', 'server.js'));
+    // The debug options for the server
+    // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
+    const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
+
+    // If the extension is launched in debug mode then the debug server options are used
+    // Otherwise the run options are used
+    const serverOptions: ServerOptions = {
+        run: { module: serverModule, transport: TransportKind.ipc },
+        debug: {
+            module: serverModule,
+            transport: TransportKind.ipc,
+            options: debugOptions
+        }
+    };
+
+    // Options to control the language client
+    const clientOptions: LanguageClientOptions = {
+        // Register the server for plain text documents
+        documentSelector: [{ scheme: 'file', language: 'harmony' }],
+        synchronize: {
+            // Notify the server about file changes to '.clientrc files contained in the workspace
+            fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
+        }
+    };
+
+    // Create the language client and start the client.
+    client = new LanguageClient(
+        'languageServerExample',
+        'Language Server Example',
+        serverOptions,
+        clientOptions
+    );
+    // Start the client. This will also launch the server
+    client.start();
+
+
+    context.subscriptions.push(runSetHarmonyLibrary);
     context.subscriptions.push(runHarmonyCommand);
     context.subscriptions.push(runHarmonyServerCommand);
     context.subscriptions.push(runHarmonyWithFlagsCommand);
     context.subscriptions.push(runHarmonyServerWithFlagsCommand);
     context.subscriptions.push(endHarmonyProcessesCommand);
 };
+
+export function deactivate(): Thenable<void> | undefined {
+    if (!client) {
+        return undefined;
+    }
+    statusBar.dispose();
+    return client.stop();
+}
 
 export function endHarmonyProcesses() {
     showMessage('Ending all Harmony processes...');
@@ -231,8 +314,8 @@ function runHarmonyServer(
 }
 
 export function runHarmony(
-    context: vscode.ExtensionContext, 
-    fullFileName: string, 
+    context: vscode.ExtensionContext,
+    fullFileName: string,
     flags = ''
 ) {
     CharmonyPanelController_v2.currentPanel?.dispose();
