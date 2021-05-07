@@ -174,16 +174,12 @@ export const activate = (context: vscode.ExtensionContext) => {
     const clientOptions: LanguageClientOptions = {
         // Register the server for plain text documents
         documentSelector: [{ scheme: 'file', language: 'harmony' }],
-        synchronize: {
-            // Notify the server about file changes to '.clientrc files contained in the workspace
-            fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
-        }
     };
 
     // Create the language client and start the client.
     client = new LanguageClient(
-        'languageServerExample',
-        'Language Server Example',
+        'harmonyLangServer',
+        'Harmony Language Server',
         serverOptions,
         clientOptions
     );
