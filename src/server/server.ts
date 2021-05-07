@@ -16,7 +16,6 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import * as child_process from 'child_process';
 import fileUriToPath = require('file-uri-to-path');
-import {EXTENSION_DIR} from '../config';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -79,11 +78,6 @@ connection.onInitialized(() => {
     }
 });
 
-// The example settings
-interface ExampleSettings {
-    maxNumberOfProblems: number;
-}
-
 interface HarmonyExtensionSettings {
     libraryPath: string | null;
 }
@@ -91,7 +85,7 @@ interface HarmonyExtensionSettings {
 // The global settings, used when the `workspace/configuration` request is not supported by the client.
 // Please note that this is not the case when using this server with the client provided in this example
 // but could happen with other clients.
-const defaultSettings: HarmonyExtensionSettings = { libraryPath: '"hello world"' };
+const defaultSettings: HarmonyExtensionSettings = { libraryPath: null };
 let globalSettings: HarmonyExtensionSettings = defaultSettings;
 
 // Cache the settings of all open documents
