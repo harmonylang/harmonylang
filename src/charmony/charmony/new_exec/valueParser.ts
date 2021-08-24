@@ -1,8 +1,8 @@
-import {IntermediateKeyValueRep, IntermediateValueRepresentation} from "../IntermediateJson";
+import {IntermediateKeyValueRep, IntermediateValueRepresentation} from "../../types/IntermediateJson";
+import {entries} from "../../util/object_util";
 
 export function parseIntermediateValueRep(v: IntermediateValueRepresentation): unknown {
     const {value, type} = v;
-    console.log(value, type);
     switch (type) {
         case "int": return Number.parseInt(value as string);
         case "atom": return value;
@@ -20,18 +20,14 @@ export function parseIntermediateValueRep(v: IntermediateValueRepresentation): u
             }
             return dict;
         }
-        case "context": {
-            return v;
-        }
     }
-    console.log("Cannot parse this value");
-    return JSON.stringify(v);
+    throw TypeError("Cannot parse this value");
 }
 
 export function parseVariableSet(sharedValues: undefined | Record<string, IntermediateValueRepresentation>): Record<string, unknown> {
     const result: Record<string, unknown> = {};
     if (sharedValues != null) {
-        Object.entries(sharedValues).forEach(([k, v]) => {
+        entries(sharedValues).forEach(([k, v]) => {
             if (!k.startsWith("__")) {
                 result[k] = parseIntermediateValueRep(v);
             }

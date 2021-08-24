@@ -7,20 +7,21 @@ import {
     CHARMONY_INSTALLER
 } from './config';
 import * as fs from 'fs';
-import { IntermediateJson } from './charmony/IntermediateJson';
+import { IntermediateJson } from './charmony/types/IntermediateJson';
 import CharmonyPanelController_v2 from './outputPanel/PanelController_v2';
-import * as commandExists from 'command-exists';
 import { ArgumentParser } from 'argparse';
 import stringArgv from 'string-argv';
 
 const processManager = ProcessManagerImpl.init();
-const harmonyLangConfig = vscode.workspace.getConfiguration('harmonylang');
 const hlConsole = vscode.window.createOutputChannel('HarmonyLang');
-const pythonPath = harmonyLangConfig.get('pythonPath');
-const ccPath = harmonyLangConfig.get('ccPath');
 
 function getHarmonyLangConfiguration() {
     return vscode.workspace.getConfiguration('harmonylang');
+}
+
+function getPythonPath() {
+    const config = getHarmonyLangConfiguration();
+    return config.get('pythonPath');
 }
 
 function getHarmonyLibraryPath(): string | null {
@@ -51,16 +52,13 @@ parser.add_argument('--module', '-m', {nargs: 1});
 export const activate = (context: vscode.ExtensionContext) => {
     const getFileName = () => {
         const filename = vscode.window.activeTextEditor?.document?.fileName;
-        const ext = path.extname(filename || '');
-        const harmonyExt = ['.hny', '.sab'];
-        if (!harmonyExt.includes(ext)) {
-            vscode.window.showInformationMessage(
-                'Target file must be an Harmony (.hny) file.'
-            );
+        if (!filename) {
+            vscode.window.showInformationMessage('Could not locate target file.');
             return;
         }
-        if (filename == null) {
-            vscode.window.showInformationMessage('Could not locate target file.');
+        const ext = path.extname(filename);
+        if (ext !== '.hny') {
+            vscode.window.showInformationMessage('Target file must be an Harmony (.hny) file.');
             return;
         }
         return filename;
@@ -211,7 +209,8 @@ export function installHarmony() {
         path.join(CHARMONY_COMPILER_DIR, 'install.py'),
     );
     const PYTHON_PATH = (() => {
-        if (pythonPath && typeof pythonPath === 'string') return pythonPath as string;
+        const pythonPath = getPythonPath();
+        if (pythonPath && typeof pythonPath === 'string') return pythonPath;
         return 'python3';
     })();
     const cmd = `${PYTHON_PATH} ${CHARMONY_INSTALLER}`;
@@ -242,6 +241,15 @@ export function runHarmony(
     fullFileName: string,
     flags = ''
 ) {
+    const harmonyScript = getHarmonyScriptPath();
+    if (!harmonyScript || !fs.existsSync(harmonyScript)) {
+        showVscodeMessage(true,
+            'Cannot find the Harmony script.'
+            + ' Check if you have installed Harmony via [Install Harmony] or'
+            + ' added the path to Harmony via [Add Harmony Library Path].'
+        );
+        return;
+    }
     CharmonyPanelController_v2.currentPanel?.dispose();
     CharmonyPanelController_v2.createOrShow(context.extensionUri);
     try {
@@ -255,7 +263,6 @@ export function runHarmony(
         return;
     }
     hlConsole.clear();
-    const harmonyScript = getHarmonyScriptPath();
     const charmonyCompileCommand = `${harmonyScript} ${flags} ${fullFileName}`;
     processManager.startCommand(charmonyCompileCommand, {
         cwd: CHARMONY_COMPILER_DIR

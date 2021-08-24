@@ -1,5 +1,5 @@
-import {IntermediateJson, IntermediateMicroStep} from "../IntermediateJson";
-import {CharmonyMacroStep, CharmonyMicroStep, CharmonySlice, CharmonyTopLevel} from "../CharmonyData";
+import {IntermediateJsonManager, IntermediateMicroStep} from "../../types/IntermediateJson";
+import {CharmonyMacroStep, CharmonyMicroStep, CharmonySlice, ExecutionPath, NoIssue} from "../../types/CharmonyJson";
 import {parseVariableSet} from "./valueParser";
 import CharmonyStackManager from "./CharmonyStackManager";
 
@@ -25,9 +25,12 @@ function processStateChanged(microStep: IntermediateMicroStep) {
     ].some(x => x != null);
 }
 
-export function genExecutionPath(json: IntermediateJson): Omit<CharmonyTopLevel, 'executedCode'> {
+export function genExecutionPath(json: IntermediateJsonManager): NoIssue | ExecutionPath {
     const stackTraceManager = new CharmonyStackManager();
-    const {issue, macrosteps} = json;
+    const macrosteps = json.getMacrosteps();
+    if (!macrosteps) {
+        return { issue: json.getIssue(), state: "No issues" };
+    }
     const slices: CharmonySlice[] = [];
     const idToThreadName: Record<string, string> = {};
     const previousSharedValues: Record<string, unknown> = {};
@@ -105,7 +108,9 @@ export function genExecutionPath(json: IntermediateJson): Omit<CharmonyTopLevel,
         });
     });
     return {
-        issue, slices,
+        state: "Issues found",
+        issue: json.getIssue(),
+        slices,
         microSteps, macroSteps,
         idToThreadName
     };

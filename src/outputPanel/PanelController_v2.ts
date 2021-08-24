@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
 import {Webview} from 'vscode';
 import * as fs from 'fs';
-import {CHARMONY_HTML_FILE, DEBUG_DIR, RESOURCE_DIR} from "../config";
-import {IntermediateJson} from "../charmony/IntermediateJson";
-import parseCharmony from "../charmony/CharmonyData";
-import * as path from "path";
+import {CHARMONY_HTML_FILE, DEBUG_DIR, RESOURCE_DIR} from '../config';
+import {IntermediateJson} from '../charmony/types/IntermediateJson';
+import { parse } from '../charmony';
+import * as path from 'path';
 
 export default class CharmonyPanelController_v2 {
     public static currentPanel: CharmonyPanelController_v2 | undefined;
@@ -56,7 +56,7 @@ export default class CharmonyPanelController_v2 {
     public updateResults(data: IntermediateJson) {
         // Send a message to the webview webview.
         // You can send any JSON serializable data.
-        console.log("Presenting the webview");
+        console.log('Presenting the webview');
         this.update(data);
     }
 
@@ -89,7 +89,7 @@ export default class CharmonyPanelController_v2 {
         const harmonyPanel = this.panel;
 
         if (data == null){
-            console.log("Looking for data");
+            console.log('Looking for data');
             try {
                 harmonyPanel.webview.html = fs.readFileSync(CHARMONY_HTML_FILE, 'utf-8');
             } catch (err) {
@@ -103,23 +103,23 @@ export default class CharmonyPanelController_v2 {
     }
 
     private loadData(data: IntermediateJson, webview: Webview) {
-        const harmonyJsonData = parseCharmony(data);
+        const harmonyJsonData = parse(data);
 
         if (fs.existsSync(DEBUG_DIR)) {
-            fs.writeFileSync(path.join(DEBUG_DIR, "visual.json"),
+            fs.writeFileSync(path.join(DEBUG_DIR, 'visual.json'),
                 JSON.stringify(harmonyJsonData, undefined, 4));
         }
 
         // if (vscode.workspace.workspaceFolders) {
-            // console.log("Creating a standalone HTML file");
-            // createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, harmonyJsonData);
+        // console.log("Creating a standalone HTML file");
+        // createStandaloneHtml(vscode.workspace.workspaceFolders[0].uri.path, harmonyJsonData);
         // }
         webview.postMessage({ command: 'load', jsonData: harmonyJsonData });
         webview.onDidReceiveMessage( message => {
             switch (message.command) {
-                case 'alert':
-                    vscode.window.showErrorMessage(message.text);
-                    return;
+            case 'alert':
+                vscode.window.showErrorMessage(message.text);
+                return;
             }
         }, undefined, undefined);
     }

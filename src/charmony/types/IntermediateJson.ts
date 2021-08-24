@@ -1,11 +1,30 @@
 export type IntermediateJson = {
+    code: string[];   // A list of all Harmony bytecode.
+    explain: string[]  // A list of explanations for each Harmony bytecode.
+    locations: Record<string, IntermediateHarmonyCode>;  // A map from code index to corresponding source code.
     issue: string;
-    macrosteps: IntermediateSwitch[];
-    code: string[];
-    explain: string[];
-    locations: Record<string, IntermediateHarmonyCode>;
+    macrosteps?: IntermediateSwitch[];
 };
 
+export class IntermediateJsonManager {
+    private readonly json: IntermediateJson;
+    constructor(json: IntermediateJson) {
+        this.json = json;
+    }
+    getCode(): string[] { return this.json.code; }
+    getExplain(): string[] { return this.json.explain; }
+    getLocations(): Record<string, IntermediateHarmonyCode> { return this.json.locations; }
+    getIssue(): string { return this.json.issue; }
+
+    getMacrosteps(): IntermediateSwitch[] | null {
+        if (this.json.issue === "No issues") { return null; }
+        if (!this.json.macrosteps) {
+            console.warn("No macrosteps found in intermediate json despite the existence of an issue")
+            return null;
+        }
+        return this.json.macrosteps;
+    }
+};
 
 export type IntermediateHarmonyCode = {
     file: string;
@@ -15,7 +34,7 @@ export type IntermediateHarmonyCode = {
 
 
 export type IntermediateValueRepresentation = {
-    type: "bool" | "int" | "atom" | "dict" | "set" | "pc" | "address" | "context";
+    type: "bool" | "int" | "atom" | "dict" | "set" | "pc" | "address";
     value: string | IntermediateValueRepresentation[] | IntermediateKeyValueRep[];
 }
 
