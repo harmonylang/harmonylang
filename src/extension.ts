@@ -181,8 +181,8 @@ const showVscodeMessage = (
  * @param options
  * @throws Error if an error occurs when parsing the options string.
  */
-export default function parseOptions(options?: string): string {
-    if (options == null) return '';
+export default function parseOptions(options?: string): string[] {
+    if (options == null) return [];
     const optionsArg = stringArgv(options);
     const [ns, oddities] = parser.parse_known_args(optionsArg);
     if (oddities.length > 0) {
@@ -191,7 +191,7 @@ export default function parseOptions(options?: string): string {
     }
     return Object.entries(ns).filter(([_, v]) => v != null).map(([k, v]) => {
         return `--${k} ${JSON.stringify((v as string[])[0])}`;
-    }).join(' ');
+    });
 }
 
 const showMessage = (main: string, subHeader?: string, subtext?: string) => {
@@ -222,7 +222,7 @@ export function installHarmony() {
         if (pythonPath && typeof pythonPath === 'string') return pythonPath;
         return 'python3';
     })();
-    const cmd = `${PYTHON_PATH} ${CHARMONY_INSTALLER}`;
+    const cmd = [PYTHON_PATH, CHARMONY_INSTALLER];
     processManager.startCommand(cmd,
         {cwd: CHARMONY_COMPILER_DIR},
         (err, stdout, stderr) => {
@@ -261,8 +261,9 @@ export function runHarmony(
     }
     CharmonyPanelController_v2.currentPanel?.dispose();
     CharmonyPanelController_v2.createOrShow(context.extensionUri);
+    let flagArgs: string[];
     try {
-        flags = parseOptions(flags);
+        flagArgs = parseOptions(flags);
     } catch (e) {
         hlConsole.clear();
         hlConsole.appendLine(e.message);
@@ -272,7 +273,7 @@ export function runHarmony(
         return;
     }
     hlConsole.clear();
-    const charmonyCompileCommand = `${harmonyScript} ${flags} ${fullFileName}`;
+    const charmonyCompileCommand = [harmonyScript, ...flagArgs, fullFileName];
     processManager.startCommand(charmonyCompileCommand, {
         cwd: CHARMONY_COMPILER_DIR
     }, (error, stdout, stderr) => {

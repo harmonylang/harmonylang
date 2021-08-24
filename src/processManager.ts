@@ -2,7 +2,7 @@ import * as child_process from 'child_process';
 
 export interface ProcessManager {
     startCommand(
-        cmd: string,
+        cmd: string[],
         options: child_process.ExecOptions,
         callback: (
             error: child_process.ExecException | null,
@@ -58,7 +58,7 @@ export class ProcessManagerImpl implements ProcessManager {
      * @param callback
      */
     startCommand(
-        cmd: string,
+        cmd: string[],
         options: child_process.ExecOptions,
         callback: (
             error: child_process.ExecException | null,
@@ -68,7 +68,7 @@ export class ProcessManagerImpl implements ProcessManager {
     ): string {
         this.processesAreKilled = false;
         const id = `command_${this.commandCount}`;
-        this.runningCommands[id] = child_process.exec(cmd, options,
+        this.runningCommands[id] = child_process.execFile(cmd[0], cmd.slice(1), options,
             (err, stdout, stderr) => {
                 delete this.runningCommands[id];
                 this.commandCount--;
