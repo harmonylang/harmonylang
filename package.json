@@ -48,6 +48,15 @@
                     "scope": "machine-overridable",
                     "default": null,
                     "description": "C Compiler installation path"
+                },
+                "harmonylang.libraryPath": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "scope": "machine-overridable",
+                    "default": null,
+                    "description": "Path of where Harmony is installed"
                 }
             }
         },
@@ -73,16 +82,16 @@
         ],
         "commands": [
             {
-                "command": "harmonylang-server.run",
-                "title": "(Server) Run Harmony"
-            },
-            {
                 "command": "harmonylang.run",
                 "title": "Run Harmony"
             },
             {
-                "command": "harmonylang-server-flag.run",
-                "title": "(Server) Run Harmony With Flags"
+                "command": "harmonylang.addLibrary",
+                "title": "Add Harmony Library Path"
+            },
+            {
+                "command": "harmonylang.install",
+                "title": "Install Harmony"
             },
             {
                 "command": "harmonylang-flag.run",

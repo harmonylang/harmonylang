@@ -28,6 +28,6 @@
     ],
     "indentationRules": {
         "increaseIndentPattern": "\\b((while.+)|(for.+)|(atomic\\s*)|(def.+)|(if.+\\s*)|(else\\s*)|(let.+))\\:\\s*",
-        "decreaseIndentPattern": "^((?!.*?\\/\\*).*\\*/)?\\s*[\\)\\}\\]].*$"
+        "decreaseIndentPattern": "^(\\s+pass)|(((?!.*?\\/\\*).*\\*/)?\\s*[\\)\\}\\]].*)\\s*$"
     }
 }

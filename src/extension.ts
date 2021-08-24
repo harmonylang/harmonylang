@@ -2,17 +2,14 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { ProcessManagerImpl } from './processManager';
 import {
+    EXTENSION_DIR,
     CHARMONY_COMPILER_DIR,
-    CHARMONY_JSON_OUTPUT,
-    CHARMONY_SCRIPT_PATH,
-    GENERATED_FILES
+    CHARMONY_INSTALLER
 } from './config';
-import * as rimraf from 'rimraf';
 import * as fs from 'fs';
 import { IntermediateJson } from './charmony/IntermediateJson';
 import CharmonyPanelController_v2 from './outputPanel/PanelController_v2';
 import * as commandExists from 'command-exists';
-import { runServerAnalysis } from './feature/runServerAnalysis';
 import { ArgumentParser } from 'argparse';
 import stringArgv from 'string-argv';
 
@@ -21,6 +18,31 @@ const harmonyLangConfig = vscode.workspace.getConfiguration('harmonylang');
 const hlConsole = vscode.window.createOutputChannel('HarmonyLang');
 const pythonPath = harmonyLangConfig.get('pythonPath');
 const ccPath = harmonyLangConfig.get('ccPath');
+
+function getHarmonyLangConfiguration() {
+    return vscode.workspace.getConfiguration('harmonylang');
+}
+
+function getHarmonyLibraryPath(): string | null {
+    const config = getHarmonyLangConfiguration();
+    const libPath = config.get('libraryPath');
+    return typeof libPath === 'string' ? libPath : null;
+}
+function setHarmonyLibraryPath(path: string) {
+    const config = getHarmonyLangConfiguration();
+    return config.update('libraryPath', path);
+}
+
+function getHarmonyScriptPath() {
+    const libraryPath = getHarmonyLibraryPath();
+    if (!libraryPath) {
+        return null;
+    }
+    if (process.platform === 'win32') {
+        return path.join(libraryPath, 'harmony.bat');
+    }
+    return path.join(libraryPath, 'harmony');
+}
 
 const parser = new ArgumentParser();
 parser.add_argument('--const','-c', {nargs: 1});
@@ -57,15 +79,33 @@ export const activate = (context: vscode.ExtensionContext) => {
         }
     );
 
-    const runHarmonyServerCommand = vscode.commands.registerCommand(
-        'harmonylang-server.run',
+    const addHarmonyLibraryCommand = vscode.commands.registerCommand(
+        'harmonylang.addLibrary',
+        () => {
+            const options: vscode.OpenDialogOptions = {
+                canSelectMany: false,
+                canSelectFiles: false,
+                canSelectFolders: true,
+                openLabel: 'Open'
+            };
+            vscode.window.showOpenDialog(options).then(fileUri => {
+                if (fileUri && fileUri[0]) {
+                    const filename = fileUri[0].fsPath;
+                    setHarmonyLibraryPath(filename);
+                    console.log('Selected file: ' + filename);
+                }
+            });
+        }
+    );
+
+    const installHarmonyCmd = vscode.commands.registerCommand(
+        'harmonylang.install',
         () => {
             try {
-                const filename = getFileName();
-                if (filename) runHarmonyServer(context, filename);
+                installHarmony();
             } catch (e) {
-                console.error('(Server) Run Harmony failed:', e);
-                vscode.window.showInformationMessage('(Server) Run Harmony failed. See the console log in the DevTools.');  
+                console.error('Install Harmony failed:', e);
+                vscode.window.showInformationMessage('Install Harmony failed. See the console log in the DevTools.');
             }
         }
     );
@@ -90,26 +130,6 @@ export const activate = (context: vscode.ExtensionContext) => {
         }
     );
 
-    const runHarmonyServerWithFlagsCommand = vscode.commands.registerCommand(
-        'harmonylang-server-flag.run',
-        () => {
-            try {
-                const filename = getFileName();
-                const options: vscode.InputBoxOptions = {
-                    prompt: '(Server) Run Harmony With Flags',
-                    placeHolder: 'flags (e.g. -c name=value, -m module=version)',
-                };
-                if (filename)
-                    vscode.window.showInputBox(options).then((value) => {
-                        runHarmonyServer(context, filename, value);
-                    });
-            } catch (e) {
-                console.error('(Server) Run Harmony failed:', e);
-                vscode.window.showInformationMessage('(Server) Run Harmony failed. See the console log in the DevTools.');  
-            }
-        }
-    );
-
     const endHarmonyProcessesCommand = vscode.commands.registerCommand(
         'harmonylang.end',
         () => {
@@ -118,9 +138,9 @@ export const activate = (context: vscode.ExtensionContext) => {
     );
 
     context.subscriptions.push(runHarmonyCommand);
-    context.subscriptions.push(runHarmonyServerCommand);
+    context.subscriptions.push(installHarmonyCmd);
+    context.subscriptions.push(addHarmonyLibraryCommand);
     context.subscriptions.push(runHarmonyWithFlagsCommand);
-    context.subscriptions.push(runHarmonyServerWithFlagsCommand);
     context.subscriptions.push(endHarmonyProcessesCommand);
 };
 
@@ -202,37 +222,47 @@ function onReceivingIntermediateJSON(results: IntermediateJson) {
     }
 }
 
-function runHarmonyServer(
-    context: vscode.ExtensionContext,
-    fullFileName: string,
-    flags = ''
-) {
-    CharmonyPanelController_v2.currentPanel?.dispose();
-    CharmonyPanelController_v2.createOrShow(context.extensionUri);
-    const workspace = vscode.workspace.workspaceFolders;
-    if (workspace == null || workspace[0] == null) {
-        return showVscodeMessage(true, 'Cannot find current project workspace');
+/**
+ * This will run the Harmony installation script.
+ */
+export function installHarmony() {
+    if (!fs.existsSync(CHARMONY_COMPILER_DIR)) {
+        fs.mkdirSync(CHARMONY_COMPILER_DIR);
     }
-    const rootDirectory = workspace[0].uri.fsPath;
-    CharmonyPanelController_v2.currentPanel?.startLoading();
-    runServerAnalysis(rootDirectory, fullFileName, flags, (json, staticHtmlUrl, duration) => {
-        if (staticHtmlUrl && duration) {
-            hlConsole.appendLine(`Harmony HTML can be found here: ${staticHtmlUrl}`);
-            hlConsole.show();
-            showMessage('Download HTML file.', `Link lasts for ${duration / 60 / 1000} minute(s)`, staticHtmlUrl);
+    fs.copyFileSync(
+        path.join(EXTENSION_DIR, 'install.py'),
+        path.join(CHARMONY_COMPILER_DIR, 'install.py'),
+    );
+    const PYTHON_PATH = (() => {
+        if (pythonPath && typeof pythonPath === 'string') return pythonPath as string;
+        return 'python3';
+    })();
+    const cmd = `${PYTHON_PATH} ${CHARMONY_INSTALLER}`;
+    processManager.startCommand(cmd,
+        {cwd: CHARMONY_COMPILER_DIR},
+        (err, stdout, stderr) => {
+            if (processManager.processesAreKilled) return;
+            hlConsole.clear();
+            if (err) {
+                hlConsole.appendLine(err.message);
+                return;
+            }
+            if (stderr) {
+                hlConsole.appendLine(stderr);
+                return;
+            }
+            if (stdout) {
+                hlConsole.appendLine(stdout);
+            }
+            showVscodeMessage(false, 'Installed Harmony locally');
+            setHarmonyLibraryPath(CHARMONY_COMPILER_DIR);
         }
-        onReceivingIntermediateJSON(json);
-    }, (msg) => {
-        hlConsole.clear();
-        hlConsole.appendLine(msg);
-        hlConsole.show();
-        CharmonyPanelController_v2.currentPanel?.updateMessage(msg);
-    });
+    );
 }
 
 export function runHarmony(
-    context: vscode.ExtensionContext, 
-    fullFileName: string, 
+    context: vscode.ExtensionContext,
+    fullFileName: string,
     flags = ''
 ) {
     CharmonyPanelController_v2.currentPanel?.dispose();
@@ -247,57 +277,42 @@ export function runHarmony(
         CharmonyPanelController_v2.currentPanel?.updateMessage(e.message);
         return;
     }
-    checkIfPython3Exists(() => {
+    hlConsole.clear();
+    const harmonyScript = getHarmonyScriptPath();
+    const charmonyCompileCommand = `${harmonyScript} ${flags} ${fullFileName}`;
+    processManager.startCommand(charmonyCompileCommand, {
+        cwd: CHARMONY_COMPILER_DIR
+    }, (error, stdout, stderr) => {
+        if (processManager.processesAreKilled) {
+            return;
+        }
+        CharmonyPanelController_v2.currentPanel?.startLoading();
         hlConsole.clear();
-        hlConsole.appendLine('Check for Python3');
-        checkIfCompilerForCExists(() => {
-            hlConsole.appendLine('Check for CC');
-            const osAlias = (process.platform === 'win32') ? 'doskey' : 'alias';
-            let charmonyCompileCommand = '';
-            if (pythonPath != 'python3') { charmonyCompileCommand += `${osAlias} python3=${pythonPath} && `; }
-            if (ccPath != 'cc') { charmonyCompileCommand += `${osAlias} cc=${ccPath} && `; }
-            charmonyCompileCommand += `${CHARMONY_SCRIPT_PATH} ${flags} ${fullFileName}`;
-            processManager.startCommand(charmonyCompileCommand, {
-                cwd: CHARMONY_COMPILER_DIR
-            }, (error, stdout, stderr) => {
-                if (processManager.processesAreKilled) return;
-                CharmonyPanelController_v2.currentPanel?.startLoading();
-                hlConsole.clear();
-                if (stderr) {
-                    hlConsole.appendLine(stderr);
-                    CharmonyPanelController_v2.currentPanel?.updateMessage('See Output Panel for details.');
-                    hlConsole.show();
-                    return;
-                }
-                hlConsole.appendLine(stdout);
-                if (error) {
-                    return CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
-                }
-                try {
-                    const results: IntermediateJson = JSON.parse(fs.readFileSync(CHARMONY_JSON_OUTPUT, {
-                        encoding: 'utf-8'
-                    }));
-                    onReceivingIntermediateJSON(results);
-                    GENERATED_FILES.forEach(f => rimraf.sync(f));
-                } catch (error) {
-                    hlConsole.appendLine(error);
-                    hlConsole.show();
-                    CharmonyPanelController_v2.currentPanel?.updateMessage('Could not create analysis file.');
-                }
-            });
-        }, () => {
-            showVscodeMessage(true,
-                'Missing dependency',
-                'Target for cc C-compiler cannot be found. Attempting to run server compiler',
-                'The model checker requires a C-compiler. Please check you have a C-compiler before continuing.'
+        if (stderr) {
+            hlConsole.appendLine(stderr);
+            CharmonyPanelController_v2.currentPanel?.updateMessage('See Output Panel for details.');
+            hlConsole.show();
+            return;
+        }
+        hlConsole.appendLine(stdout);
+        if (error) {
+            return CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
+        }
+        try {
+            const dirname = path.dirname(fullFileName);
+            const basename = path.basename(fullFileName);
+            const extname = path.extname(fullFileName);
+            const CHARMONY_JSON_OUTPUT = path.join(
+                dirname, basename.slice(0, basename.length - extname.length) + '.hco'
             );
-            runHarmonyServer(context, fullFileName, flags);
-        });
-    }, () => {
-        showVscodeMessage(true,
-            'Missing dependency',
-            'Target for python3 cannot be found. Attempting to run server compiler',
-            'The model checker requires Python3. Please install Python3 and to run compiler locally.');
-        runHarmonyServer(context, fullFileName, flags);
+            const results: IntermediateJson = JSON.parse(fs.readFileSync(CHARMONY_JSON_OUTPUT, {
+                encoding: 'utf-8'
+            }));
+            onReceivingIntermediateJSON(results);
+        } catch (error) {
+            hlConsole.appendLine(error);
+            hlConsole.show();
+            CharmonyPanelController_v2.currentPanel?.updateMessage('Could not create analysis file.');
+        }
     });
 }
