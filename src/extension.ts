@@ -166,29 +166,6 @@ const showVscodeMessage = (
     }
 };
 
-function checkIfPython3Exists(ifItExists: () => void, otherwise: () => void) {
-    const command = pythonPath ? (pythonPath as string) : 'python3';
-    commandExists(command, (err, exists) => {
-        if (exists) ifItExists();
-        else otherwise();
-    });
-}
-
-/**
- * Based on the following answer:
- * Source: https://stackoverflow.com/questions/34953168/node-check-existence-of-command-in-path
- */
-function checkIfCompilerForCExists(
-    ifItExists: () => void,
-    otherwise: () => void
-): void {
-    const command = ccPath ? (ccPath as string) : 'cc';
-    commandExists(command, (err, exists) => {
-        if (exists) ifItExists();
-        else otherwise();
-    });
-}
-
 /**
  * Parses a string which declares options to passed into the Harmony compiler.
  * Returns a cleaned string that can be passed for Harmony.
