@@ -34,6 +34,11 @@ function setHarmonyLibraryPath(path: string) {
     return config.update('libraryPath', path);
 }
 
+/**
+ * Retrieves the name of the Harmony script path, i.e. the script that runs the Harmony compiler/model checker.
+ * The file be located in the specified library path of Harmony.
+ * For Windows, this is a `harmony.bat` batch script. For other machines, this is a `harmony` shell script.
+ */
 function getHarmonyScriptPath() {
     const libraryPath = getHarmonyLibraryPath();
     if (!libraryPath) {
@@ -142,6 +147,10 @@ export const activate = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(endHarmonyProcessesCommand);
 };
 
+/**
+ * Ends all processes monitored by the Harmony process manager.
+ * Emits messages on ending processes.
+ */
 export function endHarmonyProcesses() {
     showMessage('Ending all Harmony processes...');
     processManager.endAll();

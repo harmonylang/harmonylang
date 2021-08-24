@@ -17,14 +17,14 @@ export class IntermediateJsonManager {
     getIssue(): string { return this.json.issue; }
 
     getMacrosteps(): IntermediateSwitch[] | null {
-        if (this.json.issue === "No issues") { return null; }
+        if (this.json.issue === 'No issues') { return null; }
         if (!this.json.macrosteps) {
-            console.warn("No macrosteps found in intermediate json despite the existence of an issue")
+            console.warn('No macrosteps found in intermediate json despite the existence of an issue');
             return null;
         }
         return this.json.macrosteps;
     }
-};
+}
 
 export type IntermediateHarmonyCode = {
     file: string;
@@ -34,7 +34,7 @@ export type IntermediateHarmonyCode = {
 
 
 export type IntermediateValueRepresentation = {
-    type: "bool" | "int" | "atom" | "dict" | "set" | "pc" | "address";
+    type: 'bool' | 'int' | 'atom' | 'dict' | 'set' | 'pc' | 'address';
     value: string | IntermediateValueRepresentation[] | IntermediateKeyValueRep[];
 }
 
@@ -62,7 +62,7 @@ export type IntermediateMicroStep = {
     trace?: IntermediateTrace[];
     local?: Record<VariableName, IntermediateValueRepresentation>; // Local variables at the end of micro-step
 
-    mode?: "choosing" | "blocked" | "runnable" | "terminated"; // Mode of process.
+    mode?: 'choosing' | 'blocked' | 'runnable' | 'terminated'; // Mode of process.
     readonly?: string;
     interruptlevel?: string;
     failure?: string; // Failure setting. Non-empty when a failure occurs. Undefined otherwise.
@@ -88,7 +88,7 @@ export type IntermediateContext = {
     fp: string;
     trace: IntermediateTrace[];
     this: string;
-    mode?: "choosing" | "blocked" | "runnable" | "terminated"; // Mode of process.
+    mode?: 'choosing' | 'blocked' | 'runnable' | 'terminated'; // Mode of process.
     readonly?: string;
     choose?: IntermediateValueRepresentation;
     interruptlevel?: string;
