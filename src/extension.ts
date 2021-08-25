@@ -81,8 +81,8 @@ export const activate = (context: vscode.ExtensionContext) => {
                     runHarmony(context, filename);
                 }
             } catch (e) {
-                console.error('Run Harmony failed:', e);
-                vscode.window.showInformationMessage('(Server) Run Harmony failed. See the console log in the DevTools.');  
+                OutputConsole.println(JSON.stringify(e));
+                Message.error('Run Harmony failed. See the console log in the DevTools.');
             }
         }
     );
@@ -112,8 +112,8 @@ export const activate = (context: vscode.ExtensionContext) => {
             try {
                 installHarmony();
             } catch (e) {
-                console.error('Install Harmony failed:', e);
-                vscode.window.showInformationMessage('Install Harmony failed. See the console log in the DevTools.');
+                OutputConsole.println(JSON.stringify(e));
+                Message.error('Install Harmony failed. See the console log in the DevTools.');
             }
         }
     );
@@ -132,8 +132,8 @@ export const activate = (context: vscode.ExtensionContext) => {
                         runHarmony(context, filename, value);
                     });
             } catch (e) {
-                console.error('Run Harmony failed:', e);
-                vscode.window.showInformationMessage('Run Harmony failed. See the console log in the DevTools.');  
+                OutputConsole.println(JSON.stringify(e));
+                Message.error('Run Harmony failed. See the console log in the DevTools.');
             }
         }
     );
