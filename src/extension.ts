@@ -13,6 +13,7 @@ import { ArgumentParser } from 'argparse';
 import stringArgv from 'string-argv';
 import Message from './vscode/Message';
 import OutputConsole from './vscode/OutputConsole';
+import rimraf = require('rimraf');
 
 const processManager = ProcessManagerImpl.init();
 
@@ -21,8 +22,12 @@ function getHarmonyLangConfiguration() {
 }
 
 function getPythonPath() {
+    const actualPythonPath = vscode.workspace.getConfiguration('python').get('pythonPath');
+
     const config = getHarmonyLangConfiguration();
-    return config.get('pythonPath');
+    const harmonyPythonPath = config.get('pythonPath');
+
+    return harmonyPythonPath || actualPythonPath;
 }
 
 function getHarmonyLibraryPath(): string | null {
@@ -192,11 +197,14 @@ function onReceivingIntermediateJSON(results: IntermediateJson) {
 
 /**
  * This will run the Harmony installation script.
+ * If Harmony was already instead in the extension's directory,
+ * then delete the existing installation and re-install.
  */
 export function installHarmony() {
-    if (!fs.existsSync(CHARMONY_COMPILER_DIR)) {
-        fs.mkdirSync(CHARMONY_COMPILER_DIR);
+    if (fs.existsSync(CHARMONY_COMPILER_DIR)) {
+        rimraf.sync(CHARMONY_COMPILER_DIR);
     }
+    fs.mkdirSync(CHARMONY_COMPILER_DIR);
     fs.copyFileSync(
         path.join(EXTENSION_DIR, 'install.py'),
         path.join(CHARMONY_COMPILER_DIR, 'install.py'),
@@ -207,6 +215,7 @@ export function installHarmony() {
         return 'python3';
     })();
     const cmd = [PYTHON_PATH, CHARMONY_INSTALLER];
+    Message.info('Starting installation process');
     processManager.startCommand(cmd,
         {cwd: CHARMONY_COMPILER_DIR},
         (err, stdout, stderr) => {
@@ -214,14 +223,17 @@ export function installHarmony() {
             OutputConsole.clear();
             if (err) {
                 OutputConsole.println(err.message);
+                Message.error(err.message);
                 return;
             }
             if (stderr) {
                 OutputConsole.println(stderr);
+                Message.error(stderr);
                 return;
             }
             if (stdout) {
                 OutputConsole.println(stdout);
+                Message.info(stdout);
             }
             Message.info('Installed Harmony locally');
             setHarmonyLibraryPath(CHARMONY_COMPILER_DIR);
@@ -239,7 +251,7 @@ export function installHarmony() {
 export function runHarmony(
     context: vscode.ExtensionContext,
     fullFileName: string,
-    flags = ''
+    flags?: string
 ) {
     OutputConsole.clear();
     const harmonyScript = getHarmonyScriptPath();
