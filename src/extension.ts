@@ -11,9 +11,10 @@ import { IntermediateJson } from './charmony/types/IntermediateJson';
 import CharmonyPanelController_v2 from './outputPanel/PanelController_v2';
 import { ArgumentParser } from 'argparse';
 import stringArgv from 'string-argv';
+import Message from './vscode/Message';
+import OutputConsole from './vscode/OutputConsole';
 
 const processManager = ProcessManagerImpl.init();
-const hlConsole = vscode.window.createOutputChannel('HarmonyLang');
 
 function getHarmonyLangConfiguration() {
     return vscode.workspace.getConfiguration('harmonylang');
@@ -151,26 +152,10 @@ export const activate = (context: vscode.ExtensionContext) => {
  * Emits messages on ending processes.
  */
 export function endHarmonyProcesses() {
-    showMessage('Ending all Harmony processes...');
+    Message.info('Ending all Harmony processes...');
     const count = processManager.endAll();
-    showMessage(`${count} Harmony process(es) ended.`);
+    Message.info(`${count} Harmony process(es) ended.`);
 }
-
-const showVscodeMessage = (
-    isError: boolean,
-    main: string,
-    subHeader?: string,
-    subtext?: string
-) => {
-    const show = isError
-        ? vscode.window.showErrorMessage
-        : vscode.window.showInformationMessage;
-    if (subHeader == null || subtext == null) {
-        show(main);
-    } else {
-        show(main + (subtext.length > 0 ? `\n${subHeader}: ${subtext}` : ''));
-    }
-};
 
 const parser = new ArgumentParser();
 parser.add_argument('--const','-c', {nargs: 1});
@@ -196,10 +181,6 @@ export default function parseOptions(options?: string): string[] {
         return [`--${k}`, (v as string[])[0]];
     });
 }
-
-const showMessage = (main: string, subHeader?: string, subtext?: string) => {
-    return showVscodeMessage(false, main, subHeader, subtext);
-};
 
 function onReceivingIntermediateJSON(results: IntermediateJson) {
     if (results != null && results.issue != null && results.issue != 'No issues') {
@@ -230,19 +211,19 @@ export function installHarmony() {
         {cwd: CHARMONY_COMPILER_DIR},
         (err, stdout, stderr) => {
             if (processManager.processesAreKilled) return;
-            hlConsole.clear();
+            OutputConsole.clear();
             if (err) {
-                hlConsole.appendLine(err.message);
+                OutputConsole.println(err.message);
                 return;
             }
             if (stderr) {
-                hlConsole.appendLine(stderr);
+                OutputConsole.println(stderr);
                 return;
             }
             if (stdout) {
-                hlConsole.appendLine(stdout);
+                OutputConsole.println(stdout);
             }
-            showVscodeMessage(false, 'Installed Harmony locally');
+            Message.info('Installed Harmony locally');
             setHarmonyLibraryPath(CHARMONY_COMPILER_DIR);
         }
     );
@@ -260,12 +241,13 @@ export function runHarmony(
     fullFileName: string,
     flags = ''
 ) {
+    OutputConsole.clear();
     const harmonyScript = getHarmonyScriptPath();
     if (!harmonyScript || !fs.existsSync(harmonyScript)) {
-        showVscodeMessage(true,
-            'Cannot find the Harmony script.'
-            + ' Check if you have installed Harmony via [Install Harmony] or'
-            + ' added the path to Harmony via [Add Harmony Library Path].'
+        Message.error(
+            'Cannot find the Harmony script.',
+            'Check if you have installed Harmony via [Install Harmony] or',
+            'added the path to Harmony via [Add Harmony Library Path].'
         );
         return;
     }
@@ -275,14 +257,13 @@ export function runHarmony(
     try {
         flagArgs = parseOptions(flags);
     } catch (e) {
-        hlConsole.clear();
-        hlConsole.appendLine(e.message);
-        hlConsole.show();
+        OutputConsole.println(e.message);
+        OutputConsole.show();
+
         CharmonyPanelController_v2.currentPanel?.startLoading();
         CharmonyPanelController_v2.currentPanel?.updateMessage(e.message);
         return;
     }
-    hlConsole.clear();
     const charmonyCompileCommand = [harmonyScript, ...flagArgs, fullFileName];
     processManager.startCommand(charmonyCompileCommand, {
         cwd: CHARMONY_COMPILER_DIR
@@ -291,14 +272,14 @@ export function runHarmony(
             return;
         }
         CharmonyPanelController_v2.currentPanel?.startLoading();
-        hlConsole.clear();
+        OutputConsole.clear();
         if (stderr) {
-            hlConsole.appendLine(stderr);
+            OutputConsole.println(stderr);
             CharmonyPanelController_v2.currentPanel?.updateMessage('See Output Panel for details.');
-            hlConsole.show();
+            OutputConsole.show();
             return;
         }
-        hlConsole.appendLine(stdout);
+        OutputConsole.println(stdout);
         if (error) {
             return CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
         }
@@ -314,8 +295,8 @@ export function runHarmony(
             }));
             onReceivingIntermediateJSON(results);
         } catch (error) {
-            hlConsole.appendLine(error);
-            hlConsole.show();
+            OutputConsole.println(error);
+            OutputConsole.show();
             CharmonyPanelController_v2.currentPanel?.updateMessage('Could not create analysis file.');
         }
     });

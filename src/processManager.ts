@@ -1,6 +1,6 @@
 import * as child_process from 'child_process';
 
-export interface ProcessManager {
+interface ProcessManager {
     startCommand(
         cmd: string[],
         options: child_process.ExecOptions,
@@ -34,7 +34,7 @@ export class ProcessManagerImpl implements ProcessManager {
     }
 
     /**
-     * Creates a new instance of a process manager.
+     * Returns the singular instance of a process manager.
      */
     static init(): ProcessManager {
         return new ProcessManagerImpl();
