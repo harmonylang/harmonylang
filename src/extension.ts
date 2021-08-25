@@ -36,23 +36,20 @@ function setHarmonyLibraryPath(path: string) {
 
 /**
  * Retrieves the name of the Harmony script path, i.e. the script that runs the Harmony compiler/model checker.
- * The file be located in the specified library path of Harmony.
- * For Windows, this is a `harmony.bat` batch script. For other machines, this is a `harmony` shell script.
  */
 function getHarmonyScriptPath() {
+    // The file should be located in the specified library path of Harmony.
     const libraryPath = getHarmonyLibraryPath();
     if (!libraryPath) {
         return null;
     }
+    // For Windows, this is a `harmony.bat` batch script.
+    // For other machines, this is a `harmony` shell script.
     if (process.platform === 'win32') {
         return path.join(libraryPath, 'harmony.bat');
     }
     return path.join(libraryPath, 'harmony');
 }
-
-const parser = new ArgumentParser();
-parser.add_argument('--const','-c', {nargs: 1});
-parser.add_argument('--module', '-m', {nargs: 1});
 
 export const activate = (context: vscode.ExtensionContext) => {
     const getFileName = () => {
@@ -155,8 +152,8 @@ export const activate = (context: vscode.ExtensionContext) => {
  */
 export function endHarmonyProcesses() {
     showMessage('Ending all Harmony processes...');
-    processManager.endAll();
-    showMessage('All Harmony processes have ended.');
+    const count = processManager.endAll();
+    showMessage(`${count} Harmony process(es) ended.`);
 }
 
 const showVscodeMessage = (
@@ -175,11 +172,15 @@ const showVscodeMessage = (
     }
 };
 
+const parser = new ArgumentParser();
+parser.add_argument('--const','-c', {nargs: 1});
+parser.add_argument('--module', '-m', {nargs: 1});
+
 /**
  * Parses a string which declares options to passed into the Harmony compiler.
  * Returns a cleaned string that can be passed for Harmony.
  * Some options are not supported.
- * Only the following are supported: [-C name=value, -m module=version]
+ * Only the following flags are supported: [-C name=value, -m module=version]
  * @param options
  * @throws Error if an error occurs when parsing the options string.
  */
@@ -191,8 +192,8 @@ export default function parseOptions(options?: string): string[] {
         const key = oddities[0];
         throw new Error('Invalid option used: ' + key);
     }
-    return Object.entries(ns).filter(([_, v]) => v != null).map(([k, v]) => {
-        return `--${k} ${JSON.stringify((v as string[])[0])}`;
+    return Object.entries(ns).filter(([_, v]) => v != null).flatMap(([k, v]) => {
+        return [`--${k}`, (v as string[])[0]];
     });
 }
 
