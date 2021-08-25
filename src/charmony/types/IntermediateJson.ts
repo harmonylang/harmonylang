@@ -32,12 +32,16 @@ export type IntermediateHarmonyCode = {
     code: string;
 };
 
+export type IntermediateContextRep = {
+    name: IntermediateValueRepresentation;
+    arg: IntermediateValueRepresentation;
+    pc: IntermediateValueRepresentation;
+};
 
 export type IntermediateValueRepresentation = {
-    type: 'bool' | 'int' | 'atom' | 'dict' | 'set' | 'pc' | 'address';
-    value: string | IntermediateValueRepresentation[] | IntermediateKeyValueRep[];
+    type: 'bool' | 'int' | 'atom' | 'dict' | 'set' | 'pc' | 'address' | 'context';
+    value: string | IntermediateValueRepresentation[] | IntermediateKeyValueRep[] | IntermediateContextRep;
 }
-
 
 export type IntermediateKeyValueRep = {
     key: IntermediateValueRepresentation;

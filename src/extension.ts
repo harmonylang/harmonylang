@@ -74,7 +74,9 @@ export const activate = (context: vscode.ExtensionContext) => {
         () => {
             try {
                 const filename = getFileName();
-                if (filename) runHarmony(context, filename);
+                if (filename) {
+                    runHarmony(context, filename);
+                }
             } catch (e) {
                 console.error('Run Harmony failed:', e);
                 vscode.window.showInformationMessage('(Server) Run Harmony failed. See the console log in the DevTools.');  
@@ -245,6 +247,13 @@ export function installHarmony() {
     );
 }
 
+/**
+ * Runs Harmony on the program at `fullFileName`.
+ * @param context
+ * @param fullFileName
+ * @param flags Additional flags that are passed into the Harmony compiler.
+ * @returns
+ */
 export function runHarmony(
     context: vscode.ExtensionContext,
     fullFileName: string,
