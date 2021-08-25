@@ -17,4 +17,7 @@ tsconfig.json
 debug/**
 **/*.hny
 update-harmony.sh
+
 harmony-master/
+.github/
+azure-pipelines.yml
