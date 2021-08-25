@@ -1,6 +1,6 @@
-import {IntermediateHarmonyCode, IntermediateJsonManager} from "../../types/IntermediateJson";
-import {CharmonyAssemblyCode, CharmonyExecutedCode} from "../../types/CharmonyJson";
-import {entries} from "../../util/object_util";
+import {IntermediateHarmonyCode, IntermediateJsonManager} from '../../types/IntermediateJson';
+import {CharmonyAssemblyCode, CharmonyExecutedCode} from '../../types/CharmonyJson';
+import {entries} from '../../util/object_util';
 
 export function getExecutedCode(json: IntermediateJsonManager): CharmonyExecutedCode[] {
     const allCode = json.getCode();
@@ -8,7 +8,7 @@ export function getExecutedCode(json: IntermediateJsonManager): CharmonyExecuted
 
     if (allCode.length !== allExplain.length) {
         console.warn(
-            "The sizes of code and explanations mismatch!",
+            'The sizes of code and explanations mismatch!',
             `code.length == ${allCode.length}, explain.length == ${allExplain.length}`);
     }
 
@@ -38,7 +38,7 @@ export function getExecutedCode(json: IntermediateJsonManager): CharmonyExecuted
             sourceCode: code,
             assembly: executedAssembly
         };
-    })
+    });
 
     if (firstEvaluatedPc == null || firstEvaluatedPc === 0) {
         return executedCode;
@@ -55,9 +55,9 @@ export function getExecutedCode(json: IntermediateJsonManager): CharmonyExecuted
     // Assume: the first execution block is part of internal model checker setup.
     executedCode.unshift({
         initialPc: 0,
-        file: "#internal",
-        line: "0",
-        sourceCode: "#internal_setup()",
+        file: '#internal',
+        line: '0',
+        sourceCode: '#internal_setup()',
         assembly: executedAssembly
     });
     return executedCode;

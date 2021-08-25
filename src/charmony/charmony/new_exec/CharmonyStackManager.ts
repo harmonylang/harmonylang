@@ -3,10 +3,10 @@ import {
     IntermediateMicroStep,
     IntermediateTrace,
     IntermediateValueRepresentation
-} from "../../types/IntermediateJson";
-import {CharmonyStackTrace} from "../../types/CharmonyJson";
-import {parseIntermediateValueRep, parseVariableSet} from "./valueParser";
-import {fromEntries, shallowClone} from "../../util/object_util";
+} from '../../types/IntermediateJson';
+import {CharmonyStackTrace} from '../../types/CharmonyJson';
+import {parseIntermediateValueRep, parseVariableSet} from './valueParser';
+import {fromEntries, shallowClone} from '../../util/object_util';
 
 type thread_id = string;
 
@@ -22,7 +22,7 @@ export default class CharmonyStackManager {
     constructor() {
         this.stackTrace = {};
         this.contexts = {};
-        this.currentTid = "";
+        this.currentTid = '';
     }
 
     /**
@@ -102,18 +102,18 @@ export default class CharmonyStackManager {
         const atomicLevel = atomic != null ? Number.parseInt(atomic): ongoingTrace.atomic;
         const readLevel = readonly != null ? Number.parseInt(readonly): ongoingTrace.readonly;
         const interruptLevelValue = interruptlevel != null ? Number.parseInt(interruptlevel) : ongoingTrace.interruptLevel;
-        if (status != "terminated") {
+        if (status != 'terminated') {
             if (atomicLevel > 0) {
-                augments.push("atomic");
+                augments.push('atomic');
             }
             if (readLevel > 0) {
-                augments.push("read-only");
+                augments.push('read-only');
             }
             if (interruptLevelValue > 0) {
-                augments.push("interrupts-disabled");
+                augments.push('interrupts-disabled');
             }
         }
-        const fullStatus = status + (augments.length > 0 ? " " + augments.join(" ") : "");
+        const fullStatus = status + (augments.length > 0 ? ' ' + augments.join(' ') : '');
 
         return {
             fullStatus,
@@ -162,9 +162,9 @@ export default class CharmonyStackManager {
         if (this.stackTrace[newTid] == null) {
             this.stackTrace[newTid] = {
                 failure: undefined,
-                mode: "running",
-                fullStatus: "running",
-                status: "running",
+                mode: 'running',
+                fullStatus: 'running',
+                status: 'running',
                 callStack: [],
                 tid: newTid,
                 readonly: 0,
@@ -175,9 +175,9 @@ export default class CharmonyStackManager {
         } else {
             this.stackTrace[newTid] = {
                 ...this.stackTrace[newTid],
-                mode: "running",
-                status: "running",
-                fullStatus: "running"
+                mode: 'running',
+                status: 'running',
+                fullStatus: 'running'
             };
         }
         Object.keys(this.stackTrace).forEach(tid => {

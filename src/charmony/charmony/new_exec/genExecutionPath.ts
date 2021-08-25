@@ -1,7 +1,7 @@
-import {IntermediateJsonManager, IntermediateMicroStep} from "../../types/IntermediateJson";
-import {CharmonyMacroStep, CharmonyMicroStep, CharmonySlice, ExecutionPath, NoIssue} from "../../types/CharmonyJson";
-import {parseVariableSet} from "./valueParser";
-import CharmonyStackManager from "./CharmonyStackManager";
+import {IntermediateJsonManager, IntermediateMicroStep} from '../../types/IntermediateJson';
+import {CharmonyMacroStep, CharmonyMicroStep, CharmonySlice, ExecutionPath, NoIssue} from '../../types/CharmonyJson';
+import {parseVariableSet} from './valueParser';
+import CharmonyStackManager from './CharmonyStackManager';
 
 /**
  * Returns true iff the microStep diff indicates some change in program execution.
@@ -29,7 +29,7 @@ export function genExecutionPath(json: IntermediateJsonManager): NoIssue | Execu
     const stackTraceManager = new CharmonyStackManager();
     const macrosteps = json.getMacrosteps();
     if (!macrosteps) {
-        return { issue: json.getIssue(), state: "No issues" };
+        return { issue: json.getIssue(), state: 'No issues' };
     }
     const slices: CharmonySlice[] = [];
     const idToThreadName: Record<string, string> = {};
@@ -108,7 +108,7 @@ export function genExecutionPath(json: IntermediateJsonManager): NoIssue | Execu
         });
     });
     return {
-        state: "Issues found",
+        state: 'Issues found',
         issue: json.getIssue(),
         slices,
         microSteps, macroSteps,
