@@ -3,10 +3,10 @@ import {
     IntermediateMicroStep,
     IntermediateTrace,
     IntermediateValueRepresentation
-} from "../IntermediateJson";
-import {CharmonyStackTrace} from "../CharmonyData";
-import {cloneDeep} from 'lodash';
+} from "../../types/IntermediateJson";
+import {CharmonyStackTrace} from "../../types/CharmonyJson";
 import {parseIntermediateValueRep, parseVariableSet} from "./valueParser";
+import {fromEntries, shallowClone} from "../../util/object_util";
 
 type thread_id = string;
 
@@ -157,7 +157,7 @@ export default class CharmonyStackManager {
      * @param contexts
      */
     setNewTid(newTid: thread_id, contexts: IntermediateContext[]) {
-        Object.assign(this.contexts, Object.fromEntries(contexts.map(c => [c.tid, c])));
+        Object.assign(this.contexts, fromEntries(contexts.map(c => [c.tid, c])));
         this.currentTid = newTid;
         if (this.stackTrace[newTid] == null) {
             this.stackTrace[newTid] = {
@@ -191,6 +191,6 @@ export default class CharmonyStackManager {
      * Creates a shallow copy of the current stack trace.
      */
     clone() {
-        return cloneDeep(this.stackTrace);
+        return shallowClone(this.stackTrace);
     }
 }

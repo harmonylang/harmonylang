@@ -3,7 +3,7 @@
     "displayName": "HarmonyLang",
     "description": "VS Code language support for Harmony, a Python-like concurrent programming language.",
     "icon": "images/harmonylang.png",
-    "version": "0.4.0",
+    "version": "1.0.0",
     "publisher": "kevinsun-dev-cornell",
     "repository": "https://github.com/kevinsun-dev/harmonylang",
     "engines": {
@@ -40,14 +40,14 @@
                     "default": null,
                     "description": "Python 3 installation path"
                 },
-                "harmonylang.ccPath": {
+                "harmonylang.libraryPath": {
                     "type": [
                         "string",
                         "null"
                     ],
                     "scope": "machine-overridable",
                     "default": null,
-                    "description": "C Compiler installation path"
+                    "description": "Path of where Harmony is installed"
                 }
             }
         },
@@ -73,20 +73,20 @@
         ],
         "commands": [
             {
-                "command": "harmonylang-server.run",
-                "title": "(Server) Run Harmony"
-            },
-            {
                 "command": "harmonylang.run",
                 "title": "Run Harmony"
             },
             {
-                "command": "harmonylang-server-flag.run",
-                "title": "(Server) Run Harmony With Flags"
+                "command": "harmonylang.addLibrary",
+                "title": "Add Harmony Library Path"
+            },
+            {
+                "command": "harmonylang.install",
+                "title": "Install Harmony"
             },
             {
                 "command": "harmonylang-flag.run",
-                "title": "Run Harmony With Flags"
+                "title": "Run Harmony with Flags"
             },
             {
                 "command": "harmonylang.end",
@@ -97,10 +97,6 @@
             {
                 "command": "harmonylang.run",
                 "key": "alt+shift+n"
-            },
-            {
-                "command": "harmonylang-server.run",
-                "key": "alt+shift+s"
             },
             {
                 "command": "harmonylang.end",

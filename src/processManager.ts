@@ -1,8 +1,8 @@
 import * as child_process from 'child_process';
 
-export interface ProcessManager {
+interface ProcessManager {
     startCommand(
-        cmd: string,
+        cmd: string[],
         options: child_process.ExecOptions,
         callback: (
             error: child_process.ExecException | null,
@@ -15,7 +15,7 @@ export interface ProcessManager {
 
     end(id: string): void;
 
-    endAll(): void;
+    endAll(): number;
 
     readonly processesAreKilled: boolean;
 }
@@ -34,7 +34,7 @@ export class ProcessManagerImpl implements ProcessManager {
     }
 
     /**
-     * Creates a new instance of a process manager.
+     * Returns the singular instance of a process manager.
      */
     static init(): ProcessManager {
         return new ProcessManagerImpl();
@@ -58,7 +58,7 @@ export class ProcessManagerImpl implements ProcessManager {
      * @param callback
      */
     startCommand(
-        cmd: string,
+        cmd: string[],
         options: child_process.ExecOptions,
         callback: (
             error: child_process.ExecException | null,
@@ -68,7 +68,7 @@ export class ProcessManagerImpl implements ProcessManager {
     ): string {
         this.processesAreKilled = false;
         const id = `command_${this.commandCount}`;
-        this.runningCommands[id] = child_process.exec(cmd, options,
+        this.runningCommands[id] = child_process.execFile(cmd[0], cmd.slice(1), options,
             (err, stdout, stderr) => {
                 delete this.runningCommands[id];
                 this.commandCount--;
@@ -126,18 +126,22 @@ export class ProcessManagerImpl implements ProcessManager {
     /**
      * Ends all running commands and intervals.
      */
-    endAll(): void {
+    endAll(): number {
         this.processesAreKilled = true;
-        Object.keys(this.runningCommands).forEach((cmdId) => {
+        const commands = Object.keys(this.runningCommands);
+        commands.forEach((cmdId) => {
             if (!this.runningCommands[cmdId].killed)
                 this.runningCommands[cmdId].kill();
         });
-        Object.keys(this.runningIntervals).forEach((intervalId) => {
+        const intervals = Object.keys(this.runningIntervals);
+        intervals.forEach((intervalId) => {
             clearInterval(this.runningIntervals[intervalId]);
         });
         this.runningIntervals = {};
         this.runningCommands = {};
         this.commandCount = 0;
         this.intervalCount = 0;
+
+        return commands.length + intervals.length;
     }
 }

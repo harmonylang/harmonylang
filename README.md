@@ -1,8 +1,44 @@
-# HarmonyLang Beta
+# HarmonyLang
 
-HarmonyLang provides general VS compatibility with RvR's [Harmony](http://harmony.cs.cornell.edu), a Python-like programming language for testing and experimenting with concurrent programs designed for Cornell University's CS 4410/4411 course.
+HarmonyLang provides general VSCode compatibility with RvR's [Harmony](http://harmony.cs.cornell.edu), a Python-like programming language for testing and experimenting with concurrent programs designed for Cornell University's CS 4410/6410 courses.
 
-> **Warning**: HarmonyLang Beta is currently only known to be best compatible with MacOS, due to it's reliance on the `cc` command. We're working to include Windows compatibility, but the model checker is currently non-functional on Windows PCs. At present, you may also try to use the `(Server) Run Harmony` command to run Harmony files remotely.
+## Requirements
+
+- `Python 3.6` or higher
+- `C` compiler like `gcc`, `cc`, or `clang`
+
+## Configuration Values
+
+The following values can be configured in a local or global `settings.json` file for VSCode.
+
+- `harmonylang.pythonPath`: Path to the Python interpreter
+- `harmonylang.libraryPath`: Path to the Harmony library, which has the compiler and the model-checker.
+
+## Commands
+
+The following commands are run using the Command Palette:
+
+- `Run Harmony`
+
+> Alternatively: use the keybinding Alt + Shift + N keys
+
+Compiles the currently opened file if it is a Harmony file, i.e. has the extension `.hny`. If compiled, it runs the model-checker.
+
+- `Run Harmony with Flags`
+
+Same as `Run Harmony`, except an input prompt first appears to ask for any flags to passed into the Harmony compiler. Only the flags `-c` (for constants) and `-m` (for modules) are supported.
+
+- `Install Harmony`
+
+Installs the latest version of Harmony into the extension's directory. This requires `Python 3.6` (or higher) and a `C` compiler. Sets the directory where Harmony is installed as the extension's `libraryPath` configuration value.
+
+- `Add Harmony Library Path`
+
+Shows a File Explorer Dialog box to open a folder. The opened folder's path is set as the extension's `libraryPath` configuration value, which points to the directory containing a Harmony compiler/model-checker.
+
+- `End All Harmony Processes`
+
+Ends all processes created and managed by this extension. This includes running a Harmony program that does not terminate in a timely manner.
 
 ## Features
 
@@ -49,27 +85,37 @@ You can find more information about the HarmonyLang extension project in [this d
 
 ## Release Notes
 
+### 1.0.0
+
+- Focuses on installing/supporting a local version of Harmony.
+- Update to support the latest version of Harmony (`1.2`).
+- Removes the `(Server) Run Harmony` command. For this command, please see and use [this extension](https://marketplace.visualstudio.com/items?itemName=kevinsun-dev-cornell.harmonylang-lite);
+
 ### 0.2.3
- - Add a `(Server) Run Harmony` command, which will try to run your Harmony files on a remote server that hosts the Harmony compiler. This may help those whose systems are not compatible with the local installation of Harmony
- - Update the built-in Harmony compiler
- - Bug fixes
+
+- Add a `(Server) Run Harmony` command, which will try to run your Harmony files on a remote server that hosts the Harmony compiler. This may help those whose systems are not compatible with the local installation of Harmony
+- Update the built-in Harmony compiler
+- Bug fixes
 
 ### 0.2.0
- - New `(C)Harmony` compiler, which uses `C/Python` to optimize model-checking.
-    - This will require `Python3` and a `C` compiler to be installed.
- - Fix bugs in the Interactive Process Visualizer.
+
+- New `(C)Harmony` compiler, which uses `C/Python` to optimize model-checking.
+  - This will require `Python3` and a `C` compiler to be installed.
+- Fix bugs in the Interactive Process Visualizer.
 
 ### 0.1.3
- - Updated HarmonyLang to use Harmony 0.9 LTS compiler
- - Bug fixes.
+
+- Updated HarmonyLang to use Harmony 0.9 LTS compiler
+- Bug fixes.
 
 ### 0.1.0
- - Massive UI overhaul with compiler output rewrite.
-   - Interactive Process Visualizer
-   - Crash Timeline Playback
- - Removed previous UI
- - Removed Notification Output System
- - Bug fixes
+
+- Massive UI overhaul with compiler output rewrite.
+  - Interactive Process Visualizer
+  - Crash Timeline Playback
+- Removed previous UI
+- Removed Notification Output System
+- Bug fixes
 
 ### 0.0.6
 

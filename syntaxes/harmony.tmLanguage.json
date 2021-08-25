@@ -95,7 +95,7 @@
 				},
 				{
 					"name": "keyword.control.flow.harmony",
-					"match": "(?x)\n  \\b(?<!\\.)( such\\s+that | where | atomic | del | assert | let | for | elif | else | if | pass | while )\\b\n"
+					"match": "(?x)\n  \\b(?<!\\.)( where | invariant | atomic | del | assert | possibly | let | for | elif | else | if | pass | while )\\b\n"
 				}
 			]
 		},
@@ -333,7 +333,7 @@
 			"match": "(?x)\n and= | or= | mod= | <<= | >>= | //= | \\*\\*=\n | \\+= | -= | /= | @=\n | \\*= | %= | ~= | \\^= | &= | \\|= | =(?!=)\n"
 		},
 		"operator": {
-			"match": "(?x)\n    \\b(?<!\\.)\n   (?:\n   (and | or | not | in | is)   (?# 1)\n        |\n        (for | if | else | await | (?:yield(?:\\s+from)?))  (?# 2)\n  )\n    (?!\\s*:)\\b\n\n    | (<< | >> | & | \\| | \\^ | ~)   (?# 3)\n\n    | (\\*\\* | \\* | \\+ | - | % | // | / | @)  (?# 4)\n\n    | (!= | == | >= | <= | < | >)  (?# 5)\n    | ( ! | - | ~ | all | any | atLabel | bagsize | choose | min | max | nametag | not | keys | hash | len | processes ) (?# 6)",
+			"match": "(?x)\n    \\b(?<!\\.)\n   (?:\n   (and | or | not | in | is)   (?# 1)\n        |\n        (for | where | if | else | await | (?:yield(?:\\s+from)?))  (?# 2)\n  )\n    (?!\\s*:)\\b\n\n    | (<< | >> | & | \\| | \\^ | ~)   (?# 3)\n\n    | (\\*\\* | \\* | \\+ | - | % | // | / | @)  (?# 4)\n\n    | (!= | == | >= | <= | < | >)  (?# 5)\n    | ( ! | - | ~ | all | any | atLabel | bagsize | choose | min | max | nametag | not | keys | hash | len | processes ) (?# 6)",
 			"captures": {
 				"1": {
 					"name": "keyword.operator.logical.harmony"
@@ -1045,11 +1045,6 @@
 				{
 					"name": "invalid.illegal.operator.harmony",
 					"match": "[?$]"
-				},
-				{
-					"name": "invalid.illegal.operator.harmony",
-					"comment": "We don't want `!` to flash when we're typing `!=`",
-					"match": "!\\b"
 				}
 			]
 		},

@@ -1,11 +1,30 @@
 export type IntermediateJson = {
+    code: string[];   // A list of all Harmony bytecode.
+    explain: string[]  // A list of explanations for each Harmony bytecode.
+    locations: Record<string, IntermediateHarmonyCode>;  // A map from code index to corresponding source code.
     issue: string;
-    macrosteps: IntermediateSwitch[];
-    code: string[];
-    explain: string[];
-    locations: Record<string, IntermediateHarmonyCode>;
+    macrosteps?: IntermediateSwitch[];
 };
 
+export class IntermediateJsonManager {
+    private readonly json: IntermediateJson;
+    constructor(json: IntermediateJson) {
+        this.json = json;
+    }
+    getCode(): string[] { return this.json.code; }
+    getExplain(): string[] { return this.json.explain; }
+    getLocations(): Record<string, IntermediateHarmonyCode> { return this.json.locations; }
+    getIssue(): string { return this.json.issue; }
+
+    getMacrosteps(): IntermediateSwitch[] | null {
+        if (this.json.issue === 'No issues') { return null; }
+        if (!this.json.macrosteps) {
+            console.warn('No macrosteps found in intermediate json despite the existence of an issue');
+            return null;
+        }
+        return this.json.macrosteps;
+    }
+}
 
 export type IntermediateHarmonyCode = {
     file: string;
@@ -13,12 +32,16 @@ export type IntermediateHarmonyCode = {
     code: string;
 };
 
+export type IntermediateContextRep = {
+    name: IntermediateValueRepresentation;
+    arg: IntermediateValueRepresentation;
+    pc: IntermediateValueRepresentation;
+};
 
 export type IntermediateValueRepresentation = {
-    type: "bool" | "int" | "atom" | "dict" | "set" | "pc" | "address" | "context";
-    value: string | IntermediateValueRepresentation[] | IntermediateKeyValueRep[];
+    type: 'bool' | 'int' | 'atom' | 'dict' | 'set' | 'pc' | 'address' | 'context';
+    value: string | IntermediateValueRepresentation[] | IntermediateKeyValueRep[] | IntermediateContextRep;
 }
-
 
 export type IntermediateKeyValueRep = {
     key: IntermediateValueRepresentation;
@@ -43,7 +66,7 @@ export type IntermediateMicroStep = {
     trace?: IntermediateTrace[];
     local?: Record<VariableName, IntermediateValueRepresentation>; // Local variables at the end of micro-step
 
-    mode?: "choosing" | "blocked" | "runnable" | "terminated"; // Mode of process.
+    mode?: 'choosing' | 'blocked' | 'runnable' | 'terminated'; // Mode of process.
     readonly?: string;
     interruptlevel?: string;
     failure?: string; // Failure setting. Non-empty when a failure occurs. Undefined otherwise.
@@ -69,7 +92,7 @@ export type IntermediateContext = {
     fp: string;
     trace: IntermediateTrace[];
     this: string;
-    mode?: "choosing" | "blocked" | "runnable" | "terminated"; // Mode of process.
+    mode?: 'choosing' | 'blocked' | 'runnable' | 'terminated'; // Mode of process.
     readonly?: string;
     choose?: IntermediateValueRepresentation;
     interruptlevel?: string;

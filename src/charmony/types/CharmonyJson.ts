@@ -1,33 +1,23 @@
-import {IntermediateJson} from "./IntermediateJson";
-import {getExecutedCode} from "./code/getExecutedCode";
-import {genExecutionPath} from "./new_exec/genExecutionPath";
-
 type thread_id = string;
 type variable_name = string;
 
-
-export default function parseCharmony(json: IntermediateJson): CharmonyTopLevel {
-    const executedCode: CharmonyExecutedCode[] = getExecutedCode(json);
-    const {idToThreadName, slices, issue, macroSteps, microSteps} = genExecutionPath(json);
-
-    return {
-        slices,
-        idToThreadName,
-        issue,
-        macroSteps,
-        executedCode,
-        microSteps
-    };
-}
-
-export type CharmonyTopLevel = {
+export type ExecutionPath = {
+    state: 'Issues found';
     issue: string;
     idToThreadName: Record<thread_id, string>;
     slices: CharmonySlice[];
     macroSteps: CharmonyMacroStep[];
-    executedCode: CharmonyExecutedCode[];
     microSteps: CharmonyMicroStep[];
 };
+
+export type NoIssue = {
+    state: 'No issues';
+    issue: string;
+};
+
+export type CharmonyTopLevel = {
+    executedCode: CharmonyExecutedCode[];
+} & (NoIssue | ExecutionPath);
 
 export type CharmonyMacroStep = {
     tid: string;

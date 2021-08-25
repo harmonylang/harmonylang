@@ -1,14 +1,6 @@
-git clone --depth=1 --branch=master https://github.coecis.cornell.edu/rv22/harmony.git temp_harmony_clone
-rm -rf ./temp_harmony_clone/.git
+#! /usr/bin/env sh
 
-mkdir temp_harmony_clone_copy
-
-mv ./temp_harmony_clone/harmony ./temp_harmony_clone_copy
-mv ./temp_harmony_clone/README.md ./temp_harmony_clone_copy
-mv ./temp_harmony_clone/modules ./temp_harmony_clone_copy
-mv ./temp_harmony_clone/src ./temp_harmony_clone_copy
+git clone --depth=1 --branch=master git@github.coecis.cornell.edu:rv22/harmony.git temp_harmony_clone
+mv ./temp_harmony_clone/install.py install.py
 
 rm -rf temp_harmony_clone
-rm -rf harmony-master
-
-mv temp_harmony_clone_copy harmony-master
