@@ -40,15 +40,6 @@
                     "default": null,
                     "description": "Python 3 installation path"
                 },
-                "harmonylang.ccPath": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "scope": "machine-overridable",
-                    "default": null,
-                    "description": "C Compiler installation path"
-                },
                 "harmonylang.libraryPath": {
                     "type": [
                         "string",
@@ -95,7 +86,7 @@
             },
             {
                 "command": "harmonylang-flag.run",
-                "title": "Run Harmony With Flags"
+                "title": "Run Harmony with Flags"
             },
             {
                 "command": "harmonylang.end",
@@ -106,10 +97,6 @@
             {
                 "command": "harmonylang.run",
                 "key": "alt+shift+n"
-            },
-            {
-                "command": "harmonylang-server.run",
-                "key": "alt+shift+s"
             },
             {
                 "command": "harmonylang.end",
