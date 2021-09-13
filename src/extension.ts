@@ -107,7 +107,9 @@ export const activate = (context: vscode.ExtensionContext) => {
                 if (fileUri && fileUri[0]) {
                     const filename = fileUri[0].fsPath;
                     setHarmonyLibraryPath(filename);
-                    console.log('Selected file: ' + filename);
+                    Message.info('Added Harmony path at ' + filename);
+                } else {
+                    Message.error('Add Harmony Library Path failed.');
                 }
             });
         }
@@ -120,7 +122,7 @@ export const activate = (context: vscode.ExtensionContext) => {
                 installHarmony();
             } catch (e) {
                 OutputConsole.println(JSON.stringify(e));
-                Message.error('Install Harmony failed. See the console log in the DevTools.');
+                Message.error('Install Harmony failed. See the console log in the DevTools for more error outputs.');
             }
         }
     );
