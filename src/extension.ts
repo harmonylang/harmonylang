@@ -269,11 +269,13 @@ export function runHarmony(
     try {
         flagArgs = parseOptions(flags);
     } catch (e) {
-        OutputConsole.println(e.message);
-        OutputConsole.show();
-
-        CharmonyPanelController_v2.currentPanel?.startLoading();
-        CharmonyPanelController_v2.currentPanel?.updateMessage(e.message);
+        if (typeof e === 'object' && e) {
+            const msg = (e as Record<string, any>).message;
+            OutputConsole.println(msg);
+            OutputConsole.show();
+            CharmonyPanelController_v2.currentPanel?.startLoading();
+            CharmonyPanelController_v2.currentPanel?.updateMessage(msg);
+        }
         return;
     }
     const charmonyCompileCommand = [harmonyScript, ...flagArgs, fullFileName];
@@ -307,8 +309,10 @@ export function runHarmony(
             }));
             onReceivingIntermediateJSON(results);
         } catch (error) {
-            OutputConsole.println(error);
-            OutputConsole.show();
+            if (typeof error === 'string') {
+                OutputConsole.println(error);
+                OutputConsole.show();
+            }
             CharmonyPanelController_v2.currentPanel?.updateMessage('Could not create analysis file.');
         }
     });
