@@ -1,16 +1,15 @@
 import {
     createConnection,
     TextDocuments,
+    CompletionItem,
     Diagnostic,
     DiagnosticSeverity,
     ProposedFeatures,
     InitializeParams,
     DidChangeConfigurationNotification,
-    CompletionItem,
-    CompletionItemKind,
-    TextDocumentPositionParams,
     TextDocumentSyncKind,
-    InitializeResult
+    InitializeResult,
+    TextDocumentPositionParams
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -113,9 +112,9 @@ function getDocumentSettings(resource: string): Thenable<HarmonyExtensionSetting
     if (!result) {
         const r = connection.workspace.getConfiguration('harmonylang');
         return r.then(config => {
-            return {
-                libraryPath: config.libraryPath
-            };
+            const result = {libraryPath: config.libraryPath};
+            documentSettings.set(resource, result);
+            return result;
         });
     }
     return Promise.resolve(result);
@@ -208,7 +207,8 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 
 connection.onDidChangeWatchedFiles(_change => {
     // Monitored files have change in VS Code
-    connection.console.log('We received a file change event');
+    // no-op
+    return;
 });
 
 // This handler provides the initial list of the completion items.
@@ -217,18 +217,7 @@ connection.onCompletion(
         // The pass parameter contains the position of the text document in
         // which code complete got requested. For the example we ignore this
         // info and always provide the same completion items.
-        return [
-            {
-                label: 'TypeScript',
-                kind: CompletionItemKind.Text,
-                data: 1
-            },
-            {
-                label: 'JavaScript',
-                kind: CompletionItemKind.Text,
-                data: 2
-            }
-        ];
+        return [];
     }
 );
 
