@@ -160,7 +160,17 @@ export const activate = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(runHarmonyWithFlagsCommand);
     context.subscriptions.push(endHarmonyProcessesCommand);
 
-
+    // Create the language client and start the client.
+    const harmonyScriptPath = getHarmonyScriptPath();
+    if (!harmonyScriptPath) {
+        OutputConsole.println('A path to the Harmony compiler cannot be found.');
+        OutputConsole.println('This will prevent the [Run Harmony] command from working.');
+        OutputConsole.println('This will also prevent parsing error messages from appearing.');
+        OutputConsole.println('You can add the Harmony compiler path via the [Install Harmony] or [Add Harmony Library Path] commands.');
+        OutputConsole.println('Syntax highlighting will still be enabled.');
+        return;
+    }
+    // Setup the server client only if Harmony is installed
     // The server is implemented in node
     const serverModule = context.asAbsolutePath(path.join('out', 'server', 'server.js'));
 
@@ -175,8 +185,6 @@ export const activate = (context: vscode.ExtensionContext) => {
         // Register the server for plain text documents
         documentSelector: [{ scheme: 'file', language: 'harmony' }],
     };
-
-    // Create the language client and start the client.
     client = new LanguageClient(
         'harmonyLangServer',
         'Harmony Language Server',
