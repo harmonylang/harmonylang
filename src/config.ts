@@ -4,7 +4,7 @@ import * as fs from 'fs';
 export const EXTENSION_DIR = path.join(__dirname, '..');
 export const DEBUG_DIR = path.join(EXTENSION_DIR, 'debug');
 export const RESOURCE_DIR = path.join(EXTENSION_DIR, 'resource');
-export const CHARMONY_HTML_FILE = path.join(RESOURCE_DIR, 'charmony-v2.html');
+export const CHARMONY_HTML_FILE = path.join(RESOURCE_DIR, 'charmony-v3.html');
 export const EXAMPLE_CHARM_JSON = path.join(RESOURCE_DIR, 'charm-example.json');
 
 export const CHARMONY_COMPILER_DIR = path.join(EXTENSION_DIR, 'harmony-master');
