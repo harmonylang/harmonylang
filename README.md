@@ -1,6 +1,6 @@
 # HarmonyLang
 
-HarmonyLang provides general VSCode compatibility with RvR's [Harmony](http://harmony.cs.cornell.edu), a Python-like programming language for testing and experimenting with concurrent programs designed for Cornell University's CS 4410/6410 courses.
+HarmonyLang provides a powerful development environment for RvR's [Harmony](http://harmony.cs.cornell.edu), a Python-like programming language for testing and experimenting with concurrent and distributed systems.
 
 ## Requirements
 
@@ -52,7 +52,7 @@ Supported syntax:
 - Binary operators (`and`, `**`, and `>=`)
 - Comments (`#line` and `(* block *)`)
 
-> **Warning**: This release contains the Harmony 1.0 compiler. Code written for Harmony 1.0 is not compatible with Harmony 0.9.
+> **Warning**: This release contains the Harmony 1.2 compiler. Code written for Harmony 1.2 may not be compatible with previous versions.
 
 ![Syntax Highlighting](images/syntax-example.png)
 
@@ -62,7 +62,7 @@ Run your Harmony files in VS Code. Press `Alt+Shift+N` to compile and run the cu
 
 See your Harmony Output results, right in VS Code!
 
-![Harmony Output](images/build-example.jpg)
+![Harmony Output](images/build-example.gif)
 
 > Generated `harmony.html` files are saved to the extension's internal compiler.
 
@@ -84,6 +84,13 @@ See your Harmony Output results, right in VS Code!
 You can find more information about the HarmonyLang extension project in [this document](https://docs.google.com/document/d/16pO-tNLfNebIAuqb_vy_z0dJyIFX_Nb-xYDXRfMqOfE/edit?usp=sharing). Furthermore, you can find the Harmony Python compiler, as well as additional documentation regarding the Harmony language, at this [link](http://harmony.cs.cornell.edu).
 
 ## Release Notes
+
+### 1.1.0
+
+- Added code autocompletion and error highlighting
+- Migrates to the new Melody Analysis Suite, with an improved UI
+  - Implements the previous standalone analyzer as a fallback
+- Bug fixes
 
 ### 1.0.0
 
