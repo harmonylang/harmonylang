@@ -1,10 +1,11 @@
 import * as vscode from 'vscode';
 import {Webview} from 'vscode';
 import * as fs from 'fs';
-import {CHARMONY_HTML_FILE, DEBUG_DIR, RESOURCE_DIR} from '../config';
+import {CHARMONY_HTML_FILE, MELODY_LAUNCHER, DEBUG_DIR, RESOURCE_DIR} from '../config';
 import {IntermediateJson} from '../charmony/types/IntermediateJson';
 import { parse } from '../charmony';
 import * as path from 'path';
+import isOnline = require('is-online');
 
 export default class CharmonyPanelController_v2 {
     public static currentPanel: CharmonyPanelController_v2 | undefined;
@@ -91,7 +92,13 @@ export default class CharmonyPanelController_v2 {
         if (data == null){
             console.log('Looking for data');
             try {
-                harmonyPanel.webview.html = fs.readFileSync(CHARMONY_HTML_FILE, 'utf-8');
+                isOnline({timeout: 300}).then(online => {
+                    if (online){
+                        harmonyPanel.webview.html = fs.readFileSync(MELODY_LAUNCHER, 'utf-8');
+                    } else {
+                        harmonyPanel.webview.html = fs.readFileSync(CHARMONY_HTML_FILE, 'utf-8');
+                    }
+                });
             } catch (err) {
                 console.log(err);
                 vscode.window.showInformationMessage(err.message);
