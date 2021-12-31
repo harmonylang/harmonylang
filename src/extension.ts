@@ -10,6 +10,7 @@ import * as fs from 'fs';
 import { IntermediateJson } from './charmony/types/IntermediateJson';
 import CharmonyPanelController_v2 from './outputPanel/PanelController_v2';
 import { ArgumentParser } from 'argparse';
+import * as os from 'os';
 import stringArgv from 'string-argv';
 import Message from './vscode/Message';
 import OutputConsole from './vscode/OutputConsole';
@@ -34,6 +35,34 @@ function getPythonPath() {
     const harmonyPythonPath = config.get('pythonPath');
 
     return harmonyPythonPath || actualPythonPath;
+}
+
+function getWhichCommand() {
+    switch (process.platform) {
+        case "win32":
+            return "Get-Command";
+        default:
+            return "which";
+    }
+}
+
+async function getHarmonyCommandPath(): Promise<string> {
+    const config = getHarmonyLangConfiguration();
+    const commandPath = config.get('commandPath');
+    if (typeof commandPath === 'string' && fs.existsSync(commandPath)) {
+        return Promise.resolve(commandPath);
+    }
+    const whichCmd = getWhichCommand();
+    return new Promise<string>((resolve, reject) => {
+        processManager.startCommand([whichCmd, "harmony"], {}, (err, stdout, stderr) => {
+            if (err) {
+                reject(err);
+            }
+            const cmdPath = stdout.trim();
+            config.update('commandPath', cmdPath);
+            resolve(stdout.trim());
+        });
+    });
 }
 
 function getHarmonyLibraryPath(): string | null {
@@ -161,15 +190,14 @@ export const activate = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(endHarmonyProcessesCommand);
 
     // Create the language client and start the client.
-    const harmonyScriptPath = getHarmonyScriptPath();
-    if (!harmonyScriptPath) {
-        OutputConsole.println('A path to the Harmony compiler cannot be found.');
-        OutputConsole.println('This will prevent the [Run Harmony] command from working.');
-        OutputConsole.println('This will also prevent parsing error messages from appearing.');
-        OutputConsole.println('You can add the Harmony compiler path via the [Install Harmony] or [Add Harmony Library Path] commands.');
-        OutputConsole.println('Syntax highlighting will still be enabled.');
-        return;
-    }
+    getHarmonyCommandPath()
+        .catch(() => {
+            OutputConsole.println('A path to the Harmony compiler cannot be found.');
+            OutputConsole.println('This will prevent the [Run Harmony] command from working.');
+            OutputConsole.println('This will also prevent parsing error messages from appearing.');
+            OutputConsole.println('You can add the Harmony compiler path via the [Install Harmony] or [Add Harmony Library Path] commands.');
+            OutputConsole.println('Syntax highlighting will still be enabled.');
+        });
     // Setup the server client only if Harmony is installed
     // The server is implemented in node
     const serverModule = context.asAbsolutePath(path.join('out', 'server', 'server.js'));
@@ -291,13 +319,13 @@ export function installHarmony() {
  * @param flags Additional flags that are passed into the Harmony compiler.
  * @returns
  */
-export function runHarmony(
+export async function runHarmony(
     context: vscode.ExtensionContext,
     fullFileName: string,
     flags?: string
 ) {
     OutputConsole.clear();
-    const harmonyScript = getHarmonyScriptPath();
+    const harmonyScript = await getHarmonyCommandPath();
     if (!harmonyScript || !fs.existsSync(harmonyScript)) {
         Message.error(
             'Cannot find the Harmony script.',
@@ -322,14 +350,18 @@ export function runHarmony(
         return;
     }
     const charmonyCompileCommand = [harmonyScript, ...flagArgs, fullFileName];
-    processManager.startCommand(charmonyCompileCommand, {
-        cwd: CHARMONY_COMPILER_DIR
-    }, (error, stdout, stderr) => {
+    Message.info("Running Harmony...");
+    processManager.startCommand(charmonyCompileCommand, {}, (error, stdout, stderr) => {
         if (processManager.processesAreKilled) {
             return;
         }
         CharmonyPanelController_v2.currentPanel?.startLoading();
         OutputConsole.clear();
+        if (error) {
+            OutputConsole.println(error.message);
+            Message.error(error.message);
+            return;
+        }
         if (stderr) {
             OutputConsole.println(stderr);
             CharmonyPanelController_v2.currentPanel?.updateMessage('See Output Panel for details.');

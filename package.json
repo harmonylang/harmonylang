@@ -40,6 +40,12 @@
                     "default": null,
                     "description": "Python 3 installation path"
                 },
+                "harmonylang.commandPath": {
+                    "type": ["string", "null"],
+                    "scope": "machine-overridable",
+                    "default": null,
+                    "description": "Path of the Harmony command"
+                },
                 "harmonylang.libraryPath": {
                     "type": [
                         "string",

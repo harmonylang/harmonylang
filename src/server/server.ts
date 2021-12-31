@@ -79,12 +79,13 @@ connection.onInitialized(() => {
 
 interface HarmonyExtensionSettings {
     libraryPath: string | null;
+    commandPath: string | null;
 }
 
 // The global settings, used when the `workspace/configuration` request is not supported by the client.
 // Please note that this is not the case when using this server with the client provided in this example
 // but could happen with other clients.
-const defaultSettings: HarmonyExtensionSettings = { libraryPath: null };
+const defaultSettings: HarmonyExtensionSettings = { libraryPath: null, commandPath: null };
 let globalSettings: HarmonyExtensionSettings = defaultSettings;
 
 // Cache the settings of all open documents
@@ -112,7 +113,7 @@ function getDocumentSettings(resource: string): Thenable<HarmonyExtensionSetting
     if (!result) {
         const r = connection.workspace.getConfiguration('harmonylang');
         return r.then(config => {
-            const result = {libraryPath: config.libraryPath};
+            const result = {libraryPath: config.libraryPath, commandPath: config.commandPath};
             documentSettings.set(resource, result);
             return result;
         });
@@ -146,32 +147,51 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     // In this simple example we get the settings for every validate run.
     const settings = await getDocumentSettings(textDocument.uri);
     const diagnostics: Diagnostic[] = [];
-    if (!settings.libraryPath) {
+    const harmonyScript = settings.commandPath;
+    if (!harmonyScript) {
+        // diagnostics.push({
+        //     severity: DiagnosticSeverity.Warning,
+        //     range: {
+        //         start: textDocument.positionAt(0),
+        //         end: textDocument.positionAt(1)
+        //     },
+        //     message: 'Cannot find Harmony',
+        //     source: 'Harmony'
+        // });
+        // Cannot find Harmony command to perform parsing.
+        connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
         return;
     }
-    const harmonyScript = getHarmonyScriptPath(settings.libraryPath);
 
     const harmonyFile = fileUriToPath(textDocument.uri);
-    child_process.execFile(harmonyScript, ['-p', harmonyFile], (err, stdout) => {
-        if (err) {
+    child_process.execFile(harmonyScript, ['-p', harmonyFile], () => {
             // Possibly a parsing error.
-            const dirname = path.dirname(harmonyFile);
-            const basename = path.basename(harmonyFile, path.extname(harmonyFile));
-            const analysisFile = path.join(dirname, basename + '.hvm');
-            if (!fs.existsSync(analysisFile) || !fs.statSync(analysisFile).isFile()) {
-                // No analysis file found
-                connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
-                return;
-            }
+        const dirname = path.dirname(harmonyFile);
+        const basename = path.basename(harmonyFile, path.extname(harmonyFile));
+        const analysisFile = path.join(dirname, basename + '.hvm');
+        if (!fs.existsSync(analysisFile) || !fs.statSync(analysisFile).isFile()) {
+            // diagnostics.push({
+            //     severity: DiagnosticSeverity.Error,
+            //     range: {
+            //         start: textDocument.positionAt(0),
+            //         end: textDocument.positionAt(1)
+            //     },
+            //     message: 'No analysis file found',
+            //     source: 'Harmony'
+            // })
+            // No analysis file found
+            connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+            return;
+        }
 
-            const analysis = JSON.parse(fs.readFileSync(analysisFile, 'utf-8'));
-            if (analysis.status !== 'error') {
-                // No errors
-                connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
-                return;
-            }
+        const analysis = JSON.parse(fs.readFileSync(analysisFile, 'utf-8'));
+        if (analysis.status !== 'error') {
+            // No errors
+            connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+            return;
+        }
 
-            const {line, column, lexeme, is_eof_error} = analysis;
+        for (const {line, column, message, lexeme, is_eof_error} of analysis.errors) {
             let diagnostic: Diagnostic;
             if (line == null || column == null || lexeme == null || is_eof_error) {
                 const text = textDocument.getText();
@@ -181,7 +201,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
                         start: textDocument.positionAt(text.length - 1),
                         end: textDocument.positionAt(text.length)
                     },
-                    message: stdout,
+                    message: message,
                     source: 'Harmony'
                 };
             } else {
@@ -192,7 +212,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
                         start: textDocument.positionAt(initialOffset),
                         end: textDocument.positionAt(initialOffset + lexeme.length)
                     },
-                    message: stdout,
+                    message: message,
                     source: 'Harmony'
                 };
             }
