@@ -54,7 +54,7 @@ async function getHarmonyCommandPath(): Promise<string> {
     }
     const whichCmd = getWhichCommand();
     return new Promise<string>((resolve, reject) => {
-        processManager.startCommand([whichCmd, "harmony"], {}, (err, stdout, stderr) => {
+        processManager.startCommand([whichCmd, "harmony"], {}, (err, stdout) => {
             if (err) {
                 reject(err);
             }
@@ -65,57 +65,37 @@ async function getHarmonyCommandPath(): Promise<string> {
     });
 }
 
-function getHarmonyLibraryPath(): string | null {
+function setHarmonyLibraryPath(filePath: string) {
     const config = getHarmonyLangConfiguration();
-    const libPath = config.get('libraryPath');
-    return typeof libPath === 'string' ? libPath : null;
-}
-function setHarmonyLibraryPath(path: string) {
-    const config = getHarmonyLangConfiguration();
-    return config.update('libraryPath', path);
+    return config.update('libraryPath', filePath);
 }
 
-/**
- * Retrieves the name of the Harmony script path, i.e. the script that runs the Harmony compiler/model checker.
- */
-function getHarmonyScriptPath() {
-    // The file should be located in the specified library path of Harmony.
-    const libraryPath = getHarmonyLibraryPath();
-    if (!libraryPath) {
-        return null;
+function getActiveFilename() {
+    const filename = vscode.window.activeTextEditor?.document?.fileName;
+    if (!filename) {
+        vscode.window.showInformationMessage('Could not locate target file.');
+        return;
     }
-    // For Windows, this is a `harmony.bat` batch script.
-    // For other machines, this is a `harmony` shell script.
-    if (process.platform === 'win32') {
-        return path.join(libraryPath, 'harmony.bat');
+    const ext = path.extname(filename);
+    if (ext !== '.hny') {
+        vscode.window.showInformationMessage('Target file must be an Harmony (.hny) file.');
+        return;
     }
-    return path.join(libraryPath, 'harmony');
+    return filename;
 }
 
 let client: LanguageClient;
 export const activate = (context: vscode.ExtensionContext) => {
-    const getFileName = () => {
-        const filename = vscode.window.activeTextEditor?.document?.fileName;
-        if (!filename) {
-            vscode.window.showInformationMessage('Could not locate target file.');
-            return;
-        }
-        const ext = path.extname(filename);
-        if (ext !== '.hny') {
-            vscode.window.showInformationMessage('Target file must be an Harmony (.hny) file.');
-            return;
-        }
-        return filename;
-    };
-
     const runHarmonyCommand = vscode.commands.registerCommand(
         'harmonylang.run',
         () => {
+            const filename = getActiveFilename();
+            if (!filename) {
+                Message.error("No Harmony file opened.");
+                return;
+            }
             try {
-                const filename = getFileName();
-                if (filename) {
-                    runHarmony(context, filename);
-                }
+                runHarmony(context, filename);
             } catch (e) {
                 OutputConsole.println(JSON.stringify(e));
                 Message.error('Run Harmony failed. See the console log in the DevTools.');
@@ -125,22 +105,21 @@ export const activate = (context: vscode.ExtensionContext) => {
 
     const addHarmonyLibraryCommand = vscode.commands.registerCommand(
         'harmonylang.addLibrary',
-        () => {
+        async () => {
             const options: vscode.OpenDialogOptions = {
                 canSelectMany: false,
                 canSelectFiles: false,
                 canSelectFolders: true,
-                openLabel: 'Open'
+                openLabel: 'Select'
             };
-            vscode.window.showOpenDialog(options).then(fileUri => {
-                if (fileUri && fileUri[0]) {
-                    const filename = fileUri[0].fsPath;
-                    setHarmonyLibraryPath(filename);
-                    Message.info('Added Harmony path at ' + filename);
-                } else {
-                    Message.error('Add Harmony Library Path failed.');
-                }
-            });
+            const fileUri = await vscode.window.showOpenDialog(options);
+            if (fileUri && fileUri[0]) {
+                const filename = fileUri[0].fsPath;
+                await setHarmonyLibraryPath(filename);
+                Message.info('Added Harmony path at ' + filename);
+            } else {
+                Message.error('Add Harmony Library Path failed.');
+            }
         }
     );
 
@@ -158,17 +137,19 @@ export const activate = (context: vscode.ExtensionContext) => {
 
     const runHarmonyWithFlagsCommand = vscode.commands.registerCommand(
         'harmonylang-flag.run',
-        () => {
+        async () => {
+            const filename = getActiveFilename();
+            if (!filename) {
+                Message.error("No Harmony file opened.");
+                return;
+            }
+            const options: vscode.InputBoxOptions = {
+                prompt: 'Run Harmony With Flags',
+                placeHolder: 'flags (e.g. -c name=value, -m module=version)',
+            };
+            const value = await vscode.window.showInputBox(options);
             try {
-                const filename = getFileName();
-                const options: vscode.InputBoxOptions = {
-                    prompt: 'Run Harmony With Flags',
-                    placeHolder: 'flags (e.g. -c name=value, -m module=version)',
-                };
-                if (filename)
-                    vscode.window.showInputBox(options).then((value) => {
-                        runHarmony(context, filename, value);
-                    });
+                runHarmony(context, filename, value);
             } catch (e) {
                 OutputConsole.println(JSON.stringify(e));
                 Message.error('Run Harmony failed. See the console log in the DevTools.');
@@ -178,9 +159,7 @@ export const activate = (context: vscode.ExtensionContext) => {
 
     const endHarmonyProcessesCommand = vscode.commands.registerCommand(
         'harmonylang.end',
-        () => {
-            endHarmonyProcesses();
-        }
+        endHarmonyProcesses
     );
 
     context.subscriptions.push(runHarmonyCommand);
@@ -227,7 +206,7 @@ export const activate = (context: vscode.ExtensionContext) => {
  * Ends all processes monitored by the Harmony process manager.
  * Emits messages on ending processes.
  */
-export function endHarmonyProcesses() {
+export async function endHarmonyProcesses() {
     Message.info('Ending all Harmony processes...');
     const count = processManager.endAll();
     Message.info(`${count} Harmony process(es) ended.`);
