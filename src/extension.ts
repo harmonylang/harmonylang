@@ -40,7 +40,7 @@ function getPythonPath() {
 function getWhichCommand() {
     switch (process.platform) {
         case "win32":
-            return "Get-Command";
+            return "where";
         default:
             return "which";
     }

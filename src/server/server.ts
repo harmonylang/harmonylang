@@ -9,14 +9,31 @@ import {
     DidChangeConfigurationNotification,
     TextDocumentSyncKind,
     InitializeResult,
-    TextDocumentPositionParams
+    TextDocumentPositionParams,
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import * as child_process from 'child_process';
-import fileUriToPath = require('file-uri-to-path');
+import _fileUriToPath = require('file-uri-to-path');
 import * as path from 'path';
 import * as fs from 'fs';
+
+function fileUriToPath(fileUri: string): string {
+    let p = _fileUriToPath(fileUri);
+    // Because of an odd behavior in VSCode's URI library,
+    // the colon in front of the drive-letter in Windows paths is encoded
+    // to %3A. The following is a workaround based on an implementation by [felixfbecker].
+    // Source: https://github.com/felixfbecker/php-language-server/commit/66b5176a43e1b2223ac87456e9753fc49692f10b
+    if (process.platform === 'win32') {
+        if (p.indexOf('%3A\\') >= 0) {
+            if (p[0] === '\\') {
+                p = p.slice(1);
+            }
+            p = p.replace('%3A', ':');
+        }
+    }
+    return p;
+}
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -144,26 +161,40 @@ documents.onDidOpen(change => {
 });
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-    // In this simple example we get the settings for every validate run.
     const settings = await getDocumentSettings(textDocument.uri);
     const diagnostics: Diagnostic[] = [];
     const harmonyScript = settings.commandPath;
     if (!harmonyScript) {
-        // diagnostics.push({
-        //     severity: DiagnosticSeverity.Warning,
-        //     range: {
-        //         start: textDocument.positionAt(0),
-        //         end: textDocument.positionAt(1)
-        //     },
-        //     message: 'Cannot find Harmony',
-        //     source: 'Harmony'
-        // });
+        diagnostics.push({
+            severity: DiagnosticSeverity.Warning,
+            range: {
+                start: textDocument.positionAt(0),
+                end: textDocument.positionAt(1)
+            },
+            message: 'Cannot find Harmony',
+            source: 'Harmony'
+        });
         // Cannot find Harmony command to perform parsing.
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
         return;
     }
 
-    const harmonyFile = fileUriToPath(textDocument.uri);
+    let harmonyFile = fileUriToPath(textDocument.uri);
+    if (!fs.existsSync(harmonyFile)) {
+        diagnostics.push({
+            severity: DiagnosticSeverity.Error,
+            range: {
+                start: textDocument.positionAt(0),
+                end: textDocument.positionAt(1)
+            },
+            message: `Ooops: ${harmonyFile}`,
+            source: 'Harmony'
+        });
+        connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+        return;
+    }
+    // An odd behavior where textDocument.uri gives a path beginning with file:///c%3A/ on windows
+
     child_process.execFile(harmonyScript, ['-p', harmonyFile], () => {
             // Possibly a parsing error.
         const dirname = path.dirname(harmonyFile);
