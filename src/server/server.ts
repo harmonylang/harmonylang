@@ -165,51 +165,16 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     const diagnostics: Diagnostic[] = [];
     const harmonyScript = settings.commandPath;
     if (!harmonyScript) {
-        diagnostics.push({
-            severity: DiagnosticSeverity.Warning,
-            range: {
-                start: textDocument.positionAt(0),
-                end: textDocument.positionAt(1)
-            },
-            message: 'Cannot find Harmony',
-            source: 'Harmony'
-        });
-        // Cannot find Harmony command to perform parsing.
-        connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
         return;
     }
 
     let harmonyFile = fileUriToPath(textDocument.uri);
-    if (!fs.existsSync(harmonyFile)) {
-        diagnostics.push({
-            severity: DiagnosticSeverity.Error,
-            range: {
-                start: textDocument.positionAt(0),
-                end: textDocument.positionAt(1)
-            },
-            message: `Ooops: ${harmonyFile}`,
-            source: 'Harmony'
-        });
-        connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
-        return;
-    }
-    // An odd behavior where textDocument.uri gives a path beginning with file:///c%3A/ on windows
-
     child_process.execFile(harmonyScript, ['-p', harmonyFile], () => {
             // Possibly a parsing error.
         const dirname = path.dirname(harmonyFile);
         const basename = path.basename(harmonyFile, path.extname(harmonyFile));
         const analysisFile = path.join(dirname, basename + '.hvm');
         if (!fs.existsSync(analysisFile) || !fs.statSync(analysisFile).isFile()) {
-            // diagnostics.push({
-            //     severity: DiagnosticSeverity.Error,
-            //     range: {
-            //         start: textDocument.positionAt(0),
-            //         end: textDocument.positionAt(1)
-            //     },
-            //     message: 'No analysis file found',
-            //     source: 'Harmony'
-            // })
             // No analysis file found
             connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
             return;
