@@ -162,11 +162,57 @@ export const activate = (context: vscode.ExtensionContext) => {
         endHarmonyProcesses
     );
 
+    const hoverOverMethod = vscode.languages.registerHoverProvider(
+        'harmony',
+        {
+            provideHover(doc, pos, token) {
+                const fsPath = doc.uri.fsPath;
+                const dirname = path.dirname(fsPath);
+                const basename = path.basename(fsPath);
+                const stem = basename.slice(0, basename.lastIndexOf(path.extname(basename)));
+                const docsFile = path.join(dirname, stem + ".docs");
+
+                console.log(!fs.existsSync(docsFile));
+                if (!fs.existsSync(docsFile)) {
+                    return;
+                }
+
+                const allDocs = JSON.parse(fs.readFileSync(docsFile, 'utf-8'));
+                if (allDocs[fsPath] == null) {
+                    return;
+                }
+
+                const docs = allDocs[fsPath];
+                for (const d of docs) {
+                    const [token, txt] = d;
+                    const [lexeme, _, line, column] = token;
+                    if (line !== pos.line + 1) {
+                        // VSCode positions are indexed starting at 0.
+                        continue;
+                    }
+                    const maxChar = column + lexeme.length;
+                    if (column <= pos.character && pos.character <= maxChar) {
+                        return {
+                            contents: [{
+                                language: "markdown",
+                                value: txt,
+                                isTrusted: true
+                            }]
+                        }
+                    }
+                }
+                return { contents: [] };
+            }
+        }
+    )
+
     context.subscriptions.push(runHarmonyCommand);
     context.subscriptions.push(installHarmonyCmd);
     context.subscriptions.push(addHarmonyLibraryCommand);
     context.subscriptions.push(runHarmonyWithFlagsCommand);
     context.subscriptions.push(endHarmonyProcessesCommand);
+
+    context.subscriptions.push(hoverOverMethod);
 
     // Create the language client and start the client.
     getHarmonyCommandPath()
@@ -213,8 +259,8 @@ export async function endHarmonyProcesses() {
 }
 
 const parser = new ArgumentParser();
-parser.add_argument('--const','-c', {nargs: 1});
-parser.add_argument('--module', '-m', {nargs: 1});
+parser.add_argument('--const', '-c', { nargs: 1 });
+parser.add_argument('--module', '-m', { nargs: 1 });
 
 /**
  * Parses a string which declares options to passed into the Harmony compiler.
@@ -267,7 +313,7 @@ export function installHarmony() {
     const cmd = [PYTHON_PATH, CHARMONY_INSTALLER];
     Message.info('Starting installation process');
     processManager.startCommand(cmd,
-        {cwd: CHARMONY_COMPILER_DIR},
+        { cwd: CHARMONY_COMPILER_DIR },
         (err, stdout, stderr) => {
             if (processManager.processesAreKilled) return;
             OutputConsole.clear();

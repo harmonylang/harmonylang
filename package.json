@@ -27,6 +27,9 @@
         "*"
     ],
     "main": "./out/extension.js",
+    "capabilities": {
+        "hoverProvider" : "true"
+    },
     "contributes": {
         "configuration": {
             "title": "HarmonyLang",
