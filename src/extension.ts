@@ -2,19 +2,15 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { ProcessManagerImpl } from './processManager';
 import {
-    EXTENSION_DIR,
-    CHARMONY_COMPILER_DIR,
-    CHARMONY_INSTALLER
+    INSTALL_HARMONY_COMMAND
 } from './config';
 import * as fs from 'fs';
 import { IntermediateJson } from './charmony/types/IntermediateJson';
 import CharmonyPanelController_v2 from './outputPanel/PanelController_v2';
 import { ArgumentParser } from 'argparse';
-import * as os from 'os';
 import stringArgv from 'string-argv';
 import Message from './vscode/Message';
 import OutputConsole from './vscode/OutputConsole';
-import rimraf = require('rimraf');
 import {
     LanguageClient,
     LanguageClientOptions,
@@ -46,28 +42,23 @@ function getWhichCommand() {
     }
 }
 
-async function getHarmonyCommandPath(): Promise<string> {
+async function getHarmonyCommandPath(): Promise<string | null> {
     const config = getHarmonyLangConfiguration();
     const commandPath = config.get('commandPath');
     if (typeof commandPath === 'string' && fs.existsSync(commandPath)) {
         return Promise.resolve(commandPath);
     }
     const whichCmd = getWhichCommand();
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<string | null>((resolve, reject) => {
         processManager.startCommand([whichCmd, "harmony"], {}, (err, stdout) => {
             if (err) {
-                reject(err);
+                resolve(null);
             }
             const cmdPath = stdout.trim();
             config.update('commandPath', cmdPath);
             resolve(stdout.trim());
         });
     });
-}
-
-function setHarmonyLibraryPath(filePath: string) {
-    const config = getHarmonyLangConfiguration();
-    return config.update('libraryPath', filePath);
 }
 
 function getActiveFilename() {
@@ -99,26 +90,6 @@ export const activate = (context: vscode.ExtensionContext) => {
             } catch (e) {
                 OutputConsole.println(JSON.stringify(e));
                 Message.error('Run Harmony failed. See the console log in the DevTools.');
-            }
-        }
-    );
-
-    const addHarmonyLibraryCommand = vscode.commands.registerCommand(
-        'harmonylang.addLibrary',
-        async () => {
-            const options: vscode.OpenDialogOptions = {
-                canSelectMany: false,
-                canSelectFiles: false,
-                canSelectFolders: true,
-                openLabel: 'Select'
-            };
-            const fileUri = await vscode.window.showOpenDialog(options);
-            if (fileUri && fileUri[0]) {
-                const filename = fileUri[0].fsPath;
-                await setHarmonyLibraryPath(filename);
-                Message.info('Added Harmony path at ' + filename);
-            } else {
-                Message.error('Add Harmony Library Path failed.');
             }
         }
     );
@@ -162,57 +133,10 @@ export const activate = (context: vscode.ExtensionContext) => {
         endHarmonyProcesses
     );
 
-    const hoverOverMethod = vscode.languages.registerHoverProvider(
-        'harmony',
-        {
-            provideHover(doc, pos, token) {
-                const fsPath = doc.uri.fsPath;
-                const dirname = path.dirname(fsPath);
-                const basename = path.basename(fsPath);
-                const stem = basename.slice(0, basename.lastIndexOf(path.extname(basename)));
-                const docsFile = path.join(dirname, stem + ".docs");
-
-                console.log(!fs.existsSync(docsFile));
-                if (!fs.existsSync(docsFile)) {
-                    return;
-                }
-
-                const allDocs = JSON.parse(fs.readFileSync(docsFile, 'utf-8'));
-                if (allDocs[fsPath] == null) {
-                    return;
-                }
-
-                const docs = allDocs[fsPath];
-                for (const d of docs) {
-                    const [token, txt] = d;
-                    const [lexeme, _, line, column] = token;
-                    if (line !== pos.line + 1) {
-                        // VSCode positions are indexed starting at 0.
-                        continue;
-                    }
-                    const maxChar = column + lexeme.length;
-                    if (column <= pos.character && pos.character <= maxChar) {
-                        return {
-                            contents: [{
-                                language: "markdown",
-                                value: txt,
-                                isTrusted: true
-                            }]
-                        }
-                    }
-                }
-                return { contents: [] };
-            }
-        }
-    )
-
     context.subscriptions.push(runHarmonyCommand);
     context.subscriptions.push(installHarmonyCmd);
-    context.subscriptions.push(addHarmonyLibraryCommand);
     context.subscriptions.push(runHarmonyWithFlagsCommand);
     context.subscriptions.push(endHarmonyProcessesCommand);
-
-    context.subscriptions.push(hoverOverMethod);
 
     // Create the language client and start the client.
     getHarmonyCommandPath()
@@ -220,7 +144,7 @@ export const activate = (context: vscode.ExtensionContext) => {
             OutputConsole.println('A path to the Harmony compiler cannot be found.');
             OutputConsole.println('This will prevent the [Run Harmony] command from working.');
             OutputConsole.println('This will also prevent parsing error messages from appearing.');
-            OutputConsole.println('You can add the Harmony compiler path via the [Install Harmony] or [Add Harmony Library Path] commands.');
+            OutputConsole.println('You can add the Harmony compiler path via the [Install Harmony] command.');
             OutputConsole.println('Syntax highlighting will still be enabled.');
         });
     // Setup the server client only if Harmony is installed
@@ -291,50 +215,55 @@ function onReceivingIntermediateJSON(results: IntermediateJson) {
     }
 }
 
+export async function buildHarmonyModelChecker() {
+    Message.info("Building model checker");
+    const cmdPath = await getHarmonyCommandPath();
+    if (!cmdPath) {
+        Message.error("Failed to find Harmony command");
+        return;
+    }
+    processManager.startCommand([cmdPath, "--build-model-checker"], {}, (err, stdout, stderr) => {
+        if (processManager.processesAreKilled) return;
+        if (err) {
+            OutputConsole.println(err.message);
+            Message.error(err.message);
+            return;
+        }
+        if (stdout) {
+            OutputConsole.println(stdout);
+            Message.info(stdout);
+        }
+        Message.info("Built model checker");
+    })
+}
+
 /**
  * This will run the Harmony installation script.
  * If Harmony was already instead in the extension's directory,
  * then delete the existing installation and re-install.
  */
 export function installHarmony() {
-    if (fs.existsSync(CHARMONY_COMPILER_DIR)) {
-        rimraf.sync(CHARMONY_COMPILER_DIR);
-    }
-    fs.mkdirSync(CHARMONY_COMPILER_DIR);
-    fs.copyFileSync(
-        path.join(EXTENSION_DIR, 'install.py'),
-        path.join(CHARMONY_COMPILER_DIR, 'install.py'),
-    );
-    const PYTHON_PATH = (() => {
-        const pythonPath = getPythonPath();
-        if (pythonPath && typeof pythonPath === 'string') return pythonPath;
-        return 'python3';
-    })();
-    const cmd = [PYTHON_PATH, CHARMONY_INSTALLER];
     Message.info('Starting installation process');
-    processManager.startCommand(cmd,
-        { cwd: CHARMONY_COMPILER_DIR },
-        (err, stdout, stderr) => {
-            if (processManager.processesAreKilled) return;
-            OutputConsole.clear();
-            if (err) {
-                OutputConsole.println(err.message);
-                Message.error(err.message);
-                return;
-            }
-            if (stderr) {
-                OutputConsole.println(stderr);
-                Message.error(stderr);
-                return;
-            }
-            if (stdout) {
-                OutputConsole.println(stdout);
-                Message.info(stdout);
-            }
-            Message.info('Installed Harmony locally');
-            setHarmonyLibraryPath(CHARMONY_COMPILER_DIR);
+    processManager.startCommand(INSTALL_HARMONY_COMMAND, {}, (err, stdout, stderr) => {
+        if (processManager.processesAreKilled) return;
+        OutputConsole.clear();
+        if (err) {
+            OutputConsole.println(err.message);
+            Message.error(err.message);
+            return;
         }
-    );
+        if (stderr) {
+            OutputConsole.println(stderr);
+            Message.error(stderr);
+            return;
+        }
+        if (stdout) {
+            OutputConsole.println(stdout);
+            Message.info(stdout);
+        }
+        Message.info('Installed Harmony locally');
+        buildHarmonyModelChecker();
+    });
 }
 
 /**
@@ -385,12 +314,6 @@ export async function runHarmony(
         if (error) {
             OutputConsole.println(error.message);
             Message.error(error.message);
-            return;
-        }
-        if (stderr) {
-            OutputConsole.println(stderr);
-            CharmonyPanelController_v2.currentPanel?.updateMessage('See Output Panel for details.');
-            OutputConsole.show();
             return;
         }
         OutputConsole.println(stdout);
