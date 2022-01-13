@@ -252,11 +252,11 @@ export function installHarmony() {
             Message.error(err.message);
             return;
         }
-        if (stderr) {
-            OutputConsole.println(stderr);
-            Message.error(stderr);
-            return;
-        }
+        // if (stderr) {
+        //     OutputConsole.println(stderr);
+        //     Message.error(stderr);
+        //     return;
+        // }
         if (stdout) {
             OutputConsole.println(stdout);
             Message.info(stdout);
