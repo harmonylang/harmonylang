@@ -303,9 +303,15 @@ export async function runHarmony(
         }
         return;
     }
+    if (vscode.workspace.textDocuments.length === 0) {
+        Message.error("No files are opened. Cannot run Harmony.");
+        return;
+    }
     const charmonyCompileCommand = [harmonyScript, ...flagArgs, fullFileName];
     Message.info("Running Harmony...");
-    processManager.startCommand(charmonyCompileCommand, {}, (error, stdout, stderr) => {
+    processManager.startCommand(charmonyCompileCommand, {
+        cwd: path.dirname(vscode.workspace.textDocuments[0].uri.fsPath)
+    }, (error, stdout, stderr) => {
         if (processManager.processesAreKilled) {
             return;
         }
