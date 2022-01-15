@@ -15,7 +15,7 @@ export const INSTALL_HARMONY_COMMAND = [
     "install",
     "-i", "https://test.pypi.org/simple/",
     "--extra-index-url", "https://pypi.org/simple",
-    "harmony-model-checker==0.0.20a15"
+    "harmony-model-checker==0.0.20a21"
 ];
 export const HARMONY_DIRECTORY = path.join(HOME_DIRECTORY, ".harmony-model-checker");
 
