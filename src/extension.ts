@@ -17,6 +17,7 @@ import {
     ServerOptions,
     TransportKind
 } from 'vscode-languageclient/node';
+import * as which from 'which';
 
 const processManager = ProcessManagerImpl.init();
 
@@ -24,41 +25,45 @@ function getHarmonyLangConfiguration() {
     return vscode.workspace.getConfiguration('harmonylang');
 }
 
-function getPythonPath() {
+async function getPythonCommandPath(): Promise<string | null> {
     const actualPythonPath = vscode.workspace.getConfiguration('python').get('pythonPath');
+    if (typeof actualPythonPath === 'string' && fs.existsSync(actualPythonPath)) {
+        return actualPythonPath;
+    }
 
     const config = getHarmonyLangConfiguration();
     const harmonyPythonPath = config.get('pythonPath');
-
-    return harmonyPythonPath || actualPythonPath;
-}
-
-function getWhichCommand() {
-    switch (process.platform) {
-        case "win32":
-            return "where";
-        default:
-            return "which";
+    if (typeof harmonyPythonPath === 'string' && fs.existsSync(harmonyPythonPath)) {
+        return harmonyPythonPath;
     }
+
+    return which("python3")
+        .catch(() => which('python'))
+        .catch(() => null);
 }
 
 async function getHarmonyCommandPath(): Promise<string | null> {
     const config = getHarmonyLangConfiguration();
     const commandPath = config.get('commandPath');
     if (typeof commandPath === 'string' && fs.existsSync(commandPath)) {
-        return Promise.resolve(commandPath);
+        return commandPath;
     }
-    const whichCmd = getWhichCommand();
-    return new Promise<string | null>((resolve, reject) => {
-        processManager.startCommand([whichCmd, "harmony"], {}, (err, stdout) => {
-            if (err) {
-                resolve(null);
-            }
-            const cmdPath = stdout.trim();
-            config.update('commandPath', cmdPath);
-            resolve(stdout.trim());
-        });
-    });
+    try {
+        const cmdPath = await which("harmony");
+        config.update('commandPath', cmdPath);
+        return cmdPath;
+    } catch {
+        const installPath = await getPythonInstallScriptPath();
+        if (!installPath) {
+            return null;
+        }
+        const possibleHarmonyPath = path.join(installPath, "harmony");
+        if (fs.existsSync(possibleHarmonyPath)) {
+            config.update('commandPath', possibleHarmonyPath);
+            return possibleHarmonyPath;
+        }
+        return null;
+    }
 }
 
 function getActiveFilename() {
@@ -215,14 +220,33 @@ function onReceivingIntermediateJSON(results: IntermediateJson) {
     }
 }
 
+async function getPythonInstallScriptPath(): Promise<string | null> {
+    const pythonCommand = await getPythonCommandPath();
+    if (!pythonCommand) return null;
+
+    const command = [pythonCommand, "-c", 'import os,sysconfig;print(sysconfig.get_path("scripts",f"{os.name}_user"))'];
+    return new Promise((resolve) => {
+        processManager.startCommand(command, {}, (err, stdout) => {
+            if (err) {
+                return resolve(null);
+            }
+            const possibleInstallPath = stdout.trim();
+            if (!fs.existsSync(possibleInstallPath)) {
+                return resolve(null);
+            }
+            return resolve(possibleInstallPath);
+        });
+    });
+}
+
 export async function buildHarmonyModelChecker() {
     Message.info("Building model checker");
     const cmdPath = await getHarmonyCommandPath();
     if (!cmdPath) {
-        Message.error("Failed to find Harmony command");
+        Message.error("Failed to find Harmony command. Check that the `harmony` command is available in PATH.");
         return;
     }
-    processManager.startCommand([cmdPath, "--build-model-checker"], {}, (err, stdout, stderr) => {
+    processManager.startCommand([cmdPath, "--build-model-checker"], {}, (err, stdout) => {
         if (processManager.processesAreKilled) return;
         if (err) {
             OutputConsole.println(err.message);
@@ -252,11 +276,6 @@ export function installHarmony() {
             Message.error(err.message);
             return;
         }
-        // if (stderr) {
-        //     OutputConsole.println(stderr);
-        //     Message.error(stderr);
-        //     return;
-        // }
         if (stdout) {
             OutputConsole.println(stdout);
             Message.info(stdout);

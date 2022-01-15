@@ -28,7 +28,7 @@
     ],
     "main": "./out/extension.js",
     "capabilities": {
-        "hoverProvider" : "true"
+        "hoverProvider": "true"
     },
     "contributes": {
         "configuration": {
@@ -44,7 +44,10 @@
                     "description": "Python 3 installation path"
                 },
                 "harmonylang.commandPath": {
-                    "type": ["string", "null"],
+                    "type": [
+                        "string",
+                        "null"
+                    ],
                     "scope": "machine-overridable",
                     "default": null,
                     "description": "Path of the Harmony command"
@@ -138,6 +141,7 @@
         "@types/rimraf": "^3.0.0",
         "@types/tmp": "^0.2.0",
         "@types/vscode": "^1.34.0",
+        "@types/which": "^2.0.1",
         "@typescript-eslint/eslint-plugin": "^3.0.2",
         "@typescript-eslint/parser": "^3.0.2",
         "eslint": "^7.24.0",
@@ -165,6 +169,7 @@
         "typescript": "^4.1.3",
         "vscode-languageclient": "^7.0.0",
         "vscode-languageserver": "^7.0.0",
-        "vscode-languageserver-textdocument": "^1.0.1"
+        "vscode-languageserver-textdocument": "^1.0.1",
+        "which": "^2.0.2"
     }
 }
