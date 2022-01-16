@@ -89,15 +89,15 @@
                 "title": "Run Harmony"
             },
             {
-                "command": "harmonylang.addLibrary",
-                "title": "Add Harmony Library Path"
-            },
-            {
                 "command": "harmonylang.install",
                 "title": "Install Harmony"
             },
             {
-                "command": "harmonylang-flag.run",
+                "command": "harmonylang.build-model-checker",
+                "title": "Build Model Checker"
+            },
+            {
+                "command": "harmonylang.run-with-flags",
                 "title": "Run Harmony with Flags"
             },
             {

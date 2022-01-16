@@ -17,7 +17,7 @@ export default class SystemCommands {
         }
         try {
             const cmdPath = await which("harmony");
-            config.update('commandPath', cmdPath);
+            config.update('commandPath', cmdPath, true);
             return cmdPath;
         } catch {
             const installPath = await SystemCommands.getPythonInstallScriptPath();
@@ -26,7 +26,7 @@ export default class SystemCommands {
             }
             const possibleHarmonyPath = path.join(installPath, "harmony");
             if (fs.existsSync(possibleHarmonyPath)) {
-                config.update('commandPath', possibleHarmonyPath);
+                config.update('commandPath', possibleHarmonyPath, true);
                 return possibleHarmonyPath;
             }
             return null;

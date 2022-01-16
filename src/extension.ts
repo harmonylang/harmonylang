@@ -61,8 +61,20 @@ export const activate = (context: vscode.ExtensionContext) => {
         }
     );
 
+    const buildModelCheckerCmd = vscode.commands.registerCommand(
+        'harmonylang.build-model-checker',
+        async () => {
+            runBuildHarmonyModelChecker()
+                .then(() => Message.info('Model Checker Built'))
+                .catch(e => {
+                    OutputConsole.println(JSON.stringify(e));
+                    Message.error('Build Model Checker failed. See the console log in the DevTools for more error outputs.');
+                })
+        }
+    );
+
     const runHarmonyWithFlagsCommand = vscode.commands.registerCommand(
-        'harmonylang-flag.run',
+        'harmonylang.run-with-flags',
         async () => {
             const filename = getActiveFilename();
             if (!filename) {
@@ -87,6 +99,7 @@ export const activate = (context: vscode.ExtensionContext) => {
 
     context.subscriptions.push(runHarmonyCommand);
     context.subscriptions.push(installHarmonyCmd);
+    context.subscriptions.push(buildModelCheckerCmd);
     context.subscriptions.push(runHarmonyWithFlagsCommand);
     context.subscriptions.push(endHarmonyProcessesCommand);
 
