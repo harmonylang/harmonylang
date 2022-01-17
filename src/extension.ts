@@ -36,7 +36,7 @@ export const activate = (context: vscode.ExtensionContext) => {
         () => {
             const filename = getActiveFilename();
             if (!filename) {
-                Message.error("No Harmony file opened.");
+                Message.error('No Harmony file opened.');
                 return;
             }
             try {
@@ -69,7 +69,7 @@ export const activate = (context: vscode.ExtensionContext) => {
                 .catch(e => {
                     OutputConsole.println(JSON.stringify(e));
                     Message.error('Build Model Checker failed. See the console log in the DevTools for more error outputs.');
-                })
+                });
         }
     );
 
@@ -78,7 +78,7 @@ export const activate = (context: vscode.ExtensionContext) => {
         async () => {
             const filename = getActiveFilename();
             if (!filename) {
-                Message.error("No Harmony file opened.");
+                Message.error('No Harmony file opened.');
                 return;
             }
             const options: vscode.InputBoxOptions = {

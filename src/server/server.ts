@@ -169,7 +169,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     }
 
     let harmonyFile = fileUriToPath(textDocument.uri);
-    child_process.execFile(harmonyScript, ['-p', harmonyFile], () => {
+    child_process.execFile(harmonyScript, ['-p', harmonyFile, '--noweb'], () => {
             // Possibly a parsing error.
         const dirname = path.dirname(harmonyFile);
         const basename = path.basename(harmonyFile, path.extname(harmonyFile));

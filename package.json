@@ -24,7 +24,7 @@
     },
     "license": "MIT",
     "activationEvents": [
-        "*"
+        "onLanguage:harmony"
     ],
     "main": "./out/extension.js",
     "capabilities": {

@@ -37,11 +37,13 @@ function parseOptions(options?: string): string[] {
 }
 
 
-function onReceivingIntermediateJSON(results: IntermediateJson) {
+function onReceivingIntermediateJSON(results: IntermediateJson, gvOutput: string) {
     if (results != null && results.issue != null && results.issue != 'No issues') {
         CharmonyPanelController_v2.currentPanel?.updateResults(results);
     } else {
         CharmonyPanelController_v2.currentPanel?.updateMessage('No Errors Found.');
+        if (gvOutput != '')
+            CharmonyPanelController_v2.currentPanel?.updateGraphView(gvOutput);
     }
 }
 
@@ -87,7 +89,7 @@ function onReceivingIntermediateJSON(results: IntermediateJson) {
         Message.error("No files are opened. Cannot run Harmony.");
         return;
     }
-    const charmonyCompileCommand = [harmonyScript, ...flagArgs, fullFileName];
+    const charmonyCompileCommand = [harmonyScript, ...flagArgs, fullFileName, '--noweb'];
     Message.info("Running Harmony...");
     ProcessManager.startCommand(charmonyCompileCommand, {
         cwd: path.dirname(vscode.workspace.textDocuments[0].uri.fsPath)
@@ -110,10 +112,22 @@ function onReceivingIntermediateJSON(results: IntermediateJson) {
             const CHARMONY_JSON_OUTPUT = path.join(
                 dirname, basename.slice(0, basename.length - extname.length) + '.hco'
             );
+            const CHARMONY_GV_OUTPUT = path.join(
+                dirname, basename.slice(0, basename.length - extname.length) + '.gv'
+            );
             const results: IntermediateJson = JSON.parse(fs.readFileSync(CHARMONY_JSON_OUTPUT, {
                 encoding: 'utf-8'
             }));
-            onReceivingIntermediateJSON(results);
+            let gvOutput = '';
+            try {
+                gvOutput = fs.readFileSync(CHARMONY_GV_OUTPUT, {
+                    encoding: 'utf-8'
+                });
+            } catch (err) {
+                if (err instanceof Error)
+                    OutputConsole.println(err.message);
+            }
+            onReceivingIntermediateJSON(results, gvOutput);
         } catch (error) {
             if (typeof error === 'string') {
                 OutputConsole.println(error);
