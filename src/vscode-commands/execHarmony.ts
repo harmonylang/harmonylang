@@ -4,7 +4,6 @@ import stringArgv from 'string-argv';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as os from 'os';
 
 import * as tmp from 'tmp';
 import CharmonyPanelController_v2 from '../outputPanel/PanelController_v2';
@@ -41,11 +40,13 @@ function parseOptions(options?: string): string[] {
 }
 
 
-function onReceivingIntermediateJSON(results: IntermediateJson) {
+function onReceivingIntermediateJSON(results: IntermediateJson, gvOutput: string) {
     if (results != null && results.issue != null && results.issue != 'No issues') {
         CharmonyPanelController_v2.currentPanel?.updateResults(results);
     } else {
         CharmonyPanelController_v2.currentPanel?.updateMessage('No Errors Found.');
+        if (gvOutput != '')
+            CharmonyPanelController_v2.currentPanel?.updateGraphView(gvOutput);
     }
 }
 
@@ -95,6 +96,7 @@ function onReceivingIntermediateJSON(results: IntermediateJson) {
     const hvmFilename = tmpFilename + ".hvm"
     const hcoFilename = tmpFilename + ".hco"
     const htmFilename = tmpFilename + ".htm"
+    const gvFilename = tmpFilename + ".gv"
 
     const charmonyCompileCommand = [
         harmonyScript,
@@ -102,6 +104,8 @@ function onReceivingIntermediateJSON(results: IntermediateJson) {
         "-o", hvmFilename,
         "-o", hcoFilename,
         "-o", htmFilename,
+        "-o", gvFilename,
+        '--noweb',
         fullFileName
     ];
 
@@ -122,7 +126,14 @@ function onReceivingIntermediateJSON(results: IntermediateJson) {
         }
         try {
             const results: IntermediateJson = JSON.parse(fs.readFileSync(hcoFilename, 'utf-8'));
-            onReceivingIntermediateJSON(results);
+            let gvOutput = '';
+            try {
+                gvOutput = fs.readFileSync(gvFilename, "utf-8");
+            } catch (err) {
+                if (err instanceof Error)
+                    OutputConsole.println(err.message);
+            }
+            onReceivingIntermediateJSON(results, gvOutput);
         } catch (error) {
             if (typeof error === 'string') {
                 OutputConsole.println(error);

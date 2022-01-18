@@ -70,6 +70,11 @@ export default class CharmonyPanelController_v2 {
         const webview = this.panel.webview;
         webview.postMessage({ command: 'message', jsonData: message });
     }
+    
+    public updateGraphView(gvOutput: string) {
+        const webview = this.panel.webview;
+        webview.postMessage({ command: 'load-graph', gvData: gvOutput });
+    }
 
     public dispose() {
         CharmonyPanelController_v2.currentPanel = undefined;
