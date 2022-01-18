@@ -1,8 +1,12 @@
 import { ArgumentParser } from 'argparse';
 import stringArgv from 'string-argv';
+
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as os from 'os';
+
+import * as tmp from 'tmp';
 import CharmonyPanelController_v2 from '../outputPanel/PanelController_v2';
 import Message from '../vscode/Message';
 import OutputConsole from '../vscode/OutputConsole';
@@ -87,11 +91,24 @@ function onReceivingIntermediateJSON(results: IntermediateJson) {
         Message.error("No files are opened. Cannot run Harmony.");
         return;
     }
-    const charmonyCompileCommand = [harmonyScript, ...flagArgs, fullFileName];
+    const tmpFilename = tmp.tmpNameSync();
+    const hvmFilename = tmpFilename + ".hvm"
+    const hcoFilename = tmpFilename + ".hco"
+    const htmFilename = tmpFilename + ".htm"
+
+    const charmonyCompileCommand = [
+        harmonyScript,
+        ...flagArgs,
+        "-o", hvmFilename,
+        "-o", hcoFilename,
+        "-o", htmFilename,
+        fullFileName
+    ];
+
     Message.info("Running Harmony...");
     ProcessManager.startCommand(charmonyCompileCommand, {
         cwd: path.dirname(vscode.workspace.textDocuments[0].uri.fsPath)
-    }, (error, stdout, stderr) => {
+    }, (error, stdout) => {
         CharmonyPanelController_v2.currentPanel?.startLoading();
         OutputConsole.clear();
         if (error) {
@@ -104,15 +121,7 @@ function onReceivingIntermediateJSON(results: IntermediateJson) {
             return CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
         }
         try {
-            const dirname = path.dirname(fullFileName);
-            const basename = path.basename(fullFileName);
-            const extname = path.extname(fullFileName);
-            const CHARMONY_JSON_OUTPUT = path.join(
-                dirname, basename.slice(0, basename.length - extname.length) + '.hco'
-            );
-            const results: IntermediateJson = JSON.parse(fs.readFileSync(CHARMONY_JSON_OUTPUT, {
-                encoding: 'utf-8'
-            }));
+            const results: IntermediateJson = JSON.parse(fs.readFileSync(hcoFilename, 'utf-8'));
             onReceivingIntermediateJSON(results);
         } catch (error) {
             if (typeof error === 'string') {
