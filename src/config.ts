@@ -13,9 +13,7 @@ const HOME_DIRECTORY = path.resolve(os.homedir());
 export const INSTALL_HARMONY_COMMAND = [
     "pip",
     "install",
-    "-i", "https://test.pypi.org/simple/",
-    "--extra-index-url", "https://pypi.org/simple",
-    "harmony-model-checker==0.0.20a21"
+    "harmony-model-checker"
 ];
 export const HARMONY_DIRECTORY = path.join(HOME_DIRECTORY, ".harmony-model-checker");
 
