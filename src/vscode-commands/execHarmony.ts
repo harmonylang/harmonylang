@@ -44,9 +44,9 @@ function onReceivingIntermediateJSON(results: IntermediateJson, gvOutput: string
     if (results != null && results.issue != null && results.issue != 'No issues') {
         CharmonyPanelController_v2.currentPanel?.updateResults(results);
     } else {
-        CharmonyPanelController_v2.currentPanel?.updateMessage('No Errors Found.');
         if (gvOutput != '')
             CharmonyPanelController_v2.currentPanel?.updateGraphView(gvOutput);
+        CharmonyPanelController_v2.currentPanel?.updateMessage('No Errors Found.');
     }
 }
 
@@ -115,20 +115,17 @@ function onReceivingIntermediateJSON(results: IntermediateJson, gvOutput: string
     }, (error, stdout) => {
         CharmonyPanelController_v2.currentPanel?.startLoading();
         OutputConsole.clear();
+        OutputConsole.println(stdout);
         if (error) {
             OutputConsole.println(error.message);
             Message.error(error.message);
-            return;
-        }
-        OutputConsole.println(stdout);
-        if (error) {
             return CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
         }
         try {
             const results: IntermediateJson = JSON.parse(fs.readFileSync(hcoFilename, 'utf-8'));
             let gvOutput = '';
             try {
-                gvOutput = fs.readFileSync(gvFilename, "utf-8");
+                gvOutput = fs.readFileSync(gvFilename, 'utf-8');
             } catch (err) {
                 if (err instanceof Error)
                     OutputConsole.println(err.message);
