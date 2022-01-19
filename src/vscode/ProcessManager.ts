@@ -60,7 +60,7 @@ export default class ProcessManager {
     private static endCommand(id: string) {
         if (ProcessManager.runningCommands[id] != null) {
             if (!ProcessManager.runningCommands[id].killed) {
-                ProcessManager.runningCommands[id].kill('SIGKILL');
+                ProcessManager.runningCommands[id].kill('SIGINT');
             }
             delete ProcessManager.runningCommands[id];
             ProcessManager.commandCount--;
@@ -72,7 +72,7 @@ export default class ProcessManager {
         const commands = Object.keys(ProcessManager.runningCommands);
         commands.forEach((cmdId) => {
             if (!ProcessManager.runningCommands[cmdId].killed)
-                ProcessManager.runningCommands[cmdId].kill();
+                ProcessManager.runningCommands[cmdId].kill('SIGINT');
         });
         const intervals = Object.keys(ProcessManager.runningIntervals);
         intervals.forEach((intervalId) => {
