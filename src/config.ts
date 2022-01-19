@@ -13,6 +13,7 @@ const HOME_DIRECTORY = path.resolve(os.homedir());
 export const INSTALL_HARMONY_COMMAND = [
     "pip",
     "install",
+    "--upgrade",
     "harmony-model-checker"
 ];
 export const HARMONY_DIRECTORY = path.join(HOME_DIRECTORY, ".harmony-model-checker");
