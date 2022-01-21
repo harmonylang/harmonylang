@@ -9,23 +9,14 @@ import ProcessManager from '../vscode/ProcessManager';
  * then delete the existing installation and re-install.
  */
 export default async function runInstall() {
-    try {
-        Message.info('Starting installation process');
+    return new Promise<string>((resolve, reject) => {
         ProcessManager.startCommand(INSTALL_HARMONY_COMMAND, {}, (err, stdout) => {
             OutputConsole.clear();
             if (err) {
-                OutputConsole.println(err.message);
-                Message.error(err.message);
+                reject(err);
                 return;
             }
-            if (stdout) {
-                OutputConsole.println(stdout);
-                Message.info(stdout);
-            }
-            Message.info('Installed Harmony locally');
+            resolve(stdout);
         });
-    } catch (e) {
-        OutputConsole.println(JSON.stringify(e));
-        Message.error('Install Harmony failed. See the console log in the DevTools for more error outputs.');
-    }
+    });
 }

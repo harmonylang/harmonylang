@@ -95,7 +95,7 @@
 				},
 				{
 					"name": "keyword.control.flow.harmony",
-					"match": "(?x)\n  \\b(?<!\\.)( where | invariant | atomically | del | assert | possibly | let | for | elif | else | if | pass | while )\\b\n"
+					"match": "(?x)\n  \\b(?<!\\.)( where | invariant | atomically | del | var | assert | possibly | let | when | for | elif | else | if | pass | while )\\b\n"
 				}
 			]
 		},
@@ -948,7 +948,7 @@
 		"builtin-functions": {
 			"patterns": [{
 				"name": "support.function.builtin.harmony",
-				"match": "(?x)\n  (?<!\\.) \\b( all | any | go | hash | inf | keys | len | max | min | nametag | setintlevel | stop | atLabel | spawn | trap | choose)\\b"
+				"match": "(?x)\n  (?<!\\.) \\b( all | any | go | hash | inf | keys | len | max | min | nametag | setintlevel | stop | atLabel | spawn | print | trap | choose)\\b"
 			}]
 		},
 		"builtin-types": {

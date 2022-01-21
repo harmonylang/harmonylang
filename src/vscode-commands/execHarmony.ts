@@ -119,17 +119,18 @@ function onReceivingIntermediateJSON(results: IntermediateJson, gvOutput: string
         if (error) {
             OutputConsole.println(error.message);
             Message.error(error.message);
-            return CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
+            CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
+            return;
+        }
+        const results: IntermediateJson = JSON.parse(fs.readFileSync(hcoFilename, 'utf-8'));
+        let gvOutput = '';
+        try {
+            gvOutput = fs.readFileSync(gvFilename, 'utf-8');
+        } catch (err) {
+            if (err instanceof Error)
+                OutputConsole.println(err.message);
         }
         try {
-            const results: IntermediateJson = JSON.parse(fs.readFileSync(hcoFilename, 'utf-8'));
-            let gvOutput = '';
-            try {
-                gvOutput = fs.readFileSync(gvFilename, 'utf-8');
-            } catch (err) {
-                if (err instanceof Error)
-                    OutputConsole.println(err.message);
-            }
             onReceivingIntermediateJSON(results, gvOutput);
         } catch (error) {
             if (typeof error === 'string') {
@@ -139,5 +140,4 @@ function onReceivingIntermediateJSON(results: IntermediateJson, gvOutput: string
             CharmonyPanelController_v2.currentPanel?.updateMessage('Could not create analysis file.');
         }
     });
-    return;
 }

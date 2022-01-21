@@ -6,6 +6,7 @@ import {IntermediateJson} from '../charmony/types/IntermediateJson';
 import { parse } from '../charmony';
 import * as path from 'path';
 import isOnline = require('is-online');
+import Message from '../vscode/Message';
 
 export default class CharmonyPanelController_v2 {
     public static currentPanel: CharmonyPanelController_v2 | undefined;
@@ -106,7 +107,9 @@ export default class CharmonyPanelController_v2 {
                 });
             } catch (err) {
                 console.log(err);
-                vscode.window.showInformationMessage(err.message);
+                if (err instanceof Error) {
+                    Message.error(err.message);
+                }
             }
         }
         if (data != null) {
