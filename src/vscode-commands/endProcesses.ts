@@ -1,5 +1,5 @@
-import Message from "../vscode/Message";
-import ProcessManager from "../vscode/ProcessManager";
+import Message from '../vscode/Message';
+import ProcessManager from '../vscode/ProcessManager';
 
 /**
  * Ends all processes monitored by the Harmony process manager.

@@ -58,7 +58,7 @@ function onReceivingIntermediateJSON(results: IntermediateJson, gvOutput: string
  * @param flags Additional flags that are passed into the Harmony compiler.
  * @returns
  */
- export default async function runHarmony(
+export default async function runHarmony(
     context: vscode.ExtensionContext,
     fullFileName: string,
     flags?: string
@@ -89,27 +89,27 @@ function onReceivingIntermediateJSON(results: IntermediateJson, gvOutput: string
         return;
     }
     if (vscode.workspace.textDocuments.length === 0) {
-        Message.error("No files are opened. Cannot run Harmony.");
+        Message.error('No files are opened. Cannot run Harmony.');
         return;
     }
     const tmpFilename = tmp.tmpNameSync();
-    const hvmFilename = tmpFilename + ".hvm"
-    const hcoFilename = tmpFilename + ".hco"
-    const htmFilename = tmpFilename + ".htm"
-    const gvFilename = tmpFilename + ".gv"
+    const hvmFilename = tmpFilename + '.hvm';
+    const hcoFilename = tmpFilename + '.hco';
+    const htmFilename = tmpFilename + '.htm';
+    const gvFilename = tmpFilename + '.gv';
 
     const charmonyCompileCommand = [
         harmonyScript,
         ...flagArgs,
-        "-o", hvmFilename,
-        "-o", hcoFilename,
-        "-o", htmFilename,
-        "-o", gvFilename,
+        '-o', hvmFilename,
+        '-o', hcoFilename,
+        '-o', htmFilename,
+        '-o', gvFilename,
         '--noweb',
         fullFileName
     ];
 
-    Message.info("Running Harmony...");
+    Message.info('Running Harmony...');
     ProcessManager.startCommand(charmonyCompileCommand, {
         cwd: path.dirname(vscode.workspace.textDocuments[0].uri.fsPath)
     }, (error, stdout) => {

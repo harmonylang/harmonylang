@@ -16,7 +16,7 @@ export default class SystemCommands {
             return commandPath;
         }
         try {
-            const cmdPath = await which("harmony");
+            const cmdPath = await which('harmony');
             config.update('commandPath', cmdPath, true);
             return cmdPath;
         } catch {
@@ -24,7 +24,7 @@ export default class SystemCommands {
             if (!installPath) {
                 return null;
             }
-            const possibleHarmonyPath = path.join(installPath, "harmony");
+            const possibleHarmonyPath = path.join(installPath, 'harmony');
             if (fs.existsSync(possibleHarmonyPath)) {
                 config.update('commandPath', possibleHarmonyPath, true);
                 return possibleHarmonyPath;
@@ -40,7 +40,7 @@ export default class SystemCommands {
             return actualPythonPath;
         }
 
-        const anotherPossiblePythonPath = vscode.workspace.getConfiguration("python").get("defaultInterpreterPath");
+        const anotherPossiblePythonPath = vscode.workspace.getConfiguration('python').get('defaultInterpreterPath');
         if (typeof anotherPossiblePythonPath === 'string' && fs.existsSync(anotherPossiblePythonPath)) {
             return anotherPossiblePythonPath;
         }
@@ -51,7 +51,7 @@ export default class SystemCommands {
             return harmonyPythonPath;
         }
     
-        return which("python3")
+        return which('python3')
             .catch(() => which('python'))
             .catch(() => null);
     }
@@ -60,7 +60,7 @@ export default class SystemCommands {
         const pythonCommand = await SystemCommands.getPythonCommandPath();
         if (!pythonCommand) return null;
     
-        const command = [pythonCommand, "-c", 'import os,sysconfig;print(sysconfig.get_path("scripts",f"{os.name}_user"))'];
+        const command = [pythonCommand, '-c', 'import os,sysconfig;print(sysconfig.get_path("scripts",f"{os.name}_user"))'];
         return new Promise((resolve) => {
             ProcessManager.startCommand(command, {}, (err, stdout) => {
                 if (err) {

@@ -12,7 +12,7 @@ export default async function runInstall() {
         ProcessManager.startCommand(INSTALL_HARMONY_COMMAND, {}, (err, stdout, stderr) => {
             OutputConsole.clear();
             if (err) {
-                reject(stdout + "\n\n" + stderr);
+                reject(stdout + '\n\n' + stderr);
                 return;
             }
             resolve(stdout);

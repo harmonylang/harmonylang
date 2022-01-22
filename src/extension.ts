@@ -54,7 +54,7 @@ export const activate = (context: vscode.ExtensionContext) => {
             runInstall()
                 .then(msg => OutputConsole.println(msg))
                 .catch((errMessage: string) => {
-                    Message.error("Failed to install Harmony using pip");
+                    Message.error('Failed to install Harmony using pip');
                     Message.error(errMessage);
                     OutputConsole.println(errMessage);
                     OutputConsole.show();
@@ -101,7 +101,7 @@ export const activate = (context: vscode.ExtensionContext) => {
     runInstall()
         .then(msg => OutputConsole.println(msg))
         .catch((errMessage: string) => {
-            Message.error("Failed to install Harmony using pip");
+            Message.error('Failed to install Harmony using pip');
             Message.error(errMessage);
             OutputConsole.println(errMessage);
             OutputConsole.show();

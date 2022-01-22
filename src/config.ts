@@ -11,12 +11,12 @@ export const EXAMPLE_CHARM_JSON = path.join(RESOURCE_DIR, 'charm-example.json');
 
 const HOME_DIRECTORY = path.resolve(os.homedir());
 export const INSTALL_HARMONY_COMMAND = [
-    "pip",
-    "install",
-    "--upgrade",
-    "harmony-model-checker"
+    'pip',
+    'install',
+    '--upgrade',
+    'harmony-model-checker'
 ];
-export const HARMONY_DIRECTORY = path.join(HOME_DIRECTORY, ".harmony-model-checker");
+export const HARMONY_DIRECTORY = path.join(HOME_DIRECTORY, '.harmony-model-checker');
 
 export const CHARMONY_COMPILER_DIR = path.join(HARMONY_DIRECTORY, 'harmony-compiler');
 export const CHARMONY_SCRIPT_PATH = path.join(CHARMONY_COMPILER_DIR, 'harmony');

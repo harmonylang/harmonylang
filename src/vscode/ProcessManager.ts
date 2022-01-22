@@ -1,13 +1,11 @@
 import * as child_process from 'child_process';
-import Message from './Message';
 
 export default class ProcessManager {
-    private constructor() {}
     private static runningIntervals: Record<string, NodeJS.Timeout> = {};
-    private static intervalCount: number = 0;
+    private static intervalCount = 0;
     private static runningCommands: Record<string, child_process.ChildProcess> = {};
-    private static commandCount: number = 0;
-    private static processesAreKilled: boolean = false
+    private static commandCount = 0;
+    private static processesAreKilled = false
 
     public static startCommand(
         cmd: string[],
@@ -30,7 +28,7 @@ export default class ProcessManager {
         ProcessManager.runningCommands[id] = process;
         ProcessManager.commandCount++;
         return id;
-    };
+    }
 
     public static startInterval(callback: (...args: any[]) => void, ms: number, ...args: any[]): string {
         ProcessManager.processesAreKilled = false;
@@ -38,7 +36,7 @@ export default class ProcessManager {
         ProcessManager.runningIntervals[id] = setInterval(callback, ms, ...args);
         ProcessManager.intervalCount++;
         return id;
-    };
+    }
 
     public static end(id: string): void {
         const processType = id.substring(0, id.indexOf('_'));
@@ -48,7 +46,7 @@ export default class ProcessManager {
         case 'command':
             return ProcessManager.endCommand(id);
         }
-    };
+    }
 
     private static endInterval(id: string) {
         if (ProcessManager.runningIntervals[id] != null) {
@@ -85,5 +83,5 @@ export default class ProcessManager {
         ProcessManager.intervalCount = 0;
 
         return commands.length + intervals.length;
-    };
+    }
 }
