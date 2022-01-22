@@ -10,10 +10,10 @@ import ProcessManager from '../vscode/ProcessManager';
  */
 export default async function runInstall() {
     return new Promise<string>((resolve, reject) => {
-        ProcessManager.startCommand(INSTALL_HARMONY_COMMAND, {}, (err, stdout) => {
+        ProcessManager.startCommand(INSTALL_HARMONY_COMMAND, {}, (err, stdout, stderr) => {
             OutputConsole.clear();
             if (err) {
-                reject(err);
+                reject(stdout + "\n\n" + stderr);
                 return;
             }
             resolve(stdout);

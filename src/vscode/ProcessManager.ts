@@ -20,7 +20,7 @@ export default class ProcessManager {
     ): string {
         ProcessManager.processesAreKilled = false;
         const id = `command_${ProcessManager.commandCount}`;
-        const process = child_process.execFile(cmd[0], cmd.slice(1), (err, stdout, stderr) => {
+        const process = child_process.execFile(cmd[0], cmd.slice(1), options, (err, stdout, stderr) => {
             if (ProcessManager.processesAreKilled) return;
 
             delete ProcessManager.runningCommands[id];
