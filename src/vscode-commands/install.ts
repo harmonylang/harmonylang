@@ -1,5 +1,4 @@
 import { INSTALL_HARMONY_COMMAND } from '../config';
-import Message from '../vscode/Message';
 import OutputConsole from '../vscode/OutputConsole';
 import ProcessManager from '../vscode/ProcessManager';
 

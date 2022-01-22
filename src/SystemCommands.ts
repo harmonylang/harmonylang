@@ -39,6 +39,11 @@ export default class SystemCommands {
         if (typeof actualPythonPath === 'string' && fs.existsSync(actualPythonPath)) {
             return actualPythonPath;
         }
+
+        const anotherPossiblePythonPath = vscode.workspace.getConfiguration("python").get("defaultInterpreterPath");
+        if (typeof anotherPossiblePythonPath === 'string' && fs.existsSync(anotherPossiblePythonPath)) {
+            return anotherPossiblePythonPath;
+        }
     
         const config = SystemCommands.getHarmonyLangConfiguration();
         const harmonyPythonPath = config.get('pythonPath');
