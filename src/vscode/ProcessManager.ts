@@ -5,7 +5,7 @@ export default class ProcessManager {
     private constructor() {}
     private static runningIntervals: Record<string, NodeJS.Timeout> = {};
     private static intervalCount: number = 0;
-    private static runningCommands: Record<string, child_process.ChildProcessWithoutNullStreams> = {};
+    private static runningCommands: Record<string, child_process.ChildProcess> = {};
     private static commandCount: number = 0;
     private static processesAreKilled: boolean = false
 
@@ -20,29 +20,14 @@ export default class ProcessManager {
     ): string {
         ProcessManager.processesAreKilled = false;
         const id = `command_${ProcessManager.commandCount}`;
-        const spawnedProcess = child_process.spawn(cmd[0], cmd.slice(1), {stdio: "pipe", detached: true });
-        let stdout = "";
-        let stderr = "";
-        spawnedProcess.stdout.on("data", chunk => {
-            stdout += chunk.toString("utf-8");
-        });
-        spawnedProcess.stderr.on("data", chunk => {
-            stderr += chunk.toString("utf-8");
-        });
-        spawnedProcess.on("error", err => {
-            if (ProcessManager.processesAreKilled) return;
-            delete ProcessManager.runningCommands[id];
-            ProcessManager.commandCount--;
-            callback(err, stdout, stderr);
-        });
-        spawnedProcess.on("exit", () => {
+        const process = child_process.execFile(cmd[0], cmd.slice(1), (err, stdout, stderr) => {
             if (ProcessManager.processesAreKilled) return;
 
             delete ProcessManager.runningCommands[id];
             ProcessManager.commandCount--;
-            callback(null, stdout, stderr);
+            callback(err, stdout, stderr);
         });
-        ProcessManager.runningCommands[id] = spawnedProcess;
+        ProcessManager.runningCommands[id] = process;
         ProcessManager.commandCount++;
         return id;
     };
