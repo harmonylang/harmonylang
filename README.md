@@ -31,10 +31,6 @@ Same as `Run Harmony`, except an input prompt first appears to ask for any flags
 
 Installs the latest version of Harmony into the extension's directory. This requires `Python 3.6` (or higher) and a `C` compiler. Sets the directory where Harmony is installed as the extension's `libraryPath` configuration value.
 
-- `Add Harmony Library Path`
-
-Shows a File Explorer Dialog box to open a folder. The opened folder's path is set as the extension's `libraryPath` configuration value, which points to the directory containing a Harmony compiler/model-checker.
-
 - `End All Harmony Processes`
 
 Ends all processes created and managed by this extension. This includes running a Harmony program that does not terminate in a timely manner.
