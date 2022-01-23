@@ -181,8 +181,6 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
         '--noweb',
         '-o', hvmFilename,
         '-o', hcoFilename,
-        '-o', htmFilename,
-        '-o', gvFilename,
         harmonyFile,
     ];
 
