@@ -15,8 +15,9 @@ import SystemCommands from '../SystemCommands';
 
 
 const parser = new ArgumentParser();
-parser.add_argument('--const', '-c', { nargs: 1 });
-parser.add_argument('--module', '-m', { nargs: 1 });
+parser.add_argument('--const', '-c', { action: 'append' });
+parser.add_argument('--module', '-m', { action: 'append' });
+parser.add_argument('--intf', '-i', { nargs: 1 });
 
 /**
  * Parses a string which declares options to passed into the Harmony compiler.
@@ -34,9 +35,17 @@ function parseOptions(options?: string): string[] {
         const key = oddities[0];
         throw new Error('Invalid option used: ' + key);
     }
-    return Object.entries(ns).filter(([_, v]) => v != null).flatMap(([k, v]) => {
-        return [`--${k}`, (v as string[])[0]];
+    const flags: string[] = [];
+    ns.const?.forEach((arg: string) => {
+        flags.push('--const', arg);
     });
+    ns.module?.forEach((arg: string) => {
+        flags.push('--module', arg);
+    });
+    if (ns.intf) {
+        flags.push('--intf', ns.intf[0]);
+    }
+    return flags;
 }
 
 
@@ -110,6 +119,7 @@ export default async function runHarmony(
     ];
 
     Message.info('Running Harmony...');
+    console.log(flagArgs);
     ProcessManager.startCommand(charmonyCompileCommand, {
         cwd: path.dirname(vscode.workspace.textDocuments[0].uri.fsPath)
     }, (error, stdout) => {
