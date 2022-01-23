@@ -14,6 +14,7 @@ import {
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import * as child_process from 'child_process';
+import * as tmp from 'tmp';
 import _fileUriToPath = require('file-uri-to-path');
 import * as path from 'path';
 import * as fs from 'fs';
@@ -130,7 +131,7 @@ function getDocumentSettings(resource: string): Thenable<HarmonyExtensionSetting
     if (!result) {
         const r = connection.workspace.getConfiguration('harmonylang');
         return r.then(config => {
-            const result = {libraryPath: config.libraryPath, commandPath: config.commandPath};
+            const result = { libraryPath: config.libraryPath, commandPath: config.commandPath };
             documentSettings.set(resource, result);
             return result;
         });
@@ -169,7 +170,23 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     }
 
     const harmonyFile = fileUriToPath(textDocument.uri);
-    child_process.execFile(harmonyScript, ['-p', harmonyFile, '--noweb'], () => {
+    const tmpFilename = tmp.tmpNameSync();
+    const hvmFilename = tmpFilename + '.hvm';
+    const hcoFilename = tmpFilename + '.hco';
+    const htmFilename = tmpFilename + '.htm';
+    const gvFilename = tmpFilename + '.gv';
+
+    const args = [
+        '-p',
+        '--noweb',
+        '-o', hvmFilename,
+        '-o', hcoFilename,
+        '-o', htmFilename,
+        '-o', gvFilename,
+        harmonyFile,
+    ];
+
+    child_process.execFile(harmonyScript, args, () => {
         // Possibly a parsing error.
         const dirname = path.dirname(harmonyFile);
         const basename = path.basename(harmonyFile, path.extname(harmonyFile));
@@ -187,7 +204,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
             return;
         }
 
-        for (const {line, column, message, lexeme, is_eof_error} of analysis.errors) {
+        for (const { line, column, message, lexeme, is_eof_error } of analysis.errors) {
             let diagnostic: Diagnostic;
             if (line == null || column == null || lexeme == null || is_eof_error) {
                 const text = textDocument.getText();
@@ -201,7 +218,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
                     source: 'Harmony'
                 };
             } else {
-                const initialOffset = textDocument.offsetAt({ line: line - 1, character: column - 1});
+                const initialOffset = textDocument.offsetAt({ line: line - 1, character: column - 1 });
                 diagnostic = {
                     severity: DiagnosticSeverity.Error,
                     range: {
