@@ -4,6 +4,14 @@ All notable changes to the "harmonylang" extension will be documented in this fi
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+### [2.0.0] - 2022-01-23
+
+- Updated installation method to use `pip`
+- Added compatibility for graph visualization
+- Updated syntax highlighter
+- Removed build commands _(unneccesary for recent versions of Harmony)_
+- Bug fixes
+
 ## [1.1.0] - 2021-09-30
 
 - Added code autocompletion and error highlighting
