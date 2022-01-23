@@ -70,6 +70,10 @@
                     "Harmony",
                     "harmony"
                 ],
+                "icon": {
+                    "light": "./fileicons/harmony-light.svg",
+                    "dark": "./fileicons/harmony-dark.svg"
+                },
                 "extensions": [
                     ".hny"
                 ],
@@ -91,10 +95,6 @@
             {
                 "command": "harmonylang.install",
                 "title": "Install Harmony"
-            },
-            {
-                "command": "harmonylang.build-model-checker",
-                "title": "Build Model Checker"
             },
             {
                 "command": "harmonylang.run-with-flags",
