@@ -184,8 +184,6 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 
     child_process.execFile(harmonyScript, args, () => {
         // Possibly a parsing error.
-        const dirname = path.dirname(harmonyFile);
-        const basename = path.basename(harmonyFile, path.extname(harmonyFile));
         if (!fs.existsSync(hvmFilename) || !fs.statSync(hvmFilename).isFile()) {
             // No analysis file found
             connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
@@ -199,7 +197,12 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
             return;
         }
 
-        for (const { line, column, message, lexeme, is_eof_error } of analysis.errors) {
+        for (const { line, column, message, lexeme, is_eof_error, filename } of analysis.errors) {
+            if (filename != null && path.resolve(harmonyFile) != path.resolve(filename)) {
+                // This is an error caused by some other file. Ignore
+                continue;
+            }
+
             let diagnostic: Diagnostic;
             if (line == null || column == null || lexeme == null || is_eof_error) {
                 const text = textDocument.getText();
