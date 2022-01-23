@@ -12,7 +12,6 @@ HarmonyLang provides a powerful development environment for RvR's [Harmony](http
 The following values can be configured in a local or global `settings.json` file for VSCode.
 
 - `harmonylang.pythonPath`: Path to the Python interpreter
-- `harmonylang.libraryPath`: Path to the Harmony library, which has the compiler and the model-checker.
 
 ## Commands
 
@@ -42,36 +41,29 @@ Ends all processes created and managed by this extension. This includes running 
 
 ## Features
 
-Provides advanced syntax highlighting for all flow control, method definition, and literals based on the [default VSCode extension for Python](https://github.com/microsoft/vscode).
-
-Supported syntax:
-
-- Control statement keywords (`for`, `while`, `if`, `else`)
-- Literals (`True`, `None`, and numerics)
-- Assignment operators (`and=`, `//=`, and `mod=`)
-- Binary operators (`and`, `**`, and `>=`)
-- Comments (`#line` and `(* block *)`)
-
-> **Warning**: This release contains the Harmony 1.2 compiler. Code written for Harmony 1.2 may not be compatible with previous versions.
-
-![Syntax Highlighting](images/syntax-example.png)
+### Run Model Checking
 
 Run your Harmony files in VS Code. Press `Alt+Shift+N` to compile and run the current `.hny` file. Alternatively, press `Ctrl+Shift+P` and search `Run Harmony` to find the same command. Kill all running Harmony processes with `Alt+Shift+Q`.
 
 ![Command](images/command-example.png)
 
-See your Harmony Output results, right in VS Code!
+### Advanced Process Visualizer
+
+Trace the execution of a Harmony program from initialization to failure, examining threads, variables, and stack traces every step along the way.
 
 ![Harmony Output](images/build-example.gif)
 
-> Generated `harmony.html` files are saved to the extension's internal compiler.
+### Syntax & Error Highlighting
+
+Complete language support with realtime error messages.
+
+![Syntax Highlighting](images/syntax-example.png)
 
 ## Upcoming Features
 
 - Auto-formatter
   - Format on save
   - Format via `Alt+Shift+F`
-- Intellisense Support
 
 ## Developers
 
@@ -84,6 +76,14 @@ See your Harmony Output results, right in VS Code!
 You can find more information about the HarmonyLang extension project in [this document](https://docs.google.com/document/d/16pO-tNLfNebIAuqb_vy_z0dJyIFX_Nb-xYDXRfMqOfE/edit?usp=sharing). Furthermore, you can find the Harmony Python compiler, as well as additional documentation regarding the Harmony language, at this [link](http://harmony.cs.cornell.edu).
 
 ## Release Notes
+
+### 2.0.0
+
+- Updated installation method to use `pip`
+- Added compatibility for graph visualization
+- Updated syntax highlighter
+- Removed build commands _(unneccesary for recent versions of Harmony)_
+- Bug fixes
 
 ### 1.1.0
 
