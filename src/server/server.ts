@@ -173,8 +173,6 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     const tmpFilename = tmp.tmpNameSync();
     const hvmFilename = tmpFilename + '.hvm';
     const hcoFilename = tmpFilename + '.hco';
-    const htmFilename = tmpFilename + '.htm';
-    const gvFilename = tmpFilename + '.gv';
 
     const args = [
         '-p',
@@ -188,14 +186,13 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
         // Possibly a parsing error.
         const dirname = path.dirname(harmonyFile);
         const basename = path.basename(harmonyFile, path.extname(harmonyFile));
-        const analysisFile = path.join(dirname, basename + '.hvm');
-        if (!fs.existsSync(analysisFile) || !fs.statSync(analysisFile).isFile()) {
+        if (!fs.existsSync(hvmFilename) || !fs.statSync(hvmFilename).isFile()) {
             // No analysis file found
             connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
             return;
         }
 
-        const analysis = JSON.parse(fs.readFileSync(analysisFile, 'utf-8'));
+        const analysis = JSON.parse(fs.readFileSync(hvmFilename, 'utf-8'));
         if (analysis.status !== 'error') {
             // No errors
             connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
