@@ -3,7 +3,7 @@
     "displayName": "HarmonyLang",
     "description": "VS Code language support for Harmony, a Python-like concurrent programming language.",
     "icon": "images/harmonylang.png",
-    "version": "1.1.0",
+    "version": "2.0.0",
     "publisher": "kevinsun-dev-cornell",
     "repository": "https://github.com/kevinsun-dev/harmonylang",
     "engines": {
@@ -24,9 +24,12 @@
     },
     "license": "MIT",
     "activationEvents": [
-        "*"
+        "onLanguage:harmony"
     ],
     "main": "./out/extension.js",
+    "capabilities": {
+        "hoverProvider": "true"
+    },
     "contributes": {
         "configuration": {
             "title": "HarmonyLang",
@@ -39,6 +42,15 @@
                     "scope": "machine-overridable",
                     "default": null,
                     "description": "Python 3 installation path"
+                },
+                "harmonylang.commandPath": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "scope": "machine-overridable",
+                    "default": null,
+                    "description": "Path of the Harmony command"
                 },
                 "harmonylang.libraryPath": {
                     "type": [
@@ -58,6 +70,10 @@
                     "Harmony",
                     "harmony"
                 ],
+                "icon": {
+                    "light": "./fileicons/harmony-light.svg",
+                    "dark": "./fileicons/harmony-dark.svg"
+                },
                 "extensions": [
                     ".hny"
                 ],
@@ -77,15 +93,11 @@
                 "title": "Run Harmony"
             },
             {
-                "command": "harmonylang.addLibrary",
-                "title": "Add Harmony Library Path"
-            },
-            {
                 "command": "harmonylang.install",
                 "title": "Install Harmony"
             },
             {
-                "command": "harmonylang-flag.run",
+                "command": "harmonylang.run-with-flags",
                 "title": "Run Harmony with Flags"
             },
             {
@@ -129,6 +141,7 @@
         "@types/rimraf": "^3.0.0",
         "@types/tmp": "^0.2.0",
         "@types/vscode": "^1.34.0",
+        "@types/which": "^2.0.1",
         "@typescript-eslint/eslint-plugin": "^3.0.2",
         "@typescript-eslint/parser": "^3.0.2",
         "eslint": "^7.24.0",
@@ -156,6 +169,7 @@
         "typescript": "^4.1.3",
         "vscode-languageclient": "^7.0.0",
         "vscode-languageserver": "^7.0.0",
-        "vscode-languageserver-textdocument": "^1.0.1"
+        "vscode-languageserver-textdocument": "^1.0.1",
+        "which": "^2.0.2"
     }
 }

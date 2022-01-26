@@ -9,14 +9,32 @@ import {
     DidChangeConfigurationNotification,
     TextDocumentSyncKind,
     InitializeResult,
-    TextDocumentPositionParams
+    TextDocumentPositionParams,
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import * as child_process from 'child_process';
-import fileUriToPath = require('file-uri-to-path');
+import * as tmp from 'tmp';
+import _fileUriToPath = require('file-uri-to-path');
 import * as path from 'path';
 import * as fs from 'fs';
+
+function fileUriToPath(fileUri: string): string {
+    let p = _fileUriToPath(fileUri);
+    // Because of an odd behavior in VSCode's URI library,
+    // the colon in front of the drive-letter in Windows paths is encoded
+    // to %3A. The following is a workaround based on an implementation by [felixfbecker].
+    // Source: https://github.com/felixfbecker/php-language-server/commit/66b5176a43e1b2223ac87456e9753fc49692f10b
+    if (process.platform === 'win32') {
+        if (p.indexOf('%3A\\') >= 0) {
+            if (p[0] === '\\') {
+                p = p.slice(1);
+            }
+            p = p.replace('%3A', ':');
+        }
+    }
+    return p;
+}
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -79,12 +97,13 @@ connection.onInitialized(() => {
 
 interface HarmonyExtensionSettings {
     libraryPath: string | null;
+    commandPath: string | null;
 }
 
 // The global settings, used when the `workspace/configuration` request is not supported by the client.
 // Please note that this is not the case when using this server with the client provided in this example
 // but could happen with other clients.
-const defaultSettings: HarmonyExtensionSettings = { libraryPath: null };
+const defaultSettings: HarmonyExtensionSettings = { libraryPath: null, commandPath: null };
 let globalSettings: HarmonyExtensionSettings = defaultSettings;
 
 // Cache the settings of all open documents
@@ -112,7 +131,7 @@ function getDocumentSettings(resource: string): Thenable<HarmonyExtensionSetting
     if (!result) {
         const r = connection.workspace.getConfiguration('harmonylang');
         return r.then(config => {
-            const result = {libraryPath: config.libraryPath};
+            const result = { libraryPath: config.libraryPath, commandPath: config.commandPath };
             documentSettings.set(resource, result);
             return result;
         });
@@ -143,35 +162,47 @@ documents.onDidOpen(change => {
 });
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-    // In this simple example we get the settings for every validate run.
     const settings = await getDocumentSettings(textDocument.uri);
     const diagnostics: Diagnostic[] = [];
-    if (!settings.libraryPath) {
+    const harmonyScript = settings.commandPath;
+    if (!harmonyScript) {
         return;
     }
-    const harmonyScript = getHarmonyScriptPath(settings.libraryPath);
 
     const harmonyFile = fileUriToPath(textDocument.uri);
-    child_process.execFile(harmonyScript, ['-p', harmonyFile], (err, stdout) => {
-        if (err) {
-            // Possibly a parsing error.
-            const dirname = path.dirname(harmonyFile);
-            const basename = path.basename(harmonyFile, path.extname(harmonyFile));
-            const analysisFile = path.join(dirname, basename + '.hvm');
-            if (!fs.existsSync(analysisFile) || !fs.statSync(analysisFile).isFile()) {
-                // No analysis file found
-                connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
-                return;
+    const tmpFilename = tmp.tmpNameSync();
+    const hvmFilename = tmpFilename + '.hvm';
+    const hcoFilename = tmpFilename + '.hco';
+
+    const args = [
+        '-p',
+        '--noweb',
+        '-o', hvmFilename,
+        '-o', hcoFilename,
+        harmonyFile,
+    ];
+
+    child_process.execFile(harmonyScript, args, () => {
+        // Possibly a parsing error.
+        if (!fs.existsSync(hvmFilename) || !fs.statSync(hvmFilename).isFile()) {
+            // No analysis file found
+            connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+            return;
+        }
+
+        const analysis = JSON.parse(fs.readFileSync(hvmFilename, 'utf-8'));
+        if (analysis.status !== 'error') {
+            // No errors
+            connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+            return;
+        }
+
+        for (const { line, column, message, lexeme, is_eof_error, filename } of analysis.errors) {
+            if (filename != null && path.resolve(harmonyFile) != path.resolve(filename)) {
+                // This is an error caused by some other file. Ignore
+                continue;
             }
 
-            const analysis = JSON.parse(fs.readFileSync(analysisFile, 'utf-8'));
-            if (analysis.status !== 'error') {
-                // No errors
-                connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
-                return;
-            }
-
-            const {line, column, lexeme, is_eof_error} = analysis;
             let diagnostic: Diagnostic;
             if (line == null || column == null || lexeme == null || is_eof_error) {
                 const text = textDocument.getText();
@@ -181,18 +212,18 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
                         start: textDocument.positionAt(text.length - 1),
                         end: textDocument.positionAt(text.length)
                     },
-                    message: stdout,
+                    message: message,
                     source: 'Harmony'
                 };
             } else {
-                const initialOffset = textDocument.offsetAt({ line: line - 1, character: column - 1});
+                const initialOffset = textDocument.offsetAt({ line: line - 1, character: column - 1 });
                 diagnostic = {
                     severity: DiagnosticSeverity.Error,
                     range: {
                         start: textDocument.positionAt(initialOffset),
                         end: textDocument.positionAt(initialOffset + lexeme.length)
                     },
-                    message: stdout,
+                    message: message,
                     source: 'Harmony'
                 };
             }

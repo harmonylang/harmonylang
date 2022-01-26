@@ -26,8 +26,10 @@
         ["\"", "\""],
         ["'", "'"]
     ],
-    "indentationRules": {
-        "increaseIndentPattern": "\\b((while.+)|(for.+)|(atomic\\s*)|(def.+)|(if.+\\s*)|(else\\s*)|(let.+))\\:\\s*",
-        "decreaseIndentPattern": "^(\\s+pass)|(((?!.*?\\/\\*).*\\*/)?\\s*[\\)\\}\\]].*)\\s*$"
-    }
+    "onEnterRules": [
+		{
+			"beforeText": "^\\s*((?:def|for|if|elif|else|while|atomically|let|when).*?|[a-zA-Z0-9]+\\s*):\\s*$",
+			"action": { "indent": "indent" }
+		}
+	]
 }
