@@ -105,6 +105,32 @@
                 "title": "End All Harmony Processes"
             }
         ],
+        "menus": {
+			"explorer/context": [
+				{
+					"command": "harmonylang.run",
+					"when": "resourceLangId == harmony",
+					"group": "1_livepreview@1"
+				},
+				{
+					"command": "harmonylang.run-with-flags",
+					"when": "resourceLangId == harmony",
+					"group": "1_livepreview@2"
+				}
+			],
+			"editor/context": [
+				{
+					"command": "harmonylang.run",
+					"when": "resourceLangId == harmony",
+					"group": "1_livepreview@1"
+				},
+				{
+					"command": "harmonylang.run-with-flags",
+					"when": "resourceLangId == harmony",
+					"group": "1_livepreview@2"
+				}
+			]
+        },
         "keybindings": [
             {
                 "command": "harmonylang.run",

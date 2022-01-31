@@ -29,10 +29,30 @@ function getActiveFilename() {
 
 let client: LanguageClient;
 export const activate = (context: vscode.ExtensionContext) => {
+    const installHarmonyCmd = vscode.commands.registerCommand(
+        'harmonylang.install',
+        () => {
+            runInstall()
+                .then(msg => OutputConsole.println(msg))
+                .catch((errMessage: string) => {
+                    Message.error('Failed to install Harmony using pip');
+                    Message.error(errMessage);
+                    OutputConsole.println(errMessage);
+                    OutputConsole.show();
+                });
+        }
+    );
+
     const runHarmonyCommand = vscode.commands.registerCommand(
         'harmonylang.run',
-        () => {
-            const filename = getActiveFilename();
+        (file?: any) => {
+            const filename = (typeof file == 'string')
+                ? file 
+                : (file instanceof vscode.Uri)
+                    ? (file?.fsPath)
+                        ? file.fsPath
+                        : getActiveFilename()
+                    : getActiveFilename();
             if (!filename) {
                 Message.error('No Harmony file opened.');
                 return;
@@ -48,24 +68,16 @@ export const activate = (context: vscode.ExtensionContext) => {
         }
     );
 
-    const installHarmonyCmd = vscode.commands.registerCommand(
-        'harmonylang.install',
-        () => {
-            runInstall()
-                .then(msg => OutputConsole.println(msg))
-                .catch((errMessage: string) => {
-                    Message.error('Failed to install Harmony using pip');
-                    Message.error(errMessage);
-                    OutputConsole.println(errMessage);
-                    OutputConsole.show();
-                });
-        }
-    );
-
     const runHarmonyWithFlagsCommand = vscode.commands.registerCommand(
         'harmonylang.run-with-flags',
-        () => {
-            const filename = getActiveFilename();
+        (file?: any) => {
+            const filename = (typeof file == 'string')
+                ? file 
+                : (file instanceof vscode.Uri)
+                    ? (file?.fsPath)
+                        ? file.fsPath
+                        : getActiveFilename()
+                    : getActiveFilename();
             if (!filename) {
                 Message.error('No Harmony file opened.');
                 return;

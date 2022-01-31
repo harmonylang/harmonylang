@@ -17,6 +17,8 @@ The following values can be configured in a local or global `settings.json` file
 
 The following commands are run using the Command Palette:
 
+> You can now also right click `.hny` files in the Editor or Explorer to `Run Harmony` with or without flags.
+
 - `Run Harmony`
 
 > Alternatively: use the keybinding Alt + Shift + N keys
@@ -76,7 +78,8 @@ You can find more information about the HarmonyLang extension project in [this d
 
 ### 2.1.0
 
-- Add syntax highlighting for `save` expressions
+- Added syntax highlighting for `save` expressions
+- Added right-click context commands for `Run Harmony`
 - Bug fixes
 
 ### 2.0.0
