@@ -73,6 +73,12 @@ You can find more information about the HarmonyLang extension project in [this d
 
 ## Release Notes
 
+
+### 2.1.0
+
+- Add syntax highlighting for `save` expressions
+- Bug fixes
+
 ### 2.0.0
 
 - Updated installation method to use `pip`
