@@ -6,7 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### [2.1.0] - 2022-01-31
 
-- Add syntax highlighting for `save` expressions
+- Added syntax highlighting for `save` expressions
+- Added right-click context commands for `Run Harmony`
 - Bug fixes
 
 ### [2.0.0] - 2022-01-23
