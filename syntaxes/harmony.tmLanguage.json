@@ -95,7 +95,7 @@
 				},
 				{
 					"name": "keyword.control.flow.harmony",
-					"match": "(?x)\n  \\b(?<!\\.)( where | invariant | atomically | del | var | assert | possibly | let | when | for | elif | else | if | pass | while )\\b\n"
+					"match": "(?x)\n  \\b(?<!\\.)( where | invariant | atomically | del | var | assert | sequential | possibly | let | when | for | elif | else | if | pass | while )\\b\n"
 				}
 			]
 		},
@@ -983,7 +983,7 @@
 			]
 		},
 		"illegal-names": {
-			"match": "(?x)\n  \\b(?:\n    (\n      and | assert | async | await | let | break | continue | def\n      | del | elif | else | except | finally | for | from | global\n      | if | in | is | nonlocal | not | or | pass | raise | return | try | while | with\n      | yield\n    )  )\\b\n",
+			"match": "(?x)\n  \\b(?:\n    (\n      and | assert | sequential | async | await | let | break | continue | def\n      | del | elif | else | except | finally | for | from | global\n      | if | in | is | nonlocal | not | or | pass | raise | return | try | while | with\n      | yield\n    )  )\\b\n",
 			"captures": {
 				"1": {
 					"name": "keyword.control.flow.harmony"

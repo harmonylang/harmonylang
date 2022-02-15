@@ -9,7 +9,7 @@ import {
     TransportKind
 } from 'vscode-languageclient/node';
 import runHarmony from './vscode-commands/execHarmony';
-import runInstall from './vscode-commands/install';
+import runInstall, { printReadableInstallMessage } from './vscode-commands/install';
 import endHarmonyProcesses from './vscode-commands/endProcesses';
 
 
@@ -33,10 +33,12 @@ export const activate = (context: vscode.ExtensionContext) => {
         'harmonylang.install',
         () => {
             runInstall()
-                .then(msg => OutputConsole.println(msg))
+                .then(msg => {
+                    printReadableInstallMessage(msg);
+                    OutputConsole.println(msg);
+                })
                 .catch((errMessage: string) => {
-                    Message.error('Failed to install Harmony using pip');
-                    Message.error(errMessage);
+                    printReadableInstallMessage(errMessage);
                     OutputConsole.println(errMessage);
                     OutputConsole.show();
                 });
@@ -113,8 +115,7 @@ export const activate = (context: vscode.ExtensionContext) => {
     runInstall()
         .then(msg => OutputConsole.println(msg))
         .catch((errMessage: string) => {
-            Message.error('Failed to install Harmony using pip');
-            Message.error(errMessage);
+            printReadableInstallMessage(errMessage);
             OutputConsole.println(errMessage);
             OutputConsole.show();
         });

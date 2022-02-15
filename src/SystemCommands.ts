@@ -32,9 +32,21 @@ export default class SystemCommands {
             return null;
         }
     }
-    
+
+    public static async updateHarmonyPythonCommandPath(path: string) {
+        const config = SystemCommands.getHarmonyLangConfiguration();
+        // Prefer Python configurations for HarmonyLang.
+        await config.update('pythonPath', path, true);
+    }
 
     public static async getPythonCommandPath(): Promise<string | null> {
+        const config = SystemCommands.getHarmonyLangConfiguration();
+        // Prefer Python configurations for HarmonyLang.
+        const harmonyPythonPath = config.get('pythonPath');
+        if (typeof harmonyPythonPath === 'string' && fs.existsSync(harmonyPythonPath)) {
+            return harmonyPythonPath;
+        }
+
         const actualPythonPath = vscode.workspace.getConfiguration('python').get('pythonPath');
         if (typeof actualPythonPath === 'string' && fs.existsSync(actualPythonPath)) {
             return actualPythonPath;
@@ -44,13 +56,6 @@ export default class SystemCommands {
         if (typeof anotherPossiblePythonPath === 'string' && fs.existsSync(anotherPossiblePythonPath)) {
             return anotherPossiblePythonPath;
         }
-    
-        const config = SystemCommands.getHarmonyLangConfiguration();
-        const harmonyPythonPath = config.get('pythonPath');
-        if (typeof harmonyPythonPath === 'string' && fs.existsSync(harmonyPythonPath)) {
-            return harmonyPythonPath;
-        }
-    
         return which('python3')
             .catch(() => which('python'))
             .catch(() => null);

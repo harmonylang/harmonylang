@@ -10,12 +10,6 @@ export const MELODY_LAUNCHER = path.join(RESOURCE_DIR, 'charmony-v3.html');
 export const EXAMPLE_CHARM_JSON = path.join(RESOURCE_DIR, 'charm-example.json');
 
 const HOME_DIRECTORY = path.resolve(os.homedir());
-export const INSTALL_HARMONY_COMMAND = [
-    'pip',
-    'install',
-    '--upgrade',
-    'harmony-model-checker'
-];
 export const HARMONY_DIRECTORY = path.join(HOME_DIRECTORY, '.harmony-model-checker');
 
 export const CHARMONY_COMPILER_DIR = path.join(HARMONY_DIRECTORY, 'harmony-compiler');

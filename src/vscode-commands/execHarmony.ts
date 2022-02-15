@@ -77,8 +77,7 @@ export default async function runHarmony(
     if (!harmonyScript || !fs.existsSync(harmonyScript)) {
         Message.error(
             'Cannot find the Harmony script.',
-            'Check if you have installed Harmony via [Install Harmony] or',
-            'added the path to Harmony via [Add Harmony Library Path].'
+            'Check if you have installed Harmony.',
         );
         return;
     }
