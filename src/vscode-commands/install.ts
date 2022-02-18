@@ -21,8 +21,10 @@ export default async function runInstall() {
     if (pythonPaths.length === 0) {
         throw 'Could not find a python path. Please install Python3 or report this if you believe it is an error.';
     }
+
     OutputConsole.println('Attempting to install harmony-model-checker via the following:');
     pythonPaths.forEach(p => OutputConsole.println(`\t${p}`));
+
     const errorMessages: string[] = [];
     for (const p of pythonPaths) {
         const {error, stdout, stderr} = await ProcessManager.startCommandAsync([p, '-m', 'pip', ...INSTALL_HARMONY_COMMAND_ARGS], {});
