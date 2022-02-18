@@ -12,6 +12,7 @@ import OutputConsole from '../vscode/OutputConsole';
 import ProcessManager from '../vscode/ProcessManager';
 import { IntermediateJson } from '../charmony';
 import SystemCommands from '../SystemCommands';
+import { HARMONY_ENTRY_SCRIPT } from '../config';
 
 
 const parser = new ArgumentParser();
@@ -73,11 +74,12 @@ export default async function runHarmony(
     flags?: string
 ): Promise<void> {
     OutputConsole.clear();
-    const harmonyScript = await SystemCommands.getHarmonyCommandPath();
-    if (!harmonyScript || !fs.existsSync(harmonyScript)) {
+    const getPythonCommandPath = await SystemCommands.getPythonCommandPath();
+
+    if (!getPythonCommandPath) {
         Message.error(
-            'Cannot find the Harmony script.',
-            'Check if you have installed Harmony.',
+            'Cannot find the Python script.',
+            'Check if you have installed Python.',
         );
         return;
     }
@@ -107,7 +109,9 @@ export default async function runHarmony(
     const gvFilename = tmpFilename + '.gv';
 
     const charmonyCompileCommand = [
-        harmonyScript,
+        getPythonCommandPath,
+        '-c',
+        HARMONY_ENTRY_SCRIPT,
         ...flagArgs,
         '-o', hvmFilename,
         '-o', hcoFilename,

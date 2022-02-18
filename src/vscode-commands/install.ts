@@ -17,23 +17,30 @@ const INSTALL_HARMONY_COMMAND_ARGS = [
  * then update with the latest version from PyPi
  */
 export default async function runInstall() {
-    const pythonPath = await SystemCommands.getPythonCommandPath();
-    return new Promise<string>((resolve, reject) => {
-        if (!pythonPath) {
-            reject('Could not find a python path. Please install Python3 or report this if you believe it is an error.');
-            return;
+    const pythonPaths = await SystemCommands.getAllPossiblePythonCommandPaths();
+    if (pythonPaths.length === 0) {
+        throw 'Could not find a python path. Please install Python3 or report this if you believe it is an error.';
+    }
+    OutputConsole.println('Attempting to install harmony-model-checker via the following:');
+    pythonPaths.forEach(p => OutputConsole.println(`\t${p}`));
+    const errorMessages: string[] = [];
+    for (const p of pythonPaths) {
+        const {error, stdout, stderr} = await ProcessManager.startCommandAsync([p, '-m', 'pip', ...INSTALL_HARMONY_COMMAND_ARGS], {});
+        if (error) {
+            errorMessages.push(`Failed to install harmony-model-checker via ${p}`);
+            errorMessages.push(error.message);
+            errorMessages.push(stdout);
+            errorMessages.push(stderr);
+            continue;
         }
-        ProcessManager.startCommand([pythonPath, '-m', 'pip', ...INSTALL_HARMONY_COMMAND_ARGS], {}, (err, stdout, stderr) => {
-            OutputConsole.clear();
-            if (err) {
-                reject(stdout + '\n\n' + stderr + '\n\n');
-                return;
-            }
-            // Set the pythonPath to the HarmonyLang one if it works.
-            SystemCommands.updateHarmonyPythonCommandPath(pythonPath);
-            resolve(stdout);
-        });
-    });
+        // Write any error messages encountered.
+        OutputConsole.println(errorMessages.join('\n'));
+
+        // Set the pythonPath to the HarmonyLang one if it works.
+        SystemCommands.updateHarmonyPythonCommandPath(p);
+        return stdout;
+    }
+    throw errorMessages.join('\n');
 }
 
 /**
