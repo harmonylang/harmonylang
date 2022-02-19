@@ -51,14 +51,28 @@ export default async function runInstall() {
  */
 export async function printReadableInstallMessage(msgs:string) {
     const msgLines = msgs.trim().split('\n');
-    const lastLine = msgLines[msgLines.length - 1];
-    if (lastLine.startsWith('Requirement already satisfied: ')){
+    let highestOutputLevel = 0;
+    let harmonyInstalled = false;
+
+    for (const msg in msgLines){        
+        if (msg.startsWith('ERROR:')){
+            highestOutputLevel = 2;
+            Message.error(msg);
+        } else if (msg.startsWith('WARNING:')) {
+            highestOutputLevel = 1;
+            Message.warn(msg);
+        }
+
+        if (msg.includes('Requirement already satisfied: harmony-model-checker')){
+            harmonyInstalled = true;
+        }
+    }
+
+    if (harmonyInstalled){
+        // If Harmony is already installed, that's all they need to know.
         Message.info('Harmony already installed.');
     } else {
-        if (lastLine.startsWith('ERROR:')){
-            Message.error(lastLine);
-        } else {
-            Message.info(lastLine);
-        }
+        // If Harmony isn't installed, this is either a successful install or a non-pip error.
+        Message.info(msgLines[msgLines.length - 1]);
     }
 }
