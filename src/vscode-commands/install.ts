@@ -50,15 +50,38 @@ export default async function runInstall() {
  * user readable output.
  */
 export async function printReadableInstallMessage(msgs:string) {
-    const msgLines = msgs.trim().split('\n');
-    const lastLine = msgLines[msgLines.length - 1];
-    if (lastLine.startsWith('Requirement already satisfied: ')){
-        Message.info('Harmony already installed.');
-    } else {
-        if (lastLine.startsWith('ERROR:')){
-            Message.error(lastLine);
-        } else {
-            Message.info(lastLine);
+    const MAX_MESSAGES = 3;
+    // Reversing the message order, as higher priority errors are ordered closer to the bottom.
+    const msgLines = msgs.trim().split('\n').reverse();
+    let highestOutputLevel = 0;
+    let harmonyInstalled = false;
+    let totalMessages = 0;
+
+    for (const mIndex in msgLines){    
+        const msg = msgLines[mIndex].trim();  
+        if (msg.startsWith('ERROR:')){
+            highestOutputLevel = 2;
+            totalMessages++;
+            Message.error(msg);
+        } else if (msg.startsWith('WARNING:')) {
+            highestOutputLevel = 1;
+            totalMessages++;
+            Message.warn(msg);
         }
+
+        // If too many notifications are sent, none are displayed.
+        if (totalMessages >= MAX_MESSAGES) break;
+
+        if (msg.includes('Requirement already satisfied: harmony-model-checker')){
+            harmonyInstalled = true;
+        }
+    }
+
+    if (harmonyInstalled){
+        // If Harmony is already installed, that's all they need to know.
+        Message.info('Harmony already installed.');
+    } else if (highestOutputLevel == 0) {
+        // If Harmony isn't installed, this is either a successful install or a non-pip error.
+        Message.info(msgLines[0]);
     }
 }
