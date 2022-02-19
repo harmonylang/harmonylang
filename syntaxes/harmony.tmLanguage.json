@@ -95,7 +95,7 @@
 				},
 				{
 					"name": "keyword.control.flow.harmony",
-					"match": "(?x)\n  \\b(?<!\\.)( where | invariant | atomically | del | var | assert | sequential | possibly | let | when | for | elif | else | if | pass | while )\\b\n"
+					"match": "(?x)\n  \\b(?<!\\.)( where | invariant | atomically | del | var | assert | sequential | let | when | for | elif | else | if | pass | while )\\b\n"
 				}
 			]
 		},
