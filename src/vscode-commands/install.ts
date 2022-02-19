@@ -54,7 +54,8 @@ export async function printReadableInstallMessage(msgs:string) {
     let highestOutputLevel = 0;
     let harmonyInstalled = false;
 
-    for (const msg in msgLines){        
+    for (const mIndex in msgLines){    
+        const msg = msgLines[mIndex];    
         if (msg.startsWith('ERROR:')){
             highestOutputLevel = 2;
             Message.error(msg);
