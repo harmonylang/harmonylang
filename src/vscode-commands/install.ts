@@ -57,20 +57,19 @@ export async function printReadableInstallMessage(msgs:string) {
     let harmonyInstalled = false;
     let totalMessages = 0;
 
-    for (const mIndex in msgLines){    
-        const msg = msgLines[mIndex].trim();  
-        if (msg.startsWith('ERROR:')){
-            highestOutputLevel = 2;
-            totalMessages++;
-            Message.error(msg);
-        } else if (msg.startsWith('WARNING:')) {
-            highestOutputLevel = 1;
-            totalMessages++;
-            Message.warn(msg);
+    for (const msg of msgLines){
+        // We cap the number of messages at 3 to avoid overloading the notification tray
+        if (totalMessages < MAX_MESSAGES){
+            if (msg.startsWith('ERROR:')){
+                highestOutputLevel = 2;
+                totalMessages++;
+                Message.error(msg);
+            } else if (msg.startsWith('WARNING:')) {
+                highestOutputLevel = 1;
+                totalMessages++;
+                Message.warn(msg);
+            }
         }
-
-        // If too many notifications are sent, none are displayed.
-        if (totalMessages >= MAX_MESSAGES) break;
 
         if (msg.includes('Requirement already satisfied: harmony-model-checker')){
             harmonyInstalled = true;
