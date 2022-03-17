@@ -10,12 +10,6 @@ export const MELODY_LAUNCHER = path.join(RESOURCE_DIR, 'charmony-v3.html');
 export const EXAMPLE_CHARM_JSON = path.join(RESOURCE_DIR, 'charm-example.json');
 
 const HOME_DIRECTORY = path.resolve(os.homedir());
-export const INSTALL_HARMONY_COMMAND = [
-    'pip',
-    'install',
-    '--upgrade',
-    'harmony-model-checker'
-];
 export const HARMONY_DIRECTORY = path.join(HOME_DIRECTORY, '.harmony-model-checker');
 
 export const CHARMONY_COMPILER_DIR = path.join(HARMONY_DIRECTORY, 'harmony-compiler');
@@ -23,6 +17,8 @@ export const CHARMONY_SCRIPT_PATH = path.join(CHARMONY_COMPILER_DIR, 'harmony');
 
 export const PACKAGE_JSON = path.join(EXTENSION_DIR, 'package.json');
 export const VERSION_VALUE = JSON.parse(fs.readFileSync(PACKAGE_JSON, 'utf-8'))['version'];
+
+export const HARMONY_ENTRY_SCRIPT = 'import re\nimport sys\nfrom harmony_model_checker.main import main\nif __name__ == \'__main__\':\n\tsys.argv[0] = re.sub(r\'(-script\\.pwd|\\.exe)?$\', \'\', sys.argv[0])\n\tsys.exit(main())';
 
 export const GENERATED_FILES = [
     path.join(CHARMONY_COMPILER_DIR, 'charm.dSYM'),

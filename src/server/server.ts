@@ -18,6 +18,7 @@ import * as tmp from 'tmp';
 import _fileUriToPath = require('file-uri-to-path');
 import * as path from 'path';
 import * as fs from 'fs';
+import { HARMONY_ENTRY_SCRIPT } from '../config';
 
 function fileUriToPath(fileUri: string): string {
     let p = _fileUriToPath(fileUri);
@@ -96,14 +97,13 @@ connection.onInitialized(() => {
 });
 
 interface HarmonyExtensionSettings {
-    libraryPath: string | null;
-    commandPath: string | null;
+    pythonPath: string | null;
 }
 
 // The global settings, used when the `workspace/configuration` request is not supported by the client.
 // Please note that this is not the case when using this server with the client provided in this example
 // but could happen with other clients.
-const defaultSettings: HarmonyExtensionSettings = { libraryPath: null, commandPath: null };
+const defaultSettings: HarmonyExtensionSettings = { pythonPath: null };
 let globalSettings: HarmonyExtensionSettings = defaultSettings;
 
 // Cache the settings of all open documents
@@ -131,19 +131,12 @@ function getDocumentSettings(resource: string): Thenable<HarmonyExtensionSetting
     if (!result) {
         const r = connection.workspace.getConfiguration('harmonylang');
         return r.then(config => {
-            const result = { libraryPath: config.libraryPath, commandPath: config.commandPath };
+            const result = { pythonPath: config.pythonPath };
             documentSettings.set(resource, result);
             return result;
         });
     }
     return Promise.resolve(result);
-}
-
-function getHarmonyScriptPath(libraryPath: string): string {
-    if (process.platform === 'win32') {
-        return path.join(libraryPath, 'harmony.bat');
-    }
-    return path.join(libraryPath, 'harmony');
 }
 
 // Only keep settings for open documents
@@ -164,8 +157,8 @@ documents.onDidOpen(change => {
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     const settings = await getDocumentSettings(textDocument.uri);
     const diagnostics: Diagnostic[] = [];
-    const harmonyScript = settings.commandPath;
-    if (!harmonyScript) {
+    const pythonPath = settings.pythonPath;
+    if (!pythonPath) {
         return;
     }
 
@@ -175,6 +168,8 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     const hcoFilename = tmpFilename + '.hco';
 
     const args = [
+        '-c',
+        HARMONY_ENTRY_SCRIPT,
         '-p',
         '--noweb',
         '-o', hvmFilename,
@@ -182,7 +177,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
         harmonyFile,
     ];
 
-    child_process.execFile(harmonyScript, args, () => {
+    child_process.execFile(pythonPath, args, () => {
         // Possibly a parsing error.
         if (!fs.existsSync(hvmFilename) || !fs.statSync(hvmFilename).isFile()) {
             // No analysis file found

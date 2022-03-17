@@ -7,6 +7,17 @@ export default class ProcessManager {
     private static commandCount = 0;
     private static processesAreKilled = false
 
+    public static startCommandAsync(
+        cmd: string[],
+        options: child_process.ExecOptions,
+    ): Thenable<{error: child_process.ExecException | null; stdout: string; stderr: string}> {
+        return new Promise(resolve => {
+            this.startCommand(cmd, options, (error, stdout, stderr) => {
+                resolve({error, stdout, stderr});
+            });
+        });
+    }
+
     public static startCommand(
         cmd: string[],
         options: child_process.ExecOptions,
