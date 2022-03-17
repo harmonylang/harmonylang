@@ -12,7 +12,7 @@ export default class CharmonyPanelController_v2 {
     public static currentPanel: CharmonyPanelController_v2 | undefined;
     public static readonly viewType = 'harmonyOutput';
 
-    private readonly panel: vscode.WebviewPanel;
+    public readonly panel: vscode.WebviewPanel;
     private readonly extensionUri: vscode.Uri;
     private disposables: vscode.Disposable[] = [];
 

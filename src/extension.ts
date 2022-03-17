@@ -12,7 +12,6 @@ import runHarmony from './vscode-commands/execHarmony';
 import runInstall, { printReadableInstallMessage } from './vscode-commands/install';
 import endHarmonyProcesses from './vscode-commands/endProcesses';
 
-
 function getActiveFilename() {
     const filename = vscode.window.activeTextEditor?.document?.fileName;
     if (!filename) {

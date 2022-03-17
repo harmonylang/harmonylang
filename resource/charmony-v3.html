@@ -30,6 +30,7 @@
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', () => {
         let iframe = document.getElementById('melody-analysis').contentWindow;
+        let vscode = acquireVsCodeApi();
         var messageQueue = [];
         var isLoaded = false;
         window.addEventListener('message', event => {
@@ -38,6 +39,8 @@
                 for (message in messageQueue) {
                     iframe.postMessage(messageQueue[message], "*");
                 }
+            } else if (event.data.command === "requestGraph") {
+                vscode.postMessage({command: 'requestGraph', data: null});
             } else {
                 if (isLoaded) {
                     iframe.postMessage(event.data, "*");
