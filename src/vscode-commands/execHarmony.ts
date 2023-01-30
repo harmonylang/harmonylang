@@ -10,7 +10,7 @@ import CharmonyPanelController_v2 from '../outputPanel/PanelController_v2';
 import Message from '../vscode/Message';
 import OutputConsole from '../vscode/OutputConsole';
 import ProcessManager from '../vscode/ProcessManager';
-import { IntermediateJson } from '../charmony';
+import { CharmonyTopLevelLatest } from '../charmony';
 import SystemCommands from '../SystemCommands';
 import { HARMONY_ENTRY_SCRIPT } from '../config';
 
@@ -50,9 +50,9 @@ function parseOptions(options?: string): string[] {
 }
 
 
-function onReceivingIntermediateJSON(results: IntermediateJson) {
+function onReceivingIntermediateJSON(results: CharmonyTopLevelLatest, defaultHarmonyOutputHtm: string | null = null) {
     if (results != null && results.issue != null && results.issue != 'No issues') {
-        CharmonyPanelController_v2.currentPanel?.updateResults(results);
+        CharmonyPanelController_v2.currentPanel?.updateResults(results, defaultHarmonyOutputHtm);
     } else {
         CharmonyPanelController_v2.currentPanel?.updateMessage('No Errors Found.');
     }
@@ -152,9 +152,13 @@ export default async function runHarmony(
             CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
             return;
         }
-        const results: IntermediateJson = JSON.parse(fs.readFileSync(hcoFilename, 'utf-8'));
+        const results: CharmonyTopLevelLatest = JSON.parse(fs.readFileSync(hcoFilename, 'utf-8'));
         try {
-            onReceivingIntermediateJSON(results);
+            console.log('Received intermediate json result', results);
+            onReceivingIntermediateJSON(results, htmFilename);
+            console.log('Finished handling json result');
+            OutputConsole.println(`Output html analysis file found here: ${htmFilename}`);
+            OutputConsole.show();
             CharmonyPanelController_v2.currentPanel?.panel.webview.onDidReceiveMessage(
                 message => {
                     switch (message.command) {
@@ -180,6 +184,8 @@ export default async function runHarmony(
             if (typeof error === 'string') {
                 OutputConsole.println(error);
                 OutputConsole.show();
+            } else {
+                console.log(error);
             }
             CharmonyPanelController_v2.currentPanel?.updateMessage('Could not create analysis file.');
         }

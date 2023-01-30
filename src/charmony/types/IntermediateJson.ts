@@ -39,8 +39,12 @@ export type IntermediateContextRep = {
 };
 
 export type IntermediateValueRepresentation = {
-    type: 'bool' | 'int' | 'atom' | 'dict' | 'set' | 'pc' | 'address' | 'context';
+    type: 'bool' | 'int' | 'atom' | 'dict' | 'list' | 'set' | 'pc' | 'context';
     value: string | IntermediateValueRepresentation[] | IntermediateKeyValueRep[] | IntermediateContextRep;
+} | {
+    type: 'address';
+    func?: IntermediateValueRepresentation;
+    args?: IntermediateValueRepresentation[];
 }
 
 export type IntermediateKeyValueRep = {

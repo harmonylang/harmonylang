@@ -1,10 +1,10 @@
-import {IntermediateHarmonyCode, IntermediateJsonManager} from '../../types/IntermediateJson';
 import {CharmonyAssemblyCode, CharmonyExecutedCode} from '../../types/CharmonyJson';
-import {entries} from '../../util/object_util';
+import { CharmonyTopLevelLatest } from '../../types/CharmonyJsonLatest';
 
-export function getExecutedCode(json: IntermediateJsonManager): CharmonyExecutedCode[] {
-    const allCode = json.getCode();
-    const allExplain = json.getExplain();
+export function getExecutedCode(json: CharmonyTopLevelLatest): CharmonyExecutedCode[] {
+    if (json.state === 'No issues') return [];
+    const allCode: string[] = json.hvm.pretty.map(x => x[0]);
+    const allExplain: string[] = json.hvm.pretty.map(x => x[1]);
 
     if (allCode.length !== allExplain.length) {
         console.warn(
@@ -12,9 +12,30 @@ export function getExecutedCode(json: IntermediateJsonManager): CharmonyExecuted
             `code.length == ${allCode.length}, explain.length == ${allExplain.length}`);
     }
 
-    const locations = entries(json.getLocations())
-        .map(([k, v]) => [Number.parseInt(k), v] as [number, IntermediateHarmonyCode])
-        .sort(([k1], [k2]) => k1 - k2);
+    type IntermediateHarmonyCode = {
+        file: string;
+        line: string;
+        code: string;
+    };
+
+    // const locations = entries(json.hvm.locs)
+    //     .map(([k, v]) => [Number.parseInt(k), v] as [number, IntermediateHarmonyCode])
+    //     .sort(([k1], [k2]) => k1 - k2);
+    const locations: [number, IntermediateHarmonyCode][] = json.hvm.locs.map((v, idx) => {
+        // Assuming that the index of the array is the pc number
+        const pc = idx;
+        const module = v.module;
+        const filename = json.hvm.modules[module].file;
+        const line = v.line;
+        const code = json.hvm.modules[module].lines[line-1]; // the line number is 1-indexed
+
+        const locData: IntermediateHarmonyCode = {
+            file: filename,
+            line: line.toString(),
+            code: code,
+        };
+        return [pc, locData];
+    });
     let firstEvaluatedPc: undefined | number = undefined;
 
     const executedCode: CharmonyExecutedCode[] = locations.map(([startingPc, sourceCode], idx) => {
@@ -35,7 +56,7 @@ export function getExecutedCode(json: IntermediateJsonManager): CharmonyExecuted
         return {
             initialPc: startingPc,
             file, line,
-            sourceCode: code,
+            sourceCode: code || '',
             assembly: executedAssembly
         };
     });

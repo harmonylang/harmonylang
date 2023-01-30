@@ -2,13 +2,23 @@ import {IntermediateContextRep, IntermediateKeyValueRep, IntermediateValueRepres
 import {entries} from '../../util/object_util';
 
 export function parseIntermediateValueRep(v: IntermediateValueRepresentation): unknown {
+    if (v.type === 'address') {
+        const {func, args} = v;
+        const value: Record<string, unknown> = {};
+        if (func) {
+            value.func = parseIntermediateValueRep(func);
+        }
+        if (args) {
+            value.args = args.map(x => parseIntermediateValueRep(x));
+        }
+        return value;
+    }
     const {value, type} = v;
     switch (type) {
     case 'int': return Number.parseInt(value as string);
     case 'atom': return value;
     case 'bool': return value === 'True';
     case 'pc': return value;
-    case 'address': return (value as IntermediateValueRepresentation[]).map(v => parseIntermediateValueRep(v));
     case 'set': return (value as IntermediateValueRepresentation[]).map(v => parseIntermediateValueRep(v));
     case 'dict': {
         const dict: Record<string, unknown> = {};
@@ -19,6 +29,9 @@ export function parseIntermediateValueRep(v: IntermediateValueRepresentation): u
             }
         }
         return dict;
+    }
+    case 'list': {
+        return (value as IntermediateValueRepresentation[]).map(v => parseIntermediateValueRep(v));
     }
     case 'context': {
         const dict: Record<string, unknown> = {};
