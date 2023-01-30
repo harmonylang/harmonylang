@@ -3,7 +3,7 @@ import {Webview} from 'vscode';
 import * as fs from 'fs';
 import {CHARMONY_HTML_FILE, MELODY_LAUNCHER, DEBUG_DIR, RESOURCE_DIR} from '../config';
 import {IntermediateJson} from '../charmony/types/IntermediateJson';
-import { parse } from '../charmony';
+import { CharmonyTopLevel, CharmonyTopLevelLatest, parse } from '../charmony';
 import * as path from 'path';
 import isOnline = require('is-online');
 import Message from '../vscode/Message';
@@ -12,7 +12,7 @@ export default class CharmonyPanelController_v2 {
     public static currentPanel: CharmonyPanelController_v2 | undefined;
     public static readonly viewType = 'harmonyOutput';
 
-    private readonly panel: vscode.WebviewPanel;
+    public readonly panel: vscode.WebviewPanel;
     private readonly extensionUri: vscode.Uri;
     private disposables: vscode.Disposable[] = [];
 
@@ -55,11 +55,11 @@ export default class CharmonyPanelController_v2 {
         this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
     }
 
-    public updateResults(data: IntermediateJson) {
+    public updateResults(data: CharmonyTopLevelLatest, defaultHarmonyOutputHtm: string | null = null) {
         // Send a message to the webview webview.
         // You can send any JSON serializable data.
         console.log('Presenting the webview');
-        this.update(data);
+        this.update(data, defaultHarmonyOutputHtm);
     }
 
     public startLoading() {
@@ -91,13 +91,14 @@ export default class CharmonyPanelController_v2 {
         }
     }
 
-    private update(data?: IntermediateJson) {
+    private update(data?: CharmonyTopLevelLatest, defaultHarmonyOutputHtm: string | null = null) {
         const webview = this.panel.webview;
         const harmonyPanel = this.panel;
 
         if (data == null){
             console.log('Looking for data');
             try {
+                console.log('Output htm path', defaultHarmonyOutputHtm);
                 isOnline({timeout: 300}).then(online => {
                     if (online){
                         harmonyPanel.webview.html = fs.readFileSync(MELODY_LAUNCHER, 'utf-8');
@@ -117,9 +118,9 @@ export default class CharmonyPanelController_v2 {
         }
     }
 
-    private loadData(data: IntermediateJson, webview: Webview) {
+    private loadData(data: CharmonyTopLevelLatest, webview: Webview) {
         const harmonyJsonData = parse(data);
-
+    
         if (fs.existsSync(DEBUG_DIR)) {
             fs.writeFileSync(path.join(DEBUG_DIR, 'visual.json'),
                 JSON.stringify(harmonyJsonData, undefined, 4));

@@ -4,6 +4,12 @@ All notable changes to the "harmonylang" extension will be documented in this fi
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+### [2.2.0] - 2023-01-30
+- Updated for compatibility with Harmony 1.2.3125
+- Upgraded Melody Analysis Suite for graph generation support
+- Updated installation strategy
+- Bug fixes
+
 ### [2.1.0] - 2022-01-31
 
 - Added syntax highlighting for `save` expressions

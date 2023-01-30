@@ -333,7 +333,7 @@
 			"match": "(?x)\n and= | or= | mod= | <<= | >>= | //= | \\*\\*=\n | \\+= | -= | /= | @=\n | \\*= | %= | ~= | \\^= | &= | \\|= | =(?!=)\n"
 		},
 		"operator": {
-			"match": "(?x)\n    \\b(?<!\\.)\n   (?:\n   (and | or | -> | not | in )   (?# 1)\n        |\n        (for | where | if | else | await | (?:yield(?:\\s+from)?))  (?# 2)\n  )\n    (?!\\s*:)\\b\n\n    | (<< | >> | & | \\| | \\^ | ~)   (?# 3)\n\n    | (\\*\\* | \\* | \\+ | - | % | mod | // | / | @ | \\.\\.)  (?# 4)\n\n    | (!= | == | >= | <= | < | >)  (?# 5)\n    | ( ! | - | ~ | all | any | atLabel | bagsize | choose | min | max | nametag | not | keys | hash | len | processes ) (?# 6)",
+			"match": "(?x)\n    \\b(?<!\\.)\n   (?:\n   (and | or | -> | not | in )   (?# 1)\n        |\n        (for | where | if | else | await | (?:yield(?:\\s+from)?))  (?# 2)\n  )\n    (?!\\s*:)\\b\n\n    | (<< | >> | & | \\| | \\^ | ~)   (?# 3)\n\n    | (\\*\\* | \\* | \\+ | - | % | mod | // | / | @ | \\.\\.)  (?# 4)\n\n    | (!= | == | >= | <= | < | >)  (?# 5)\n    | ( ! | \\? | - | ~ | all | any | atLabel | bagsize | choose | min | max | nametag | not | keys | hash | len | processes ) (?# 6)",
 			"captures": {
 				"1": {
 					"name": "keyword.operator.logical.harmony"
@@ -983,7 +983,7 @@
 			]
 		},
 		"illegal-names": {
-			"match": "(?x)\n  \\b(?:\n    (\n      and | assert | sequential | async | await | let | break | continue | def\n      | del | elif | else | except | finally | for | from | global\n      | if | in | is | nonlocal | not | or | pass | raise | return | try | while | with\n      | yield\n    )  )\\b\n",
+			"match": "(?x)\n  \\b(?:\n    (\n      and | assert | sequential | async | await | let | break | continue | def\n      | del | elif | else | except | finally | for | from | global\n      | if | in | is | nonlocal | not | or | pass | returns | try | while | with\n      | yield\n    )  )\\b\n",
 			"captures": {
 				"1": {
 					"name": "keyword.control.flow.harmony"
@@ -1026,10 +1026,6 @@
 			"patterns": [{
 					"name": "invalid.illegal.operator.harmony",
 					"match": "&&|\\|\\||--|\\+\\+"
-				},
-				{
-					"name": "invalid.illegal.operator.harmony",
-					"match": "[?$]"
 				}
 			]
 		},

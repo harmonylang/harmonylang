@@ -10,7 +10,7 @@ import CharmonyPanelController_v2 from '../outputPanel/PanelController_v2';
 import Message from '../vscode/Message';
 import OutputConsole from '../vscode/OutputConsole';
 import ProcessManager from '../vscode/ProcessManager';
-import { IntermediateJson } from '../charmony';
+import { CharmonyTopLevelLatest } from '../charmony';
 import SystemCommands from '../SystemCommands';
 import { HARMONY_ENTRY_SCRIPT } from '../config';
 
@@ -50,14 +50,32 @@ function parseOptions(options?: string): string[] {
 }
 
 
-function onReceivingIntermediateJSON(results: IntermediateJson, gvOutput: string) {
+function onReceivingIntermediateJSON(results: CharmonyTopLevelLatest, defaultHarmonyOutputHtm: string | null = null) {
     if (results != null && results.issue != null && results.issue != 'No issues') {
-        CharmonyPanelController_v2.currentPanel?.updateResults(results);
+        CharmonyPanelController_v2.currentPanel?.updateResults(results, defaultHarmonyOutputHtm);
     } else {
-        if (gvOutput != '')
-            CharmonyPanelController_v2.currentPanel?.updateGraphView(gvOutput);
         CharmonyPanelController_v2.currentPanel?.updateMessage('No Errors Found.');
     }
+}
+
+function onRequestGraphView(generateGVCommand: string[], gvFilename: string) {
+    ProcessManager.startCommand(generateGVCommand, {
+        cwd: path.dirname(vscode.workspace.textDocuments[0].uri.fsPath)
+    }, (error, stdout) => {
+        OutputConsole.println(stdout);
+        if (error) {
+            OutputConsole.println(error.message);
+            return;
+        }
+        let gvOutput = '';
+        try {
+            gvOutput = fs.readFileSync(gvFilename, 'utf-8');
+            CharmonyPanelController_v2.currentPanel?.updateGraphView(gvOutput);
+        } catch (err) {
+            if (err instanceof Error)
+                OutputConsole.println(err.message);
+        }
+    });
 }
 
 
@@ -116,7 +134,6 @@ export default async function runHarmony(
         '-o', hvmFilename,
         '-o', hcoFilename,
         '-o', htmFilename,
-        '-o', gvFilename,
         '--noweb',
         fullFileName
     ];
@@ -135,17 +152,55 @@ export default async function runHarmony(
             CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
             return;
         }
-        const results: IntermediateJson = JSON.parse(fs.readFileSync(hcoFilename, 'utf-8'));
-        let gvOutput = '';
+        const results: CharmonyTopLevelLatest = JSON.parse(fs.readFileSync(hcoFilename, 'utf-8'));
         try {
-            gvOutput = fs.readFileSync(gvFilename, 'utf-8');
-        } catch (err) {
-            if (err instanceof Error)
-                OutputConsole.println(err.message);
-        }
-        try {
-            onReceivingIntermediateJSON(results, gvOutput);
+            onReceivingIntermediateJSON(results, htmFilename);
+            OutputConsole.println(`Output html analysis file found here: ${htmFilename}`);
+            CharmonyPanelController_v2.currentPanel?.panel.webview.onDidReceiveMessage(
+                message => {
+                    switch (message.command) {
+                    case 'requestGraph': {
+                        const generateGVCommand = [
+                            getPythonCommandPath,
+                            '-c',
+                            HARMONY_ENTRY_SCRIPT,
+                            ...flagArgs,
+                            '-o', gvFilename,
+                            '--noweb',
+                            hcoFilename
+                        ];
+                        Message.info('Generating graph...');
+                        onRequestGraphView(generateGVCommand, gvFilename);
+                    } break;
+                    }
+                },
+                undefined,
+                context.subscriptions
+            );
+            vscode.window.showInformationMessage('Created HTML analysis file', ...['Open Raw']).then(option => {
+                if (option === 'Open Raw') {
+                    let command = '';
+                    switch (process.platform) {
+                    case 'darwin':
+                        command = 'open';
+                        break;
+                    case 'win32':
+                        command = 'explorer';
+                        break;
+                    default:
+                        command = 'xdg-open';
+                        break;
+                    }
+                    ProcessManager.startCommand([command, htmFilename], {}, (error, _) => {
+                        if (error) {
+                            OutputConsole.println(error.message);
+                            Message.error(error.message);
+                        }
+                    });
+                }
+            });
         } catch (error) {
+            console.log(error);
             if (typeof error === 'string') {
                 OutputConsole.println(error);
                 OutputConsole.show();
