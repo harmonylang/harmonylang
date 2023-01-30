@@ -58,7 +58,7 @@ function onReceivingIntermediateJSON(results: CharmonyTopLevelLatest, defaultHar
     }
 }
 
-function onRequestGraphView(generateGVCommand: string[], gvFilename: string){
+function onRequestGraphView(generateGVCommand: string[], gvFilename: string) {
     ProcessManager.startCommand(generateGVCommand, {
         cwd: path.dirname(vscode.workspace.textDocuments[0].uri.fsPath)
     }, (error, stdout) => {
@@ -156,7 +156,6 @@ export default async function runHarmony(
         try {
             onReceivingIntermediateJSON(results, htmFilename);
             OutputConsole.println(`Output html analysis file found here: ${htmFilename}`);
-            OutputConsole.show();
             CharmonyPanelController_v2.currentPanel?.panel.webview.onDidReceiveMessage(
                 message => {
                     switch (message.command) {
@@ -178,6 +177,28 @@ export default async function runHarmony(
                 undefined,
                 context.subscriptions
             );
+            vscode.window.showInformationMessage('Created HTML analysis file', ...['Open Raw']).then(option => {
+                if (option === 'Open Raw') {
+                    let command = '';
+                    switch (process.platform) {
+                    case 'darwin':
+                        command = 'open';
+                        break;
+                    case 'win32':
+                        command = 'explorer';
+                        break;
+                    default:
+                        command = 'xdg-open';
+                        break;
+                    }
+                    ProcessManager.startCommand([command, htmFilename], {}, (error, _) => {
+                        if (error) {
+                            OutputConsole.println(error.message);
+                            Message.error(error.message);
+                        }
+                    });
+                }
+            });
         } catch (error) {
             console.log(error);
             if (typeof error === 'string') {
