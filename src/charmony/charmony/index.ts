@@ -7,11 +7,7 @@ import { genExecutionPath } from './new_exec/genExecutionPath';
 
 export default function parseCharmony(json: CharmonyTopLevelLatest): CharmonyTopLevel {
     const executedCode: CharmonyExecutedCode[] = getExecutedCode(json);
-    console.log('Executed code', executedCode);
     const execution = genExecutionPath(json);
-
-    // execution.executedCode = executedCode;
-    // return execution;
 
     return {
         ...execution,

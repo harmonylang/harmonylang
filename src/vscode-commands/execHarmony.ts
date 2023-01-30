@@ -154,9 +154,7 @@ export default async function runHarmony(
         }
         const results: CharmonyTopLevelLatest = JSON.parse(fs.readFileSync(hcoFilename, 'utf-8'));
         try {
-            console.log('Received intermediate json result', results);
             onReceivingIntermediateJSON(results, htmFilename);
-            console.log('Finished handling json result');
             OutputConsole.println(`Output html analysis file found here: ${htmFilename}`);
             OutputConsole.show();
             CharmonyPanelController_v2.currentPanel?.panel.webview.onDidReceiveMessage(
@@ -181,11 +179,10 @@ export default async function runHarmony(
                 context.subscriptions
             );
         } catch (error) {
+            console.log(error);
             if (typeof error === 'string') {
                 OutputConsole.println(error);
                 OutputConsole.show();
-            } else {
-                console.log(error);
             }
             CharmonyPanelController_v2.currentPanel?.updateMessage('Could not create analysis file.');
         }

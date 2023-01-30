@@ -114,7 +114,6 @@ export default class CharmonyPanelController_v2 {
             }
         }
         if (data != null) {
-            console.log('Loading the data', data);
             this.loadData(data, webview);
         }
     }
@@ -122,7 +121,6 @@ export default class CharmonyPanelController_v2 {
     private loadData(data: CharmonyTopLevelLatest, webview: Webview) {
         const harmonyJsonData = parse(data);
     
-        console.log('harmony json data', harmonyJsonData);
         if (fs.existsSync(DEBUG_DIR)) {
             fs.writeFileSync(path.join(DEBUG_DIR, 'visual.json'),
                 JSON.stringify(harmonyJsonData, undefined, 4));
