@@ -79,6 +79,10 @@
                 "title": "Install Harmony"
             },
             {
+                "command": "harmonylang.install-with-python-env",
+                "title": "Install Harmony with Python Environment"
+            },
+            {
                 "command": "harmonylang.run-with-flags",
                 "title": "Run Harmony with Flags"
             },

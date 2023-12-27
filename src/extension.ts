@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as fs from 'fs';
 import Message from './vscode/Message';
 import OutputConsole from './vscode/OutputConsole';
 import {
@@ -11,6 +12,9 @@ import {
 import runHarmony from './vscode-commands/execHarmony';
 import runInstall, { printReadableInstallMessage } from './vscode-commands/install';
 import endHarmonyProcesses from './vscode-commands/endProcesses';
+import SystemCommands from './SystemCommands';
+import { HARMONY_ENTRY_SCRIPT } from './config';
+import ProcessManager from './vscode/ProcessManager';
 
 function getActiveFilename() {
     const filename = vscode.window.activeTextEditor?.document?.fileName;
@@ -28,10 +32,53 @@ function getActiveFilename() {
 
 let client: LanguageClient;
 export const activate = (context: vscode.ExtensionContext) => {
+
+    // Install Harmony when the extension is activated.
+    // This will either install Harmony fresh or upgrade to the
+    // latest version.
+    runInstall()
+        .then(msg => OutputConsole.println(msg))
+        .catch((errMessage: string) => {
+            printReadableInstallMessage(errMessage);
+            OutputConsole.println(errMessage);
+            OutputConsole.show();
+        });
+
+
     const installHarmonyCmd = vscode.commands.registerCommand(
         'harmonylang.install',
         () => {
             runInstall()
+                .then(msg => {
+                    printReadableInstallMessage(msg);
+                    OutputConsole.println(msg);
+                })
+                .catch((errMessage: string) => {
+                    printReadableInstallMessage(errMessage);
+                    OutputConsole.println(errMessage);
+                    OutputConsole.show();
+                });
+        }
+    );
+
+    const installHarmonyCmdWithPythonEnvironment = vscode.commands.registerCommand(
+        'harmonylang.install-with-python-env',
+        async () => {
+            const options: vscode.InputBoxOptions = {
+                prompt: 'Python Executable Path',
+                placeHolder: 'Full path to Python executable (e.g. /usr/bin/python3)',
+            };
+            const value = await vscode.window.showInputBox(options);
+            if (value == null) {
+                Message.error('No value given');
+                return;
+            }
+            if (!fs.existsSync(value)) {
+                Message.error(`Path ${value} does not exist`);
+                return;
+            }
+            Message.info('Installing Harmony...');
+            await runInstall(value)
                 .then(msg => {
                     printReadableInstallMessage(msg);
                     OutputConsole.println(msg);
@@ -103,21 +150,41 @@ export const activate = (context: vscode.ExtensionContext) => {
 
     const endHarmonyProcessesCommand = vscode.commands.registerCommand('harmonylang.end', endHarmonyProcesses);
 
+    // priority=100 is arbitrary
+    const harmonyStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+    const onStatusBarClick = async () => {
+        Message.info(`Harmony is using Python environment ${await SystemCommands.getPythonCommandPath()}`)
+    };
+    const onStatusBarClickCommandId = 'harmonylang.on-status-bar-click';
+    harmonyStatusBar.command = onStatusBarClickCommandId;
+    const updateHarmonyStatusBar = async (): Promise<void> => {
+        const pythonCommandPath = await SystemCommands.getPythonCommandPath();
+        if (!pythonCommandPath) {
+            harmonyStatusBar.text = 'Harmony: missing Python env';
+            return;
+        }
+
+        const cmdArgs = [pythonCommandPath, '-c', HARMONY_ENTRY_SCRIPT, '--version'];
+        const result = await ProcessManager.startCommandAsync(cmdArgs, {});
+        if (result.error) {
+            OutputConsole.println(result.error.message);
+            harmonyStatusBar.text = 'Harmony: process error';
+            return;
+        }
+        harmonyStatusBar.text = `${result.stdout}`;
+    };
+
     context.subscriptions.push(runHarmonyCommand);
     context.subscriptions.push(installHarmonyCmd);
+    context.subscriptions.push(installHarmonyCmdWithPythonEnvironment);
     context.subscriptions.push(runHarmonyWithFlagsCommand);
     context.subscriptions.push(endHarmonyProcessesCommand);
-
-    // Install Harmony when the extension is activated.
-    // This will either install Harmony fresh or upgrade to the
-    // latest version.
-    runInstall()
-        .then(msg => OutputConsole.println(msg))
-        .catch((errMessage: string) => {
-            printReadableInstallMessage(errMessage);
-            OutputConsole.println(errMessage);
-            OutputConsole.show();
-        });
+    context.subscriptions.push(harmonyStatusBar);
+    context.subscriptions.push(vscode.commands.registerCommand(onStatusBarClickCommandId, onStatusBarClick));
+    context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(updateHarmonyStatusBar));
+    context.subscriptions.push(vscode.window.onDidChangeTextEditorSelection(updateHarmonyStatusBar));
+    updateHarmonyStatusBar();
+    harmonyStatusBar.show();
 
     // Setup the server client only if Harmony is installed
     // The server is implemented in node

@@ -26,7 +26,7 @@ export default class SystemCommands {
         // Prefer the extension-set pythonPath first, and then remaining possible paths
         // as fallback.
         pythonPaths.push(
-            SystemCommands.getPythonCommandPath(),
+            await SystemCommands.getPythonCommandPath(),
             vscode.workspace.getConfiguration('python').get('pythonPath'),
             vscode.workspace.getConfiguration('python').get('defaultInterpreterPath'),
         );

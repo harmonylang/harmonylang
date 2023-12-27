@@ -16,8 +16,14 @@ const INSTALL_HARMONY_COMMAND_ARGS = [
  * If Harmony was already instead in the extension's directory,
  * then update with the latest version from PyPi
  */
-export default async function runInstall() {
-    const pythonPaths = await SystemCommands.getAllPossiblePythonCommandPaths();
+export default async function runInstall(pythonPath: string | undefined = undefined) {
+    const pythonPaths = await (() => {
+        if (pythonPath == null) {
+            return SystemCommands.getAllPossiblePythonCommandPaths();
+        } else {
+            return [pythonPath,];
+        }
+    })();
     if (pythonPaths.length === 0) {
         throw 'Could not find a python path. Please install Python3 or report this if you believe it is an error.';
     }
