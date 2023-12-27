@@ -27,18 +27,23 @@ export default async function runInstall() {
 
     const errorMessages: string[] = [];
     for (const p of pythonPaths) {
-        const {error, stdout, stderr} = await ProcessManager.startCommandAsync([p, '-m', 'pip', ...INSTALL_HARMONY_COMMAND_ARGS], {});
+        const commandArgs = [p, '-m', 'pip', ...INSTALL_HARMONY_COMMAND_ARGS];
+        const {error, stdout, stderr} = await ProcessManager.startCommandAsync(commandArgs, {});
         if (error) {
-            errorMessages.push(`Failed to install harmony via ${p}`);
+            errorMessages.push(`Failed to install harmony via command ${commandArgs}`);
             errorMessages.push(error.message);
             errorMessages.push(stdout);
             errorMessages.push(stderr);
             continue;
         }
         // Write any error messages encountered.
-        OutputConsole.println(errorMessages.join('\n'));
+        if (errorMessages.length > 0) {
+            OutputConsole.println('Harmony installed. Encountered some errors along the way, but no action is likely needed');
+            OutputConsole.println(errorMessages.join('\n'));
+        }
 
         // Set the pythonPath to the HarmonyLang one if it works.
+        OutputConsole.println(`Successfully installed harmony using command arguments ${commandArgs}`);
         SystemCommands.updateHarmonyPythonCommandPath(p);
         return stdout;
     }
@@ -49,7 +54,7 @@ export default async function runInstall() {
  * Parses the output messages from pip to produce
  * user readable output.
  */
-export async function printReadableInstallMessage(msgs:string) {
+export async function printReadableInstallMessage(msgs: string) {
     const MAX_MESSAGES = 3;
     // Reversing the message order, as higher priority errors are ordered closer to the bottom.
     const msgLines = msgs.trim().split('\n').reverse();
