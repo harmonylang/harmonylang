@@ -15,6 +15,11 @@ const INSTALL_HARMONY_COMMAND_ARGS = [
  * This will run the Harmony installation script.
  * If Harmony was already instead in the extension's directory,
  * then update with the latest version from PyPi
+ *
+ * If the Python path is not given, attempt to install Harmony on all
+ * detectable Python environments, with the HarmonyLang extension configured
+ * Python path first.
+ *
  */
 export default async function runInstall(pythonPath: string | undefined = undefined) {
     const pythonPaths = await (() => {
@@ -48,7 +53,8 @@ export default async function runInstall(pythonPath: string | undefined = undefi
             OutputConsole.println(errorMessages.join('\n'));
         }
 
-        // Set the pythonPath to the HarmonyLang one if it works.
+        // Set the pythonPath to the HarmonyLang one if it works, so that future
+        // install runs use the working one.
         OutputConsole.println(`Successfully installed harmony using command arguments ${commandArgs}`);
         SystemCommands.updateHarmonyPythonCommandPath(p);
         return stdout;
