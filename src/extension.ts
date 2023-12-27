@@ -153,7 +153,7 @@ export const activate = (context: vscode.ExtensionContext) => {
     // priority=100 is arbitrary
     const harmonyStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     const onStatusBarClick = async () => {
-        Message.info(`Harmony is using Python environment ${await SystemCommands.getPythonCommandPath()}`)
+        Message.info(`Harmony is using Python environment ${await SystemCommands.getPythonCommandPath()}`);
     };
     const onStatusBarClickCommandId = 'harmonylang.on-status-bar-click';
     harmonyStatusBar.command = onStatusBarClickCommandId;
