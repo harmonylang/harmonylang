@@ -51,8 +51,8 @@ export const activate = (context: vscode.ExtensionContext) => {
         'harmonylang.install',
         async () => {
             const options: vscode.InputBoxOptions = {
-                prompt: 'Python Executable Path',
-                placeHolder: 'Optional full path to Python executable (e.g. /usr/bin/python3)',
+                prompt: 'Python Executable Path. Enter nothing for an auto-detected Python path.',
+                placeHolder: 'Optional full path to Python executable (e.g. /usr/bin/python3).',
             };
             let value = await vscode.window.showInputBox(options);
             if (value == null) {
