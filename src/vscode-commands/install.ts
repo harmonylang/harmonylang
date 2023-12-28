@@ -11,6 +11,15 @@ const INSTALL_HARMONY_COMMAND_ARGS = [
     'harmony'
 ];
 
+type InstallResult = {
+    state: 'success';
+    message: string;
+    pythonPath: string;
+} | {
+    state: 'failure';
+    message: string;
+};
+
 /**
  * This will run the Harmony installation script.
  * If Harmony was already instead in the extension's directory,
@@ -21,7 +30,7 @@ const INSTALL_HARMONY_COMMAND_ARGS = [
  * Python path first.
  *
  */
-export default async function runInstall(pythonPath: string | undefined = undefined) {
+export default async function runInstall(pythonPath: string | undefined = undefined): Promise<InstallResult> {
     const pythonPaths = await (() => {
         if (pythonPath == null) {
             return SystemCommands.getAllPossiblePythonCommandPaths();
@@ -30,7 +39,10 @@ export default async function runInstall(pythonPath: string | undefined = undefi
         }
     })();
     if (pythonPaths.length === 0) {
-        throw 'Could not find a python path. Please install Python3 or report this if you believe it is an error.';
+        return {
+            state: 'failure',
+            message: 'Could not find a python path. Please install Python3 or report this if you believe it is an error.'
+        };
     }
 
     OutputConsole.println('Attempting to install harmony via the following:');
@@ -57,9 +69,16 @@ export default async function runInstall(pythonPath: string | undefined = undefi
         // install runs use the working one.
         OutputConsole.println(`Successfully installed harmony using command arguments ${commandArgs}`);
         SystemCommands.updateHarmonyPythonCommandPath(p);
-        return stdout;
+        return {
+            state: 'success',
+            message: stdout,
+            pythonPath: p
+        };
     }
-    throw errorMessages.join('\n');
+    return {
+        state: 'failure',
+        message: errorMessages.join('\n'),
+    };
 }
 
 /**

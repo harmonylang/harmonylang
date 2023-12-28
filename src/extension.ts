@@ -37,55 +37,58 @@ export const activate = (context: vscode.ExtensionContext) => {
     // This will either install Harmony fresh or upgrade to the
     // latest version.
     runInstall()
-        .then(msg => OutputConsole.println(msg))
-        .catch((errMessage: string) => {
-            printReadableInstallMessage(errMessage);
-            OutputConsole.println(errMessage);
+        .then(result => {
+            OutputConsole.println(result.state);
+            OutputConsole.println(result.message);
+        })
+        .catch((err: unknown) => {
+            Message.error('Encountered an unexpected error during installation. See logs for more details and contact developers.');
+            OutputConsole.println(String(err));
             OutputConsole.show();
         });
 
-
-    const installHarmonyCmd = vscode.commands.registerCommand(
-        'harmonylang.install',
-        () => {
-            runInstall()
-                .then(msg => {
-                    printReadableInstallMessage(msg);
-                    OutputConsole.println(msg);
-                })
-                .catch((errMessage: string) => {
-                    printReadableInstallMessage(errMessage);
-                    OutputConsole.println(errMessage);
-                    OutputConsole.show();
-                });
-        }
-    );
-
     const installHarmonyCmdWithPythonEnvironment = vscode.commands.registerCommand(
-        'harmonylang.install-with-python-env',
+        'harmonylang.install',
         async () => {
             const options: vscode.InputBoxOptions = {
                 prompt: 'Python Executable Path',
-                placeHolder: 'Full path to Python executable (e.g. /usr/bin/python3)',
+                placeHolder: 'Optional full path to Python executable (e.g. /usr/bin/python3)',
             };
-            const value = await vscode.window.showInputBox(options);
+            let value = await vscode.window.showInputBox(options);
             if (value == null) {
-                Message.error('No value given');
+                // User cancelled action
                 return;
             }
-            if (!fs.existsSync(value)) {
-                Message.error(`Path ${value} does not exist`);
-                return;
+            value = value.trim();
+            if (fs.existsSync(value)) {
+                Message.info(`Installing Harmony using ${value}`);
+            } else {
+                Message.info('Installing Harmony using detectable Python3 environments');
+                value = undefined;
             }
-            Message.info('Installing Harmony...');
+
             await runInstall(value)
-                .then(msg => {
-                    printReadableInstallMessage(msg);
-                    OutputConsole.println(msg);
+                .then(result => {
+                    switch (result.state) {
+                    case 'success': {
+                        const msg = result.message;
+                        printReadableInstallMessage(msg);
+                        OutputConsole.println(msg);
+                        Message.info(`Successfully installed Harmony using ${result.pythonPath}`);
+                        break;
+                    }
+                    case 'failure': {
+                        const errMessage = result.message;
+                        printReadableInstallMessage(errMessage);
+                        OutputConsole.println(errMessage);
+                        OutputConsole.show();
+                        break;
+                    }
+                    }
                 })
-                .catch((errMessage: string) => {
-                    printReadableInstallMessage(errMessage);
-                    OutputConsole.println(errMessage);
+                .catch((err: unknown) => {
+                    Message.error('Encountered an unexpected error during installation. See logs for more details and contact developers.');
+                    OutputConsole.println(String(err));
                     OutputConsole.show();
                 });
         }
@@ -175,7 +178,6 @@ export const activate = (context: vscode.ExtensionContext) => {
     };
 
     context.subscriptions.push(runHarmonyCommand);
-    context.subscriptions.push(installHarmonyCmd);
     context.subscriptions.push(installHarmonyCmdWithPythonEnvironment);
     context.subscriptions.push(runHarmonyWithFlagsCommand);
     context.subscriptions.push(endHarmonyProcessesCommand);
