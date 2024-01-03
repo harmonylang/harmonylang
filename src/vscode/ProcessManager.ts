@@ -5,7 +5,7 @@ export default class ProcessManager {
     private static intervalCount = 0;
     private static runningCommands: Record<string, child_process.ChildProcess> = {};
     private static commandCount = 0;
-    private static processesAreKilled = false
+    private static processesAreKilled = false;
 
     public static startCommandAsync(
         cmd: string[],
@@ -49,7 +49,7 @@ export default class ProcessManager {
         return id;
     }
 
-    public static end(id: string): void {
+    public static end(id: string) {
         const processType = id.substring(0, id.indexOf('_'));
         switch (processType) {
         case 'interval':
@@ -69,30 +69,29 @@ export default class ProcessManager {
     private static endCommand(id: string) {
         if (ProcessManager.runningCommands[id] != null) {
             if (ProcessManager.runningCommands[id].exitCode == null) {
-                process.kill(-ProcessManager.runningCommands[id].pid);
+                process.kill(ProcessManager.runningCommands[id].pid);
             }
             delete ProcessManager.runningCommands[id];
             ProcessManager.commandCount--;
         }
     }
 
+    /**
+     * Kills/Stops all commands/intervals managed by ProcessManager.
+     * @returns The number of commands/intervals ended by ProcessManager
+     */
     public static endAll(): number {
         ProcessManager.processesAreKilled = true;
-        const commands = Object.keys(ProcessManager.runningCommands);
-        commands.forEach((cmdId) => {
-            if (ProcessManager.runningCommands[cmdId].exitCode == null) {
-                process.kill(-ProcessManager.runningCommands[cmdId].pid);
-            }
-        });
-        const intervals = Object.keys(ProcessManager.runningIntervals);
-        intervals.forEach((intervalId) => {
-            clearInterval(ProcessManager.runningIntervals[intervalId]);
-        });
+        const commandIds = [
+            ...Object.keys(ProcessManager.runningCommands),
+            ...Object.keys(ProcessManager.runningIntervals)
+        ];
+        commandIds.forEach(cmdId => this.end(cmdId));
         ProcessManager.runningIntervals = {};
         ProcessManager.runningCommands = {};
         ProcessManager.commandCount = 0;
         ProcessManager.intervalCount = 0;
 
-        return commands.length + intervals.length;
+        return commandIds.length;
     }
 }
