@@ -26,12 +26,15 @@ export default class SystemCommands {
         // Prefer the extension-set pythonPath first, and then remaining possible paths
         // as fallback.
         pythonPaths.push(
-            SystemCommands.getHarmonyLangConfiguration().get('pythonPath'),
+            await SystemCommands.getPythonCommandPath(),
             vscode.workspace.getConfiguration('python').get('pythonPath'),
             vscode.workspace.getConfiguration('python').get('defaultInterpreterPath'),
-            ...await which('python3', { all: true }),
-            ...await which('python', { all: true }),
         );
+        for (const command of ['python3', 'python']) {
+            try {
+                pythonPaths.push(...await which(command, { all: true }));
+            } catch { /* no command named python3 found using `which` */ }
+        }
         // TODO: Convert this array into an iterator that lazily checks if the element is
         // a string & exists (& checks if it is >= python3.6).
         return pythonPaths.filter((x): x is string => typeof x === 'string' && fs.existsSync(x));

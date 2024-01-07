@@ -88,30 +88,30 @@
             }
         ],
         "menus": {
-			"explorer/context": [
-				{
-					"command": "harmonylang.run",
-					"when": "resourceLangId == harmony",
-					"group": "1_livepreview@1"
-				},
-				{
-					"command": "harmonylang.run-with-flags",
-					"when": "resourceLangId == harmony",
-					"group": "1_livepreview@2"
-				}
-			],
-			"editor/context": [
-				{
-					"command": "harmonylang.run",
-					"when": "resourceLangId == harmony",
-					"group": "1_livepreview@1"
-				},
-				{
-					"command": "harmonylang.run-with-flags",
-					"when": "resourceLangId == harmony",
-					"group": "1_livepreview@2"
-				}
-			]
+            "explorer/context": [
+                {
+                    "command": "harmonylang.run",
+                    "when": "resourceLangId == harmony",
+                    "group": "1_livepreview@1"
+                },
+                {
+                    "command": "harmonylang.run-with-flags",
+                    "when": "resourceLangId == harmony",
+                    "group": "1_livepreview@2"
+                }
+            ],
+            "editor/context": [
+                {
+                    "command": "harmonylang.run",
+                    "when": "resourceLangId == harmony",
+                    "group": "1_livepreview@1"
+                },
+                {
+                    "command": "harmonylang.run-with-flags",
+                    "when": "resourceLangId == harmony",
+                    "group": "1_livepreview@2"
+                }
+            ]
         },
         "keybindings": [
             {
@@ -149,7 +149,7 @@
         "@types/rimraf": "^3.0.0",
         "@types/tmp": "^0.2.0",
         "@types/vscode": "^1.34.0",
-        "@types/which": "^2.0.1",
+        "@types/which": "^2.0.2",
         "@typescript-eslint/eslint-plugin": "^3.0.2",
         "@typescript-eslint/parser": "^3.0.2",
         "eslint": "^7.24.0",

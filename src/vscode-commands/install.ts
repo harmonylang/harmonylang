@@ -11,15 +11,38 @@ const INSTALL_HARMONY_COMMAND_ARGS = [
     'harmony'
 ];
 
+type InstallResult = {
+    state: 'success';
+    message: string;
+    pythonPath: string;
+} | {
+    state: 'failure';
+    message: string;
+};
+
 /**
  * This will run the Harmony installation script.
  * If Harmony was already instead in the extension's directory,
  * then update with the latest version from PyPi
+ *
+ * If the Python path is not given, attempt to install Harmony on all
+ * detectable Python environments, with the HarmonyLang extension configured
+ * Python path first.
+ *
  */
-export default async function runInstall() {
-    const pythonPaths = await SystemCommands.getAllPossiblePythonCommandPaths();
+export default async function runInstall(pythonPath: string | undefined = undefined): Promise<InstallResult> {
+    const pythonPaths = await (() => {
+        if (pythonPath == null) {
+            return SystemCommands.getAllPossiblePythonCommandPaths();
+        } else {
+            return [pythonPath,];
+        }
+    })();
     if (pythonPaths.length === 0) {
-        throw 'Could not find a python path. Please install Python3 or report this if you believe it is an error.';
+        return {
+            state: 'failure',
+            message: 'Could not find a python path. Please install Python3 or report this if you believe it is an error.'
+        };
     }
 
     OutputConsole.println('Attempting to install harmony via the following:');
@@ -27,29 +50,42 @@ export default async function runInstall() {
 
     const errorMessages: string[] = [];
     for (const p of pythonPaths) {
-        const {error, stdout, stderr} = await ProcessManager.startCommandAsync([p, '-m', 'pip', ...INSTALL_HARMONY_COMMAND_ARGS], {});
+        const commandArgs = [p, '-m', 'pip', ...INSTALL_HARMONY_COMMAND_ARGS];
+        const {error, stdout, stderr} = await ProcessManager.startCommandAsync(commandArgs, {});
         if (error) {
-            errorMessages.push(`Failed to install harmony via ${p}`);
+            errorMessages.push(`Failed to install harmony via command ${commandArgs}`);
             errorMessages.push(error.message);
             errorMessages.push(stdout);
             errorMessages.push(stderr);
             continue;
         }
         // Write any error messages encountered.
-        OutputConsole.println(errorMessages.join('\n'));
+        if (errorMessages.length > 0) {
+            OutputConsole.println('Harmony installed. Encountered some errors along the way, but no action is likely needed');
+            OutputConsole.println(errorMessages.join('\n'));
+        }
 
-        // Set the pythonPath to the HarmonyLang one if it works.
+        // Set the pythonPath to the HarmonyLang one if it works, so that future
+        // install runs use the working one.
+        OutputConsole.println(`Successfully installed harmony using command arguments ${commandArgs}`);
         SystemCommands.updateHarmonyPythonCommandPath(p);
-        return stdout;
+        return {
+            state: 'success',
+            message: stdout,
+            pythonPath: p
+        };
     }
-    throw errorMessages.join('\n');
+    return {
+        state: 'failure',
+        message: errorMessages.join('\n'),
+    };
 }
 
 /**
  * Parses the output messages from pip to produce
  * user readable output.
  */
-export async function printReadableInstallMessage(msgs:string) {
+export async function printReadableInstallMessage(msgs: string) {
     const MAX_MESSAGES = 3;
     // Reversing the message order, as higher priority errors are ordered closer to the bottom.
     const msgLines = msgs.trim().split('\n').reverse();
