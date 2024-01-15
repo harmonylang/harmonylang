@@ -1,0 +1,1809 @@
+{
+  "nstates": 13,
+  "issue": "Safety violation",
+  "hvm": {
+    "modules": {
+        "__main__": {
+            "file": "/var/folders/6n/pjbfqj310fz0rt3tlz28gcdc0000gn/T/tmpoigkn1jf/Upf.hny",
+            "lines": [
+                "count = 0",
+                "",
+                "finally count == 2",
+                "",
+                "def incrementer():",
+                "    count = count + 1",
+                "",
+                "spawn incrementer()",
+                "spawn incrementer()"
+              ],
+            "identifiers": {
+                "count": "global",
+                "this": "local-var",
+                "incrementer": "constant",
+                "___": "___"
+              }
+          }
+      },
+    "labels": {
+        "__end__": 30
+      },
+    "pretty": [
+        [
+            "Frame __init__()",
+            "start of method __init__"
+          ],
+        [
+            "Push 0",
+            "push constant 0"
+          ],
+        [
+            "Store count",
+            "pop a value and store it in shared variable count"
+          ],
+        [
+            "Jump 10",
+            "jump over finally definition: set program counter to 10"
+          ],
+        [
+            "Frame finally()",
+            "start of method finally"
+          ],
+        [
+            "Load count",
+            "push value of shared variable count"
+          ],
+        [
+            "Push 2",
+            "push constant 2"
+          ],
+        [
+            "2-ary ==",
+            "pop 2 values and push the result of applying =="
+          ],
+        [
+            "Assert",
+            "pop a condition and raise exception if condition is false"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "Finally 4",
+            "test predicate over final state"
+          ],
+        [
+            "Jump 18",
+            "jump over method definition: set program counter to 18"
+          ],
+        [
+            "Frame incrementer()",
+            "start of method incrementer"
+          ],
+        [
+            "Load count",
+            "push value of shared variable count"
+          ],
+        [
+            "Push 1",
+            "push constant 1"
+          ],
+        [
+            "2-ary +",
+            "pop 2 values and push the result of applying +"
+          ],
+        [
+            "Store count",
+            "pop a value and store it in shared variable count"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "Push ?PC(12)",
+            "push constant ?PC(12)"
+          ],
+        [
+            "Push ()",
+            "push constant ()"
+          ],
+        [
+            "2-ary AddArg",
+            "pop 2 values and push the result of applying AddArg"
+          ],
+        [
+            "Push {:}",
+            "push constant {:}"
+          ],
+        [
+            "Spawn",
+            "pop thread-local state, argument, and pc and spawn a new thread"
+          ],
+        [
+            "Push ?PC(12)",
+            "push constant ?PC(12)"
+          ],
+        [
+            "Push ()",
+            "push constant ()"
+          ],
+        [
+            "2-ary AddArg",
+            "pop 2 values and push the result of applying AddArg"
+          ],
+        [
+            "Push {:}",
+            "push constant {:}"
+          ],
+        [
+            "Spawn",
+            "pop thread-local state, argument, and pc and spawn a new thread"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "DelVar result",
+            "delete method variable result"
+          ]
+      ],
+    "locs": [
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                1,
+                1,
+                10,
+                7
+              ],
+            "line": 1,
+            "endcolumn": 7,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                9
+              ],
+            "line": 1,
+            "endcolumn": 9,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                9
+              ],
+            "line": 1,
+            "endcolumn": 7,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                3,
+                1,
+                3,
+                18
+              ],
+            "line": 3,
+            "endcolumn": 7,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                3,
+                1,
+                3,
+                18
+              ],
+            "line": 3,
+            "endcolumn": 18,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                3,
+                1,
+                3,
+                18
+              ],
+            "line": 3,
+            "endcolumn": 13,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                3,
+                1,
+                3,
+                18
+              ],
+            "line": 3,
+            "endcolumn": 18,
+            "column": 18
+          },
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                3,
+                1,
+                3,
+                18
+              ],
+            "line": 3,
+            "endcolumn": 18,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                3,
+                1,
+                3,
+                18
+              ],
+            "line": 3,
+            "endcolumn": 18,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                3,
+                1,
+                3,
+                18
+              ],
+            "line": 3,
+            "endcolumn": 18,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                3,
+                1,
+                3,
+                18
+              ],
+            "line": 3,
+            "endcolumn": 18,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                1,
+                5,
+                18
+              ],
+            "line": 5,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                1,
+                5,
+                18
+              ],
+            "line": 5,
+            "endcolumn": 18,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                5,
+                6,
+                21
+              ],
+            "line": 6,
+            "endcolumn": 17,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                5,
+                6,
+                21
+              ],
+            "line": 6,
+            "endcolumn": 21,
+            "column": 21
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                5,
+                6,
+                21
+              ],
+            "line": 6,
+            "endcolumn": 21,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                5,
+                6,
+                21
+              ],
+            "line": 6,
+            "endcolumn": 11,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                1,
+                5,
+                18
+              ],
+            "line": 5,
+            "endcolumn": 18,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 8,
+            "stmt": [
+                8,
+                1,
+                8,
+                19
+              ],
+            "line": 8,
+            "endcolumn": 17,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 8,
+            "stmt": [
+                8,
+                1,
+                8,
+                19
+              ],
+            "line": 8,
+            "endcolumn": 19,
+            "column": 18
+          },
+        {
+            "module": "__main__",
+            "endline": 8,
+            "stmt": [
+                8,
+                1,
+                8,
+                19
+              ],
+            "line": 8,
+            "endcolumn": 19,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 8,
+            "stmt": [
+                8,
+                1,
+                8,
+                19
+              ],
+            "line": 8,
+            "endcolumn": 19,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 8,
+            "stmt": [
+                8,
+                1,
+                8,
+                19
+              ],
+            "line": 8,
+            "endcolumn": 19,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                1,
+                9,
+                19
+              ],
+            "line": 9,
+            "endcolumn": 17,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                1,
+                9,
+                19
+              ],
+            "line": 9,
+            "endcolumn": 19,
+            "column": 18
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                1,
+                9,
+                19
+              ],
+            "line": 9,
+            "endcolumn": 19,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                1,
+                9,
+                19
+              ],
+            "line": 9,
+            "endcolumn": 19,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                1,
+                9,
+                19
+              ],
+            "line": 9,
+            "endcolumn": 19,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                1,
+                1,
+                10,
+                7
+              ],
+            "line": 1,
+            "endcolumn": 7,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                1,
+                1,
+                10,
+                7
+              ],
+            "line": 1,
+            "endcolumn": 7,
+            "column": 1
+          }
+      ],
+    "code": [
+        {
+            "args": "()",
+            "name": "__init__",
+            "op": "Frame"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 0
+              },
+            "op": "Push"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "count"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "pc": "10",
+            "op": "Jump"
+          },
+        {
+            "args": "()",
+            "name": "finally",
+            "op": "Frame"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "count"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 2
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "==",
+            "op": "Nary"
+          },
+        {
+            "op": "Assert"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "pc": "4",
+            "op": "Finally"
+          },
+        {
+            "pc": "18",
+            "op": "Jump"
+          },
+        {
+            "args": "()",
+            "name": "incrementer",
+            "op": "Frame"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "count"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 1
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "+",
+            "op": "Nary"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "count"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "value": {
+                "type": "address",
+                "args": [
+
+                  ],
+                "func": {
+                    "type": "pc",
+                    "value": "12"
+                  }
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "list",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "AddArg",
+            "op": "Nary"
+          },
+        {
+            "value": {
+                "type": "dict",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "eternal": "False",
+            "op": "Spawn"
+          },
+        {
+            "value": {
+                "type": "address",
+                "args": [
+
+                  ],
+                "func": {
+                    "type": "pc",
+                    "value": "12"
+                  }
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "list",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "AddArg",
+            "op": "Nary"
+          },
+        {
+            "value": {
+                "type": "dict",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "eternal": "False",
+            "op": "Spawn"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "value": "result",
+            "op": "DelVar"
+          }
+      ]
+  },
+  "macrosteps": [
+    {
+      "id": "1",
+      "tid": "0",
+      "shared": { },
+      "name": "__init__()",
+      "context": {
+        "tid": "0",
+        "hvalue": "7fbb502d9b6a",
+        "fp": "1",
+        "id": "0",
+        "name": "__init__()",
+        "entry": "0",
+        "pc": "0",
+        "sp": "1",
+        "stack": [{ "type": "list", "value": [] }],
+        "trace": [
+{"pc": "0","xpc": "0","method_name": { "type": "atom", "value": "__init__" },
+"method_arg": { "type": "list", "value": [] },
+"method": "__init__()","calltype": "process","vars":{ },"sp": 0}
+        ],
+        "atomic": "1",
+        "next": { "type": "Frame", "name": "__init__", "args": "()", "value": { "type": "list", "value": [] } },
+        "mode": "runnable"
+      },
+      "microsteps": [
+        {
+          "code": "Frame __init__()",
+          "explain": "pop argument () and run method \"__init__\"",
+          "explain2": { "text": "pop argument () and run method #+", "args": [ { "type": "atom", "value": "__init__" } ] },
+          "npc": "1",
+          "fp": "1",
+          "trace": [
+{"pc": "1","xpc": "0","method_name": { "type": "atom", "value": "__init__" },
+"method_arg": { "type": "list", "value": [] },
+"method": "__init__()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "pop": "1",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "0"
+        },
+
+        {
+          "code": "Push 0",
+          "explain": "push constant 0",
+          "explain2": { "text": "push constant 0", "args": [] },
+          "npc": "2",
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "1"
+        },
+
+        {
+          "code": "Store count",
+          "explain": "pop value (0) and store into variable count",
+          "explain2": { "text": "pop value (#+) and store into variable #@", "args": [ { "type": "int", "value": "0" }, { "type": "address", "func": { "type": "pc", "value": "-1" }, "args": [{ "type": "atom", "value": "count" } ] } ] },
+          "shared": { "count": { "type": "int", "value": "0" } },
+          "npc": "3",
+          "pop": "1",
+          "push": [ ],
+          "pc": "2"
+        },
+
+        {
+          "code": "Jump 10",
+          "explain": "jump over finally definition: set program counter to 10",
+          "explain2": { "text": "jump over finally definition: set program counter to 10", "args": [] },
+          "npc": "10",
+          "push": [ ],
+          "pc": "3"
+        },
+
+        {
+          "code": "Finally 4",
+          "explain": "test predicate over final state",
+          "explain2": { "text": "test predicate over final state", "args": [] },
+          "npc": "11",
+          "push": [ ],
+          "pc": "10"
+        },
+
+        {
+          "code": "Jump 18",
+          "explain": "jump over method definition: set program counter to 18",
+          "explain2": { "text": "jump over method definition: set program counter to 18", "args": [] },
+          "npc": "18",
+          "push": [ ],
+          "pc": "11"
+        },
+
+        {
+          "code": "Push ?PC(12)",
+          "explain": "push constant ?PC(12)",
+          "explain2": { "text": "push constant ?PC(12)", "args": [] },
+          "npc": "19",
+          "push": [ { "type": "address", "func": { "type": "pc", "value": "12" }, "args": [ ] } ],
+          "pc": "18"
+        },
+
+        {
+          "code": "Push ()",
+          "explain": "push constant ()",
+          "explain2": { "text": "push constant ()", "args": [] },
+          "npc": "20",
+          "push": [ { "type": "list", "value": [] } ],
+          "pc": "19"
+        },
+
+        {
+          "code": "2-ary AddArg",
+          "explain": "pop 2 values ([], ?PC(12)); push result (?PC(12)[[]])",
+          "explain2": { "text": "pop 2 values (#+, #+); push result (#+)", "args": [ { "type": "list", "value": [] }, { "type": "address", "func": { "type": "pc", "value": "12" }, "args": [ ] }, { "type": "address", "func": { "type": "pc", "value": "12" }, "args": [{ "type": "list", "value": [] } ] } ] },
+          "npc": "21",
+          "pop": "2",
+          "push": [ { "type": "address", "func": { "type": "pc", "value": "12" }, "args": [{ "type": "list", "value": [] } ] } ],
+          "pc": "20"
+        },
+
+        {
+          "code": "Push {:}",
+          "explain": "push constant {:}",
+          "explain2": { "text": "push constant {:}", "args": [] },
+          "npc": "22",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "21"
+        },
+
+        {
+          "code": "Spawn",
+          "explain": "pop local state ({:}), arg ([]), and pc (12: \"incrementer\"), and spawn thread",
+          "explain2": { "text": "pop local state (#+), arg (#+), and pc (12: #+), and spawn thread", "args": [ { "type": "dict", "value": [] }, { "type": "list", "value": [] }, { "type": "atom", "value": "incrementer" } ] },
+          "npc": "23",
+          "pop": "2",
+          "push": [ ],
+          "pc": "22"
+        },
+
+        {
+          "code": "Push ?PC(12)",
+          "explain": "push constant ?PC(12)",
+          "explain2": { "text": "push constant ?PC(12)", "args": [] },
+          "npc": "24",
+          "push": [ { "type": "address", "func": { "type": "pc", "value": "12" }, "args": [ ] } ],
+          "pc": "23"
+        },
+
+        {
+          "code": "Push ()",
+          "explain": "push constant ()",
+          "explain2": { "text": "push constant ()", "args": [] },
+          "npc": "25",
+          "push": [ { "type": "list", "value": [] } ],
+          "pc": "24"
+        },
+
+        {
+          "code": "2-ary AddArg",
+          "explain": "pop 2 values ([], ?PC(12)); push result (?PC(12)[[]])",
+          "explain2": { "text": "pop 2 values (#+, #+); push result (#+)", "args": [ { "type": "list", "value": [] }, { "type": "address", "func": { "type": "pc", "value": "12" }, "args": [ ] }, { "type": "address", "func": { "type": "pc", "value": "12" }, "args": [{ "type": "list", "value": [] } ] } ] },
+          "npc": "26",
+          "pop": "2",
+          "push": [ { "type": "address", "func": { "type": "pc", "value": "12" }, "args": [{ "type": "list", "value": [] } ] } ],
+          "pc": "25"
+        },
+
+        {
+          "code": "Push {:}",
+          "explain": "push constant {:}",
+          "explain2": { "text": "push constant {:}", "args": [] },
+          "npc": "27",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "26"
+        },
+
+        {
+          "code": "Spawn",
+          "explain": "pop local state ({:}), arg ([]), and pc (12: \"incrementer\"), and spawn thread",
+          "explain2": { "text": "pop local state (#+), arg (#+), and pc (12: #+), and spawn thread", "args": [ { "type": "dict", "value": [] }, { "type": "list", "value": [] }, { "type": "atom", "value": "incrementer" } ] },
+          "npc": "28",
+          "pop": "2",
+          "push": [ ],
+          "pc": "27"
+        },
+
+        {
+          "code": "ReturnOp(result. None)",
+          "explain": "pop caller's method variables and pc and push result (), or terminate if no caller",
+          "explain2": { "text": "pop caller's method variables and pc and push result (), or terminate if no caller", "args": [ { "type": "address" } ] },
+          "npc": "28",
+          "mode": "terminated",
+          "pop": "1",
+          "push": [ { "type": "address" } ],
+          "pc": "28"
+        }
+
+      ],
+      "ctxbag": {
+          "7fbb5800007a": "2"
+      },
+      "contexts": [
+        {
+          "tid": "0",
+          "hvalue": "7fbb580000aa",
+          "fp": "1",
+          "id": "0",
+          "name": "__init__()",
+          "entry": "0",
+          "pc": "28",
+          "sp": "1",
+          "stack": [{ "type": "address" }],
+          "trace": [
+{"pc": "28","xpc": "0","method_name": { "type": "atom", "value": "__init__" },
+"method_arg": { "type": "list", "value": [] },
+"method": "__init__()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "atomic": "1",
+          "mode": "terminated"
+        },
+        {
+          "tid": "1",
+          "hvalue": "7fbb5800007a",
+          "fp": "1",
+          "name": "incrementer()",
+          "entry": "12",
+          "pc": "12",
+          "sp": "1",
+          "stack": [{ "type": "list", "value": [] }],
+          "trace": [
+{"pc": "12","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "next": { "type": "Frame", "name": "incrementer", "args": "()", "value": { "type": "list", "value": [] } },
+          "mode": "runnable"
+        },
+        {
+          "tid": "2",
+          "hvalue": "7fbb5800007a",
+          "fp": "1",
+          "name": "incrementer()",
+          "entry": "12",
+          "pc": "12",
+          "sp": "1",
+          "stack": [{ "type": "list", "value": [] }],
+          "trace": [
+{"pc": "12","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "next": { "type": "Frame", "name": "incrementer", "args": "()", "value": { "type": "list", "value": [] } },
+          "mode": "runnable"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "tid": "1",
+      "shared": { "count": { "type": "int", "value": "0" } },
+      "name": "incrementer()",
+      "context": {
+        "tid": "1",
+        "hvalue": "7fbb5800007a",
+        "fp": "1",
+        "name": "incrementer()",
+        "entry": "12",
+        "pc": "12",
+        "sp": "1",
+        "stack": [{ "type": "list", "value": [] }],
+        "trace": [
+{"pc": "12","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+        ],
+        "next": { "type": "Frame", "name": "incrementer", "args": "()", "value": { "type": "list", "value": [] } },
+        "mode": "runnable"
+      },
+      "microsteps": [
+        {
+          "code": "Frame incrementer()",
+          "explain": "pop argument () and run method \"incrementer\"",
+          "explain2": { "text": "pop argument () and run method #+", "args": [ { "type": "atom", "value": "incrementer" } ] },
+          "npc": "13",
+          "fp": "1",
+          "trace": [
+{"pc": "13","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "pop": "1",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "12"
+        }
+
+      ],
+      "ctxbag": {
+          "7fbb4470000a": "1",
+          "7fbb5800007a": "1"
+      },
+      "contexts": [
+        {
+          "tid": "0",
+          "hvalue": "7fbb580000aa",
+          "fp": "1",
+          "id": "0",
+          "name": "__init__()",
+          "entry": "0",
+          "pc": "28",
+          "sp": "1",
+          "stack": [{ "type": "address" }],
+          "trace": [
+{"pc": "28","xpc": "0","method_name": { "type": "atom", "value": "__init__" },
+"method_arg": { "type": "list", "value": [] },
+"method": "__init__()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "atomic": "1",
+          "mode": "terminated"
+        },
+        {
+          "tid": "1",
+          "hvalue": "7fbb4470000a",
+          "fp": "1",
+          "name": "incrementer()",
+          "entry": "12",
+          "pc": "13",
+          "sp": "1",
+          "stack": [{ "type": "dict", "value": [] }],
+          "trace": [
+{"pc": "13","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "next": { "type": "Load", "var": "count" },
+          "mode": "runnable"
+        },
+        {
+          "tid": "2",
+          "hvalue": "7fbb5800007a",
+          "fp": "1",
+          "name": "incrementer()",
+          "entry": "12",
+          "pc": "12",
+          "sp": "1",
+          "stack": [{ "type": "list", "value": [] }],
+          "trace": [
+{"pc": "12","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "next": { "type": "Frame", "name": "incrementer", "args": "()", "value": { "type": "list", "value": [] } },
+          "mode": "runnable"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "tid": "1",
+      "shared": { "count": { "type": "int", "value": "0" } },
+      "name": "incrementer()",
+      "context": {
+        "tid": "1",
+        "hvalue": "7fbb4470000a",
+        "fp": "1",
+        "name": "incrementer()",
+        "entry": "12",
+        "pc": "13",
+        "sp": "1",
+        "stack": [{ "type": "dict", "value": [] }],
+        "trace": [
+{"pc": "13","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+        ],
+        "next": { "type": "Load", "var": "count" },
+        "mode": "runnable"
+      },
+      "microsteps": [
+        {
+          "code": "Load count",
+          "explain": "push value (0) of variable count",
+          "explain2": { "text": "push value (#+) of variable count", "args": [ { "type": "int", "value": "0" } ] },
+          "npc": "14",
+          "fp": "1",
+          "trace": [
+{"pc": "14","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "13"
+        },
+
+        {
+          "code": "Push 1",
+          "explain": "push constant 1",
+          "explain2": { "text": "push constant 1", "args": [] },
+          "npc": "15",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "14"
+        },
+
+        {
+          "code": "2-ary +",
+          "explain": "pop 2 values (1, 0); add the integers; push result (1)",
+          "explain2": { "text": "pop 2 values (#+, #+); add the integers; push result (#+)", "args": [ { "type": "int", "value": "1" }, { "type": "int", "value": "0" }, { "type": "int", "value": "1" } ] },
+          "npc": "16",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "15"
+        }
+
+      ],
+      "ctxbag": {
+          "7fbb5800007a": "1",
+          "7fbb5a00000a": "1"
+      },
+      "contexts": [
+        {
+          "tid": "0",
+          "hvalue": "7fbb580000aa",
+          "fp": "1",
+          "id": "0",
+          "name": "__init__()",
+          "entry": "0",
+          "pc": "28",
+          "sp": "1",
+          "stack": [{ "type": "address" }],
+          "trace": [
+{"pc": "28","xpc": "0","method_name": { "type": "atom", "value": "__init__" },
+"method_arg": { "type": "list", "value": [] },
+"method": "__init__()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "atomic": "1",
+          "mode": "terminated"
+        },
+        {
+          "tid": "1",
+          "hvalue": "7fbb5a00000a",
+          "fp": "1",
+          "name": "incrementer()",
+          "entry": "12",
+          "pc": "16",
+          "sp": "2",
+          "stack": [{ "type": "dict", "value": [] }, { "type": "int", "value": "1" }],
+          "trace": [
+{"pc": "16","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "next": { "type": "Store", "var": "count", "value": { "type": "int", "value": "1" } },
+          "mode": "runnable"
+        },
+        {
+          "tid": "2",
+          "hvalue": "7fbb5800007a",
+          "fp": "1",
+          "name": "incrementer()",
+          "entry": "12",
+          "pc": "12",
+          "sp": "1",
+          "stack": [{ "type": "list", "value": [] }],
+          "trace": [
+{"pc": "12","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "next": { "type": "Frame", "name": "incrementer", "args": "()", "value": { "type": "list", "value": [] } },
+          "mode": "runnable"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "tid": "2",
+      "shared": { "count": { "type": "int", "value": "0" } },
+      "name": "incrementer()",
+      "context": {
+        "tid": "2",
+        "hvalue": "7fbb5800007a",
+        "fp": "1",
+        "name": "incrementer()",
+        "entry": "12",
+        "pc": "12",
+        "sp": "1",
+        "stack": [{ "type": "list", "value": [] }],
+        "trace": [
+{"pc": "12","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+        ],
+        "next": { "type": "Frame", "name": "incrementer", "args": "()", "value": { "type": "list", "value": [] } },
+        "mode": "runnable"
+      },
+      "microsteps": [
+        {
+          "code": "Frame incrementer()",
+          "explain": "pop argument () and run method \"incrementer\"",
+          "explain2": { "text": "pop argument () and run method #+", "args": [ { "type": "atom", "value": "incrementer" } ] },
+          "npc": "13",
+          "fp": "1",
+          "trace": [
+{"pc": "13","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "pop": "1",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "12"
+        }
+
+      ],
+      "ctxbag": {
+          "7fbb4470000a": "1",
+          "7fbb5a00000a": "1"
+      },
+      "contexts": [
+        {
+          "tid": "0",
+          "hvalue": "7fbb580000aa",
+          "fp": "1",
+          "id": "0",
+          "name": "__init__()",
+          "entry": "0",
+          "pc": "28",
+          "sp": "1",
+          "stack": [{ "type": "address" }],
+          "trace": [
+{"pc": "28","xpc": "0","method_name": { "type": "atom", "value": "__init__" },
+"method_arg": { "type": "list", "value": [] },
+"method": "__init__()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "atomic": "1",
+          "mode": "terminated"
+        },
+        {
+          "tid": "1",
+          "hvalue": "7fbb5a00000a",
+          "fp": "1",
+          "name": "incrementer()",
+          "entry": "12",
+          "pc": "16",
+          "sp": "2",
+          "stack": [{ "type": "dict", "value": [] }, { "type": "int", "value": "1" }],
+          "trace": [
+{"pc": "16","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "next": { "type": "Store", "var": "count", "value": { "type": "int", "value": "1" } },
+          "mode": "runnable"
+        },
+        {
+          "tid": "2",
+          "hvalue": "7fbb4470000a",
+          "fp": "1",
+          "name": "incrementer()",
+          "entry": "12",
+          "pc": "13",
+          "sp": "1",
+          "stack": [{ "type": "dict", "value": [] }],
+          "trace": [
+{"pc": "13","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "next": { "type": "Load", "var": "count" },
+          "mode": "runnable"
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "tid": "2",
+      "shared": { "count": { "type": "int", "value": "0" } },
+      "name": "incrementer()",
+      "context": {
+        "tid": "2",
+        "hvalue": "7fbb4470000a",
+        "fp": "1",
+        "name": "incrementer()",
+        "entry": "12",
+        "pc": "13",
+        "sp": "1",
+        "stack": [{ "type": "dict", "value": [] }],
+        "trace": [
+{"pc": "13","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+        ],
+        "next": { "type": "Load", "var": "count" },
+        "mode": "runnable"
+      },
+      "microsteps": [
+        {
+          "code": "Load count",
+          "explain": "push value (0) of variable count",
+          "explain2": { "text": "push value (#+) of variable count", "args": [ { "type": "int", "value": "0" } ] },
+          "npc": "14",
+          "fp": "1",
+          "trace": [
+{"pc": "14","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "push": [ { "type": "int", "value": "0" } ],
+          "pc": "13"
+        },
+
+        {
+          "code": "Push 1",
+          "explain": "push constant 1",
+          "explain2": { "text": "push constant 1", "args": [] },
+          "npc": "15",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "14"
+        },
+
+        {
+          "code": "2-ary +",
+          "explain": "pop 2 values (1, 0); add the integers; push result (1)",
+          "explain2": { "text": "pop 2 values (#+, #+); add the integers; push result (#+)", "args": [ { "type": "int", "value": "1" }, { "type": "int", "value": "0" }, { "type": "int", "value": "1" } ] },
+          "npc": "16",
+          "pop": "2",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "15"
+        }
+
+      ],
+      "ctxbag": {
+          "7fbb5a00000a": "2"
+      },
+      "contexts": [
+        {
+          "tid": "0",
+          "hvalue": "7fbb580000aa",
+          "fp": "1",
+          "id": "0",
+          "name": "__init__()",
+          "entry": "0",
+          "pc": "28",
+          "sp": "1",
+          "stack": [{ "type": "address" }],
+          "trace": [
+{"pc": "28","xpc": "0","method_name": { "type": "atom", "value": "__init__" },
+"method_arg": { "type": "list", "value": [] },
+"method": "__init__()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "atomic": "1",
+          "mode": "terminated"
+        },
+        {
+          "tid": "1",
+          "hvalue": "7fbb5a00000a",
+          "fp": "1",
+          "name": "incrementer()",
+          "entry": "12",
+          "pc": "16",
+          "sp": "2",
+          "stack": [{ "type": "dict", "value": [] }, { "type": "int", "value": "1" }],
+          "trace": [
+{"pc": "16","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "next": { "type": "Store", "var": "count", "value": { "type": "int", "value": "1" } },
+          "mode": "runnable"
+        },
+        {
+          "tid": "2",
+          "hvalue": "7fbb5a00000a",
+          "fp": "1",
+          "name": "incrementer()",
+          "entry": "12",
+          "pc": "16",
+          "sp": "2",
+          "stack": [{ "type": "dict", "value": [] }, { "type": "int", "value": "1" }],
+          "trace": [
+{"pc": "16","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "next": { "type": "Store", "var": "count", "value": { "type": "int", "value": "1" } },
+          "mode": "runnable"
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "tid": "2",
+      "shared": { "count": { "type": "int", "value": "0" } },
+      "name": "incrementer()",
+      "context": {
+        "tid": "2",
+        "hvalue": "7fbb5a00000a",
+        "fp": "1",
+        "name": "incrementer()",
+        "entry": "12",
+        "pc": "16",
+        "sp": "2",
+        "stack": [{ "type": "dict", "value": [] }, { "type": "int", "value": "1" }],
+        "trace": [
+{"pc": "16","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+        ],
+        "next": { "type": "Store", "var": "count", "value": { "type": "int", "value": "1" } },
+        "mode": "runnable"
+      },
+      "microsteps": [
+        {
+          "code": "Store count",
+          "explain": "pop value (1) and store into variable count",
+          "explain2": { "text": "pop value (#+) and store into variable #@", "args": [ { "type": "int", "value": "1" }, { "type": "address", "func": { "type": "pc", "value": "-1" }, "args": [{ "type": "atom", "value": "count" } ] } ] },
+          "shared": { "count": { "type": "int", "value": "1" } },
+          "npc": "17",
+          "fp": "1",
+          "trace": [
+{"pc": "17","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+
+        {
+          "code": "ReturnOp(result. None)",
+          "explain": "pop caller's method variables and pc and push result (), or terminate if no caller",
+          "explain2": { "text": "pop caller's method variables and pc and push result (), or terminate if no caller", "args": [ { "type": "address" } ] },
+          "npc": "17",
+          "mode": "terminated",
+          "pop": "1",
+          "push": [ { "type": "address" } ],
+          "pc": "17"
+        }
+
+      ],
+      "ctxbag": {
+          "7fbb5a00000a": "1"
+      },
+      "contexts": [
+        {
+          "tid": "0",
+          "hvalue": "7fbb580000aa",
+          "fp": "1",
+          "id": "0",
+          "name": "__init__()",
+          "entry": "0",
+          "pc": "28",
+          "sp": "1",
+          "stack": [{ "type": "address" }],
+          "trace": [
+{"pc": "28","xpc": "0","method_name": { "type": "atom", "value": "__init__" },
+"method_arg": { "type": "list", "value": [] },
+"method": "__init__()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "atomic": "1",
+          "mode": "terminated"
+        },
+        {
+          "tid": "1",
+          "hvalue": "7fbb5a00000a",
+          "fp": "1",
+          "name": "incrementer()",
+          "entry": "12",
+          "pc": "16",
+          "sp": "2",
+          "stack": [{ "type": "dict", "value": [] }, { "type": "int", "value": "1" }],
+          "trace": [
+{"pc": "16","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "next": { "type": "Store", "var": "count", "value": { "type": "int", "value": "1" } },
+          "mode": "runnable"
+        },
+        {
+          "tid": "2",
+          "hvalue": "7fbb5e00002a",
+          "fp": "1",
+          "name": "incrementer()",
+          "entry": "12",
+          "pc": "17",
+          "sp": "1",
+          "stack": [{ "type": "address" }],
+          "trace": [
+{"pc": "17","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "mode": "terminated"
+        }
+      ]
+    },
+    {
+      "id": "11",
+      "tid": "1",
+      "shared": { "count": { "type": "int", "value": "1" } },
+      "name": "incrementer()",
+      "context": {
+        "tid": "1",
+        "hvalue": "7fbb5a00000a",
+        "fp": "1",
+        "name": "incrementer()",
+        "entry": "12",
+        "pc": "16",
+        "sp": "2",
+        "stack": [{ "type": "dict", "value": [] }, { "type": "int", "value": "1" }],
+        "trace": [
+{"pc": "16","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+        ],
+        "next": { "type": "Store", "var": "count", "value": { "type": "int", "value": "1" } },
+        "mode": "runnable"
+      },
+      "microsteps": [
+        {
+          "code": "Store count",
+          "explain": "pop value (1) and store into variable count",
+          "explain2": { "text": "pop value (#+) and store into variable #@", "args": [ { "type": "int", "value": "1" }, { "type": "address", "func": { "type": "pc", "value": "-1" }, "args": [{ "type": "atom", "value": "count" } ] } ] },
+          "npc": "17",
+          "fp": "1",
+          "trace": [
+{"pc": "17","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "pop": "1",
+          "push": [ ],
+          "pc": "16"
+        },
+
+        {
+          "code": "ReturnOp(result. None)",
+          "explain": "pop caller's method variables and pc and push result (), or terminate if no caller",
+          "explain2": { "text": "pop caller's method variables and pc and push result (), or terminate if no caller", "args": [ { "type": "address" } ] },
+          "npc": "17",
+          "mode": "terminated",
+          "pop": "1",
+          "push": [ { "type": "address" } ],
+          "pc": "17"
+        }
+
+      ],
+      "ctxbag": {
+
+      },
+      "contexts": [
+        {
+          "tid": "0",
+          "hvalue": "7fbb580000aa",
+          "fp": "1",
+          "id": "0",
+          "name": "__init__()",
+          "entry": "0",
+          "pc": "28",
+          "sp": "1",
+          "stack": [{ "type": "address" }],
+          "trace": [
+{"pc": "28","xpc": "0","method_name": { "type": "atom", "value": "__init__" },
+"method_arg": { "type": "list", "value": [] },
+"method": "__init__()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "atomic": "1",
+          "mode": "terminated"
+        },
+        {
+          "tid": "1",
+          "hvalue": "7fbb5e00002a",
+          "fp": "1",
+          "name": "incrementer()",
+          "entry": "12",
+          "pc": "17",
+          "sp": "1",
+          "stack": [{ "type": "address" }],
+          "trace": [
+{"pc": "17","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "mode": "terminated"
+        },
+        {
+          "tid": "2",
+          "hvalue": "7fbb5e00002a",
+          "fp": "1",
+          "name": "incrementer()",
+          "entry": "12",
+          "pc": "17",
+          "sp": "1",
+          "stack": [{ "type": "address" }],
+          "trace": [
+{"pc": "17","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "mode": "terminated"
+        }
+      ]
+    },
+    {
+      "id": "11",
+      "tid": "3",
+      "shared": { "count": { "type": "int", "value": "1" } },
+      "name": "finally()",
+      "context": {
+        "tid": "3",
+        "hvalue": "7fbb5800002a",
+        "fp": "1",
+        "name": "finally()",
+        "entry": "4",
+        "pc": "4",
+        "sp": "1",
+        "stack": [{ "type": "list", "value": [] }],
+        "trace": [
+{"pc": "4","xpc": "4","method_name": { "type": "atom", "value": "finally" },
+"method_arg": { "type": "list", "value": [] },
+"method": "finally()","calltype": "process","vars":{ },"sp": 0}
+        ],
+        "atomic": "1",
+        "readonly": "1",
+        "next": { "type": "Frame", "name": "finally", "args": "()", "value": { "type": "list", "value": [] } },
+        "mode": "runnable"
+      },
+      "microsteps": [
+        {
+          "code": "Frame finally()",
+          "explain": "pop argument () and run method \"finally\"",
+          "explain2": { "text": "pop argument () and run method #+", "args": [ { "type": "atom", "value": "finally" } ] },
+          "npc": "5",
+          "fp": "1",
+          "trace": [
+{"pc": "5","xpc": "4","method_name": { "type": "atom", "value": "finally" },
+"method_arg": { "type": "list", "value": [] },
+"method": "finally()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "pop": "1",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "4"
+        },
+
+        {
+          "code": "Load count",
+          "explain": "push value (1) of variable count",
+          "explain2": { "text": "push value (#+) of variable count", "args": [ { "type": "int", "value": "1" } ] },
+          "npc": "6",
+          "push": [ { "type": "int", "value": "1" } ],
+          "pc": "5"
+        },
+
+        {
+          "code": "Push 2",
+          "explain": "push constant 2",
+          "explain2": { "text": "push constant 2", "args": [] },
+          "npc": "7",
+          "push": [ { "type": "int", "value": "2" } ],
+          "pc": "6"
+        },
+
+        {
+          "code": "2-ary ==",
+          "explain": "pop 2 values (2, 1); check if both values are the same; push result (False)",
+          "explain2": { "text": "pop 2 values (#+, #+); check if both values are the same; push result (#+)", "args": [ { "type": "int", "value": "2" }, { "type": "int", "value": "1" }, { "type": "bool", "value": "False" } ] },
+          "npc": "8",
+          "pop": "2",
+          "push": [ { "type": "bool", "value": "False" } ],
+          "pc": "7"
+        },
+
+        {
+          "code": "Assert",
+          "explain": "pop a value (False) and raise exception",
+          "explain2": { "text": "pop a value (False) and raise exception", "args": [ ] },
+          "npc": "8",
+          "failure": "Harmony assertion failed",
+          "mode": "failed",
+          "pop": "1",
+          "push": [ ],
+          "pc": "8"
+        }
+
+      ],
+      "ctxbag": {
+
+      },
+      "contexts": [
+        {
+          "tid": "0",
+          "hvalue": "7fbb580000aa",
+          "fp": "1",
+          "id": "0",
+          "name": "__init__()",
+          "entry": "0",
+          "pc": "28",
+          "sp": "1",
+          "stack": [{ "type": "address" }],
+          "trace": [
+{"pc": "28","xpc": "0","method_name": { "type": "atom", "value": "__init__" },
+"method_arg": { "type": "list", "value": [] },
+"method": "__init__()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "atomic": "1",
+          "mode": "terminated"
+        },
+        {
+          "tid": "1",
+          "hvalue": "7fbb5e00002a",
+          "fp": "1",
+          "name": "incrementer()",
+          "entry": "12",
+          "pc": "17",
+          "sp": "1",
+          "stack": [{ "type": "address" }],
+          "trace": [
+{"pc": "17","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "mode": "terminated"
+        },
+        {
+          "tid": "2",
+          "hvalue": "7fbb5e00002a",
+          "fp": "1",
+          "name": "incrementer()",
+          "entry": "12",
+          "pc": "17",
+          "sp": "1",
+          "stack": [{ "type": "address" }],
+          "trace": [
+{"pc": "17","xpc": "12","method_name": { "type": "atom", "value": "incrementer" },
+"method_arg": { "type": "list", "value": [] },
+"method": "incrementer()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "mode": "terminated"
+        },
+        {
+          "tid": "3",
+          "hvalue": "7fbb4470008a",
+          "fp": "1",
+          "name": "finally()",
+          "entry": "4",
+          "pc": "8",
+          "sp": "1",
+          "stack": [{ "type": "dict", "value": [] }],
+          "trace": [
+{"pc": "8","xpc": "4","method_name": { "type": "atom", "value": "finally" },
+"method_arg": { "type": "list", "value": [] },
+"method": "finally()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "failure": "Harmony assertion failed",
+          "this": { "type": "dict", "value": [] },
+          "atomic": "1",
+          "readonly": "1",
+          "mode": "failed"
+        }
+      ]
+    }
+
+  ]
+}

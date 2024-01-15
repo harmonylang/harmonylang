@@ -1,0 +1,365 @@
+{
+  "nstates": 3,
+  "issue": "No issues",
+  "hvm": {
+    "modules": {
+        "__main__": {
+            "file": "/var/folders/6n/pjbfqj310fz0rt3tlz28gcdc0000gn/T/tmpoigkn1jf/hello4.hny",
+            "lines": [
+                "while choose { False, True }:",
+                "    print \"hello world\""
+              ],
+            "identifiers": {
+                "this": "local-var",
+                "___": "___"
+              }
+          }
+      },
+    "labels": {
+        "__end__": 13
+      },
+    "pretty": [
+        [
+            "Frame __init__()",
+            "start of method __init__"
+          ],
+        [
+            "Push {}",
+            "push constant {}"
+          ],
+        [
+            "Push False",
+            "push constant False"
+          ],
+        [
+            "2-ary SetAdd",
+            "pop 2 values and push the result of applying SetAdd"
+          ],
+        [
+            "Push True",
+            "push constant True"
+          ],
+        [
+            "2-ary SetAdd",
+            "pop 2 values and push the result of applying SetAdd"
+          ],
+        [
+            "Choose",
+            "pop a set value and push one of its elements"
+          ],
+        [
+            "JumpCond False 11",
+            "pop a value and jump to 11 if the value is False"
+          ],
+        [
+            "Push \"hello world\"",
+            "push constant \"hello world\""
+          ],
+        [
+            "Print",
+            "pop a value and add to print history"
+          ],
+        [
+            "Jump 1",
+            "set program counter to 1"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "DelVar result",
+            "delete method variable result"
+          ]
+      ],
+    "locs": [
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                1,
+                1,
+                3,
+                6
+              ],
+            "line": 1,
+            "endcolumn": 6,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                29
+              ],
+            "line": 1,
+            "endcolumn": 26,
+            "column": 16
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                29
+              ],
+            "line": 1,
+            "endcolumn": 20,
+            "column": 16
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                29
+              ],
+            "line": 1,
+            "endcolumn": 26,
+            "column": 16
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                29
+              ],
+            "line": 1,
+            "endcolumn": 26,
+            "column": 23
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                29
+              ],
+            "line": 1,
+            "endcolumn": 26,
+            "column": 16
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                29
+              ],
+            "line": 1,
+            "endcolumn": 28,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                29
+              ],
+            "line": 1,
+            "endcolumn": 5,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 2,
+            "stmt": [
+                2,
+                5,
+                2,
+                23
+              ],
+            "line": 2,
+            "endcolumn": 23,
+            "column": 11
+          },
+        {
+            "module": "__main__",
+            "endline": 2,
+            "stmt": [
+                2,
+                5,
+                2,
+                23
+              ],
+            "line": 2,
+            "endcolumn": 23,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                29
+              ],
+            "line": 1,
+            "endcolumn": 29,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                1,
+                1,
+                3,
+                6
+              ],
+            "line": 1,
+            "endcolumn": 6,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                1,
+                1,
+                3,
+                6
+              ],
+            "line": 1,
+            "endcolumn": 6,
+            "column": 1
+          }
+      ],
+    "code": [
+        {
+            "args": "()",
+            "name": "__init__",
+            "op": "Frame"
+          },
+        {
+            "value": {
+                "type": "set",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "SetAdd",
+            "op": "Nary"
+          },
+        {
+            "value": {
+                "type": "bool",
+                "value": "True"
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "SetAdd",
+            "op": "Nary"
+          },
+        {
+            "op": "Choose"
+          },
+        {
+            "pc": "11",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": {
+                "type": "atom",
+                "value": "hello world"
+              },
+            "op": "Push"
+          },
+        {
+            "op": "Print"
+          },
+        {
+            "pc": "1",
+            "op": "Jump"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "value": "result",
+            "op": "DelVar"
+          }
+      ]
+  },
+  "symbols": {
+     "1": { "type": "atom", "value": "hello world" }
+  },
+  "nodes": [
+    {
+      "idx": 0,
+      "transitions": [
+        [[],[1]]
+      ],
+      "type": "initial"
+    },
+    {
+      "idx": 1,
+      "transitions": [
+        [[],[2]],
+        [[1],[1]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 2,
+      "transitions": [
+
+      ],
+      "type": "terminal"
+    }
+  ],
+  "profile": [
+    1,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    1,
+    1,
+    1,
+    1,
+    0
+  ]
+}

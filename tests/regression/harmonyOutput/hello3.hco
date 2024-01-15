@@ -1,0 +1,292 @@
+{
+  "nstates": 3,
+  "issue": "No issues",
+  "hvm": {
+    "modules": {
+        "__main__": {
+            "file": "/var/folders/6n/pjbfqj310fz0rt3tlz28gcdc0000gn/T/tmpoigkn1jf/hello3.hny",
+            "lines": [
+                "print choose { \"hello\", \"world\" }"
+              ],
+            "identifiers": {
+                "this": "local-var",
+                "___": "___"
+              }
+          }
+      },
+    "labels": {
+        "__end__": 10
+      },
+    "pretty": [
+        [
+            "Frame __init__()",
+            "start of method __init__"
+          ],
+        [
+            "Push {}",
+            "push constant {}"
+          ],
+        [
+            "Push \"hello\"",
+            "push constant \"hello\""
+          ],
+        [
+            "2-ary SetAdd",
+            "pop 2 values and push the result of applying SetAdd"
+          ],
+        [
+            "Push \"world\"",
+            "push constant \"world\""
+          ],
+        [
+            "2-ary SetAdd",
+            "pop 2 values and push the result of applying SetAdd"
+          ],
+        [
+            "Choose",
+            "pop a set value and push one of its elements"
+          ],
+        [
+            "Print",
+            "pop a value and add to print history"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "DelVar result",
+            "delete method variable result"
+          ]
+      ],
+    "locs": [
+        {
+            "module": "__main__",
+            "endline": 2,
+            "stmt": [
+                1,
+                1,
+                2,
+                7
+              ],
+            "line": 1,
+            "endcolumn": 7,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                33
+              ],
+            "line": 1,
+            "endcolumn": 31,
+            "column": 16
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                33
+              ],
+            "line": 1,
+            "endcolumn": 22,
+            "column": 16
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                33
+              ],
+            "line": 1,
+            "endcolumn": 31,
+            "column": 16
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                33
+              ],
+            "line": 1,
+            "endcolumn": 31,
+            "column": 25
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                33
+              ],
+            "line": 1,
+            "endcolumn": 31,
+            "column": 16
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                33
+              ],
+            "line": 1,
+            "endcolumn": 33,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                33
+              ],
+            "line": 1,
+            "endcolumn": 33,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 2,
+            "stmt": [
+                1,
+                1,
+                2,
+                7
+              ],
+            "line": 1,
+            "endcolumn": 7,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 2,
+            "stmt": [
+                1,
+                1,
+                2,
+                7
+              ],
+            "line": 1,
+            "endcolumn": 7,
+            "column": 1
+          }
+      ],
+    "code": [
+        {
+            "args": "()",
+            "name": "__init__",
+            "op": "Frame"
+          },
+        {
+            "value": {
+                "type": "set",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "atom",
+                "value": "hello"
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "SetAdd",
+            "op": "Nary"
+          },
+        {
+            "value": {
+                "type": "atom",
+                "value": "world"
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "SetAdd",
+            "op": "Nary"
+          },
+        {
+            "op": "Choose"
+          },
+        {
+            "op": "Print"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "value": "result",
+            "op": "DelVar"
+          }
+      ]
+  },
+  "symbols": {
+     "2": { "type": "atom", "value": "world" },
+     "1": { "type": "atom", "value": "hello" }
+  },
+  "nodes": [
+    {
+      "idx": 0,
+      "transitions": [
+        [[],[1]]
+      ],
+      "type": "initial"
+    },
+    {
+      "idx": 1,
+      "transitions": [
+        [[2],[2]],
+        [[1],[2]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 2,
+      "transitions": [
+
+      ],
+      "type": "terminal"
+    }
+  ],
+  "profile": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    0
+  ]
+}

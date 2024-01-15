@@ -1,0 +1,575 @@
+{
+  "nstates": 10,
+  "issue": "No issues",
+  "hvm": {
+    "modules": {
+        "__main__": {
+            "file": "/var/folders/6n/pjbfqj310fz0rt3tlz28gcdc0000gn/T/tmpoigkn1jf/hello6.hny",
+            "lines": [
+                "def p(s):",
+                "    print s",
+                "",
+                "spawn p(\"hello\")",
+                "spawn p(\"world\")"
+              ],
+            "identifiers": {
+                "this": "local-var",
+                "p": "constant",
+                "s": "local-const",
+                "___": "___"
+              }
+          }
+      },
+    "labels": {
+        "__end__": 19
+      },
+    "pretty": [
+        [
+            "Frame __init__()",
+            "start of method __init__"
+          ],
+        [
+            "Jump 7",
+            "jump over method definition: set program counter to 7"
+          ],
+        [
+            "Frame p(s)",
+            "start of method p"
+          ],
+        [
+            "LoadVar s",
+            "push the value of s"
+          ],
+        [
+            "DelVar s",
+            "delete method variable s"
+          ],
+        [
+            "Print",
+            "pop a value and add to print history"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "Push ?PC(2)",
+            "push constant ?PC(2)"
+          ],
+        [
+            "Push \"hello\"",
+            "push constant \"hello\""
+          ],
+        [
+            "2-ary AddArg",
+            "pop 2 values and push the result of applying AddArg"
+          ],
+        [
+            "Push {:}",
+            "push constant {:}"
+          ],
+        [
+            "Spawn",
+            "pop thread-local state, argument, and pc and spawn a new thread"
+          ],
+        [
+            "Push ?PC(2)",
+            "push constant ?PC(2)"
+          ],
+        [
+            "Push \"world\"",
+            "push constant \"world\""
+          ],
+        [
+            "2-ary AddArg",
+            "pop 2 values and push the result of applying AddArg"
+          ],
+        [
+            "Push {:}",
+            "push constant {:}"
+          ],
+        [
+            "Spawn",
+            "pop thread-local state, argument, and pc and spawn a new thread"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "DelVar result",
+            "delete method variable result"
+          ]
+      ],
+    "locs": [
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                1,
+                1,
+                6,
+                7
+              ],
+            "line": 1,
+            "endcolumn": 7,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                9
+              ],
+            "line": 1,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                9
+              ],
+            "line": 1,
+            "endcolumn": 9,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 2,
+            "stmt": [
+                2,
+                5,
+                2,
+                11
+              ],
+            "line": 2,
+            "endcolumn": 11,
+            "column": 11
+          },
+        {
+            "module": "__main__",
+            "endline": 2,
+            "stmt": [
+                2,
+                5,
+                2,
+                11
+              ],
+            "line": 2,
+            "endcolumn": 11,
+            "column": 11
+          },
+        {
+            "module": "__main__",
+            "endline": 2,
+            "stmt": [
+                2,
+                5,
+                2,
+                11
+              ],
+            "line": 2,
+            "endcolumn": 11,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                9
+              ],
+            "line": 1,
+            "endcolumn": 9,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 4,
+            "stmt": [
+                4,
+                1,
+                4,
+                16
+              ],
+            "line": 4,
+            "endcolumn": 7,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 4,
+            "stmt": [
+                4,
+                1,
+                4,
+                16
+              ],
+            "line": 4,
+            "endcolumn": 15,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 4,
+            "stmt": [
+                4,
+                1,
+                4,
+                16
+              ],
+            "line": 4,
+            "endcolumn": 16,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 4,
+            "stmt": [
+                4,
+                1,
+                4,
+                16
+              ],
+            "line": 4,
+            "endcolumn": 16,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 4,
+            "stmt": [
+                4,
+                1,
+                4,
+                16
+              ],
+            "line": 4,
+            "endcolumn": 16,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                1,
+                5,
+                16
+              ],
+            "line": 5,
+            "endcolumn": 7,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                1,
+                5,
+                16
+              ],
+            "line": 5,
+            "endcolumn": 15,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                1,
+                5,
+                16
+              ],
+            "line": 5,
+            "endcolumn": 16,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                1,
+                5,
+                16
+              ],
+            "line": 5,
+            "endcolumn": 16,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                1,
+                5,
+                16
+              ],
+            "line": 5,
+            "endcolumn": 16,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                1,
+                1,
+                6,
+                7
+              ],
+            "line": 1,
+            "endcolumn": 7,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                1,
+                1,
+                6,
+                7
+              ],
+            "line": 1,
+            "endcolumn": 7,
+            "column": 1
+          }
+      ],
+    "code": [
+        {
+            "args": "()",
+            "name": "__init__",
+            "op": "Frame"
+          },
+        {
+            "pc": "7",
+            "op": "Jump"
+          },
+        {
+            "args": "s",
+            "name": "p",
+            "op": "Frame"
+          },
+        {
+            "value": "s",
+            "op": "LoadVar"
+          },
+        {
+            "value": "s",
+            "op": "DelVar"
+          },
+        {
+            "op": "Print"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "value": {
+                "type": "address",
+                "args": [
+
+                  ],
+                "func": {
+                    "type": "pc",
+                    "value": "2"
+                  }
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "atom",
+                "value": "hello"
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "AddArg",
+            "op": "Nary"
+          },
+        {
+            "value": {
+                "type": "dict",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "eternal": "False",
+            "op": "Spawn"
+          },
+        {
+            "value": {
+                "type": "address",
+                "args": [
+
+                  ],
+                "func": {
+                    "type": "pc",
+                    "value": "2"
+                  }
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "atom",
+                "value": "world"
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "AddArg",
+            "op": "Nary"
+          },
+        {
+            "value": {
+                "type": "dict",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "eternal": "False",
+            "op": "Spawn"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "value": "result",
+            "op": "DelVar"
+          }
+      ]
+  },
+  "symbols": {
+     "1": { "type": "atom", "value": "hello" },
+     "2": { "type": "atom", "value": "world" }
+  },
+  "nodes": [
+    {
+      "idx": 0,
+      "transitions": [
+        [[],[1]]
+      ],
+      "type": "initial"
+    },
+    {
+      "idx": 1,
+      "transitions": [
+        [[],[2,3]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 2,
+      "transitions": [
+        [[],[4]],
+        [[1],[5]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 3,
+      "transitions": [
+        [[],[4]],
+        [[2],[6]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 4,
+      "transitions": [
+        [[1],[7]],
+        [[2],[8]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 5,
+      "transitions": [
+        [[],[7]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 6,
+      "transitions": [
+        [[],[8]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 7,
+      "transitions": [
+        [[2],[9]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 8,
+      "transitions": [
+        [[1],[9]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 9,
+      "transitions": [
+
+      ],
+      "type": "terminal"
+    }
+  ],
+  "profile": [
+    1,
+    1,
+    2,
+    2,
+    2,
+    2,
+    2,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0
+  ]
+}

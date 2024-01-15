@@ -25,3 +25,5 @@ harmony-master/charm
 debug/
 harmony-master/
 .DS_Store
+
+parsedHarmonyOutputLatest/

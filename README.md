@@ -75,6 +75,10 @@ You can find more information about the HarmonyLang extension project in [this d
 
 ## Release Notes
 
+### 2.3.1
+
+- Fix a compatibility bug in Harmony '.hco' output
+
 ### 2.3.0
 - Updated for compatibility with Harmony 1.2.3564
 - Improved Harmony installation process and outputs

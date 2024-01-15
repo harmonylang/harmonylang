@@ -1,0 +1,833 @@
+{
+  "nstates": 3,
+  "issue": "No issues",
+  "hvm": {
+    "modules": {
+        "__main__": {
+            "file": "/var/folders/6n/pjbfqj310fz0rt3tlz28gcdc0000gn/T/tmpoigkn1jf/multitest.hny",
+            "lines": [
+                "def seq_test():",
+                "    pass",
+                "",
+                "def conc_test1():",
+                "    pass",
+                "",
+                "def conc_test2():",
+                "    pass",
+                "",
+                "def conc_test3():",
+                "    pass",
+                "",
+                "seq_test()",
+                "let test = choose({ conc_test1, conc_test2, conc_test3 }):",
+                "    test()"
+              ],
+            "identifiers": {
+                "conc_test2": "constant",
+                "this": "local-var",
+                "seq_test": "constant",
+                "test": "local-const",
+                "___": "___",
+                "conc_test1": "constant",
+                "conc_test3": "constant"
+              }
+          }
+      },
+    "labels": {
+        "__end__": 33
+      },
+    "pretty": [
+        [
+            "Frame __init__()",
+            "start of method __init__"
+          ],
+        [
+            "Jump 13",
+            "jump over method definition: set program counter to 13"
+          ],
+        [
+            "Frame seq_test()",
+            "start of method seq_test"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "Jump 13",
+            "jump over method definition: set program counter to 13"
+          ],
+        [
+            "Frame conc_test1()",
+            "start of method conc_test1"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "Jump 13",
+            "jump over method definition: set program counter to 13"
+          ],
+        [
+            "Frame conc_test2()",
+            "start of method conc_test2"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "Jump 13",
+            "jump over method definition: set program counter to 13"
+          ],
+        [
+            "Frame conc_test3()",
+            "start of method conc_test3"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "Push ()",
+            "push constant ()"
+          ],
+        [
+            "Apply PC(2)",
+            "call method PC(2)"
+          ],
+        [
+            "Pop",
+            "discard the top value on the stack"
+          ],
+        [
+            "Push {}",
+            "push constant {}"
+          ],
+        [
+            "Push PC(5)",
+            "push constant PC(5)"
+          ],
+        [
+            "2-ary SetAdd",
+            "pop 2 values and push the result of applying SetAdd"
+          ],
+        [
+            "Push PC(8)",
+            "push constant PC(8)"
+          ],
+        [
+            "2-ary SetAdd",
+            "pop 2 values and push the result of applying SetAdd"
+          ],
+        [
+            "Push PC(11)",
+            "push constant PC(11)"
+          ],
+        [
+            "2-ary SetAdd",
+            "pop 2 values and push the result of applying SetAdd"
+          ],
+        [
+            "Choose",
+            "pop a set value and push one of its elements"
+          ],
+        [
+            "StoreVar test",
+            "pop a value and store in test"
+          ],
+        [
+            "LoadVar test",
+            "push the value of test"
+          ],
+        [
+            "DelVar test",
+            "delete method variable test"
+          ],
+        [
+            "Push ()",
+            "push constant ()"
+          ],
+        [
+            "2-ary Closure",
+            "pop 2 values and push the result of applying Closure"
+          ],
+        [
+            "Load",
+            "pop an address and push the value at the address"
+          ],
+        [
+            "Pop",
+            "discard the top value on the stack"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "DelVar result",
+            "delete method variable result"
+          ]
+      ],
+    "locs": [
+        {
+            "module": "__main__",
+            "endline": 16,
+            "stmt": [
+                1,
+                1,
+                16,
+                6
+              ],
+            "line": 1,
+            "endcolumn": 6,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                15
+              ],
+            "line": 1,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                15
+              ],
+            "line": 1,
+            "endcolumn": 15,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                15
+              ],
+            "line": 1,
+            "endcolumn": 15,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 4,
+            "stmt": [
+                4,
+                1,
+                4,
+                17
+              ],
+            "line": 4,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 4,
+            "stmt": [
+                4,
+                1,
+                4,
+                17
+              ],
+            "line": 4,
+            "endcolumn": 17,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 4,
+            "stmt": [
+                4,
+                1,
+                4,
+                17
+              ],
+            "line": 4,
+            "endcolumn": 17,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                1,
+                7,
+                17
+              ],
+            "line": 7,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                1,
+                7,
+                17
+              ],
+            "line": 7,
+            "endcolumn": 17,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                1,
+                7,
+                17
+              ],
+            "line": 7,
+            "endcolumn": 17,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                1,
+                10,
+                17
+              ],
+            "line": 10,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                1,
+                10,
+                17
+              ],
+            "line": 10,
+            "endcolumn": 17,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                1,
+                10,
+                17
+              ],
+            "line": 10,
+            "endcolumn": 17,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 13,
+            "stmt": [
+                13,
+                1,
+                13,
+                10
+              ],
+            "line": 13,
+            "endcolumn": 10,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 13,
+            "stmt": [
+                13,
+                1,
+                13,
+                10
+              ],
+            "line": 13,
+            "endcolumn": 10,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 13,
+            "stmt": [
+                13,
+                1,
+                13,
+                10
+              ],
+            "line": 13,
+            "endcolumn": 10,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                1,
+                14,
+                57
+              ],
+            "line": 14,
+            "endcolumn": 54,
+            "column": 21
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                1,
+                14,
+                57
+              ],
+            "line": 14,
+            "endcolumn": 30,
+            "column": 21
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                1,
+                14,
+                57
+              ],
+            "line": 14,
+            "endcolumn": 54,
+            "column": 21
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                1,
+                14,
+                57
+              ],
+            "line": 14,
+            "endcolumn": 42,
+            "column": 33
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                1,
+                14,
+                57
+              ],
+            "line": 14,
+            "endcolumn": 54,
+            "column": 21
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                1,
+                14,
+                57
+              ],
+            "line": 14,
+            "endcolumn": 54,
+            "column": 45
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                1,
+                14,
+                57
+              ],
+            "line": 14,
+            "endcolumn": 54,
+            "column": 21
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                1,
+                14,
+                57
+              ],
+            "line": 14,
+            "endcolumn": 57,
+            "column": 12
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                1,
+                14,
+                57
+              ],
+            "line": 14,
+            "endcolumn": 10,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 15,
+            "stmt": [
+                15,
+                5,
+                15,
+                10
+              ],
+            "line": 15,
+            "endcolumn": 8,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 15,
+            "stmt": [
+                15,
+                5,
+                15,
+                10
+              ],
+            "line": 15,
+            "endcolumn": 8,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 15,
+            "stmt": [
+                15,
+                5,
+                15,
+                10
+              ],
+            "line": 15,
+            "endcolumn": 10,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 15,
+            "stmt": [
+                15,
+                5,
+                15,
+                10
+              ],
+            "line": 15,
+            "endcolumn": 10,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 15,
+            "stmt": [
+                15,
+                5,
+                15,
+                10
+              ],
+            "line": 15,
+            "endcolumn": 10,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 15,
+            "stmt": [
+                15,
+                5,
+                15,
+                10
+              ],
+            "line": 15,
+            "endcolumn": 10,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 16,
+            "stmt": [
+                1,
+                1,
+                16,
+                6
+              ],
+            "line": 1,
+            "endcolumn": 6,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 16,
+            "stmt": [
+                1,
+                1,
+                16,
+                6
+              ],
+            "line": 1,
+            "endcolumn": 6,
+            "column": 1
+          }
+      ],
+    "code": [
+        {
+            "args": "()",
+            "name": "__init__",
+            "op": "Frame"
+          },
+        {
+            "pc": "13",
+            "op": "Jump"
+          },
+        {
+            "args": "()",
+            "name": "seq_test",
+            "op": "Frame"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "pc": "13",
+            "op": "Jump"
+          },
+        {
+            "args": "()",
+            "name": "conc_test1",
+            "op": "Frame"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "pc": "13",
+            "op": "Jump"
+          },
+        {
+            "args": "()",
+            "name": "conc_test2",
+            "op": "Frame"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "pc": "13",
+            "op": "Jump"
+          },
+        {
+            "args": "()",
+            "name": "conc_test3",
+            "op": "Frame"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "value": {
+                "type": "list",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "pc",
+                "value": "2"
+              },
+            "op": "Apply"
+          },
+        {
+            "op": "Pop"
+          },
+        {
+            "value": {
+                "type": "set",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "pc",
+                "value": "5"
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "SetAdd",
+            "op": "Nary"
+          },
+        {
+            "value": {
+                "type": "pc",
+                "value": "8"
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "SetAdd",
+            "op": "Nary"
+          },
+        {
+            "value": {
+                "type": "pc",
+                "value": "11"
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "SetAdd",
+            "op": "Nary"
+          },
+        {
+            "op": "Choose"
+          },
+        {
+            "value": "test",
+            "op": "StoreVar"
+          },
+        {
+            "value": "test",
+            "op": "LoadVar"
+          },
+        {
+            "value": "test",
+            "op": "DelVar"
+          },
+        {
+            "value": {
+                "type": "list",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "Closure",
+            "op": "Nary"
+          },
+        {
+            "op": "Load"
+          },
+        {
+            "op": "Pop"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "value": "result",
+            "op": "DelVar"
+          }
+      ]
+  },
+  "symbols": {
+
+  },
+  "nodes": [
+    {
+      "idx": 0,
+      "transitions": [
+
+      ],
+      "type": "initial"
+    }
+  ],
+  "profile": [
+    1,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    0,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    0
+  ]
+}

@@ -25,6 +25,8 @@ jobs:
           ls ${{ github.workspace }}
       - name: Run regression tests
         run: npm run test
+      - name: Run regression tests
+        run: npm run regression
       - name: Version Check
         uses: EndBug/version-check@v2.1.2
         id: check

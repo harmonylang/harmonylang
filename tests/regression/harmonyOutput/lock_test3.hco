@@ -1,0 +1,2416 @@
+{
+  "nstates": 137,
+  "issue": "No issues",
+  "hvm": {
+    "modules": {
+        "__main__": {
+            "file": "/var/folders/6n/pjbfqj310fz0rt3tlz28gcdc0000gn/T/tmpoigkn1jf/lock_test3.hny",
+            "lines": [
+                "from lock import Lock, acquire, release",
+                "",
+                "const NTHREADS = 5",
+                "",
+                "thelock = Lock()",
+                "in_cs = 0",
+                "",
+                "def thread():",
+                "    while choose { False, True }:",
+                "        acquire(?thelock)",
+                "        atomically in_cs += 1",
+                "        assert in_cs == 1",
+                "        atomically in_cs -= 1",
+                "        release(?thelock)",
+                "",
+                "for i in {1..NTHREADS}:",
+                "    spawn thread()"
+              ],
+            "identifiers": {
+                "thread": "constant",
+                "release": "imported",
+                "thelock": "global",
+                "i": "local-const",
+                "lock": "module",
+                "in_cs": "global",
+                "this": "local-var",
+                "Lock": "imported",
+                "___": "___",
+                "NTHREADS": "constant",
+                "acquire": "imported"
+              }
+          },
+        "lock": {
+            "file": "/var/folders/6n/pjbfqj310fz0rt3tlz28gcdc0000gn/T/tmpoigkn1jf/lock.hny",
+            "lines": [
+                "def Lock() returns result:",
+                "    result = False",
+                "",
+                "def acquire(lk):",
+                "    atomically when not !lk:",
+                "        !lk = True",
+                "",
+                "def release(lk):",
+                "    atomically:",
+                "        assert !lk",
+                "        !lk = False"
+              ],
+            "identifiers": {
+                "release": "constant",
+                "this": "local-var",
+                "Lock": "constant",
+                "lk": "local-const",
+                "___": "___",
+                "acquire": "constant"
+              }
+          }
+      },
+    "labels": {
+        "__end__": 99
+      },
+    "pretty": [
+        [
+            "Frame __init__()",
+            "start of method __init__"
+          ],
+        [
+            "Jump 42",
+            "jump over method definition: set program counter to 42"
+          ],
+        [
+            "Frame Lock()",
+            "start of method Lock"
+          ],
+        [
+            "DelVar result",
+            "delete method variable result"
+          ],
+        [
+            "Push False",
+            "push constant False"
+          ],
+        [
+            "StoreVar result",
+            "pop a value and store in result"
+          ],
+        [
+            "ReturnOp(result)",
+            "restore caller method state and push result"
+          ],
+        [
+            "Jump 42",
+            "jump over method definition: set program counter to 42"
+          ],
+        [
+            "Frame acquire(lk)",
+            "start of method acquire"
+          ],
+        [
+            "AtomicInc(eager)",
+            "increment atomic counter of context; thread runs uninterrupted if larger than 0"
+          ],
+        [
+            "ReadonlyInc",
+            "increment readonly counter of context; thread cannot mutate shared variables if > 0"
+          ],
+        [
+            "LoadVar lk",
+            "push the value of lk"
+          ],
+        [
+            "Load",
+            "pop an address and push the value at the address"
+          ],
+        [
+            "1-ary not",
+            "pop 1 value and push the result of applying not"
+          ],
+        [
+            "JumpCond False 16",
+            "pop a value and jump to 16 if the value is False"
+          ],
+        [
+            "Jump 19",
+            "set program counter to 19"
+          ],
+        [
+            "ReadonlyDec",
+            "decrement readonly counter of context"
+          ],
+        [
+            "AtomicDec",
+            "decrement atomic counter of context"
+          ],
+        [
+            "Jump 9",
+            "set program counter to 9"
+          ],
+        [
+            "ReadonlyDec",
+            "decrement readonly counter of context"
+          ],
+        [
+            "LoadVar lk",
+            "push the value of lk"
+          ],
+        [
+            "DelVar lk",
+            "delete method variable lk"
+          ],
+        [
+            "Push True",
+            "push constant True"
+          ],
+        [
+            "Store",
+            "pop a value and an address and store the value at the address"
+          ],
+        [
+            "AtomicDec",
+            "decrement atomic counter of context"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "Jump 42",
+            "jump over method definition: set program counter to 42"
+          ],
+        [
+            "Frame release(lk)",
+            "start of method release"
+          ],
+        [
+            "AtomicInc(eager)",
+            "increment atomic counter of context; thread runs uninterrupted if larger than 0"
+          ],
+        [
+            "AtomicInc(lazy)",
+            "increment atomic counter of context; thread runs uninterrupted if larger than 0"
+          ],
+        [
+            "ReadonlyInc",
+            "increment readonly counter of context; thread cannot mutate shared variables if > 0"
+          ],
+        [
+            "LoadVar lk",
+            "push the value of lk"
+          ],
+        [
+            "Load",
+            "pop an address and push the value at the address"
+          ],
+        [
+            "Assert",
+            "pop a condition and raise exception if condition is false"
+          ],
+        [
+            "ReadonlyDec",
+            "decrement readonly counter of context"
+          ],
+        [
+            "AtomicDec",
+            "decrement atomic counter of context"
+          ],
+        [
+            "LoadVar lk",
+            "push the value of lk"
+          ],
+        [
+            "DelVar lk",
+            "delete method variable lk"
+          ],
+        [
+            "Push False",
+            "push constant False"
+          ],
+        [
+            "Store",
+            "pop a value and an address and store the value at the address"
+          ],
+        [
+            "AtomicDec",
+            "decrement atomic counter of context"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "Push ()",
+            "push constant ()"
+          ],
+        [
+            "Apply PC(2)",
+            "call method PC(2)"
+          ],
+        [
+            "Store thelock",
+            "pop a value and store it in shared variable thelock"
+          ],
+        [
+            "Push 0",
+            "push constant 0"
+          ],
+        [
+            "Store in_cs",
+            "pop a value and store it in shared variable in_cs"
+          ],
+        [
+            "Jump 84",
+            "jump over method definition: set program counter to 84"
+          ],
+        [
+            "Frame thread()",
+            "start of method thread"
+          ],
+        [
+            "Push {}",
+            "push constant {}"
+          ],
+        [
+            "Push False",
+            "push constant False"
+          ],
+        [
+            "2-ary SetAdd",
+            "pop 2 values and push the result of applying SetAdd"
+          ],
+        [
+            "Push True",
+            "push constant True"
+          ],
+        [
+            "2-ary SetAdd",
+            "pop 2 values and push the result of applying SetAdd"
+          ],
+        [
+            "Choose",
+            "pop a set value and push one of its elements"
+          ],
+        [
+            "JumpCond False 83",
+            "pop a value and jump to 83 if the value is False"
+          ],
+        [
+            "Push ?thelock",
+            "push constant ?thelock"
+          ],
+        [
+            "Apply PC(8)",
+            "call method PC(8)"
+          ],
+        [
+            "Pop",
+            "discard the top value on the stack"
+          ],
+        [
+            "AtomicInc(eager)",
+            "increment atomic counter of context; thread runs uninterrupted if larger than 0"
+          ],
+        [
+            "Load in_cs",
+            "push value of shared variable in_cs"
+          ],
+        [
+            "Push 1",
+            "push constant 1"
+          ],
+        [
+            "2-ary +",
+            "pop 2 values and push the result of applying +"
+          ],
+        [
+            "Store in_cs",
+            "pop a value and store it in shared variable in_cs"
+          ],
+        [
+            "AtomicDec",
+            "decrement atomic counter of context"
+          ],
+        [
+            "AtomicInc(lazy)",
+            "increment atomic counter of context; thread runs uninterrupted if larger than 0"
+          ],
+        [
+            "ReadonlyInc",
+            "increment readonly counter of context; thread cannot mutate shared variables if > 0"
+          ],
+        [
+            "Load in_cs",
+            "push value of shared variable in_cs"
+          ],
+        [
+            "Push 1",
+            "push constant 1"
+          ],
+        [
+            "2-ary ==",
+            "pop 2 values and push the result of applying =="
+          ],
+        [
+            "Assert",
+            "pop a condition and raise exception if condition is false"
+          ],
+        [
+            "ReadonlyDec",
+            "decrement readonly counter of context"
+          ],
+        [
+            "AtomicDec",
+            "decrement atomic counter of context"
+          ],
+        [
+            "AtomicInc(eager)",
+            "increment atomic counter of context; thread runs uninterrupted if larger than 0"
+          ],
+        [
+            "Load in_cs",
+            "push value of shared variable in_cs"
+          ],
+        [
+            "Push 1",
+            "push constant 1"
+          ],
+        [
+            "2-ary -",
+            "pop 2 values and push the result of applying -"
+          ],
+        [
+            "Store in_cs",
+            "pop a value and store it in shared variable in_cs"
+          ],
+        [
+            "AtomicDec",
+            "decrement atomic counter of context"
+          ],
+        [
+            "Push ?thelock",
+            "push constant ?thelock"
+          ],
+        [
+            "Apply PC(27)",
+            "call method PC(27)"
+          ],
+        [
+            "Pop",
+            "discard the top value on the stack"
+          ],
+        [
+            "Jump 49",
+            "set program counter to 49"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "Push 1",
+            "push constant 1"
+          ],
+        [
+            "Push 5",
+            "push constant 5"
+          ],
+        [
+            "2-ary ..",
+            "pop 2 values and push the result of applying .."
+          ],
+        [
+            "Push 0",
+            "push constant 0"
+          ],
+        [
+            "Cut(i)",
+            "get next element and assign to i; push False or True depending on success"
+          ],
+        [
+            "DelVar i",
+            "delete method variable i"
+          ],
+        [
+            "JumpCond False 97",
+            "check if loop is done: pop a value and jump to 97 if the value is False"
+          ],
+        [
+            "Push ?PC(48)",
+            "push constant ?PC(48)"
+          ],
+        [
+            "Push ()",
+            "push constant ()"
+          ],
+        [
+            "2-ary AddArg",
+            "pop 2 values and push the result of applying AddArg"
+          ],
+        [
+            "Push {:}",
+            "push constant {:}"
+          ],
+        [
+            "Spawn",
+            "pop thread-local state, argument, and pc and spawn a new thread"
+          ],
+        [
+            "Jump 88",
+            "set program counter to 88"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "DelVar result",
+            "delete method variable result"
+          ]
+      ],
+    "locs": [
+        {
+            "module": "__main__",
+            "endline": 18,
+            "stmt": [
+                1,
+                1,
+                18,
+                6
+              ],
+            "line": 1,
+            "endcolumn": 6,
+            "column": 1
+          },
+        {
+            "module": "lock",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                26
+              ],
+            "line": 1,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "lock",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                26
+              ],
+            "line": 1,
+            "endcolumn": 26,
+            "column": 1
+          },
+        {
+            "module": "lock",
+            "endline": 2,
+            "stmt": [
+                2,
+                5,
+                2,
+                18
+              ],
+            "line": 2,
+            "endcolumn": 18,
+            "column": 14
+          },
+        {
+            "module": "lock",
+            "endline": 2,
+            "stmt": [
+                2,
+                5,
+                2,
+                18
+              ],
+            "line": 2,
+            "endcolumn": 18,
+            "column": 14
+          },
+        {
+            "module": "lock",
+            "endline": 2,
+            "stmt": [
+                2,
+                5,
+                2,
+                18
+              ],
+            "line": 2,
+            "endcolumn": 12,
+            "column": 5
+          },
+        {
+            "module": "lock",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                26
+              ],
+            "line": 1,
+            "endcolumn": 26,
+            "column": 1
+          },
+        {
+            "module": "lock",
+            "endline": 4,
+            "stmt": [
+                4,
+                1,
+                4,
+                16
+              ],
+            "line": 4,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "lock",
+            "endline": 4,
+            "stmt": [
+                4,
+                1,
+                4,
+                16
+              ],
+            "line": 4,
+            "endcolumn": 16,
+            "column": 1
+          },
+        {
+            "module": "lock",
+            "endline": 7,
+            "stmt": [
+                5,
+                16,
+                7,
+                6
+              ],
+            "line": 5,
+            "endcolumn": 6,
+            "column": 16
+          },
+        {
+            "module": "lock",
+            "endline": 5,
+            "stmt": [
+                5,
+                16,
+                7,
+                6
+              ],
+            "line": 5,
+            "endcolumn": 16,
+            "column": 16
+          },
+        {
+            "module": "lock",
+            "endline": 5,
+            "stmt": [
+                5,
+                16,
+                5,
+                27
+              ],
+            "line": 5,
+            "endcolumn": 27,
+            "column": 26
+          },
+        {
+            "module": "lock",
+            "endline": 5,
+            "stmt": [
+                5,
+                16,
+                5,
+                27
+              ],
+            "line": 5,
+            "endcolumn": 27,
+            "column": 25
+          },
+        {
+            "module": "lock",
+            "endline": 5,
+            "stmt": [
+                5,
+                16,
+                5,
+                27
+              ],
+            "line": 5,
+            "endcolumn": 27,
+            "column": 21
+          },
+        {
+            "module": "lock",
+            "endline": 5,
+            "stmt": [
+                5,
+                16,
+                5,
+                27
+              ],
+            "line": 5,
+            "endcolumn": 27,
+            "column": 16
+          },
+        {
+            "module": "lock",
+            "endline": 5,
+            "stmt": [
+                5,
+                16,
+                5,
+                27
+              ],
+            "line": 5,
+            "endcolumn": 27,
+            "column": 27
+          },
+        {
+            "module": "lock",
+            "endline": 5,
+            "stmt": [
+                5,
+                16,
+                5,
+                27
+              ],
+            "line": 5,
+            "endcolumn": 27,
+            "column": 16
+          },
+        {
+            "module": "lock",
+            "endline": 5,
+            "stmt": [
+                5,
+                16,
+                5,
+                27
+              ],
+            "line": 5,
+            "endcolumn": 27,
+            "column": 16
+          },
+        {
+            "module": "lock",
+            "endline": 5,
+            "stmt": [
+                5,
+                16,
+                5,
+                27
+              ],
+            "line": 5,
+            "endcolumn": 27,
+            "column": 27
+          },
+        {
+            "module": "lock",
+            "endline": 5,
+            "stmt": [
+                5,
+                16,
+                5,
+                27
+              ],
+            "line": 5,
+            "endcolumn": 27,
+            "column": 16
+          },
+        {
+            "module": "lock",
+            "endline": 6,
+            "stmt": [
+                6,
+                9,
+                6,
+                18
+              ],
+            "line": 6,
+            "endcolumn": 11,
+            "column": 10
+          },
+        {
+            "module": "lock",
+            "endline": 6,
+            "stmt": [
+                6,
+                9,
+                6,
+                18
+              ],
+            "line": 6,
+            "endcolumn": 11,
+            "column": 10
+          },
+        {
+            "module": "lock",
+            "endline": 6,
+            "stmt": [
+                6,
+                9,
+                6,
+                18
+              ],
+            "line": 6,
+            "endcolumn": 18,
+            "column": 15
+          },
+        {
+            "module": "lock",
+            "endline": 6,
+            "stmt": [
+                6,
+                9,
+                6,
+                18
+              ],
+            "line": 6,
+            "endcolumn": 13,
+            "column": 9
+          },
+        {
+            "module": "lock",
+            "endline": 5,
+            "stmt": [
+                5,
+                16,
+                5,
+                27
+              ],
+            "line": 5,
+            "endcolumn": 27,
+            "column": 16
+          },
+        {
+            "module": "lock",
+            "endline": 4,
+            "stmt": [
+                4,
+                1,
+                4,
+                16
+              ],
+            "line": 4,
+            "endcolumn": 16,
+            "column": 1
+          },
+        {
+            "module": "lock",
+            "endline": 8,
+            "stmt": [
+                8,
+                1,
+                8,
+                16
+              ],
+            "line": 8,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "lock",
+            "endline": 8,
+            "stmt": [
+                8,
+                1,
+                8,
+                16
+              ],
+            "line": 8,
+            "endcolumn": 16,
+            "column": 1
+          },
+        {
+            "module": "lock",
+            "endline": 9,
+            "stmt": [
+                9,
+                5,
+                9,
+                15
+              ],
+            "line": 9,
+            "endcolumn": 15,
+            "column": 5
+          },
+        {
+            "module": "lock",
+            "endline": 10,
+            "stmt": [
+                10,
+                9,
+                10,
+                18
+              ],
+            "line": 10,
+            "endcolumn": 18,
+            "column": 9
+          },
+        {
+            "module": "lock",
+            "endline": 10,
+            "stmt": [
+                10,
+                9,
+                10,
+                18
+              ],
+            "line": 10,
+            "endcolumn": 18,
+            "column": 9
+          },
+        {
+            "module": "lock",
+            "endline": 10,
+            "stmt": [
+                10,
+                9,
+                10,
+                18
+              ],
+            "line": 10,
+            "endcolumn": 18,
+            "column": 17
+          },
+        {
+            "module": "lock",
+            "endline": 10,
+            "stmt": [
+                10,
+                9,
+                10,
+                18
+              ],
+            "line": 10,
+            "endcolumn": 18,
+            "column": 16
+          },
+        {
+            "module": "lock",
+            "endline": 10,
+            "stmt": [
+                10,
+                9,
+                10,
+                18
+              ],
+            "line": 10,
+            "endcolumn": 14,
+            "column": 9
+          },
+        {
+            "module": "lock",
+            "endline": 10,
+            "stmt": [
+                10,
+                9,
+                10,
+                18
+              ],
+            "line": 10,
+            "endcolumn": 18,
+            "column": 9
+          },
+        {
+            "module": "lock",
+            "endline": 10,
+            "stmt": [
+                10,
+                9,
+                10,
+                18
+              ],
+            "line": 10,
+            "endcolumn": 18,
+            "column": 9
+          },
+        {
+            "module": "lock",
+            "endline": 11,
+            "stmt": [
+                11,
+                9,
+                11,
+                19
+              ],
+            "line": 11,
+            "endcolumn": 11,
+            "column": 10
+          },
+        {
+            "module": "lock",
+            "endline": 11,
+            "stmt": [
+                11,
+                9,
+                11,
+                19
+              ],
+            "line": 11,
+            "endcolumn": 11,
+            "column": 10
+          },
+        {
+            "module": "lock",
+            "endline": 11,
+            "stmt": [
+                11,
+                9,
+                11,
+                19
+              ],
+            "line": 11,
+            "endcolumn": 19,
+            "column": 15
+          },
+        {
+            "module": "lock",
+            "endline": 11,
+            "stmt": [
+                11,
+                9,
+                11,
+                19
+              ],
+            "line": 11,
+            "endcolumn": 13,
+            "column": 9
+          },
+        {
+            "module": "lock",
+            "endline": 9,
+            "stmt": [
+                9,
+                5,
+                9,
+                15
+              ],
+            "line": 9,
+            "endcolumn": 15,
+            "column": 5
+          },
+        {
+            "module": "lock",
+            "endline": 8,
+            "stmt": [
+                8,
+                1,
+                8,
+                16
+              ],
+            "line": 8,
+            "endcolumn": 16,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                1,
+                5,
+                16
+              ],
+            "line": 5,
+            "endcolumn": 16,
+            "column": 15
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                1,
+                5,
+                16
+              ],
+            "line": 5,
+            "endcolumn": 16,
+            "column": 11
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                1,
+                5,
+                16
+              ],
+            "line": 5,
+            "endcolumn": 9,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                1,
+                6,
+                9
+              ],
+            "line": 6,
+            "endcolumn": 9,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                1,
+                6,
+                9
+              ],
+            "line": 6,
+            "endcolumn": 7,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 8,
+            "stmt": [
+                8,
+                1,
+                8,
+                13
+              ],
+            "line": 8,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 8,
+            "stmt": [
+                8,
+                1,
+                8,
+                13
+              ],
+            "line": 8,
+            "endcolumn": 13,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                5,
+                9,
+                33
+              ],
+            "line": 9,
+            "endcolumn": 30,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                5,
+                9,
+                33
+              ],
+            "line": 9,
+            "endcolumn": 24,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                5,
+                9,
+                33
+              ],
+            "line": 9,
+            "endcolumn": 30,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                5,
+                9,
+                33
+              ],
+            "line": 9,
+            "endcolumn": 30,
+            "column": 27
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                5,
+                9,
+                33
+              ],
+            "line": 9,
+            "endcolumn": 30,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                5,
+                9,
+                33
+              ],
+            "line": 9,
+            "endcolumn": 32,
+            "column": 11
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                5,
+                9,
+                33
+              ],
+            "line": 9,
+            "endcolumn": 9,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                9,
+                10,
+                25
+              ],
+            "line": 10,
+            "endcolumn": 24,
+            "column": 18
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                9,
+                10,
+                25
+              ],
+            "line": 10,
+            "endcolumn": 25,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                9,
+                10,
+                25
+              ],
+            "line": 10,
+            "endcolumn": 25,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 11,
+            "stmt": [
+                11,
+                20,
+                11,
+                29
+              ],
+            "line": 11,
+            "endcolumn": 29,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 11,
+            "stmt": [
+                11,
+                20,
+                11,
+                29
+              ],
+            "line": 11,
+            "endcolumn": 29,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 11,
+            "stmt": [
+                11,
+                20,
+                11,
+                29
+              ],
+            "line": 11,
+            "endcolumn": 29,
+            "column": 29
+          },
+        {
+            "module": "__main__",
+            "endline": 11,
+            "stmt": [
+                11,
+                20,
+                11,
+                29
+              ],
+            "line": 11,
+            "endcolumn": 29,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 11,
+            "stmt": [
+                11,
+                20,
+                11,
+                29
+              ],
+            "line": 11,
+            "endcolumn": 27,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 11,
+            "stmt": [
+                11,
+                20,
+                11,
+                29
+              ],
+            "line": 11,
+            "endcolumn": 29,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 12,
+            "stmt": [
+                12,
+                9,
+                12,
+                25
+              ],
+            "line": 12,
+            "endcolumn": 25,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 12,
+            "stmt": [
+                12,
+                9,
+                12,
+                25
+              ],
+            "line": 12,
+            "endcolumn": 25,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 12,
+            "stmt": [
+                12,
+                9,
+                12,
+                25
+              ],
+            "line": 12,
+            "endcolumn": 20,
+            "column": 16
+          },
+        {
+            "module": "__main__",
+            "endline": 12,
+            "stmt": [
+                12,
+                9,
+                12,
+                25
+              ],
+            "line": 12,
+            "endcolumn": 25,
+            "column": 25
+          },
+        {
+            "module": "__main__",
+            "endline": 12,
+            "stmt": [
+                12,
+                9,
+                12,
+                25
+              ],
+            "line": 12,
+            "endcolumn": 25,
+            "column": 16
+          },
+        {
+            "module": "__main__",
+            "endline": 12,
+            "stmt": [
+                12,
+                9,
+                12,
+                25
+              ],
+            "line": 12,
+            "endcolumn": 14,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 12,
+            "stmt": [
+                12,
+                9,
+                12,
+                25
+              ],
+            "line": 12,
+            "endcolumn": 25,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 12,
+            "stmt": [
+                12,
+                9,
+                12,
+                25
+              ],
+            "line": 12,
+            "endcolumn": 25,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 13,
+            "stmt": [
+                13,
+                20,
+                13,
+                29
+              ],
+            "line": 13,
+            "endcolumn": 29,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 13,
+            "stmt": [
+                13,
+                20,
+                13,
+                29
+              ],
+            "line": 13,
+            "endcolumn": 29,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 13,
+            "stmt": [
+                13,
+                20,
+                13,
+                29
+              ],
+            "line": 13,
+            "endcolumn": 29,
+            "column": 29
+          },
+        {
+            "module": "__main__",
+            "endline": 13,
+            "stmt": [
+                13,
+                20,
+                13,
+                29
+              ],
+            "line": 13,
+            "endcolumn": 29,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 13,
+            "stmt": [
+                13,
+                20,
+                13,
+                29
+              ],
+            "line": 13,
+            "endcolumn": 27,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 13,
+            "stmt": [
+                13,
+                20,
+                13,
+                29
+              ],
+            "line": 13,
+            "endcolumn": 29,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                9,
+                14,
+                25
+              ],
+            "line": 14,
+            "endcolumn": 24,
+            "column": 18
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                9,
+                14,
+                25
+              ],
+            "line": 14,
+            "endcolumn": 25,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                9,
+                14,
+                25
+              ],
+            "line": 14,
+            "endcolumn": 25,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                5,
+                9,
+                33
+              ],
+            "line": 9,
+            "endcolumn": 33,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 8,
+            "stmt": [
+                8,
+                1,
+                8,
+                13
+              ],
+            "line": 8,
+            "endcolumn": 13,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 16,
+            "stmt": [
+                16,
+                1,
+                16,
+                22
+              ],
+            "line": 16,
+            "endcolumn": 11,
+            "column": 11
+          },
+        {
+            "module": "__main__",
+            "endline": 16,
+            "stmt": [
+                16,
+                1,
+                16,
+                22
+              ],
+            "line": 16,
+            "endcolumn": 21,
+            "column": 14
+          },
+        {
+            "module": "__main__",
+            "endline": 16,
+            "stmt": [
+                16,
+                1,
+                16,
+                22
+              ],
+            "line": 16,
+            "endcolumn": 21,
+            "column": 11
+          },
+        {
+            "module": "__main__",
+            "endline": 16,
+            "stmt": [
+                16,
+                1,
+                16,
+                22
+              ],
+            "line": 16,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 16,
+            "stmt": [
+                16,
+                1,
+                16,
+                22
+              ],
+            "line": 16,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 16,
+            "stmt": [
+                16,
+                1,
+                16,
+                22
+              ],
+            "line": 16,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 16,
+            "stmt": [
+                16,
+                1,
+                16,
+                22
+              ],
+            "line": 16,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 17,
+            "stmt": [
+                17,
+                5,
+                17,
+                18
+              ],
+            "line": 17,
+            "endcolumn": 16,
+            "column": 11
+          },
+        {
+            "module": "__main__",
+            "endline": 17,
+            "stmt": [
+                17,
+                5,
+                17,
+                18
+              ],
+            "line": 17,
+            "endcolumn": 18,
+            "column": 17
+          },
+        {
+            "module": "__main__",
+            "endline": 17,
+            "stmt": [
+                17,
+                5,
+                17,
+                18
+              ],
+            "line": 17,
+            "endcolumn": 18,
+            "column": 11
+          },
+        {
+            "module": "__main__",
+            "endline": 17,
+            "stmt": [
+                17,
+                5,
+                17,
+                18
+              ],
+            "line": 17,
+            "endcolumn": 18,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 17,
+            "stmt": [
+                17,
+                5,
+                17,
+                18
+              ],
+            "line": 17,
+            "endcolumn": 18,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 16,
+            "stmt": [
+                16,
+                1,
+                16,
+                22
+              ],
+            "line": 16,
+            "endcolumn": 22,
+            "column": 22
+          },
+        {
+            "module": "__main__",
+            "endline": 18,
+            "stmt": [
+                1,
+                1,
+                18,
+                6
+              ],
+            "line": 1,
+            "endcolumn": 6,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 18,
+            "stmt": [
+                1,
+                1,
+                18,
+                6
+              ],
+            "line": 1,
+            "endcolumn": 6,
+            "column": 1
+          }
+      ],
+    "code": [
+        {
+            "args": "()",
+            "name": "__init__",
+            "op": "Frame"
+          },
+        {
+            "pc": "42",
+            "op": "Jump"
+          },
+        {
+            "args": "()",
+            "name": "Lock",
+            "op": "Frame"
+          },
+        {
+            "value": "result",
+            "op": "DelVar"
+          },
+        {
+            "value": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "Push"
+          },
+        {
+            "value": "result",
+            "op": "StoreVar"
+          },
+        {
+            "result": "result",
+            "op": "Return"
+          },
+        {
+            "pc": "42",
+            "op": "Jump"
+          },
+        {
+            "args": "lk",
+            "name": "acquire",
+            "op": "Frame"
+          },
+        {
+            "lazy": "False",
+            "op": "AtomicInc"
+          },
+        {
+            "op": "ReadonlyInc"
+          },
+        {
+            "value": "lk",
+            "op": "LoadVar"
+          },
+        {
+            "op": "Load"
+          },
+        {
+            "arity": 1,
+            "value": "not",
+            "op": "Nary"
+          },
+        {
+            "pc": "16",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "pc": "19",
+            "op": "Jump"
+          },
+        {
+            "op": "ReadonlyDec"
+          },
+        {
+            "op": "AtomicDec"
+          },
+        {
+            "pc": "9",
+            "op": "Jump"
+          },
+        {
+            "op": "ReadonlyDec"
+          },
+        {
+            "value": "lk",
+            "op": "LoadVar"
+          },
+        {
+            "value": "lk",
+            "op": "DelVar"
+          },
+        {
+            "value": {
+                "type": "bool",
+                "value": "True"
+              },
+            "op": "Push"
+          },
+        {
+            "op": "Store"
+          },
+        {
+            "op": "AtomicDec"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "pc": "42",
+            "op": "Jump"
+          },
+        {
+            "args": "lk",
+            "name": "release",
+            "op": "Frame"
+          },
+        {
+            "lazy": "False",
+            "op": "AtomicInc"
+          },
+        {
+            "lazy": "True",
+            "op": "AtomicInc"
+          },
+        {
+            "op": "ReadonlyInc"
+          },
+        {
+            "value": "lk",
+            "op": "LoadVar"
+          },
+        {
+            "op": "Load"
+          },
+        {
+            "op": "Assert"
+          },
+        {
+            "op": "ReadonlyDec"
+          },
+        {
+            "op": "AtomicDec"
+          },
+        {
+            "value": "lk",
+            "op": "LoadVar"
+          },
+        {
+            "value": "lk",
+            "op": "DelVar"
+          },
+        {
+            "value": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "Push"
+          },
+        {
+            "op": "Store"
+          },
+        {
+            "op": "AtomicDec"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "value": {
+                "type": "list",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "pc",
+                "value": "2"
+              },
+            "op": "Apply"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "thelock"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 0
+              },
+            "op": "Push"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "in_cs"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "pc": "84",
+            "op": "Jump"
+          },
+        {
+            "args": "()",
+            "name": "thread",
+            "op": "Frame"
+          },
+        {
+            "value": {
+                "type": "set",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "SetAdd",
+            "op": "Nary"
+          },
+        {
+            "value": {
+                "type": "bool",
+                "value": "True"
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "SetAdd",
+            "op": "Nary"
+          },
+        {
+            "op": "Choose"
+          },
+        {
+            "pc": "83",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": {
+                "type": "address",
+                "args": [
+                    {
+                        "type": "atom",
+                        "value": "thelock"
+                      }
+                  ],
+                "func": {
+                    "type": "pc",
+                    "value": "-1"
+                  }
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "pc",
+                "value": "8"
+              },
+            "op": "Apply"
+          },
+        {
+            "op": "Pop"
+          },
+        {
+            "lazy": "False",
+            "op": "AtomicInc"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "in_cs"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 1
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "+",
+            "op": "Nary"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "in_cs"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "op": "AtomicDec"
+          },
+        {
+            "lazy": "True",
+            "op": "AtomicInc"
+          },
+        {
+            "op": "ReadonlyInc"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "in_cs"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 1
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "==",
+            "op": "Nary"
+          },
+        {
+            "op": "Assert"
+          },
+        {
+            "op": "ReadonlyDec"
+          },
+        {
+            "op": "AtomicDec"
+          },
+        {
+            "lazy": "False",
+            "op": "AtomicInc"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "in_cs"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 1
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "-",
+            "op": "Nary"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "in_cs"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "op": "AtomicDec"
+          },
+        {
+            "value": {
+                "type": "address",
+                "args": [
+                    {
+                        "type": "atom",
+                        "value": "thelock"
+                      }
+                  ],
+                "func": {
+                    "type": "pc",
+                    "value": "-1"
+                  }
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "pc",
+                "value": "27"
+              },
+            "op": "Apply"
+          },
+        {
+            "op": "Pop"
+          },
+        {
+            "pc": "49",
+            "op": "Jump"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 1
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 5
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "..",
+            "op": "Nary"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 0
+              },
+            "op": "Push"
+          },
+        {
+            "value": "i",
+            "op": "Cut"
+          },
+        {
+            "value": "i",
+            "op": "DelVar"
+          },
+        {
+            "pc": "97",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": {
+                "type": "address",
+                "args": [
+
+                  ],
+                "func": {
+                    "type": "pc",
+                    "value": "48"
+                  }
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "list",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "AddArg",
+            "op": "Nary"
+          },
+        {
+            "value": {
+                "type": "dict",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "eternal": "False",
+            "op": "Spawn"
+          },
+        {
+            "pc": "88",
+            "op": "Jump"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "value": "result",
+            "op": "DelVar"
+          }
+      ]
+  },
+  "symbols": {
+
+  },
+  "nodes": [
+    {
+      "idx": 0,
+      "component": 61,
+      "transitions": [
+
+      ],
+      "type": "initial"
+    }
+  ],
+  "profile": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    1,
+    2,
+    2,
+    2,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    3,
+    4,
+    4,
+    4,
+    4,
+    4,
+    6,
+    6,
+    3,
+    3,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    2,
+    2,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    3,
+    1,
+    1,
+    1,
+    1,
+    6,
+    6,
+    6,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    1,
+    0
+  ]
+}

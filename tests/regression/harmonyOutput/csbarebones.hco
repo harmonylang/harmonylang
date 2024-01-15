@@ -1,0 +1,835 @@
+{
+  "nstates": 3,
+  "issue": "Non-terminating state",
+  "hvm": {
+    "modules": {
+        "__main__": {
+            "file": "/var/folders/6n/pjbfqj310fz0rt3tlz28gcdc0000gn/T/tmpoigkn1jf/csbarebones.hny",
+            "lines": [
+                "def thread():",
+                "    while True:",
+                "        # Critical section is here",
+                "        pass",
+                "    ",
+                "spawn thread()",
+                "spawn thread()"
+              ],
+            "identifiers": {
+                "thread": "constant",
+                "this": "local-var",
+                "___": "___"
+              }
+          }
+      },
+    "labels": {
+        "__end__": 19
+      },
+    "pretty": [
+        [
+            "Frame __init__()",
+            "start of method __init__"
+          ],
+        [
+            "Jump 7",
+            "jump over method definition: set program counter to 7"
+          ],
+        [
+            "Frame thread()",
+            "start of method thread"
+          ],
+        [
+            "Push True",
+            "push constant True"
+          ],
+        [
+            "JumpCond False 6",
+            "pop a value and jump to 6 if the value is False"
+          ],
+        [
+            "Jump 3",
+            "set program counter to 3"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "Push ?PC(2)",
+            "push constant ?PC(2)"
+          ],
+        [
+            "Push ()",
+            "push constant ()"
+          ],
+        [
+            "2-ary AddArg",
+            "pop 2 values and push the result of applying AddArg"
+          ],
+        [
+            "Push {:}",
+            "push constant {:}"
+          ],
+        [
+            "Spawn",
+            "pop thread-local state, argument, and pc and spawn a new thread"
+          ],
+        [
+            "Push ?PC(2)",
+            "push constant ?PC(2)"
+          ],
+        [
+            "Push ()",
+            "push constant ()"
+          ],
+        [
+            "2-ary AddArg",
+            "pop 2 values and push the result of applying AddArg"
+          ],
+        [
+            "Push {:}",
+            "push constant {:}"
+          ],
+        [
+            "Spawn",
+            "pop thread-local state, argument, and pc and spawn a new thread"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "DelVar result",
+            "delete method variable result"
+          ]
+      ],
+    "locs": [
+        {
+            "module": "__main__",
+            "endline": 8,
+            "stmt": [
+                1,
+                1,
+                8,
+                7
+              ],
+            "line": 1,
+            "endcolumn": 7,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                13
+              ],
+            "line": 1,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                13
+              ],
+            "line": 1,
+            "endcolumn": 13,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 2,
+            "stmt": [
+                2,
+                5,
+                2,
+                15
+              ],
+            "line": 2,
+            "endcolumn": 14,
+            "column": 11
+          },
+        {
+            "module": "__main__",
+            "endline": 2,
+            "stmt": [
+                2,
+                5,
+                2,
+                15
+              ],
+            "line": 2,
+            "endcolumn": 9,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 2,
+            "stmt": [
+                2,
+                5,
+                2,
+                15
+              ],
+            "line": 2,
+            "endcolumn": 15,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                13
+              ],
+            "line": 1,
+            "endcolumn": 13,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                1,
+                6,
+                14
+              ],
+            "line": 6,
+            "endcolumn": 12,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                1,
+                6,
+                14
+              ],
+            "line": 6,
+            "endcolumn": 14,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                1,
+                6,
+                14
+              ],
+            "line": 6,
+            "endcolumn": 14,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                1,
+                6,
+                14
+              ],
+            "line": 6,
+            "endcolumn": 14,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                1,
+                6,
+                14
+              ],
+            "line": 6,
+            "endcolumn": 14,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                1,
+                7,
+                14
+              ],
+            "line": 7,
+            "endcolumn": 12,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                1,
+                7,
+                14
+              ],
+            "line": 7,
+            "endcolumn": 14,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                1,
+                7,
+                14
+              ],
+            "line": 7,
+            "endcolumn": 14,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                1,
+                7,
+                14
+              ],
+            "line": 7,
+            "endcolumn": 14,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                1,
+                7,
+                14
+              ],
+            "line": 7,
+            "endcolumn": 14,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 8,
+            "stmt": [
+                1,
+                1,
+                8,
+                7
+              ],
+            "line": 1,
+            "endcolumn": 7,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 8,
+            "stmt": [
+                1,
+                1,
+                8,
+                7
+              ],
+            "line": 1,
+            "endcolumn": 7,
+            "column": 1
+          }
+      ],
+    "code": [
+        {
+            "args": "()",
+            "name": "__init__",
+            "op": "Frame"
+          },
+        {
+            "pc": "7",
+            "op": "Jump"
+          },
+        {
+            "args": "()",
+            "name": "thread",
+            "op": "Frame"
+          },
+        {
+            "value": {
+                "type": "bool",
+                "value": "True"
+              },
+            "op": "Push"
+          },
+        {
+            "pc": "6",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "pc": "3",
+            "op": "Jump"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "value": {
+                "type": "address",
+                "args": [
+
+                  ],
+                "func": {
+                    "type": "pc",
+                    "value": "2"
+                  }
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "list",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "AddArg",
+            "op": "Nary"
+          },
+        {
+            "value": {
+                "type": "dict",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "eternal": "False",
+            "op": "Spawn"
+          },
+        {
+            "value": {
+                "type": "address",
+                "args": [
+
+                  ],
+                "func": {
+                    "type": "pc",
+                    "value": "2"
+                  }
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "list",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "AddArg",
+            "op": "Nary"
+          },
+        {
+            "value": {
+                "type": "dict",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "eternal": "False",
+            "op": "Spawn"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "value": "result",
+            "op": "DelVar"
+          }
+      ]
+  },
+  "macrosteps": [
+    {
+      "id": "1",
+      "tid": "0",
+      "shared": { },
+      "name": "__init__()",
+      "context": {
+        "tid": "0",
+        "hvalue": "7f8bccb0e72a",
+        "fp": "1",
+        "id": "0",
+        "name": "__init__()",
+        "entry": "0",
+        "pc": "0",
+        "sp": "1",
+        "stack": [{ "type": "list", "value": [] }],
+        "trace": [
+{"pc": "0","xpc": "0","method_name": { "type": "atom", "value": "__init__" },
+"method_arg": { "type": "list", "value": [] },
+"method": "__init__()","calltype": "process","vars":{ },"sp": 0}
+        ],
+        "atomic": "1",
+        "next": { "type": "Frame", "name": "__init__", "args": "()", "value": { "type": "list", "value": [] } },
+        "mode": "runnable"
+      },
+      "microsteps": [
+        {
+          "code": "Frame __init__()",
+          "explain": "pop argument () and run method \"__init__\"",
+          "explain2": { "text": "pop argument () and run method #+", "args": [ { "type": "atom", "value": "__init__" } ] },
+          "npc": "1",
+          "fp": "1",
+          "trace": [
+{"pc": "1","xpc": "0","method_name": { "type": "atom", "value": "__init__" },
+"method_arg": { "type": "list", "value": [] },
+"method": "__init__()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "pop": "1",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "0"
+        },
+
+        {
+          "code": "Jump 7",
+          "explain": "jump over method definition: set program counter to 7",
+          "explain2": { "text": "jump over method definition: set program counter to 7", "args": [] },
+          "npc": "7",
+          "push": [ ],
+          "pc": "1"
+        },
+
+        {
+          "code": "Push ?PC(2)",
+          "explain": "push constant ?PC(2)",
+          "explain2": { "text": "push constant ?PC(2)", "args": [] },
+          "npc": "8",
+          "push": [ { "type": "address", "func": { "type": "pc", "value": "2" }, "args": [ ] } ],
+          "pc": "7"
+        },
+
+        {
+          "code": "Push ()",
+          "explain": "push constant ()",
+          "explain2": { "text": "push constant ()", "args": [] },
+          "npc": "9",
+          "push": [ { "type": "list", "value": [] } ],
+          "pc": "8"
+        },
+
+        {
+          "code": "2-ary AddArg",
+          "explain": "pop 2 values ([], ?PC(2)); push result (?PC(2)[[]])",
+          "explain2": { "text": "pop 2 values (#+, #+); push result (#+)", "args": [ { "type": "list", "value": [] }, { "type": "address", "func": { "type": "pc", "value": "2" }, "args": [ ] }, { "type": "address", "func": { "type": "pc", "value": "2" }, "args": [{ "type": "list", "value": [] } ] } ] },
+          "npc": "10",
+          "pop": "2",
+          "push": [ { "type": "address", "func": { "type": "pc", "value": "2" }, "args": [{ "type": "list", "value": [] } ] } ],
+          "pc": "9"
+        },
+
+        {
+          "code": "Push {:}",
+          "explain": "push constant {:}",
+          "explain2": { "text": "push constant {:}", "args": [] },
+          "npc": "11",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "10"
+        },
+
+        {
+          "code": "Spawn",
+          "explain": "pop local state ({:}), arg ([]), and pc (2: \"thread\"), and spawn thread",
+          "explain2": { "text": "pop local state (#+), arg (#+), and pc (2: #+), and spawn thread", "args": [ { "type": "dict", "value": [] }, { "type": "list", "value": [] }, { "type": "atom", "value": "thread" } ] },
+          "npc": "12",
+          "pop": "2",
+          "push": [ ],
+          "pc": "11"
+        },
+
+        {
+          "code": "Push ?PC(2)",
+          "explain": "push constant ?PC(2)",
+          "explain2": { "text": "push constant ?PC(2)", "args": [] },
+          "npc": "13",
+          "push": [ { "type": "address", "func": { "type": "pc", "value": "2" }, "args": [ ] } ],
+          "pc": "12"
+        },
+
+        {
+          "code": "Push ()",
+          "explain": "push constant ()",
+          "explain2": { "text": "push constant ()", "args": [] },
+          "npc": "14",
+          "push": [ { "type": "list", "value": [] } ],
+          "pc": "13"
+        },
+
+        {
+          "code": "2-ary AddArg",
+          "explain": "pop 2 values ([], ?PC(2)); push result (?PC(2)[[]])",
+          "explain2": { "text": "pop 2 values (#+, #+); push result (#+)", "args": [ { "type": "list", "value": [] }, { "type": "address", "func": { "type": "pc", "value": "2" }, "args": [ ] }, { "type": "address", "func": { "type": "pc", "value": "2" }, "args": [{ "type": "list", "value": [] } ] } ] },
+          "npc": "15",
+          "pop": "2",
+          "push": [ { "type": "address", "func": { "type": "pc", "value": "2" }, "args": [{ "type": "list", "value": [] } ] } ],
+          "pc": "14"
+        },
+
+        {
+          "code": "Push {:}",
+          "explain": "push constant {:}",
+          "explain2": { "text": "push constant {:}", "args": [] },
+          "npc": "16",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "15"
+        },
+
+        {
+          "code": "Spawn",
+          "explain": "pop local state ({:}), arg ([]), and pc (2: \"thread\"), and spawn thread",
+          "explain2": { "text": "pop local state (#+), arg (#+), and pc (2: #+), and spawn thread", "args": [ { "type": "dict", "value": [] }, { "type": "list", "value": [] }, { "type": "atom", "value": "thread" } ] },
+          "npc": "17",
+          "pop": "2",
+          "push": [ ],
+          "pc": "16"
+        },
+
+        {
+          "code": "ReturnOp(result. None)",
+          "explain": "pop caller's method variables and pc and push result (), or terminate if no caller",
+          "explain2": { "text": "pop caller's method variables and pc and push result (), or terminate if no caller", "args": [ { "type": "address" } ] },
+          "npc": "17",
+          "mode": "terminated",
+          "pop": "1",
+          "push": [ { "type": "address" } ],
+          "pc": "17"
+        }
+
+      ],
+      "ctxbag": {
+          "7f8bbe70002a": "2"
+      },
+      "contexts": [
+        {
+          "tid": "0",
+          "hvalue": "7f8bbe70005a",
+          "fp": "1",
+          "id": "0",
+          "name": "__init__()",
+          "entry": "0",
+          "pc": "17",
+          "sp": "1",
+          "stack": [{ "type": "address" }],
+          "trace": [
+{"pc": "17","xpc": "0","method_name": { "type": "atom", "value": "__init__" },
+"method_arg": { "type": "list", "value": [] },
+"method": "__init__()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "atomic": "1",
+          "mode": "terminated"
+        },
+        {
+          "tid": "1",
+          "hvalue": "7f8bbe70002a",
+          "fp": "1",
+          "name": "thread()",
+          "entry": "2",
+          "pc": "2",
+          "sp": "1",
+          "stack": [{ "type": "list", "value": [] }],
+          "trace": [
+{"pc": "2","xpc": "2","method_name": { "type": "atom", "value": "thread" },
+"method_arg": { "type": "list", "value": [] },
+"method": "thread()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "next": { "type": "Frame", "name": "thread", "args": "()", "value": { "type": "list", "value": [] } },
+          "mode": "runnable"
+        },
+        {
+          "tid": "2",
+          "hvalue": "7f8bbe70002a",
+          "fp": "1",
+          "name": "thread()",
+          "entry": "2",
+          "pc": "2",
+          "sp": "1",
+          "stack": [{ "type": "list", "value": [] }],
+          "trace": [
+{"pc": "2","xpc": "2","method_name": { "type": "atom", "value": "thread" },
+"method_arg": { "type": "list", "value": [] },
+"method": "thread()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "next": { "type": "Frame", "name": "thread", "args": "()", "value": { "type": "list", "value": [] } },
+          "mode": "runnable"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "tid": "1",
+      "shared": { },
+      "name": "thread()",
+      "context": {
+        "tid": "1",
+        "hvalue": "7f8bbe70002a",
+        "fp": "1",
+        "name": "thread()",
+        "entry": "2",
+        "pc": "2",
+        "sp": "1",
+        "stack": [{ "type": "list", "value": [] }],
+        "trace": [
+{"pc": "2","xpc": "2","method_name": { "type": "atom", "value": "thread" },
+"method_arg": { "type": "list", "value": [] },
+"method": "thread()","calltype": "process","vars":{ },"sp": 0}
+        ],
+        "next": { "type": "Frame", "name": "thread", "args": "()", "value": { "type": "list", "value": [] } },
+        "mode": "runnable"
+      },
+      "microsteps": [
+        {
+          "code": "Frame thread()",
+          "explain": "pop argument () and run method \"thread\"",
+          "explain2": { "text": "pop argument () and run method #+", "args": [ { "type": "atom", "value": "thread" } ] },
+          "npc": "3",
+          "fp": "1",
+          "trace": [
+{"pc": "3","xpc": "2","method_name": { "type": "atom", "value": "thread" },
+"method_arg": { "type": "list", "value": [] },
+"method": "thread()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "pop": "1",
+          "push": [ { "type": "dict", "value": [] } ],
+          "pc": "2"
+        },
+
+        {
+          "code": "Push True",
+          "explain": "push constant True",
+          "explain2": { "text": "push constant True", "args": [] },
+          "npc": "4",
+          "push": [ { "type": "bool", "value": "True" } ],
+          "pc": "3"
+        },
+
+        {
+          "code": "JumpCond False 6",
+          "explain": "pop value (True), compare to False, and jump to 6 if the same",
+          "explain2": { "text": "pop value (#+), compare to #+, and jump to 6 if the same", "args": [ { "type": "bool", "value": "True" }, { "type": "bool", "value": "False" } ] },
+          "npc": "5",
+          "pop": "1",
+          "push": [ ],
+          "pc": "4"
+        },
+
+        {
+          "code": "Jump 3",
+          "explain": "set program counter to 3",
+          "explain2": { "text": "set program counter to 3", "args": [] },
+          "npc": "3",
+          "failure": "infinite loop",
+          "mode": "failed",
+          "push": [ ],
+          "pc": "5"
+        }
+
+      ],
+      "ctxbag": {
+          "7f8bbe70002a": "1",
+          "7f8bd600002a": "1"
+      },
+      "contexts": [
+        {
+          "tid": "0",
+          "hvalue": "7f8bbe70005a",
+          "fp": "1",
+          "id": "0",
+          "name": "__init__()",
+          "entry": "0",
+          "pc": "17",
+          "sp": "1",
+          "stack": [{ "type": "address" }],
+          "trace": [
+{"pc": "17","xpc": "0","method_name": { "type": "atom", "value": "__init__" },
+"method_arg": { "type": "list", "value": [] },
+"method": "__init__()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "atomic": "1",
+          "mode": "terminated"
+        },
+        {
+          "tid": "1",
+          "hvalue": "7f8bd600002a",
+          "fp": "1",
+          "name": "thread()",
+          "entry": "2",
+          "pc": "3",
+          "sp": "1",
+          "stack": [{ "type": "dict", "value": [] }],
+          "trace": [
+{"pc": "3","xpc": "2","method_name": { "type": "atom", "value": "thread" },
+"method_arg": { "type": "list", "value": [] },
+"method": "thread()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "failure": "infinite loop",
+          "this": { "type": "dict", "value": [] },
+          "mode": "failed"
+        },
+        {
+          "tid": "2",
+          "hvalue": "7f8bbe70002a",
+          "fp": "1",
+          "name": "thread()",
+          "entry": "2",
+          "pc": "2",
+          "sp": "1",
+          "stack": [{ "type": "list", "value": [] }],
+          "trace": [
+{"pc": "2","xpc": "2","method_name": { "type": "atom", "value": "thread" },
+"method_arg": { "type": "list", "value": [] },
+"method": "thread()","calltype": "process","vars":{ },"sp": 0}
+          ],
+          "next": { "type": "Frame", "name": "thread", "args": "()", "value": { "type": "list", "value": [] } },
+          "mode": "runnable"
+        }
+      ]
+    }
+
+  ]
+}

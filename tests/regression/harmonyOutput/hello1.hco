@@ -1,0 +1,164 @@
+{
+  "nstates": 2,
+  "issue": "No issues",
+  "hvm": {
+    "modules": {
+        "__main__": {
+            "file": "/var/folders/6n/pjbfqj310fz0rt3tlz28gcdc0000gn/T/tmpoigkn1jf/hello1.hny",
+            "lines": [
+                "print \"hello world\""
+              ],
+            "identifiers": {
+                "this": "local-var",
+                "___": "___"
+              }
+          }
+      },
+    "labels": {
+        "__end__": 5
+      },
+    "pretty": [
+        [
+            "Frame __init__()",
+            "start of method __init__"
+          ],
+        [
+            "Push \"hello world\"",
+            "push constant \"hello world\""
+          ],
+        [
+            "Print",
+            "pop a value and add to print history"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "DelVar result",
+            "delete method variable result"
+          ]
+      ],
+    "locs": [
+        {
+            "module": "__main__",
+            "endline": 2,
+            "stmt": [
+                1,
+                1,
+                2,
+                7
+              ],
+            "line": 1,
+            "endcolumn": 7,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                19
+              ],
+            "line": 1,
+            "endcolumn": 19,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 1,
+            "stmt": [
+                1,
+                1,
+                1,
+                19
+              ],
+            "line": 1,
+            "endcolumn": 19,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 2,
+            "stmt": [
+                1,
+                1,
+                2,
+                7
+              ],
+            "line": 1,
+            "endcolumn": 7,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 2,
+            "stmt": [
+                1,
+                1,
+                2,
+                7
+              ],
+            "line": 1,
+            "endcolumn": 7,
+            "column": 1
+          }
+      ],
+    "code": [
+        {
+            "args": "()",
+            "name": "__init__",
+            "op": "Frame"
+          },
+        {
+            "value": {
+                "type": "atom",
+                "value": "hello world"
+              },
+            "op": "Push"
+          },
+        {
+            "op": "Print"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "value": "result",
+            "op": "DelVar"
+          }
+      ]
+  },
+  "symbols": {
+     "1": { "type": "atom", "value": "hello world" }
+  },
+  "nodes": [
+    {
+      "idx": 0,
+      "transitions": [
+        [[1],[1]]
+      ],
+      "type": "initial"
+    },
+    {
+      "idx": 1,
+      "transitions": [
+
+      ],
+      "type": "terminal"
+    }
+  ],
+  "profile": [
+    1,
+    1,
+    1,
+    1,
+    0
+  ]
+}

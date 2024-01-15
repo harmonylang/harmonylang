@@ -1,0 +1,2543 @@
+{
+  "nstates": 14,
+  "issue": "No issues",
+  "hvm": {
+    "modules": {
+        "__main__": {
+            "file": "/var/folders/6n/pjbfqj310fz0rt3tlz28gcdc0000gn/T/tmpoigkn1jf/ky.hny",
+            "lines": [
+                "# Knuth-Yao fair dice algorithm",
+                "",
+                "x = 0",
+                "while x < 11:",
+                "    coin = choose { False, True }",
+                "    if x == 0:",
+                "        x = 1 if coin else 2",
+                "    elif x == 1:",
+                "        x = 3 if coin else 4",
+                "    elif x == 2:",
+                "        x = 5 if coin else 6",
+                "    elif x == 3:",
+                "        x = 1 if coin else 11",
+                "    elif x == 4:",
+                "        x = 12 if coin else 13",
+                "    elif x == 5:",
+                "        x = 14 if coin else 15",
+                "    elif x == 6:",
+                "        x = 16 if coin else 2",
+                "",
+                "print x"
+              ],
+            "identifiers": {
+                "x": "global",
+                "this": "local-var",
+                "___": "___"
+              }
+          }
+      },
+    "labels": {
+        "__end__": 95
+      },
+    "pretty": [
+        [
+            "Frame __init__()",
+            "start of method __init__"
+          ],
+        [
+            "Push 0",
+            "push constant 0"
+          ],
+        [
+            "Store x",
+            "pop a value and store it in shared variable x"
+          ],
+        [
+            "Load x",
+            "push value of shared variable x"
+          ],
+        [
+            "Push 11",
+            "push constant 11"
+          ],
+        [
+            "2-ary <",
+            "pop 2 values and push the result of applying <"
+          ],
+        [
+            "JumpCond False 91",
+            "pop a value and jump to 91 if the value is False"
+          ],
+        [
+            "Push {}",
+            "push constant {}"
+          ],
+        [
+            "Push False",
+            "push constant False"
+          ],
+        [
+            "2-ary SetAdd",
+            "pop 2 values and push the result of applying SetAdd"
+          ],
+        [
+            "Push True",
+            "push constant True"
+          ],
+        [
+            "2-ary SetAdd",
+            "pop 2 values and push the result of applying SetAdd"
+          ],
+        [
+            "Choose",
+            "pop a set value and push one of its elements"
+          ],
+        [
+            "Store coin",
+            "pop a value and store it in shared variable coin"
+          ],
+        [
+            "Load x",
+            "push value of shared variable x"
+          ],
+        [
+            "Push 0",
+            "push constant 0"
+          ],
+        [
+            "2-ary ==",
+            "pop 2 values and push the result of applying =="
+          ],
+        [
+            "JumpCond False 25",
+            "pop a value and jump to 25 if the value is False"
+          ],
+        [
+            "Load coin",
+            "push value of shared variable coin"
+          ],
+        [
+            "JumpCond False 22",
+            "pop a value and jump to 22 if the value is False"
+          ],
+        [
+            "Push 1",
+            "push constant 1"
+          ],
+        [
+            "Jump 23",
+            "set program counter to 23"
+          ],
+        [
+            "Push 2",
+            "push constant 2"
+          ],
+        [
+            "Store x",
+            "pop a value and store it in shared variable x"
+          ],
+        [
+            "Jump 3",
+            "set program counter to 3"
+          ],
+        [
+            "Load x",
+            "push value of shared variable x"
+          ],
+        [
+            "Push 1",
+            "push constant 1"
+          ],
+        [
+            "2-ary ==",
+            "pop 2 values and push the result of applying =="
+          ],
+        [
+            "JumpCond False 36",
+            "pop a value and jump to 36 if the value is False"
+          ],
+        [
+            "Load coin",
+            "push value of shared variable coin"
+          ],
+        [
+            "JumpCond False 33",
+            "pop a value and jump to 33 if the value is False"
+          ],
+        [
+            "Push 3",
+            "push constant 3"
+          ],
+        [
+            "Jump 34",
+            "set program counter to 34"
+          ],
+        [
+            "Push 4",
+            "push constant 4"
+          ],
+        [
+            "Store x",
+            "pop a value and store it in shared variable x"
+          ],
+        [
+            "Jump 3",
+            "set program counter to 3"
+          ],
+        [
+            "Load x",
+            "push value of shared variable x"
+          ],
+        [
+            "Push 2",
+            "push constant 2"
+          ],
+        [
+            "2-ary ==",
+            "pop 2 values and push the result of applying =="
+          ],
+        [
+            "JumpCond False 47",
+            "pop a value and jump to 47 if the value is False"
+          ],
+        [
+            "Load coin",
+            "push value of shared variable coin"
+          ],
+        [
+            "JumpCond False 44",
+            "pop a value and jump to 44 if the value is False"
+          ],
+        [
+            "Push 5",
+            "push constant 5"
+          ],
+        [
+            "Jump 45",
+            "set program counter to 45"
+          ],
+        [
+            "Push 6",
+            "push constant 6"
+          ],
+        [
+            "Store x",
+            "pop a value and store it in shared variable x"
+          ],
+        [
+            "Jump 3",
+            "set program counter to 3"
+          ],
+        [
+            "Load x",
+            "push value of shared variable x"
+          ],
+        [
+            "Push 3",
+            "push constant 3"
+          ],
+        [
+            "2-ary ==",
+            "pop 2 values and push the result of applying =="
+          ],
+        [
+            "JumpCond False 58",
+            "pop a value and jump to 58 if the value is False"
+          ],
+        [
+            "Load coin",
+            "push value of shared variable coin"
+          ],
+        [
+            "JumpCond False 55",
+            "pop a value and jump to 55 if the value is False"
+          ],
+        [
+            "Push 1",
+            "push constant 1"
+          ],
+        [
+            "Jump 56",
+            "set program counter to 56"
+          ],
+        [
+            "Push 11",
+            "push constant 11"
+          ],
+        [
+            "Store x",
+            "pop a value and store it in shared variable x"
+          ],
+        [
+            "Jump 3",
+            "set program counter to 3"
+          ],
+        [
+            "Load x",
+            "push value of shared variable x"
+          ],
+        [
+            "Push 4",
+            "push constant 4"
+          ],
+        [
+            "2-ary ==",
+            "pop 2 values and push the result of applying =="
+          ],
+        [
+            "JumpCond False 69",
+            "pop a value and jump to 69 if the value is False"
+          ],
+        [
+            "Load coin",
+            "push value of shared variable coin"
+          ],
+        [
+            "JumpCond False 66",
+            "pop a value and jump to 66 if the value is False"
+          ],
+        [
+            "Push 12",
+            "push constant 12"
+          ],
+        [
+            "Jump 67",
+            "set program counter to 67"
+          ],
+        [
+            "Push 13",
+            "push constant 13"
+          ],
+        [
+            "Store x",
+            "pop a value and store it in shared variable x"
+          ],
+        [
+            "Jump 3",
+            "set program counter to 3"
+          ],
+        [
+            "Load x",
+            "push value of shared variable x"
+          ],
+        [
+            "Push 5",
+            "push constant 5"
+          ],
+        [
+            "2-ary ==",
+            "pop 2 values and push the result of applying =="
+          ],
+        [
+            "JumpCond False 80",
+            "pop a value and jump to 80 if the value is False"
+          ],
+        [
+            "Load coin",
+            "push value of shared variable coin"
+          ],
+        [
+            "JumpCond False 77",
+            "pop a value and jump to 77 if the value is False"
+          ],
+        [
+            "Push 14",
+            "push constant 14"
+          ],
+        [
+            "Jump 78",
+            "set program counter to 78"
+          ],
+        [
+            "Push 15",
+            "push constant 15"
+          ],
+        [
+            "Store x",
+            "pop a value and store it in shared variable x"
+          ],
+        [
+            "Jump 3",
+            "set program counter to 3"
+          ],
+        [
+            "Load x",
+            "push value of shared variable x"
+          ],
+        [
+            "Push 6",
+            "push constant 6"
+          ],
+        [
+            "2-ary ==",
+            "pop 2 values and push the result of applying =="
+          ],
+        [
+            "JumpCond False 3",
+            "pop a value and jump to 3 if the value is False"
+          ],
+        [
+            "Load coin",
+            "push value of shared variable coin"
+          ],
+        [
+            "JumpCond False 88",
+            "pop a value and jump to 88 if the value is False"
+          ],
+        [
+            "Push 16",
+            "push constant 16"
+          ],
+        [
+            "Jump 89",
+            "set program counter to 89"
+          ],
+        [
+            "Push 2",
+            "push constant 2"
+          ],
+        [
+            "Store x",
+            "pop a value and store it in shared variable x"
+          ],
+        [
+            "Jump 3",
+            "set program counter to 3"
+          ],
+        [
+            "Load x",
+            "push value of shared variable x"
+          ],
+        [
+            "Print",
+            "pop a value and add to print history"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "DelVar result",
+            "delete method variable result"
+          ]
+      ],
+    "locs": [
+        {
+            "module": "__main__",
+            "endline": 22,
+            "stmt": [
+                3,
+                1,
+                22,
+                7
+              ],
+            "line": 3,
+            "endcolumn": 7,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                3,
+                1,
+                3,
+                5
+              ],
+            "line": 3,
+            "endcolumn": 5,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                3,
+                1,
+                3,
+                5
+              ],
+            "line": 3,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 4,
+            "stmt": [
+                4,
+                1,
+                4,
+                13
+              ],
+            "line": 4,
+            "endcolumn": 7,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 4,
+            "stmt": [
+                4,
+                1,
+                4,
+                13
+              ],
+            "line": 4,
+            "endcolumn": 12,
+            "column": 11
+          },
+        {
+            "module": "__main__",
+            "endline": 4,
+            "stmt": [
+                4,
+                1,
+                4,
+                13
+              ],
+            "line": 4,
+            "endcolumn": 12,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 4,
+            "stmt": [
+                4,
+                1,
+                4,
+                13
+              ],
+            "line": 4,
+            "endcolumn": 5,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                5,
+                5,
+                33
+              ],
+            "line": 5,
+            "endcolumn": 31,
+            "column": 21
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                5,
+                5,
+                33
+              ],
+            "line": 5,
+            "endcolumn": 25,
+            "column": 21
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                5,
+                5,
+                33
+              ],
+            "line": 5,
+            "endcolumn": 31,
+            "column": 21
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                5,
+                5,
+                33
+              ],
+            "line": 5,
+            "endcolumn": 31,
+            "column": 28
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                5,
+                5,
+                33
+              ],
+            "line": 5,
+            "endcolumn": 31,
+            "column": 21
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                5,
+                5,
+                33
+              ],
+            "line": 5,
+            "endcolumn": 33,
+            "column": 12
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                5,
+                5,
+                33
+              ],
+            "line": 5,
+            "endcolumn": 10,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                5,
+                6,
+                14
+              ],
+            "line": 6,
+            "endcolumn": 8,
+            "column": 8
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                5,
+                6,
+                14
+              ],
+            "line": 6,
+            "endcolumn": 13,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                5,
+                6,
+                14
+              ],
+            "line": 6,
+            "endcolumn": 13,
+            "column": 8
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                5,
+                6,
+                14
+              ],
+            "line": 6,
+            "endcolumn": 6,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                9,
+                7,
+                28
+              ],
+            "line": 7,
+            "endcolumn": 21,
+            "column": 18
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                9,
+                7,
+                28
+              ],
+            "line": 7,
+            "endcolumn": 28,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                9,
+                7,
+                28
+              ],
+            "line": 7,
+            "endcolumn": 13,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                9,
+                7,
+                28
+              ],
+            "line": 7,
+            "endcolumn": 16,
+            "column": 15
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                9,
+                7,
+                28
+              ],
+            "line": 7,
+            "endcolumn": 28,
+            "column": 28
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                9,
+                7,
+                28
+              ],
+            "line": 7,
+            "endcolumn": 11,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                5,
+                6,
+                14
+              ],
+            "line": 6,
+            "endcolumn": 14,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 8,
+            "stmt": [
+                8,
+                5,
+                8,
+                16
+              ],
+            "line": 8,
+            "endcolumn": 10,
+            "column": 10
+          },
+        {
+            "module": "__main__",
+            "endline": 8,
+            "stmt": [
+                8,
+                5,
+                8,
+                16
+              ],
+            "line": 8,
+            "endcolumn": 15,
+            "column": 15
+          },
+        {
+            "module": "__main__",
+            "endline": 8,
+            "stmt": [
+                8,
+                5,
+                8,
+                16
+              ],
+            "line": 8,
+            "endcolumn": 15,
+            "column": 10
+          },
+        {
+            "module": "__main__",
+            "endline": 8,
+            "stmt": [
+                8,
+                5,
+                8,
+                16
+              ],
+            "line": 8,
+            "endcolumn": 8,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                9,
+                9,
+                28
+              ],
+            "line": 9,
+            "endcolumn": 21,
+            "column": 18
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                9,
+                9,
+                28
+              ],
+            "line": 9,
+            "endcolumn": 28,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                9,
+                9,
+                28
+              ],
+            "line": 9,
+            "endcolumn": 13,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                9,
+                9,
+                28
+              ],
+            "line": 9,
+            "endcolumn": 16,
+            "column": 15
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                9,
+                9,
+                28
+              ],
+            "line": 9,
+            "endcolumn": 28,
+            "column": 28
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                9,
+                9,
+                28
+              ],
+            "line": 9,
+            "endcolumn": 11,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 8,
+            "stmt": [
+                8,
+                5,
+                8,
+                16
+              ],
+            "line": 8,
+            "endcolumn": 16,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                5,
+                10,
+                16
+              ],
+            "line": 10,
+            "endcolumn": 10,
+            "column": 10
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                5,
+                10,
+                16
+              ],
+            "line": 10,
+            "endcolumn": 15,
+            "column": 15
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                5,
+                10,
+                16
+              ],
+            "line": 10,
+            "endcolumn": 15,
+            "column": 10
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                5,
+                10,
+                16
+              ],
+            "line": 10,
+            "endcolumn": 8,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 11,
+            "stmt": [
+                11,
+                9,
+                11,
+                28
+              ],
+            "line": 11,
+            "endcolumn": 21,
+            "column": 18
+          },
+        {
+            "module": "__main__",
+            "endline": 11,
+            "stmt": [
+                11,
+                9,
+                11,
+                28
+              ],
+            "line": 11,
+            "endcolumn": 28,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 11,
+            "stmt": [
+                11,
+                9,
+                11,
+                28
+              ],
+            "line": 11,
+            "endcolumn": 13,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 11,
+            "stmt": [
+                11,
+                9,
+                11,
+                28
+              ],
+            "line": 11,
+            "endcolumn": 16,
+            "column": 15
+          },
+        {
+            "module": "__main__",
+            "endline": 11,
+            "stmt": [
+                11,
+                9,
+                11,
+                28
+              ],
+            "line": 11,
+            "endcolumn": 28,
+            "column": 28
+          },
+        {
+            "module": "__main__",
+            "endline": 11,
+            "stmt": [
+                11,
+                9,
+                11,
+                28
+              ],
+            "line": 11,
+            "endcolumn": 11,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                5,
+                10,
+                16
+              ],
+            "line": 10,
+            "endcolumn": 16,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 12,
+            "stmt": [
+                12,
+                5,
+                12,
+                16
+              ],
+            "line": 12,
+            "endcolumn": 10,
+            "column": 10
+          },
+        {
+            "module": "__main__",
+            "endline": 12,
+            "stmt": [
+                12,
+                5,
+                12,
+                16
+              ],
+            "line": 12,
+            "endcolumn": 15,
+            "column": 15
+          },
+        {
+            "module": "__main__",
+            "endline": 12,
+            "stmt": [
+                12,
+                5,
+                12,
+                16
+              ],
+            "line": 12,
+            "endcolumn": 15,
+            "column": 10
+          },
+        {
+            "module": "__main__",
+            "endline": 12,
+            "stmt": [
+                12,
+                5,
+                12,
+                16
+              ],
+            "line": 12,
+            "endcolumn": 8,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 13,
+            "stmt": [
+                13,
+                9,
+                13,
+                29
+              ],
+            "line": 13,
+            "endcolumn": 21,
+            "column": 18
+          },
+        {
+            "module": "__main__",
+            "endline": 13,
+            "stmt": [
+                13,
+                9,
+                13,
+                29
+              ],
+            "line": 13,
+            "endcolumn": 29,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 13,
+            "stmt": [
+                13,
+                9,
+                13,
+                29
+              ],
+            "line": 13,
+            "endcolumn": 13,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 13,
+            "stmt": [
+                13,
+                9,
+                13,
+                29
+              ],
+            "line": 13,
+            "endcolumn": 16,
+            "column": 15
+          },
+        {
+            "module": "__main__",
+            "endline": 13,
+            "stmt": [
+                13,
+                9,
+                13,
+                29
+              ],
+            "line": 13,
+            "endcolumn": 29,
+            "column": 28
+          },
+        {
+            "module": "__main__",
+            "endline": 13,
+            "stmt": [
+                13,
+                9,
+                13,
+                29
+              ],
+            "line": 13,
+            "endcolumn": 11,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 12,
+            "stmt": [
+                12,
+                5,
+                12,
+                16
+              ],
+            "line": 12,
+            "endcolumn": 16,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                5,
+                14,
+                16
+              ],
+            "line": 14,
+            "endcolumn": 10,
+            "column": 10
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                5,
+                14,
+                16
+              ],
+            "line": 14,
+            "endcolumn": 15,
+            "column": 15
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                5,
+                14,
+                16
+              ],
+            "line": 14,
+            "endcolumn": 15,
+            "column": 10
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                5,
+                14,
+                16
+              ],
+            "line": 14,
+            "endcolumn": 8,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 15,
+            "stmt": [
+                15,
+                9,
+                15,
+                30
+              ],
+            "line": 15,
+            "endcolumn": 22,
+            "column": 19
+          },
+        {
+            "module": "__main__",
+            "endline": 15,
+            "stmt": [
+                15,
+                9,
+                15,
+                30
+              ],
+            "line": 15,
+            "endcolumn": 30,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 15,
+            "stmt": [
+                15,
+                9,
+                15,
+                30
+              ],
+            "line": 15,
+            "endcolumn": 14,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 15,
+            "stmt": [
+                15,
+                9,
+                15,
+                30
+              ],
+            "line": 15,
+            "endcolumn": 17,
+            "column": 16
+          },
+        {
+            "module": "__main__",
+            "endline": 15,
+            "stmt": [
+                15,
+                9,
+                15,
+                30
+              ],
+            "line": 15,
+            "endcolumn": 30,
+            "column": 29
+          },
+        {
+            "module": "__main__",
+            "endline": 15,
+            "stmt": [
+                15,
+                9,
+                15,
+                30
+              ],
+            "line": 15,
+            "endcolumn": 11,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 14,
+            "stmt": [
+                14,
+                5,
+                14,
+                16
+              ],
+            "line": 14,
+            "endcolumn": 16,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 16,
+            "stmt": [
+                16,
+                5,
+                16,
+                16
+              ],
+            "line": 16,
+            "endcolumn": 10,
+            "column": 10
+          },
+        {
+            "module": "__main__",
+            "endline": 16,
+            "stmt": [
+                16,
+                5,
+                16,
+                16
+              ],
+            "line": 16,
+            "endcolumn": 15,
+            "column": 15
+          },
+        {
+            "module": "__main__",
+            "endline": 16,
+            "stmt": [
+                16,
+                5,
+                16,
+                16
+              ],
+            "line": 16,
+            "endcolumn": 15,
+            "column": 10
+          },
+        {
+            "module": "__main__",
+            "endline": 16,
+            "stmt": [
+                16,
+                5,
+                16,
+                16
+              ],
+            "line": 16,
+            "endcolumn": 8,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 17,
+            "stmt": [
+                17,
+                9,
+                17,
+                30
+              ],
+            "line": 17,
+            "endcolumn": 22,
+            "column": 19
+          },
+        {
+            "module": "__main__",
+            "endline": 17,
+            "stmt": [
+                17,
+                9,
+                17,
+                30
+              ],
+            "line": 17,
+            "endcolumn": 30,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 17,
+            "stmt": [
+                17,
+                9,
+                17,
+                30
+              ],
+            "line": 17,
+            "endcolumn": 14,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 17,
+            "stmt": [
+                17,
+                9,
+                17,
+                30
+              ],
+            "line": 17,
+            "endcolumn": 17,
+            "column": 16
+          },
+        {
+            "module": "__main__",
+            "endline": 17,
+            "stmt": [
+                17,
+                9,
+                17,
+                30
+              ],
+            "line": 17,
+            "endcolumn": 30,
+            "column": 29
+          },
+        {
+            "module": "__main__",
+            "endline": 17,
+            "stmt": [
+                17,
+                9,
+                17,
+                30
+              ],
+            "line": 17,
+            "endcolumn": 11,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 16,
+            "stmt": [
+                16,
+                5,
+                16,
+                16
+              ],
+            "line": 16,
+            "endcolumn": 16,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 18,
+            "stmt": [
+                18,
+                5,
+                18,
+                16
+              ],
+            "line": 18,
+            "endcolumn": 10,
+            "column": 10
+          },
+        {
+            "module": "__main__",
+            "endline": 18,
+            "stmt": [
+                18,
+                5,
+                18,
+                16
+              ],
+            "line": 18,
+            "endcolumn": 15,
+            "column": 15
+          },
+        {
+            "module": "__main__",
+            "endline": 18,
+            "stmt": [
+                18,
+                5,
+                18,
+                16
+              ],
+            "line": 18,
+            "endcolumn": 15,
+            "column": 10
+          },
+        {
+            "module": "__main__",
+            "endline": 18,
+            "stmt": [
+                18,
+                5,
+                18,
+                16
+              ],
+            "line": 18,
+            "endcolumn": 8,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 19,
+            "stmt": [
+                19,
+                9,
+                19,
+                29
+              ],
+            "line": 19,
+            "endcolumn": 22,
+            "column": 19
+          },
+        {
+            "module": "__main__",
+            "endline": 19,
+            "stmt": [
+                19,
+                9,
+                19,
+                29
+              ],
+            "line": 19,
+            "endcolumn": 29,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 19,
+            "stmt": [
+                19,
+                9,
+                19,
+                29
+              ],
+            "line": 19,
+            "endcolumn": 14,
+            "column": 13
+          },
+        {
+            "module": "__main__",
+            "endline": 19,
+            "stmt": [
+                19,
+                9,
+                19,
+                29
+              ],
+            "line": 19,
+            "endcolumn": 17,
+            "column": 16
+          },
+        {
+            "module": "__main__",
+            "endline": 19,
+            "stmt": [
+                19,
+                9,
+                19,
+                29
+              ],
+            "line": 19,
+            "endcolumn": 29,
+            "column": 29
+          },
+        {
+            "module": "__main__",
+            "endline": 19,
+            "stmt": [
+                19,
+                9,
+                19,
+                29
+              ],
+            "line": 19,
+            "endcolumn": 11,
+            "column": 9
+          },
+        {
+            "module": "__main__",
+            "endline": 4,
+            "stmt": [
+                4,
+                1,
+                4,
+                13
+              ],
+            "line": 4,
+            "endcolumn": 13,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 21,
+            "stmt": [
+                21,
+                1,
+                21,
+                7
+              ],
+            "line": 21,
+            "endcolumn": 7,
+            "column": 7
+          },
+        {
+            "module": "__main__",
+            "endline": 21,
+            "stmt": [
+                21,
+                1,
+                21,
+                7
+              ],
+            "line": 21,
+            "endcolumn": 7,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 22,
+            "stmt": [
+                3,
+                1,
+                22,
+                7
+              ],
+            "line": 3,
+            "endcolumn": 7,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 22,
+            "stmt": [
+                3,
+                1,
+                22,
+                7
+              ],
+            "line": 3,
+            "endcolumn": 7,
+            "column": 1
+          }
+      ],
+    "code": [
+        {
+            "args": "()",
+            "name": "__init__",
+            "op": "Frame"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 0
+              },
+            "op": "Push"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 11
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "<",
+            "op": "Nary"
+          },
+        {
+            "pc": "91",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": {
+                "type": "set",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "SetAdd",
+            "op": "Nary"
+          },
+        {
+            "value": {
+                "type": "bool",
+                "value": "True"
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "SetAdd",
+            "op": "Nary"
+          },
+        {
+            "op": "Choose"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "coin"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 0
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "==",
+            "op": "Nary"
+          },
+        {
+            "pc": "25",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "coin"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "pc": "22",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 1
+              },
+            "op": "Push"
+          },
+        {
+            "pc": "23",
+            "op": "Jump"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 2
+              },
+            "op": "Push"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "pc": "3",
+            "op": "Jump"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 1
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "==",
+            "op": "Nary"
+          },
+        {
+            "pc": "36",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "coin"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "pc": "33",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 3
+              },
+            "op": "Push"
+          },
+        {
+            "pc": "34",
+            "op": "Jump"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 4
+              },
+            "op": "Push"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "pc": "3",
+            "op": "Jump"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 2
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "==",
+            "op": "Nary"
+          },
+        {
+            "pc": "47",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "coin"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "pc": "44",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 5
+              },
+            "op": "Push"
+          },
+        {
+            "pc": "45",
+            "op": "Jump"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 6
+              },
+            "op": "Push"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "pc": "3",
+            "op": "Jump"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 3
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "==",
+            "op": "Nary"
+          },
+        {
+            "pc": "58",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "coin"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "pc": "55",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 1
+              },
+            "op": "Push"
+          },
+        {
+            "pc": "56",
+            "op": "Jump"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 11
+              },
+            "op": "Push"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "pc": "3",
+            "op": "Jump"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 4
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "==",
+            "op": "Nary"
+          },
+        {
+            "pc": "69",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "coin"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "pc": "66",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 12
+              },
+            "op": "Push"
+          },
+        {
+            "pc": "67",
+            "op": "Jump"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 13
+              },
+            "op": "Push"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "pc": "3",
+            "op": "Jump"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 5
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "==",
+            "op": "Nary"
+          },
+        {
+            "pc": "80",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "coin"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "pc": "77",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 14
+              },
+            "op": "Push"
+          },
+        {
+            "pc": "78",
+            "op": "Jump"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 15
+              },
+            "op": "Push"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "pc": "3",
+            "op": "Jump"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 6
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "==",
+            "op": "Nary"
+          },
+        {
+            "pc": "3",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "coin"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "pc": "88",
+            "cond": {
+                "type": "bool",
+                "value": "False"
+              },
+            "op": "JumpCond"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 16
+              },
+            "op": "Push"
+          },
+        {
+            "pc": "89",
+            "op": "Jump"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 2
+              },
+            "op": "Push"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "pc": "3",
+            "op": "Jump"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "x"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "op": "Print"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "value": "result",
+            "op": "DelVar"
+          }
+      ]
+  },
+  "symbols": {
+     "2": { "type": "int", "value": "15" },
+     "3": { "type": "int", "value": "14" },
+     "1": { "type": "int", "value": "16" },
+     "6": { "type": "int", "value": "11" },
+     "4": { "type": "int", "value": "13" },
+     "5": { "type": "int", "value": "12" }
+  },
+  "nodes": [
+    {
+      "idx": 0,
+      "component": 11,
+      "transitions": [
+        [[],[1]]
+      ],
+      "type": "initial"
+    },
+    {
+      "idx": 1,
+      "component": 10,
+      "transitions": [
+        [[],[2,3]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 2,
+      "component": 4,
+      "transitions": [
+        [[],[4,5]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 3,
+      "component": 9,
+      "transitions": [
+        [[],[6,7]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 4,
+      "component": 4,
+      "transitions": [
+        [[],[2]],
+        [[1],[8]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 5,
+      "component": 3,
+      "transitions": [
+        [[2],[9]],
+        [[3],[10]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 6,
+      "component": 7,
+      "transitions": [
+        [[4],[11]],
+        [[5],[12]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 7,
+      "component": 9,
+      "transitions": [
+        [[],[3]],
+        [[6],[13]]
+      ],
+      "type": "normal"
+    },
+    {
+      "idx": 8,
+      "component": 0,
+      "transitions": [
+
+      ],
+      "type": "terminal"
+    },
+    {
+      "idx": 9,
+      "component": 1,
+      "transitions": [
+
+      ],
+      "type": "terminal"
+    },
+    {
+      "idx": 10,
+      "component": 2,
+      "transitions": [
+
+      ],
+      "type": "terminal"
+    },
+    {
+      "idx": 11,
+      "component": 5,
+      "transitions": [
+
+      ],
+      "type": "terminal"
+    },
+    {
+      "idx": 12,
+      "component": 6,
+      "transitions": [
+
+      ],
+      "type": "terminal"
+    },
+    {
+      "idx": 13,
+      "component": 8,
+      "transitions": [
+
+      ],
+      "type": "terminal"
+    }
+  ],
+  "profile": [
+    1,
+    1,
+    1,
+    15,
+    15,
+    15,
+    15,
+    9,
+    9,
+    9,
+    9,
+    9,
+    14,
+    14,
+    14,
+    14,
+    14,
+    14,
+    2,
+    2,
+    1,
+    1,
+    1,
+    2,
+    2,
+    12,
+    12,
+    12,
+    12,
+    2,
+    2,
+    1,
+    1,
+    1,
+    2,
+    2,
+    10,
+    10,
+    10,
+    10,
+    2,
+    2,
+    1,
+    1,
+    1,
+    2,
+    2,
+    8,
+    8,
+    8,
+    8,
+    2,
+    2,
+    1,
+    1,
+    1,
+    2,
+    2,
+    6,
+    6,
+    6,
+    6,
+    2,
+    2,
+    1,
+    1,
+    1,
+    2,
+    2,
+    4,
+    4,
+    4,
+    4,
+    2,
+    2,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    1,
+    1,
+    1,
+    2,
+    2,
+    6,
+    6,
+    6,
+    0
+  ]
+}

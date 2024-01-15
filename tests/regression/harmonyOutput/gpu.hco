@@ -1,0 +1,779 @@
+{
+  "nstates": 2,
+  "issue": "No issues",
+  "hvm": {
+    "modules": {
+        "__main__": {
+            "file": "/var/folders/6n/pjbfqj310fz0rt3tlz28gcdc0000gn/T/tmpoigkn1jf/gpu.hny",
+            "lines": [
+                "const N = 10",
+                "",
+                "availGPUs = {1..N}",
+                "",
+                "def gpuAlloc() returns gpu:",
+                "    gpu = choose(availGPUs)",
+                "    availGPUs -= { result }",
+                "",
+                "def gpuRelease(gpu):",
+                "    availGPUs |= { gpu }"
+              ],
+            "identifiers": {
+                "gpuAlloc": "constant",
+                "this": "local-var",
+                "gpu": "local-const",
+                "availGPUs": "global",
+                "___": "___",
+                "N": "constant",
+                "gpuRelease": "constant"
+              }
+          }
+      },
+    "labels": {
+        "__end__": 30
+      },
+    "pretty": [
+        [
+            "Frame __init__()",
+            "start of method __init__"
+          ],
+        [
+            "Push 1",
+            "push constant 1"
+          ],
+        [
+            "Push 10",
+            "push constant 10"
+          ],
+        [
+            "2-ary ..",
+            "pop 2 values and push the result of applying .."
+          ],
+        [
+            "Store availGPUs",
+            "pop a value and store it in shared variable availGPUs"
+          ],
+        [
+            "Jump 28",
+            "jump over method definition: set program counter to 28"
+          ],
+        [
+            "Frame gpuAlloc()",
+            "start of method gpuAlloc"
+          ],
+        [
+            "Load availGPUs",
+            "push value of shared variable availGPUs"
+          ],
+        [
+            "Choose",
+            "pop a set value and push one of its elements"
+          ],
+        [
+            "StoreVar gpu",
+            "pop a value and store in gpu"
+          ],
+        [
+            "Load availGPUs",
+            "push value of shared variable availGPUs"
+          ],
+        [
+            "Push {}",
+            "push constant {}"
+          ],
+        [
+            "Load result",
+            "push value of shared variable result"
+          ],
+        [
+            "2-ary SetAdd",
+            "pop 2 values and push the result of applying SetAdd"
+          ],
+        [
+            "2-ary -",
+            "pop 2 values and push the result of applying -"
+          ],
+        [
+            "Store availGPUs",
+            "pop a value and store it in shared variable availGPUs"
+          ],
+        [
+            "ReturnOp(gpu)",
+            "restore caller method state and push gpu"
+          ],
+        [
+            "DelVar gpu",
+            "delete method variable gpu"
+          ],
+        [
+            "Jump 28",
+            "jump over method definition: set program counter to 28"
+          ],
+        [
+            "Frame gpuRelease(gpu)",
+            "start of method gpuRelease"
+          ],
+        [
+            "Load availGPUs",
+            "push value of shared variable availGPUs"
+          ],
+        [
+            "Push {}",
+            "push constant {}"
+          ],
+        [
+            "LoadVar gpu",
+            "push the value of gpu"
+          ],
+        [
+            "DelVar gpu",
+            "delete method variable gpu"
+          ],
+        [
+            "2-ary SetAdd",
+            "pop 2 values and push the result of applying SetAdd"
+          ],
+        [
+            "2-ary |",
+            "pop 2 values and push the result of applying |"
+          ],
+        [
+            "Store availGPUs",
+            "pop a value and store it in shared variable availGPUs"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "ReturnOp(result. None)",
+            "restore caller method state and push result"
+          ],
+        [
+            "DelVar result",
+            "delete method variable result"
+          ]
+      ],
+    "locs": [
+        {
+            "module": "__main__",
+            "endline": 11,
+            "stmt": [
+                1,
+                1,
+                11,
+                6
+              ],
+            "line": 1,
+            "endcolumn": 6,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                3,
+                1,
+                3,
+                18
+              ],
+            "line": 3,
+            "endcolumn": 14,
+            "column": 14
+          },
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                3,
+                1,
+                3,
+                18
+              ],
+            "line": 3,
+            "endcolumn": 17,
+            "column": 17
+          },
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                3,
+                1,
+                3,
+                18
+              ],
+            "line": 3,
+            "endcolumn": 17,
+            "column": 14
+          },
+        {
+            "module": "__main__",
+            "endline": 3,
+            "stmt": [
+                3,
+                1,
+                3,
+                18
+              ],
+            "line": 3,
+            "endcolumn": 11,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                1,
+                5,
+                27
+              ],
+            "line": 5,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                1,
+                5,
+                27
+              ],
+            "line": 5,
+            "endcolumn": 27,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                5,
+                6,
+                27
+              ],
+            "line": 6,
+            "endcolumn": 26,
+            "column": 18
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                5,
+                6,
+                27
+              ],
+            "line": 6,
+            "endcolumn": 27,
+            "column": 11
+          },
+        {
+            "module": "__main__",
+            "endline": 6,
+            "stmt": [
+                6,
+                5,
+                6,
+                27
+              ],
+            "line": 6,
+            "endcolumn": 9,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                5,
+                7,
+                27
+              ],
+            "line": 7,
+            "endcolumn": 27,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                5,
+                7,
+                27
+              ],
+            "line": 7,
+            "endcolumn": 25,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                5,
+                7,
+                27
+              ],
+            "line": 7,
+            "endcolumn": 25,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                5,
+                7,
+                27
+              ],
+            "line": 7,
+            "endcolumn": 25,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                5,
+                7,
+                27
+              ],
+            "line": 7,
+            "endcolumn": 27,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 7,
+            "stmt": [
+                7,
+                5,
+                7,
+                27
+              ],
+            "line": 7,
+            "endcolumn": 16,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                1,
+                5,
+                27
+              ],
+            "line": 5,
+            "endcolumn": 27,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 5,
+            "stmt": [
+                5,
+                1,
+                5,
+                27
+              ],
+            "line": 5,
+            "endcolumn": 27,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                1,
+                9,
+                20
+              ],
+            "line": 9,
+            "endcolumn": 3,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                1,
+                9,
+                20
+              ],
+            "line": 9,
+            "endcolumn": 20,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                5,
+                10,
+                24
+              ],
+            "line": 10,
+            "endcolumn": 24,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                5,
+                10,
+                24
+              ],
+            "line": 10,
+            "endcolumn": 22,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                5,
+                10,
+                24
+              ],
+            "line": 10,
+            "endcolumn": 22,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                5,
+                10,
+                24
+              ],
+            "line": 10,
+            "endcolumn": 22,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                5,
+                10,
+                24
+              ],
+            "line": 10,
+            "endcolumn": 22,
+            "column": 20
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                5,
+                10,
+                24
+              ],
+            "line": 10,
+            "endcolumn": 24,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 10,
+            "stmt": [
+                10,
+                5,
+                10,
+                24
+              ],
+            "line": 10,
+            "endcolumn": 16,
+            "column": 5
+          },
+        {
+            "module": "__main__",
+            "endline": 9,
+            "stmt": [
+                9,
+                1,
+                9,
+                20
+              ],
+            "line": 9,
+            "endcolumn": 20,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 11,
+            "stmt": [
+                1,
+                1,
+                11,
+                6
+              ],
+            "line": 1,
+            "endcolumn": 6,
+            "column": 1
+          },
+        {
+            "module": "__main__",
+            "endline": 11,
+            "stmt": [
+                1,
+                1,
+                11,
+                6
+              ],
+            "line": 1,
+            "endcolumn": 6,
+            "column": 1
+          }
+      ],
+    "code": [
+        {
+            "args": "()",
+            "name": "__init__",
+            "op": "Frame"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 1
+              },
+            "op": "Push"
+          },
+        {
+            "value": {
+                "type": "int",
+                "value": 10
+              },
+            "op": "Push"
+          },
+        {
+            "arity": 2,
+            "value": "..",
+            "op": "Nary"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "availGPUs"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "pc": "28",
+            "op": "Jump"
+          },
+        {
+            "args": "()",
+            "name": "gpuAlloc",
+            "op": "Frame"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "availGPUs"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "op": "Choose"
+          },
+        {
+            "value": "gpu",
+            "op": "StoreVar"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "availGPUs"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "value": {
+                "type": "set",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "result"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "arity": 2,
+            "value": "SetAdd",
+            "op": "Nary"
+          },
+        {
+            "arity": 2,
+            "value": "-",
+            "op": "Nary"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "availGPUs"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "result": "gpu",
+            "op": "Return"
+          },
+        {
+            "value": "gpu",
+            "op": "DelVar"
+          },
+        {
+            "pc": "28",
+            "op": "Jump"
+          },
+        {
+            "args": "gpu",
+            "name": "gpuRelease",
+            "op": "Frame"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "availGPUs"
+                  }
+              ],
+            "op": "Load"
+          },
+        {
+            "value": {
+                "type": "set",
+                "value": [
+
+                  ]
+              },
+            "op": "Push"
+          },
+        {
+            "value": "gpu",
+            "op": "LoadVar"
+          },
+        {
+            "value": "gpu",
+            "op": "DelVar"
+          },
+        {
+            "arity": 2,
+            "value": "SetAdd",
+            "op": "Nary"
+          },
+        {
+            "arity": 2,
+            "value": "|",
+            "op": "Nary"
+          },
+        {
+            "value": [
+                {
+                    "type": "atom",
+                    "value": "availGPUs"
+                  }
+              ],
+            "op": "Store"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "result": "result",
+            "default": {
+                "type": "address"
+              },
+            "op": "Return"
+          },
+        {
+            "value": "result",
+            "op": "DelVar"
+          }
+      ]
+  },
+  "symbols": {
+
+  },
+  "nodes": [
+    {
+      "idx": 0,
+      "transitions": [
+
+      ],
+      "type": "initial"
+    }
+  ],
+  "profile": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+  ]
+}

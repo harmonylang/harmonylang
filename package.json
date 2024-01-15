@@ -3,7 +3,7 @@
     "displayName": "HarmonyLang",
     "description": "VS Code language support for Harmony, a Python-like concurrent programming language.",
     "icon": "images/harmonylang.png",
-    "version": "2.3.0",
+    "version": "2.3.1",
     "publisher": "kevinsun-dev-cornell",
     "repository": "https://github.com/kevinsun-dev/harmonylang",
     "engines": {
@@ -133,7 +133,8 @@
         "watch": "tsc -watch -p ./",
         "clean": "rm -rf out",
         "update-harmony": "./update_harmony.sh",
-        "test": "mocha -r ts-node/register tests/**/*.test.ts"
+        "test": "mocha -r ts-node/register tests/unit/**/*.test.ts",
+        "regression": "mocha -r ts-node/register tests/regression/**/*.test.ts"
     },
     "devDependencies": {
         "@types/adm-zip": "^0.4.33",
@@ -142,6 +143,7 @@
         "@types/chmodr": "^1.0.0",
         "@types/command-exists": "^1.2.0",
         "@types/create-html-element": "^2.1.0",
+        "@types/diff": "^5.0.9",
         "@types/glob": "^7.1.3",
         "@types/lodash": "^4.14.168",
         "@types/mocha": "^8.2.0",
@@ -152,6 +154,8 @@
         "@types/which": "^2.0.2",
         "@typescript-eslint/eslint-plugin": "^3.0.2",
         "@typescript-eslint/parser": "^3.0.2",
+        "axios": "^1.6.5",
+        "diff": "^5.1.0",
         "eslint": "^7.24.0",
         "ts-node": "^10.9.2",
         "vsce": "^1.96.1"
@@ -159,7 +163,6 @@
     "dependencies": {
         "adm-zip": "^0.5.2",
         "argparse": "^2.0.1",
-        "axios": "^0.21.1",
         "chai": "^4.2.0",
         "chmodr": "^1.2.0",
         "command-exists": "^1.2.9",
