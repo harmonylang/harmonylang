@@ -23,6 +23,13 @@ jobs:
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
+      - name: Run regression tests
+        run: npm run test
+      - name: Check if new version was published using package.json
+        run: |
+          PREV_VERSION=$(git show ${{ github.event.before }}:package.json | jq '.version')
+          NEW_VERSION=$(git show ${{ github.event.base_ref }}:package.json | jq '.version')
+          diff <(echo $PREV_VERSION) <(echo $NEW_VERSION)
       - name: Publish extension
         if: success() && env.VSCE_PAT != null
         env:
