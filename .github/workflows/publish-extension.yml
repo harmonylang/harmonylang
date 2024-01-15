@@ -25,13 +25,17 @@ jobs:
           ls ${{ github.workspace }}
       - name: Run regression tests
         run: npm run test
-      - name: Check if new version was published using package.json
-        run: |
-          PREV_VERSION=$(git show ${{ github.event.before }}:package.json | jq '.version')
-          NEW_VERSION=$(git show HEAD:package.json | jq '.version')
-          diff <(echo $PREV_VERSION) <(echo $NEW_VERSION)
+      - name: Version Check
+        uses: EndBug/version-check@v2.1.2
+        id: check
+      - name: Log when changed
+        if: steps.check.outputs.changed == 'true'
+        run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
+      - name: Log when unchanged
+        if: steps.check.outputs.changed == 'false'
+        run: 'echo "No version change :/"'
       - name: Publish extension
-        if: success() && env.VSCE_PAT != null
+        if: success() && steps.check.outputs.changed == 'true' && env.VSCE_PAT != null
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
