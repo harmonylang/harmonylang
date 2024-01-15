@@ -153,6 +153,7 @@
         "@typescript-eslint/eslint-plugin": "^3.0.2",
         "@typescript-eslint/parser": "^3.0.2",
         "eslint": "^7.24.0",
+        "ts-node": "^10.9.2",
         "vsce": "^1.96.1"
     },
     "dependencies": {
