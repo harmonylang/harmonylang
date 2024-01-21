@@ -146,10 +146,10 @@ export default async function runHarmony(
         CharmonyPanelController_v2.currentPanel?.startLoading();
         OutputConsole.clear();
         OutputConsole.println(stdout);
+        CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
         if (error) {
             OutputConsole.println(error.message);
             Message.error(error.message);
-            CharmonyPanelController_v2.currentPanel?.updateMessage(stdout);
             return;
         }
         const results: CharmonyTopLevelLatest = JSON.parse(fs.readFileSync(hcoFilename, 'utf-8'));
