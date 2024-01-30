@@ -18,7 +18,6 @@ import { HARMONY_ENTRY_SCRIPT } from '../config';
 const parser = new ArgumentParser();
 parser.add_argument('--const', '-c', { action: 'append' });
 parser.add_argument('--module', '-m', { action: 'append' });
-parser.add_argument('--intf', '-i', { nargs: 1 });
 
 /**
  * Parses a string which declares options to passed into the Harmony compiler.
@@ -43,9 +42,6 @@ function parseOptions(options?: string): string[] {
     ns.module?.forEach((arg: string) => {
         flags.push('--module', arg);
     });
-    if (ns.intf) {
-        flags.push('--intf', ns.intf[0]);
-    }
     return flags;
 }
 

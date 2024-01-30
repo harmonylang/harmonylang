@@ -135,7 +135,7 @@ export const activate = (context: vscode.ExtensionContext) => {
             }
             const options: vscode.InputBoxOptions = {
                 prompt: 'Run Harmony With Flags',
-                placeHolder: 'flags (e.g. -c name=value, -m module=version, -i expr, --intf expr)',
+                placeHolder: 'flags (e.g. -c name=value, -m module=version)',
             };
             vscode.window.showInputBox(options)
                 .then(value => {
