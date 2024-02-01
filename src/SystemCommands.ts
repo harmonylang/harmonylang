@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as which from 'which';
+import OutputConsole from './vscode/OutputConsole';
 
 export default class SystemCommands {
     private static getHarmonyLangConfiguration() {
@@ -32,8 +33,12 @@ export default class SystemCommands {
         );
         for (const command of ['python3', 'python']) {
             try {
-                pythonPaths.push(...await which(command, { all: true }));
-            } catch { /* no command named python3 found using `which` */ }
+                const whichPaths = await which(command, { all: true });
+                OutputConsole.println(`Found these paths for ${command} using which: ${whichPaths}`);
+                pythonPaths.push(...whichPaths);
+            } catch (e) {
+                OutputConsole.println(`Failed to get which of ${command}: ${e}`);
+            }
         }
         // TODO: Convert this array into an iterator that lazily checks if the element is
         // a string & exists (& checks if it is >= python3.6).

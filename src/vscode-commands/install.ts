@@ -28,7 +28,6 @@ type InstallResult = {
  * If the Python path is not given, attempt to install Harmony on all
  * detectable Python environments, with the HarmonyLang extension configured
  * Python path first.
- *
  */
 export default async function runInstall(pythonPath: string | undefined = undefined): Promise<InstallResult> {
     const pythonPaths = await (() => {
@@ -41,7 +40,7 @@ export default async function runInstall(pythonPath: string | undefined = undefi
     if (pythonPaths.length === 0) {
         return {
             state: 'failure',
-            message: 'Could not find a python path. Please install Python3 or report this if you believe it is an error.'
+            message: 'Could not find a path with a python executable. Please install Python3 or edit your system\' PATH environment variable.'
         };
     }
 
@@ -61,7 +60,7 @@ export default async function runInstall(pythonPath: string | undefined = undefi
         }
         // Write any error messages encountered.
         if (errorMessages.length > 0) {
-            OutputConsole.println('Harmony installed. Encountered some errors along the way, but no action is likely needed');
+            OutputConsole.println('Harmony installed. Encountered some errors along the way.');
             OutputConsole.println(errorMessages.join('\n'));
         }
 

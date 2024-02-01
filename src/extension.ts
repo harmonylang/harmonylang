@@ -60,11 +60,13 @@ export const activate = (context: vscode.ExtensionContext) => {
                 return;
             }
             value = value.trim();
-            if (fs.existsSync(value)) {
+            if (value === '') {
+                value = undefined;
+            } else if (fs.existsSync(value)) {
                 Message.info(`Installing Harmony using ${value}`);
             } else {
-                Message.info('Installing Harmony using detectable Python3 environments');
-                value = undefined;
+                Message.error(`The given path ${value} is not executable. It may not exist or is a system-level executable that cannot be used. Please install a new/different Python3 environment`);
+                return;
             }
 
             await runInstall(value)
