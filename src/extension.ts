@@ -61,9 +61,10 @@ export const activate = (context: vscode.ExtensionContext) => {
             }
             value = value.trim();
             if (value === '') {
+                Message.info('Installing Harmony using auto-detected Python paths. Success message will appear when finished.');
                 value = undefined;
             } else if (fs.existsSync(value)) {
-                Message.info(`Installing Harmony using ${value}`);
+                Message.info(`Installing Harmony using Python path ${value}. Success message will appear when finished.`);
             } else {
                 Message.error(`The given path ${value} is not executable. It may not exist or is a system-level executable that cannot be used. Please install a new/different Python3 environment`);
                 return;
